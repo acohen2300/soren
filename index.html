@@ -812,7 +812,7 @@ class SoundBath {
     this.master = c.createGain(); this.master.gain.value = 0;
     comp.connect(this.master); this.master.connect(c.destination);
     this.bus = {};
-    for (const k of ['notes', 'drone', 'weather', 'wildlife', 'breath']) { const g = c.createGain(); g.gain.value = 0; g.connect(comp); this.bus[k] = g; }
+    for (const k of ['notes', 'drone', 'weather', 'wildlife', 'breath', 'ambient']) { const g = c.createGain(); g.gain.value = 0; g.connect(comp); this.bus[k] = g; }
     this.echo = c.createGain();   // one shared echo: a delay line with damped feedback
     const delay = c.createDelay(1), tone = c.createBiquadFilter(), fb = c.createGain(), wet = c.createGain();
     delay.delayTime.value = 0.32; tone.type = 'lowpass'; tone.frequency.value = 2400; fb.gain.value = 0.34; wet.gain.value = 0.5;
@@ -827,6 +827,7 @@ class SoundBath {
     this.cicada = this.bed('wildlife', [['bandpass', 5200, 3]], true);
     this.rolling = this.bed('notes', [['highpass', 70], ['lowpass', 260]]);   // Heritage: marbles rolling on the wood
     this.fire = this.bed('weather', [['lowpass', 380], ['highpass', 50]]);
+    this.amb = { rain: this.bed('ambient', [['highpass', 700], ['lowpass', 5200]]), wind: this.bed('ambient', [['bandpass', 380, 0.7]]), fire: this.bed('ambient', [['lowpass', 380], ['highpass', 50]]) };   // your ambient sound: its own beds on its own bus, so the Weather and Wildlife switches leave it alone
     this.stream = this.bed('wildlife', [['bandpass', 1100, 0.5], ['lowpass', 3200]]);   // the waterfall and the rainforest stream
     this.ocean = this.bed('weather', [['lowpass', 900], ['highpass', 90]]);            // the sea, in waves
     this.toneLp = c.createBiquadFilter(); this.toneLp.type = 'lowpass'; this.toneLp.frequency.value = 300;
@@ -857,12 +858,12 @@ class SoundBath {
   applyVolumes() {   // each bus: its slider when it is on, nothing when off; while a sample plays, only the sampled bus
     if (!this.ctx) return;
     const solo = this.solo && this.solo.until > performance.now() ? this.solo.buses : null;
-    for (const k in this.bus) this.bus[k].gain.setTargetAtTime(solo ? (solo.includes(k) ? PREFS.vol[k] : 0) : PREFS.on[k] ? PREFS.vol[k] : 0, this.ctx.currentTime, 0.05);
+    for (const k in this.bus) this.bus[k].gain.setTargetAtTime(solo ? (solo.includes(k) ? (k === 'ambient' ? 1 : PREFS.vol[k]) : 0) : k === 'ambient' ? (PREFS.soundscape === 'off' ? 0 : 1) : PREFS.on[k] ? PREFS.vol[k] : 0, this.ctx.currentTime, 0.05);   // ambient carries its own level (A, below)
   }
   // Play sample: the one row you last touched, alone, for three seconds, at the level its slider is on. Everything else is held back.
   sample(key) {
     this.init(); if (!this.ctx) return;
-    const which = { volume: ['notes', 'drone', 'weather', 'wildlife', 'breath'], notes: ['notes'], breath: ['breath'], drone: ['drone'], weather: ['weather'], thunder: ['weather'], wildlife: ['wildlife'], ambient: ['weather', 'wildlife'], vibration: [] }[key] || [];
+    const which = { volume: ['notes', 'drone', 'weather', 'wildlife', 'breath'], notes: ['notes'], breath: ['breath'], drone: ['drone'], weather: ['weather'], thunder: ['weather'], wildlife: ['wildlife'], ambient: ['ambient'], vibration: [] }[key] || [];
     this.solo = { key, buses: which, until: performance.now() + 3000 }; this.applyVolumes();
     clearTimeout(this.soloT); this.soloT = setTimeout(() => { this.solo = null; this.applyVolumes(); }, 3000);
     if (key === 'volume' || key === 'notes') { [2, 3, 4].forEach((t, i) => setTimeout(() => this.merge(t, 1, 0, here().synth), i * 500)); }
@@ -960,7 +961,7 @@ class SoundBath {
   note(x, y) { if (this.live) this.tone(this.out('notes', panFor(x)), [261.63, 329.63, 392.0, 523.25][clamp(Math.floor((1 - y / LH) * 4), 0, 3)], 'sine', 0.06, 0.02, 1.8, this.ctx.currentTime).connect(this.echo); }
   bead(pan, glass) { if (!this.live) return; if (glass) this.clink(1046.5, pan, 0.03); else this.knock(pan, true); }   // a bead arriving: a soft click of wood, or of glass in Heritage
   tick(pan) { if (this.live) this.tone(this.out('notes', pan), 520, 'sine', 0.012, 0.004, 0.12, this.ctx.currentTime); }   // a tap off the beat: answered, never scolded
-  crackle(n) { for (let i = 0; i < n; i++) setTimeout(() => this.noise1({ bus: 'weather', type: 'bandpass', f0: 1500 + Math.random() * 2500, f1: 900, q: 2, peak: 0.02 + Math.random() * 0.03, attack: 0.003, dur: 0.04 + Math.random() * 0.06, pan: (Math.random() - 0.5) * 0.6 }), i * (40 + Math.random() * 90)); }
+  crackle(n, bus = 'weather') { for (let i = 0; i < n; i++) setTimeout(() => this.noise1({ bus, type: 'bandpass', f0: 1500 + Math.random() * 2500, f1: 900, q: 2, peak: 0.02 + Math.random() * 0.03, attack: 0.003, dur: 0.04 + Math.random() * 0.06, pan: (Math.random() - 0.5) * 0.6 }), i * (40 + Math.random() * 90)); }
   crack(peak) {   // a close strike: a sharp tearing crack and a deep boom under it
     const pan = (Math.random() - 0.5) * 0.8;
     this.noise1({ type: 'lowpass', f0: 2600, f1: 120, peak, attack: 0.015, dur: 3.2, pan });
@@ -987,8 +988,8 @@ class SoundBath {
       o.connect(g); g.connect(out); o.start(t); o.stop(t + 0.13); o.onended = () => g.disconnect();
     }
   }
-  trill(level) {
-    const t0 = this.ctx.currentTime, out = this.out('wildlife', Math.random() * 1.2 - 0.6);
+  trill(level, bus = 'wildlife') {   // a night of crickets is the world's (wildlife) or the one you chose (ambient)
+    const t0 = this.ctx.currentTime, out = this.out(bus, Math.random() * 1.2 - 0.6);
     const f = 4186 * (0.96 + Math.random() * 0.08), gap = 0.04 + Math.random() * 0.025;   // each cricket a little different
     for (let i = 0, n = 2 + (Math.random() * 4 | 0); i < n; i++) this.tone(out, f, 'sine', 0.007 * level, 0.008, 0.035, t0 + i * gap);
   }
@@ -1042,17 +1043,18 @@ class SoundBath {
     if (!PREFS.sound) { if ((this.hush = (this.hush || 0) + dt) > 0.15 && this.ctx.state === 'running') this.ctx.suspend().catch(() => {}); return; }   // muted: the whole engine sleeps, saving battery
     this.hush = 0;
     this.drift = clamp((this.drift || 1) + (Math.random() - 0.5) * 0.06, 0.82, 1.12);   // rain and wind wander a little, so the ear never settles on a loop
-    this.rain.g.gain.setTargetAtTime(Math.max(z === 'rain' ? 0.22 * A : 0, (solo === 'weather' ? 1 : ENV.rain) * 0.2) * this.drift, t, 0.6);   // a weather sample: rain, whatever the sky
-    const bed = (z === 'wind' || z === 'night') && blow < 0.3;   // the wind you chose, until the world's own wind picks up
-    this.wind.g.gain.setTargetAtTime(Math.max(z === 'wind' ? 0.12 * drift * A : z === 'night' ? 0.025 * A : 0, Math.min(1.2, blow) * 0.1), t, 0.5);
-    this.wind.f.frequency.setTargetAtTime((bed || (rest && z) ? 330 + 220 * drift : 280 + 700 * Math.min(1.2, blow)) * (0.9 + 0.1 * this.drift), t, 0.8);
+    this.rain.g.gain.setTargetAtTime((solo === 'weather' ? 1 : ENV.rain) * 0.2 * this.drift, t, 0.6);   // a weather sample: rain, whatever the sky
+    this.wind.g.gain.setTargetAtTime(Math.min(1.2, blow) * 0.1, t, 0.5);
+    this.wind.f.frequency.setTargetAtTime((280 + 700 * Math.min(1.2, blow)) * (0.9 + 0.1 * this.drift), t, 0.8);
+    this.amb.rain.g.gain.setTargetAtTime(z === 'rain' ? 0.22 * A * this.drift : 0, t, 0.6);   // the ambient bed you chose, whatever the sky does
+    this.amb.wind.g.gain.setTargetAtTime(z === 'wind' ? 0.12 * drift * A : z === 'night' ? 0.025 * A : 0, t, 0.5); this.amb.wind.f.frequency.setTargetAtTime((330 + 220 * drift) * (0.9 + 0.1 * this.drift), t, 0.8);
     this.growl.g.gain.setTargetAtTime(S.growl * (0.8 + Math.random() * 0.4), t, 0.12);
     this.cicada.g.gain.setTargetAtTime(ENV.cicadas * 0.05, t, 1);
     const roll = here().glass && awake() ? rolling() : 0;   // one low rumble for the whole tray: louder and brighter the faster and heavier
     this.rolling.g.gain.setTargetAtTime(0.16 * Math.sqrt(roll), t, 0.08);
     this.rolling.f.frequency.setTargetAtTime(170 + 420 * roll, t, 0.1);
     const amb = here().amb || {}, wave = 0.5 - 0.5 * Math.cos(t * TAU / 9);
-    this.fire.g.gain.setTargetAtTime(Math.max(z === 'fire' ? 0.05 * A : 0, (amb.fire || 0) * 0.045), t, 0.4);   // the fire's steady roar: your sound, or the campsite's
+    this.fire.g.gain.setTargetAtTime((amb.fire || 0) * 0.045, t, 0.4); this.amb.fire.g.gain.setTargetAtTime(z === 'fire' ? 0.05 * A : 0, t, 0.4);   // the fire's steady roar: the campsite's, or your sound
     this.stream.g.gain.setTargetAtTime((amb.water || 0) * (0.05 + 0.025 * Math.random()), t, 0.3);
     this.ocean.g.gain.setTargetAtTime((amb.ocean || 0) * (0.03 + 0.13 * wave * wave), t, 0.5);   // a wave every nine seconds, in step with the one you see
     this.ocean.f.frequency.setTargetAtTime(500 + 900 * wave, t, 0.6);
@@ -1062,7 +1064,7 @@ class SoundBath {
     for (const o of this.toneOsc) o.detune.setTargetAtTime(b * 35, t, 0.2);
     if (this.drone) {
       this.droneAge += dt;
-      const rich = rest ? 0.5 : clamp(Math.log10(S.score + 1) / 5, 0, 1), { g, lp, parts } = this.drone;
+      const rich = rest || solo === 'drone' ? 0.5 : clamp(Math.log10(S.score + 1) / 5, 0, 1), { g, lp, parts } = this.drone;   // the sample has the fuller chord: a phone can't play the low note alone
       parts.forEach((pg, i) => { if (i) pg.gain.setTargetAtTime(clamp(rich * parts.length - i + 1, 0, 1) * 0.5 / i, t, 1.5); });
       const settle = S.mode === 'settle';
       lp.frequency.setTargetAtTime((260 + 1000 * rich) * (settle ? 0.8 + 0.2 * b : 1), t, 1.5);   // Settle: a little warmer and darker on the breath out
@@ -1077,13 +1079,13 @@ class SoundBath {
       this.sweep.g.gain.setTargetAtTime(0.012 + 0.02 * b, t, 0.3); this.sweep.f.frequency.setTargetAtTime(350 + 1400 * b, t, 0.3);
     } else { this.rain.f.frequency.setTargetAtTime(5200, t, 0.8); this.wind.f.Q.setTargetAtTime(0.7, t, 0.8); this.sweep.g.gain.setTargetAtTime(0, t, 0.3); }
     if (!this.live) return;
-    if ((z === 'fire' || amb.fire) && (this.popT = (this.popT ?? 1) - dt) <= 0) { this.crackle(1); this.popT = 0.3 + Math.random() * 1.6; }   // the fire pops now and then
+    if ((z === 'fire' || amb.fire) && (this.popT = (this.popT ?? 1) - dt) <= 0) { this.crackle(1, amb.fire ? 'weather' : 'ambient'); this.popT = 0.3 + Math.random() * 1.6; }   // the fire pops now and then
     if (amb.owl && ENV.dark > 0.35 && OWL.away <= 0 && (this.owlT = (this.owlT ?? 6) - dt) <= 0) { this.hoot(); this.owlT = 10 + Math.random() * 16; }
     if (amb.ocean && SKY.light > 0.4 && (this.gullT = (this.gullT ?? 5) - dt) <= 0) { this.gull(); this.gullT = 12 + Math.random() * 16; }
     if (amb.exotic && ENV.light > 0.3 && (this.exT = (this.exT ?? 3) - dt) <= 0) { Math.random() < 0.6 ? this.whistle() : this.squawk(); this.exT = 3 + Math.random() * 6; }
-    const crickets = Math.max(z === 'night' ? 0.8 * A : 0, ENV.crickets);
+    const night = z === 'night' ? 0.8 * A : 0, crickets = Math.max(night, ENV.crickets);
     if (ENV.birds > 0.05 && (this.birdT -= dt) <= 0) { this.chirp(ENV.birds); this.birdT = (2 + Math.random() * 5) / Math.max(0.5, ENV.birds); }
-    if (crickets > 0.05 && (this.cricketT -= dt) <= 0) { this.trill(crickets); this.cricketT = Math.random() < 0.25 ? 2.5 + Math.random() * 4 : 0.4 + Math.random() * 1.8; }   // scattered, never a steady beat
+    if (crickets > 0.05 && (this.cricketT -= dt) <= 0) { this.trill(crickets, ENV.crickets > 0.05 ? 'wildlife' : 'ambient'); this.cricketT = Math.random() < 0.25 ? 2.5 + Math.random() * 4 : 0.4 + Math.random() * 1.8; }   // scattered, never a steady beat
   }
 }
 const sound = new SoundBath();
@@ -2331,7 +2333,7 @@ function enterSleep() {
   $('sleepView').classList.remove('idle');
   requestWake(true); updateSleepText();
 }
-function exitSleep() { S.sleep = null; requestWake(false); $('sleepGlow').style.opacity = 0; }
+function exitSleep() { S.sleep = null; PEND.snap = null; requestWake(false); $('sleepGlow').style.opacity = 0; }   // Rest's rows are done with their snapshot
 function updateSleep(dt) {
   const z = S.sleep;
   z.t += dt;
@@ -2466,7 +2468,7 @@ function handleEvents(events) {
       if (!PREFS.seenChain) { PREFS.seenChain = true; say('A chain turns gold', 'Two merges or more from one drop', 3500); }
     }
     if (e.tier === 9) { sound.wash(); say(T.name, w.glass ? 'The largest marble. Pair it for a Full Bloom.' : '1024 reached. Pair it for a Full Bloom.'); maybePraise('big', e.x, e.y); }
-    if (PREFS.afterMerge.on && e.tier >= PREFS.afterMerge.tier && PREFS.afterMerge.tier < 9) S.sighIn = 1.6;   // Breathe after a merge: this big or bigger
+    if (PREFS.afterMerge.on && e.tier >= PREFS.afterMerge.tier + 1 && PREFS.afterMerge.tier < 9) S.sighIn = 1.6;   // Breathe after a merge: this big or bigger
   }
 }
 // Every way a sphere leaves without merging goes through here: letting one go, dissolving the top, a Strike, Loosen.
@@ -2615,7 +2617,7 @@ function loadPool() {
   for (const b of p.balls) {
     if (!Array.isArray(b)) continue;
     const t = tier(b[2], RADII.length - 1), r = b[3] ? WILD_R : RADII[t];   // each marble back exactly where it rested
-    addBall(S.world, clamp(num(b[0], LW / 2), r + 4, LW - r - 4), clamp(num(b[1], LH / 2), r + 4, LH - r - 6), t, b[4] === 0 ? { wild: !!b[3] } : { wild: !!b[3], landed: true, age: 60 });
+    addBall(S.world, clamp(num(b[0], LW / 2), r + 4, LW - r - 4), clamp(num(b[1], LH / 2), b[4] === 0 ? -600 : r + 4, LH - r - 6), t, b[4] === 0 ? { wild: !!b[3] } : { wild: !!b[3], landed: true, age: 60 });
   }
   const items = obj(p.items);
   Object.assign(S, { score: num(p.score), blooms: num(p.blooms), merges: num(p.merges), highestTier: tier(p.highestTier, 9), current: tier(p.current, 3), next: tier(p.next, 3),
@@ -2665,7 +2667,7 @@ const todoLines = () => PREFS.todo.filter(l => l.on && l.text.trim()).map(l => l
 // A task done: it goes from the list (the goal line stays, cleared). Nothing is counted.
 function lineDone(text) {
   const i = PREFS.todo.findIndex(l => l.text.trim() === text); if (i < 0) return;
-  if (i) PREFS.todo.splice(i, 1); else Object.assign(PREFS.todo[0], { text: '', at: -1 });
+  if (i) PREFS.todo.splice(i, 1); else Object.assign(PREFS.todo[0], { on: false, text: '', at: -1 });
   savePrefs(); sound.chime(0, here().synth); haptic(20);
 }
 function startPlan() {   // ✓ on your time: it plays at once. A timer already running, with the same answer, keeps running.
@@ -2996,7 +2998,7 @@ const placeOpts = () => Object.keys(PLACES).map(k => `${k}:${PLACES[k].label}`).
 const PALETTE_NAMES = { spring: 'Mint', summer: 'Gold', autumn: 'Ember', winter: 'Ice', rainforest: 'Moss', camp: 'Lantern', woods: 'Heather', beach: 'Tide', stars: 'Midnight' };   // a palette by its colours, not its place
 const paletteOpts = () => Object.keys(PALETTE_NAMES).map(k => `${k}:${PALETTE_NAMES[k]}`).join('|');
 const soundOff = () => !PREFS.sound;
-const tierName = (t) => (t >= 9 ? 'Bloom' : `Ball ${Math.round(t) + 1}+`);   // by its place in the line: Ball 3+ … Ball 10+, then a Bloom
+const tierName = (t) => (t >= 9 ? 'Bloom' : `Ball ${Math.round(t) + 2}+`);   // the sphere a merge makes, by its place in the line: Ball 2+ … Ball 10+, then a Bloom
 const ITEMS = {
   mode: choice('Mode', 'play:Play|rain:SkyPlay|settle:Settle|rest:Rest'),
   place: choice('Scene', 'heritage:Heritage|nature:Nature'),
@@ -3069,7 +3071,7 @@ const WX_ROWS = () => [
     row(here().snow ? 'Snow' : 'Rain', ['atmo.rain.on', 'atmo.rain.lv'], 'Falls over the game; the sound comes with it.', 'Rain falls over the game, with its sound; how much is how hard it falls. In winter places it snows instead.'),
     row('Time', ['atmo.time.on', 'atmo.time.lv'], 'Hold keeps the hour you set; off follows your clock.', 'Off, the sky follows the time where you are, dawn to night. On, it holds at the hour on the slider, whatever the time is.')];
 Object.assign(SHEETS, {
-  sky: { title: 'Sky settings', note: 'How the sky looks. <a data-act="wxribbon">Go to weather settings</a>', items: [
+  sky: { title: 'Sky settings', note: () => 'How the sky looks.' + (here().indoor ? '' : ' <a data-act="wxribbon">Go to weather settings</a>'), items: [
     row('Clouds', 'weather', 'How much cloud is in the sky.', 'Clear to dark, or Changing, which lets the sky move on by itself. Clouds change only how the sky looks; rain and wind are in weather settings.'),
     row('Sway', 'windAim', 'The wind sways the waiting sphere.', 'With Sway on, the sphere waiting at the top drifts with the wind, so a drop needs a little allowance. Off, it hangs still.'),
     row('Carry', 'windFall', 'The wind carries falling spheres.', 'With Carry on, a falling sphere is pushed sideways by the wind, more when it is small. Off, it falls straight.'),
@@ -3157,6 +3159,7 @@ function itemEl(key) {
     case 'ask': el.className = 'item ask'; el.innerHTML = `<span class="askq" id="askQ">${ASKS[S.askI]}</span>`; break;
     case 'todo': {   // the goal, then up to three tasks: Off | On, the words, a due time, ✓. Then + Add task.
       el.className = 'item todo'; el.innerHTML = PREFS.todo.map((l, i) => todoRow(l, i)).join('') + (PREFS.todo.length < 4 ? '<button class="tog add" data-act="addtask">+ Add task</button>' : '');
+      const box = el.querySelector('.due-pick'); if (box) { box.appendChild(pickerEl([['due.ch', ''], ['due.cm', ''], ['due.ap', '']])); box.insertAdjacentHTML('beforeend', '<button class="tog notime" data-act="notime">No time</button>'); }   // the open due time's wheels come with the list, however it is drawn
       break; }
     case 'leave': {   // when you leave: a timer (hours, min), a time (hour, minute, AM/PM), or I'll decide
       const h = PREFS.leave.how;
@@ -3199,9 +3202,7 @@ function todoRow(l, i) {
 function openDue(i) {   // the due time's pickers, under their line
   S.due = S.due === i ? -1 : i;
   if (S.due >= 0 && dueOf(i) < 0) { const d = new Date(), now = d.getHours() * 60 + d.getMinutes(); PREFS.todo[i].at = (Math.ceil((now + 30) / 5) * 5) % 1440; }   // opened: a time half an hour on, to the five
-  redraw('.todo', 'todo');
-  const box = document.querySelector('.due-pick'); if (box) { box.appendChild(pickerEl([['due.ch', ''], ['due.cm', ''], ['due.ap', '']])); box.insertAdjacentHTML('beforeend', '<button class="tog notime" data-act="notime">No time</button>'); }
-  syncControls();
+  redraw('.todo', 'todo'); syncControls();
 }
 function soonestDue() {   // the nearest due time still ahead, on a line that's on
   const d = new Date(), now = d.getHours() * 60 + d.getMinutes();
@@ -3291,7 +3292,7 @@ function remember() { PEND.snap = clone(PREFS); PEND.ready = {}; PEND.step = {};
 // Each control in a row goes dim → blue → green, and only one is blue at a time: the next thing to touch. The switch goes green
 // when chosen and hands blue to the amount; the amount goes green when set and hands blue to ✓; ✓ goes green (its tick gold) and
 // hands blue to ▶; ▶ goes green for a second as it saves. A switch turned off skips the amount. PEND.step[id] says where a row is.
-function setStep(id, st) { PEND.step[id] = st; syncRows(); }
+function setStep(id, st) { if (st === 'sw' || st === 'amt') delete PEND.ready[id]; PEND.step[id] = st; syncRows(); }   // changed again: the tick is off, even back at the ticked value
 const stepOf = (id) => (PEND.step[id] === 'save' || rowState(id) !== '' ? PEND.step[id] || '' : '');   // a row back as it was is at rest
 function readyRow(id) {   // ✓: green with a gold tick, and ▶ lights. ✓ again: not after all.
   const st = rowState(id);
@@ -3302,6 +3303,7 @@ function saveRow(id) {   // ▶: this row is kept, there and then, with one swee
   if (rowState(id) !== 'ready') return;
   const restart = id === 'game' && S.gameChoice === 'restart';
   for (const k of rowKeys(id)) { if (ITEMS[k] && ITEMS[k].get) PEND.virt[k] = ITEMS[k].get(); else setPath(PEND.snap, k, clone(pathGet(PREFS, k))); if (k === 'overflow') PEND.fair = S.fair; }
+  if (id.startsWith('todo.')) PREFS.todo.forEach((l, i) => { if (!PEND.snap.todo[i]) PEND.snap.todo[i] = clone(l); });   // a task kept keeps the lines above it: the list is one thing
   delete PEND.ready[id]; savePrefs(); sound.chime(0, here().synth); haptic(15); setStep(id, 'save');
   setTimeout(() => { if (PEND.step[id] === 'save') { delete PEND.step[id]; syncRows(); } if (S.strip && id.startsWith('atmo.')) { closeStrip(false); foldWx(); } }, 900);   // ▶ green for a moment; then the row rests, and a weather strip goes
   if (restart) { doRestart(); return; }
@@ -3320,7 +3322,7 @@ function syncRows() {   // paint each control of each row by where the row is: p
 }
 const rowOf = (t) => { const r = t.closest && t.closest('[data-row]'); return r ? r.dataset.row : null; };
 const hasAmount = (id) => { const r = document.querySelector(`[data-row="${id}"]`); return !!r && !!r.querySelector('.rctl > .item:not(.sw), .text-input'); };
-function undoAll() { if (!PEND.snap) return; Object.assign(PREFS, clone(PEND.snap), { seenChain: PREFS.seenChain }); S.fair = PEND.fair; PEND.snap = null; apply(); remember(); }
+function undoAll() { if (!PEND.snap) return; Object.assign(PREFS, clone(PEND.snap), { seenChain: PREFS.seenChain }); S.fair = PEND.fair; for (const k in PEND.virt) ITEMS[k].set(PEND.virt[k]); PEND.snap = null; PEND.ready = {}; PEND.step = {}; apply(); }   // the snapshot is spent: whoever stays open takes a fresh one (openSheet, cellTap)
 function apply() {   // the settings as they now stand take effect everywhere
   timeTo(PREFS.atmo.time.on, PREFS.atmo.time.lv);
   if (!PREFS.atmo.bolt.on) { S.rumbles = []; S.pulses = []; scene.bolt = null; LT.tail = 0; }   // a storm you put back takes its thunder with it
@@ -3516,7 +3518,7 @@ function openSheet(name, push = false, back = false) {
   if (name === 'pause') S.held = true;   // the game waits for a tap when you come back to it
   if (name === 'checkin' && PREFS.leave.how === 'clock' && !(S.goal && S.goal.phase === 'play')) freshClock();
   closeStrip(true); S.sheet = name; S.aiming = false; S.due = -1; S.sample = null; remember();
-  $('sheetTitle').textContent = def.title; $('sheetTitle').hidden = !def.title; $('sheetNote').innerHTML = def.note || ''; $('sheetNote').hidden = !def.note;
+  $('sheetTitle').textContent = def.title; $('sheetTitle').hidden = !def.title; const note = typeof def.note === 'function' ? def.note() : def.note; $('sheetNote').innerHTML = note || ''; $('sheetNote').hidden = !note;
   $('sheetHelp').hidden = name === 'help'; $('sheetSample').hidden = !def.sample; $('sheetDone').hidden = !def.onDone; $('sheetFoot').hidden = !(def.sample || def.onDone); $('morePop').hidden = true;   // the foot only when a card has something to start or play
   document.body.classList.toggle('see', name === 'checkin');   // the world shows through behind your time
   $('sheet').dataset.name = name;
@@ -3534,7 +3536,7 @@ function closeSheet() {
   if (was === 'checkin') { PREFS.mode = S.mode; sound.init(); }
   syncControls();
 }
-function startSheet() { const def = SHEETS[S.sheet]; undoAll(); if (def && def.onDone) def.onDone(); closeSheet(); }   // Your time's Start: what you saved, and play
+function startSheet() { const def = SHEETS[S.sheet]; PEND.snap = null; savePrefs(); if (def && def.onDone) def.onDone(); closeSheet(); }   // Your time's Start: every row as it stands is kept, and play
 function backSheet() { undoAll(); if (NAV.stack.length) { openSheet(NAV.stack.pop(), false, true); return; } closeSheet(); }   // ‹: put back, then back to the card you came from (or away, from a first card: the same as ✕)
 function closeAll() { undoAll(); closeSheet(); }   // ✕: put back, and away
 function doRestart() { closeSheet(); stopPlan(); setMode('play'); startPool(); S.held = true; }
@@ -3632,7 +3634,7 @@ function bind() {
     const tx = e.target.closest('[data-type="text"]'); if (tx) { setPrefRaw(tx.dataset.key, tx.value.slice(0, 60)); syncControls(); const id = rowOf(tx); if (id) setStep(id, 'sw'); }   // writing: the words are blue
   });
   document.addEventListener('change', (e) => { const r = e.target.closest('[data-type="range"]'); const id = r && rowOf(r); if (id) setStep(id, 'amt'); });   // let go: set, green; ✓ is next
-  document.addEventListener('focusout', (e) => { const tx = e.target.closest && e.target.closest('[data-type="text"]'); const id = tx && rowOf(tx); if (id && rowState(id) !== '') setStep(id, 'amt'); });
+  document.addEventListener('focusout', (e) => { const tx = e.target.closest && e.target.closest('[data-type="text"]'); const id = tx && rowOf(tx); if (id && rowState(id) === 'changed') setStep(id, 'amt'); });   // leaving the words: the row waits for ✓ (a row already ticked is left alone, so ▶ can take the tap)
   document.addEventListener('keydown', (e) => {
     if (e.key === 'Escape') { if (!$('morePop').hidden) $('morePop').hidden = true; else if (S.sheet) closeAll(); }
     else if (e.key === 'Enter' && e.target.matches && e.target.matches('.text-input')) e.target.blur();
