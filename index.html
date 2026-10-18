@@ -164,6 +164,7 @@ body.lamp { --glint: rgba(255, 236, 196, 0.95); --glint-soft: rgba(255, 205, 130
 .sheet-body { flex: 1; overflow-y: auto; overscroll-behavior: contain; display: flex; flex-direction: column; gap: 8px; padding: 2px 14px 10px; scrollbar-width: thin; scrollbar-color: rgba(242, 248, 252, 0.4) transparent; }
 .sheet-body::-webkit-scrollbar { width: 4px; } .sheet-body::-webkit-scrollbar-thumb { background: rgba(242, 248, 252, 0.4); border-radius: 2px; }
 .sheet-body.more { -webkit-mask-image: linear-gradient(#000 calc(100% - 28px), transparent); mask-image: linear-gradient(#000 calc(100% - 28px), transparent); }   /* a long menu says so: a bar at its side, a fade at its foot */
+.sheet-body > .item { flex-shrink: 0; }   /* a long card scrolls; its rows never squeeze into each other */
 .sheet-body > .item:last-child { padding-bottom: 20px; }
 .sheet-foot { flex: none; display: flex; flex-direction: column; gap: 6px; padding: 8px 14px calc(10px + env(safe-area-inset-bottom, 0px)); border-top: 1px solid var(--chip-line); }
 .sheet-foot .btn { width: 100%; min-height: 44px; font-size: 15px; }
@@ -212,16 +213,13 @@ body.lamp { --glint: rgba(255, 236, 196, 0.95); --glint-soft: rgba(255, 205, 130
 .switch:disabled { opacity: 0.35; cursor: default; }
 /* The to-do: Off | On · the words · due · ✓, one line each; blue with nothing on it, green while it waits for ✓, gold when done */
 .todo { display: flex; flex-direction: column; gap: 8px; }
-.trow { display: grid; grid-template-columns: 52px minmax(0, 1fr) 64px 38px 38px; gap: 4px; align-items: center; padding: 3px; border-radius: 14px; border: 1px solid transparent; transition: border-color .25s, box-shadow .25s; }
-.trow > .tog { min-height: 40px; padding: 0 2px; }
+.trow { display: grid; grid-template-columns: 52px minmax(0, 1fr) 64px; gap: 4px; align-items: center; padding: 3px; border-radius: 14px; border: 1px solid transparent; transition: border-color .25s, box-shadow .25s; }
+.trow.goal { grid-template-columns: minmax(0, 1fr) 64px; } .trow > .tog { min-height: 40px; padding: 0 2px; }
 .trow .text-input { min-height: 40px; padding: 6px 10px; }
 .trow.dim .text-input, .trow.dim .chip { opacity: 0.4; }
 .chip { font-size: 11.5px; padding: 0 4px; white-space: normal; line-height: 1.1; } .chip.open { border-style: dashed; }
 .due-pick { display: flex; flex-direction: column; align-items: center; gap: 6px; padding: 2px 0 6px; } .due-pick .notime { width: auto; min-height: 34px; padding: 0 14px; font-size: 12.5px; }
 .tog.add { border-style: dashed; color: var(--ink-dim); }
-/* Your time: the questions breathe by in white italics; one answer, when you leave */
-.ask { min-height: 96px; display: grid; place-items: center; text-align: center; } .ask .askq { font-size: 18px; line-height: 1.3; margin: 0; }
-.askq { display: block; margin: 6px 0 4px; font: italic 600 17px var(--f-display); color: #fff; }
 .picker { display: flex; justify-content: center; gap: 6px; margin: 2px 0 4px; }   /* the phone's timer and alarm pickers, in our wells */
 .picker > .item { position: relative; flex: 0 0 86px; } .picker > .item:last-child:nth-child(3) { flex-basis: 64px; } .picker > .item:has([data-key="leave.h"]), .picker > .item:has([data-key="leave.m"]) { flex-basis: 116px; }
 .picker .cnt { display: none; } .picker .wi { font-size: 20px; font-variant-numeric: tabular-nums; text-align: center; padding-right: 6px; }
@@ -693,7 +691,7 @@ const S = {
   breath: 0.5, sigh: null, sighIn: 0, space: null, ballFade: 0, rescueAt: 0, life: 0.5, rainMem: 0,
   held: false, wxState: -1, wxLen: 1, pulses: [], rumbles: [], lit: 0, growl: 0, cellA: 0, flash: 0,
   lastInput: -1e9, born: performance.now(),
-  sleep: null, wakeLock: null, goal: null, ending: false, thaw: false, roundDone: false, merges: 0, askI: 0, askPh: 0, gone: null, heave: 1, sure: null, due: -1
+  sleep: null, wakeLock: null, goal: null, ending: false, thaw: false, roundDone: false, merges: 0, plan: { task: null, how: null, goal: null }, prev: null, gone: null, heave: 1, sure: null, due: -1
 };
 // The spheres move only when their layer is on and nothing is asking for you: no card, no deep breath, no choice to make,
 // and not held (Play waits for a tap whenever you come back to it).
@@ -2371,6 +2369,7 @@ function newPool() {
   particles = []; ripples = []; floaters = [];
   Object.assign(S, { world: createWorld(), score: 0, blooms: 0, merges: 0, highestTier: 2, current: 0, next: 1, currentWild: false, fair: PREFS.overflow === 'end',
     canDrop: true, cooldown: 0, overT: 0, offender: 0, pick: null, loosen: null, gameOver: false, combo: 0, comboT: 0, items: { ...START_TOOLS }, armed: null, sighIn: 0 });
+  Object.assign(BW, { pool: 0, drift: 0, fog: 0, splashes: [], leaves: [] }); S.zap = null;   // a fresh game starts with a clear board and a clear sky over it
   $('alert').hidden = true; hideCard();
 }
 function startPool() {
@@ -2607,11 +2606,12 @@ function roundCard() {   // while a round is over, this card is what's left when
 
 /* ---------- The pool keeps: saved on this device, so it waits for you ---------- */
 function savePool() {
+  if (S.prev) return;   // the last game waits on Your time, in case you want it back
   saveJSON(SKEY, { score: S.score, blooms: S.blooms, highestTier: S.highestTier, current: S.current, next: S.next, currentWild: S.currentWild,
     items: S.items, gameOver: S.gameOver || S.roundDone, fair: S.fair, merges: S.merges, balls: S.world.balls.map(b => [Math.round(b.x * 10) / 10, Math.round(b.y * 10) / 10, b.tier, b.wild ? 1 : 0, b.landed ? 1 : 0]) });   // a sphere still falling comes back falling
 }
-function loadPool() {
-  const p = loadJSON(SKEY), num = (v, d = 0) => (Number.isFinite(+v) ? +v : d), tier = (t, hi) => clamp(t | 0, 0, hi);
+function loadPool(p = loadJSON(SKEY)) {
+  const num = (v, d = 0) => (Number.isFinite(+v) ? +v : d), tier = (t, hi) => clamp(t | 0, 0, hi);
   if (!Array.isArray(p.balls) || p.gameOver) return false;
   newPool();
   for (const b of p.balls) {
@@ -2627,7 +2627,7 @@ function loadPool() {
 }
 
 /* ---------- Your time: when you leave ---------- */
-// The second screen asks, at the breath's pace, when you leave: a timer, a time, or I'll decide. Five minutes before, a card
+// The second screen asks if you have a task, how long you play (a countdown, or until a time), and whether to set a goal. Five minutes before, a card
 // asks. In the last two minutes the game ends itself: the line turns red and wakes, and the dropper serves big frosted
 // spheres. At your time the pool parks, greyed and saved, with your goal (or a send-off) across it; Settle first if you like.
 const MIN = 60000;
@@ -2681,6 +2681,13 @@ function startPlan() {   // ✓ on your time: it plays at once. A timer already 
   if (!same && S.goal) { say(todoLines()[0] || 'Your time', leaveWords(), 3200); shimmer($('topBar').querySelector('[data-cell=goal]')); }   // this, now
 }
 function stopPlan() { if (S.goal) goalBack(); }
+const planLeft = () => S.plan.task === null || (S.plan.task && !S.plan.how);   // the question above the goal is still open
+const planReady = () => !planLeft() && S.plan.goal !== null;
+function answer(id, yes) {   // a yes or no on Your time: the next question comes up under it
+  if (id === 'task') { if (S.plan.task === yes) return; S.plan.task = yes; S.plan.how = null; if (!yes) PREFS.leave.how = 'decide'; else if (PREFS.leave.how === 'decide') PREFS.leave.how = 'timer'; }
+  else { if (S.plan.goal === yes) return; S.plan.goal = yes; if (yes) PREFS.todo[0].on = true; else PREFS.todo.forEach(l => { l.on = false; }); }   // No goal: no tasks this session either
+  sound.tick(0); refill();
+}
 const goalLeft = () => (S.goal ? Math.max(0, (S.goal.end - Date.now()) / 1000) : 0);
 function updateGoal() {
   const g = S.goal;
@@ -2870,22 +2877,25 @@ function render() {
   if (S.intro) drawIntro(ctx, S.intro);
   ctx.restore();
 }
-// The opening: dark blue and Settle's breath shape. One breath, circle out to the pool's edge and back; then the circle rests:
-// SoRen shimmers across it in silver, the tagline comes under it, and Start, until a tap fades the app in.
+// The opening, SoRen's own movement: on dark blue the lines heave into being from nothing and flash bright at the crest; the neon
+// and glow fade after it, and the shape falls from the pool's rectangle to a small circle. SoRen shimmers in the circle, the
+// tagline comes under it, and Your time follows by itself (a tap, any time, brings it sooner).
 function drawIntro(c, o) {
   const ph = Math.min(1, o.t / o.len), lv = 0.5 + 0.5 * breathAt(ph), shape = breathShape(lv), rest = Math.max(0, o.t - o.len);
+  const CREST = 0.4, glow = ph < CREST ? (ph / CREST) ** 2 : Math.max(0, 1 - (ph - CREST) / 0.3) ** 2, fl = Math.max(0, 1 - Math.abs(ph - CREST) / 0.06), line = clamp(ph / 0.25, 0, 1);   // one flash, at the crest, on the line alone
   c.save(); c.globalAlpha = o.go == null ? 1 : clamp(1 - (o.t - o.go) / 1.2, 0, 1);
   const v = c.createRadialGradient(CX, CY, 20, CX, CY, LW / 2); v.addColorStop(0, '#0c1c35'); v.addColorStop(1, '#050d1c');   // lit in the middle, falling into shadow toward the edges, where it meets the page
   c.fillStyle = v; c.fillRect(0, 0, LW, LH);
-  c.fillStyle = `rgba(242,248,252,${(0.05 + 0.1 * (lv - 0.5) * 2).toFixed(3)})`; c.beginPath(); shapePath(c, shape); c.fill();
-  c.shadowColor = 'rgba(186,230,253,0.9)'; c.shadowBlur = 14; c.strokeStyle = 'rgba(186,230,253,0.85)'; c.lineWidth = 2.5; c.stroke(); c.shadowBlur = 0;
+  c.fillStyle = `rgba(242,248,252,${((0.05 + 0.1 * (lv - 0.5) * 2) * line).toFixed(3)})`; c.beginPath(); shapePath(c, shape); c.fill();
+  c.shadowColor = `rgba(186,230,253,${(0.9 * glow).toFixed(3)})`; c.shadowBlur = 3 + 30 * glow + 12 * fl;
+  c.strokeStyle = `rgba(${Math.round(186 + 69 * fl)},${Math.round(230 + 25 * fl)},253,${(0.85 * line + 0.15 * fl).toFixed(3)})`; c.lineWidth = 1.8 + 1.4 * glow + 1.2 * fl; c.stroke(); c.shadowBlur = 0;
   if (ph >= 1) {
     c.textAlign = 'center'; c.textBaseline = 'middle';
     const k = clamp(rest / 0.5, 0, 1), sweep = rest < 0.6 ? -1 : (((rest - 0.6) % 4) / 1.2) * 1.6 - 0.3, g = c.createLinearGradient(CX - 80, 0, CX + 80, 0);   // a silver sweep across the name, once the name is in, then every four seconds
     const [lo, mid, hi] = here().indoor ? ['#b08a52', '#d6b47a', '#fff1d2'] : ['#9fb0c4', '#b8c6d8', '#ffffff'];   // silver, or lamplight on glass
     g.addColorStop(0, lo); g.addColorStop(clamp(sweep - 0.12, 0.001, 0.998), mid); g.addColorStop(clamp(sweep, 0.002, 0.999), hi); g.addColorStop(clamp(sweep + 0.12, 0.003, 1), mid); g.addColorStop(1, lo);
     c.globalAlpha *= k; c.fillStyle = g; c.font = `400 38px ${FONT.serif}`; c.fillText('SoRen', CX, CY - 14);
-    c.globalAlpha = clamp((rest - 0.9) / 0.6, 0, 1); c.fillStyle = 'rgba(242,248,252,0.8)'; c.font = `500 13px ${FONT.sans}`; c.fillText('Start', CX, CY + 26);
+    c.globalAlpha = clamp((rest - 0.5) / 0.6, 0, 1); c.fillStyle = 'rgba(242,248,252,0.8)';
     c.font = `italic 500 16px ${FONT.serif}`; c.fillText('Settle. Touch. Return.', CX, CY + CORE_R + 34);
   }
   c.restore();
@@ -2933,6 +2943,7 @@ let lastFrame = performance.now(), audioT = 0, uiT = 0, warmT = 0, physAcc = 0, 
 function update(k, dt) {
   animTime += dt;
   if (S.intro && (S.intro.t += dt) && S.intro.go != null && S.intro.t - S.intro.go > 1.2) S.intro = null;
+  if (S.intro && S.intro.go == null && S.intro.t > S.intro.len + 2.4) introGo();   // the opening flows into Your time by itself
   updateGoal();
   updateScene(dt); updateWind(dt); updateLife(dt);
   updateBreath(dt);
@@ -3005,7 +3016,7 @@ const ITEMS = {
   outdoor: wheel('Place', () => `outside:Live|${placeOpts()}|custom:Custom`, { off: () => PREFS.place === 'heritage' }),
   game: choice('Game', 'resume:Resume|restart:Restart', { get: () => S.gameChoice, set: (v) => { S.gameChoice = v; } }),   // Paused: the game only restarts once you confirm
   rules: choice('Rules', 'end:Classic|zen:Zen', { keys: ['overflow'] }), atline: choice('At the line', 'choose:I choose|dissolve:Dissolve', { keys: ['overflow'], off: () => PREFS.overflow === 'end' }),
-  ask: { type: 'ask' }, todo: { type: 'todo' }, leave: { type: 'leave' },
+  task: { type: 'task' }, goalq: { type: 'task' }, resume: { type: 'resume' }, todo: { type: 'todo' }, leave: { type: 'leave' },
   'leave.h': wheel('Hours', [0, 1, 2, 3].map(n => `${n}:${n}`).join('|')), 'leave.m': wheel('Minutes', [...Array(60).keys()].map(n => `${n}:${n}`).join('|')),   // a timer, as a phone sets one
   'leave.ch': wheel('Hour', [...Array(12).keys()].map(n => `${n + 1}:${n + 1}`).join('|')), 'leave.cm': wheel('Minute', [...Array(60).keys()].map(n => `${n}:${String(n).padStart(2, '0')}`).join('|')), 'leave.ap': wheel('', 'am:am|pm:pm'),   // a time, as a phone sets an alarm
   weather: wheel('Clouds', 'changing:Changing|clear:Clear|clouds:Some|rain:Overcast|storm:Dark|clearing:Clearing', { off: indoor, keys: ['weatherFlow', 'wx'] }),   // the sky's look; the weather itself is the Weather card
@@ -3054,7 +3065,7 @@ const SOUND_ROWS = [
 ];
 const VIBRATION = row('Vibration', 'haptics', 'A tap you feel on each merge.', 'A short buzz on merges, Full Blooms and close thunder. iPhones can’t vibrate from a web page, so the row only shows where it works.');
 const SHEETS = {
-  checkin: { title: '', items: ['ask', 'todo', 'leave'], onDone: startPlan },   // the second screen, every launch: Confirm plays
+  checkin: { title: '', items: () => ['task', ...(S.plan.task ? ['leave'] : []), ...(planLeft() ? [] : ['goalq', ...(S.plan.goal ? ['todo'] : [])]), ...(S.prev ? ['resume'] : [])], onDone: startPlan },   // the second screen, every launch: a task? how long? a goal? Start. Each question waits for the one above it
   mode: { title: 'Mode', note: 'It is always the same game. Choose what is on it.', items: [row('Mode', 'mode', () => MODE_NOTES[PREFS.mode], 'Play: the spheres, the weather and the world. SkyPlay: only the world and its weather, nothing to drop. Settle: no weather, nothing to win; hold to breathe in, let go to breathe out; slide a finger to trace, tap for a note, or just watch the ring. A bead slides across on every breath out. Rest: the screen fades to dark while the sound goes on.')] },
   scene: { title: 'Scene', note: 'Where the game is.', items: () => [row('Scene', 'place', 'A wooden tray in lamplight, or the outdoors.', 'Heritage is a wooden tray in lamplight, with ten antique marbles. Nature is the outdoors: one place, or Live, the season where you are.'),
     row('Place', 'outdoor', 'Live is the season where you are; or pick one.', 'Live follows the calendar where you are: spring, summer, autumn or winter. Or hold one place. Custom builds a place from parts.'),
@@ -3100,7 +3111,6 @@ Object.assign(SHEETS, {
   help: { title: 'How to play', items: ['help'] }
 });
 const REST_ROWS = [SOUND_ROWS[7], SOUND_ROWS[8], row('Fades after', 'sleepTimer', 'The sound fades out after this long.', 'Rest keeps the screen on and dark while the sound plays. After this long the sound fades to nothing. Never keeps it going.'), SOUND_ROWS[0], SOUND_ROWS[4], SOUND_ROWS[6]];
-const ASKS = ['How long do you want to play..', 'When is your next task..', 'How long is your break..'];   // rhetorical: they breathe by, one a breath
 // How to play: a few questions, then every card and its rows, from the same words.
 const FAQ = [
   ['How do I play?', 'Touch anywhere on the board and slide to move the waiting sphere; let go to drop it. A quick tap drops it where it is. Two spheres of the same kind merge into the next one up, and the two largest make a Full Bloom. Every merge plays a note from the same calm scale. Whenever you come back to Play, the game waits for a tap.'],
@@ -3108,7 +3118,7 @@ const FAQ = [
   ['How do I change things?', 'Every card is the same: ‹ and the speaker on the left, ? and ✕ on the right. Every row is the same: its name and Learn more, one line on what it does, then a switch if it can be off, its control, ✓ and ▶. A change rings the row blue; ✓ turns gold and lights ▶; ▶ saves it. Leave a card with ‹ or ✕ and anything not saved goes back. The house pauses; the speaker mutes, from anywhere.'],
   ['How does the weather work?', 'Lightning, Wind, Rain (Snow where it snows) and Time are the only source of the rain, the wind and the storm. They fold away under the words Weather Settings, which glow green while any weather is on. Tap the words and the ribbon opens: tap a tile and its row comes up over the tools, with its switch, how much, ✓ and ▶. ❙❙ stills it all (green while it does), and only ▶ brings it back. Pin the ribbon to keep it open; unpinned, it folds away after you save or touch the board.'],
   ['What are the tools?', () => `They sit in their own row under the weather. ${TOOLS.map(t => `${t.name}: ${t.desc.toLowerCase()}.`).join(' ')} You start with none: a Full Bloom or a chain of three earns one, up to three of each, for this game. Blue is one in hand. Tap it to arm it (green), then touch the board to use it; tap it again to put it away. Nothing is for sale.`],
-  ['What is the screen before I play?', 'Your goal, up to three tasks, and when you leave. Each line is Off or On, the words, a due time, and ✓. Then a timer, a time of day, or I’ll decide: if a task has a due time, the time of day starts just before it. Five minutes before, SoRen asks. In the last two minutes the line turns red and the last spheres come frosted: the game ends itself. At your time the game parks with your list on it; Go sends you out with it, one line a breath. Tap a line there and it is done.'],
+  ['What is the screen before I play?', 'Three questions, each waiting for the one above it. Do you have a task to do? Yes asks how long you want to play: a countdown, or until a time of day (if a task has a due time, it starts just before it). No means no timer. Then, a goal for this session? Yes brings up your goal and up to three tasks, each with a due time if you like. Start lights when you have answered. Five minutes before, SoRen asks. In the last two minutes the line turns red and the last spheres come frosted: the game ends itself. At your time the game parks with your list on it; Go sends you out with it, one line a breath. Tap a line there and it is done.'],
   ['What are the modes?', () => Object.keys(MODE_NAMES).map(m => `${MODE_NAMES[m]}: ${MODE_NOTES[m]}`).join(' ') + ' Lay the phone flat on your chest in Settle, hands off, and after a few breaths it follows yours.'],
   ['Does SoRen collect anything about me?', 'No. Everything stays on this device: no accounts, no ads, no tracking, no notifications, nothing to buy. The motion sensor, if you allow it, is read on the phone and never leaves it. SoRen follows your phone’s silent switch.'],
   ['Why does the sound stop when my screen locks?', 'Phones stop web audio when they lock. Rest keeps the screen on; plug in for long sessions.'],
@@ -3156,15 +3166,20 @@ function itemEl(key) {
     case 'onoff': if (it.words) { el.className = 'item onoff'; el.innerHTML = [0, 1].map(v => `<button class="tog" data-onoff="${key}" data-v="${v}">${it.words[v]}</button>`).join(''); }   // two named choices, one always chosen
       else { el.className = 'item sw'; el.innerHTML = switchHTML(key); } break;   // a switch: right and green is on, left and plain is off
     case 'act': el.className = 'item act'; el.innerHTML = `<button class="tog step" data-act="${it.act}" aria-label="Now">›</button>`; break;
-    case 'ask': el.className = 'item ask'; el.innerHTML = `<span class="askq" id="askQ">${ASKS[S.askI]}</span>`; break;
+    case 'task': {   // a yes/no question on Your time: both answers blue while it waits, the chosen one green
+      const goal = key === 'goalq', v = goal ? S.plan.goal : S.plan.task, id = goal ? 'goal' : 'task';
+      el.className = 'item row plan'; el.dataset.name = goal ? 'A goal' : 'A task';
+      el.innerHTML = `<div class="rhead"><span class="rname">${goal ? 'Set a goal for this session?' : 'Do you have a task to do?'}</span><button class="learn" data-more="${id}">Learn more</button></div><i class="rdesc">${goal ? 'A line to come back to.' : 'A task sets how long you play.'}</i><div class="rctl"><div class="choice">${[[1, 'Yes'], [0, 'No']].map(([n, l]) => `<button class="tog${v === !!n ? ' sel' : v === null ? ' c-blue' : ''}" data-ans="${id}" data-v="${n}">${l}</button>`).join('')}</div></div>`;
+      break; }
+    case 'resume': el.className = 'item'; el.innerHTML = '<button class="tog add" data-act="continue">Continue last game</button>'; break;
     case 'todo': {   // the goal, then up to three tasks: Off | On, the words, a due time, ✓. Then + Add task.
       el.className = 'item todo'; el.innerHTML = PREFS.todo.map((l, i) => todoRow(l, i)).join('') + (PREFS.todo.length < 4 ? '<button class="tog add" data-act="addtask">+ Add task</button>' : '');
       const box = el.querySelector('.due-pick'); if (box) { box.appendChild(pickerEl([['due.ch', ''], ['due.cm', ''], ['due.ap', '']])); box.insertAdjacentHTML('beforeend', '<button class="tog notime" data-act="notime">No time</button>'); }   // the open due time's wheels come with the list, however it is drawn
       break; }
-    case 'leave': {   // when you leave: a timer (hours, min), a time (hour, minute, AM/PM), or I'll decide
-      const h = PREFS.leave.how;
-      el.className = 'item row leave'; el.dataset.row = 'leave'; el.dataset.name = 'When you leave';
-      el.innerHTML = `<div class="rhead"><span class="rname">When you leave</span><button class="learn" data-more="leave">Learn more</button></div><i class="rdesc" id="leaveWords"></i><div class="rctl"><div class="choice">${[['timer', 'A timer'], ['clock', 'A time'], ['decide', 'I’ll decide']].map(([k, l]) => `<button class="tog${h === k ? ' sel' : ''}" data-how="${k}">${l}</button>`).join('')}</div>${checkGo('leave')}</div>`;
+    case 'leave': {   // how long: a countdown (hours, min) or until a time (hour, minute, AM/PM); both blue until one is chosen
+      const h = S.plan.how;
+      el.className = 'item row leave'; el.dataset.name = 'How long';
+      el.innerHTML = `<div class="rhead"><span class="rname">How long do you want to play?</span><button class="learn" data-more="leave">Learn more</button></div><i class="rdesc" id="leaveWords"></i><div class="rctl"><div class="choice">${[['timer', 'Countdown'], ['clock', 'Until a time']].map(([k, l]) => `<button class="tog${h === k ? ' sel' : !h ? ' c-blue' : ''}" data-how="${k}">${l}</button>`).join('')}</div></div>`;
       const picks = { timer: [['leave.h', 'hours'], ['leave.m', 'min']], clock: [['leave.ch', ''], ['leave.cm', ''], ['leave.ap', '']] }[h];
       if (picks) el.appendChild(pickerEl(picks));
       break; }
@@ -3174,7 +3189,9 @@ function itemEl(key) {
   }
   return el;
 }
-const MORE = { leave: ['When you leave', 'A timer counts down from the hours and minutes you set. A time is a time of day; if a task has a due time, it starts just before it. I’ll decide sets no timer. Five minutes before, SoRen asks; in the last two minutes the game ends itself, and at your time it parks with your list on it.'] };
+const MORE = { leave: ['How long', 'A countdown runs from the hours and minutes you set. Until a time stops at a time of day; if a task has a due time, it starts just before it. Five minutes before, SoRen asks; in the last two minutes the game ends itself, and at your time it parks with your list on it.'],
+  task: ['A task', 'Yes means there is something you have to get to, so you choose how long you play: a countdown, or until a time. No means no timer; you decide when you are done.'],
+  goal: ['A goal', 'A line for this session, like “I want to relax”. It comes back with your tasks when your time is up. You can add up to three tasks, each with a due time if you like.'] };
 function learnMore(id) {   // Learn more: the row's words, in a small pop-up over the card
   const it = findRow(id), [name, more] = it ? [it.name, it.more] : MORE[id] || ['', ''];
   $('moreTitle').textContent = name; $('moreText').textContent = more; $('morePop').hidden = false;
@@ -3191,12 +3208,11 @@ function pickerEl(picks) {   // the phone's own pickers, in our wells
 // under the line, with No time to clear it. The goal is the first line; the tasks follow. Each line is a row of its own.
 const dueOf = (i) => (PREFS.todo[i] ? PREFS.todo[i].at : -1);
 const dueWords = (at) => (at < 0 ? 'No time' : clockOf(new Date().setHours(Math.floor(at / 60), at % 60, 0, 0)));
-function todoRow(l, i) {
+function todoRow(l, i) {   // the goal is the line the question above opened; the tasks beneath each have a switch
   const open = S.due === i;
-  return `<div class="trow${l.on ? '' : ' dim'}" data-line="${i}" data-row="todo.${i}">${switchHTML(`todo.${i}.on`)}`
-    + `<input class="text-input" type="text" maxlength="60" enterkeyhint="done" autocomplete="off" placeholder="${i ? 'Set task to do here' : 'Set goal here'}" data-key="todo.${i}.text" data-type="text"${l.on ? '' : ' disabled'}>`
-    + `<button class="tog chip${l.at >= 0 ? ' sel' : ' off'}${open ? ' open' : ''}" data-due="${i}"${l.on ? '' : ' disabled'}>${dueWords(l.at)}</button>`
-    + `${checkGo(`todo.${i}`)}</div>`
+  return `<div class="trow${i ? '' : ' goal'}${l.on ? '' : ' dim'}" data-line="${i}">${i ? switchHTML(`todo.${i}.on`) : ''}`
+    + `<input class="text-input" type="text" maxlength="60" enterkeyhint="done" autocomplete="off" placeholder="${i ? 'Set task to do here' : 'I want to relax..'}" data-key="todo.${i}.text" data-type="text"${l.on ? '' : ' disabled'}>`
+    + `<button class="tog chip${l.at >= 0 ? ' sel' : ' off'}${open ? ' open' : ''}" data-due="${i}"${l.on ? '' : ' disabled'}>${dueWords(l.at)}</button></div>`
     + (open ? `<div class="due-pick" data-line="${i}"></div>` : '');
 }
 function openDue(i) {   // the due time's pickers, under their line
@@ -3271,6 +3287,7 @@ function syncControls() {
   const sb = $('sheetBody'); if (sb) sb.classList.toggle('more', sb.scrollHeight > sb.clientHeight + 2);   // a long menu says so: a bar at its side and a fade at its foot
   for (const m of document.querySelectorAll('[data-mute]')) m.dataset.muted = String(!PREFS.sound);
   document.querySelectorAll('[data-off]').forEach(e => { const off = !!ITEMS[e.dataset.off].off(); e.classList.toggle('off', off); e.querySelectorAll('button, input').forEach(b => { b.disabled = off; }); });
+  const sd = $('sheetDone'); if (sd && S.sheet && !sd.dataset.go) { const ok = S.sheet !== 'checkin' || planReady(); sd.disabled = !ok; sd.classList.toggle('c-blue', S.sheet === 'checkin' && ok); }   // Start lights when Your time is answered
   syncRows(); syncBars();
 }
 
@@ -3464,11 +3481,6 @@ function tickBars() {
     const on = PREFS.breathing || S.mode === 'settle' || S.sigh, b = on ? clamp(S.breath + 0.4 * apexAmp(), 0, 1.2) : 0, w = br.querySelector('.sub'), word = on ? breathWord() : 'Breathe';
     br.style.setProperty('--b', b.toFixed(3)); if (w.textContent !== word) w.textContent = word;
   }
-  const q = $('askQ');
-  if (q) {   // the questions, at the breath's pace: the next one comes at the bottom of each breath
-    if (P.phase < S.askPh) { S.askI = (S.askI + 1) % ASKS.length; q.textContent = ASKS[S.askI]; }
-    S.askPh = P.phase; q.style.opacity = (0.3 + 0.7 * pacerLevel()).toFixed(3);
-  }
   const bot = $('botBar');
   for (const k of ['breath', 'deep']) { const dp = bot.querySelector(`[data-act=${k}]`); if (dp) dp.classList.toggle('on', !!S.sigh && (S.sigh.steps === DEEP) === (k === 'deep')); }   // green while it runs
   const g = top.querySelector('[data-cell=goal]'), G = S.goal, live = !!G && G.phase === 'play';
@@ -3517,6 +3529,7 @@ function openSheet(name, push = false, back = false) {
   else if (!S.sheet) NAV.stack = [];
   if (name === 'pause') S.held = true;   // the game waits for a tap when you come back to it
   if (name === 'checkin' && PREFS.leave.how === 'clock' && !(S.goal && S.goal.phase === 'play')) freshClock();
+  if (name === 'checkin' && !back) { const live = S.goal && S.goal.phase === 'play'; S.plan = live ? { task: true, how: PREFS.leave.how, goal: !!PREFS.todo[0].on } : { task: null, how: null, goal: null }; $('sheetDone').classList.remove('c-green'); delete $('sheetDone').dataset.go; }   // coming back from Help keeps your answers; a timer already running shows its answers; a fresh one asks again
   closeStrip(true); S.sheet = name; S.aiming = false; S.due = -1; S.sample = null; remember();
   $('sheetTitle').textContent = def.title; $('sheetTitle').hidden = !def.title; const note = typeof def.note === 'function' ? def.note() : def.note; $('sheetNote').innerHTML = note || ''; $('sheetNote').hidden = !note;
   $('sheetHelp').hidden = name === 'help'; $('sheetSample').hidden = !def.sample; $('sheetDone').hidden = !def.onDone; $('sheetFoot').hidden = !(def.sample || def.onDone); $('morePop').hidden = true;   // the foot only when a card has something to start or play
@@ -3531,9 +3544,9 @@ function closeSheet() {
   if (!S.sheet) return;
   undoAll();   // however a card closes, a row not saved goes back
   S.sheet = null; NAV.stack = []; S.due = -1; PEND.snap = null;
-  $('sheet').hidden = true; $('scrim').hidden = true; $('sheetBody').innerHTML = ''; $('morePop').hidden = true; document.body.classList.remove('see');
+  $('sheet').hidden = true; $('scrim').hidden = true; $('sheetBody').innerHTML = ''; $('morePop').hidden = true; document.body.classList.remove('see'); $('sheetDone').classList.remove('c-green', 'c-blue'); delete $('sheetDone').dataset.go;
   try { canvas.focus({ preventScroll: true }); } catch (e) {}
-  if (was === 'checkin') { PREFS.mode = S.mode; sound.init(); }
+  if (was === 'checkin') { PREFS.mode = S.mode; sound.init(); S.prev = null; }   // the last game is let go once you are past Your time
   syncControls();
 }
 function startSheet() { const def = SHEETS[S.sheet]; PEND.snap = null; savePrefs(); if (def && def.onDone) def.onDone(); closeSheet(); }   // Your time's Start: every row as it stands is kept, and play
@@ -3605,8 +3618,9 @@ function bind() {
   // One listener for every setting, card, bar cell and action, wherever it was built.
   const ACTS = { still: () => setStill(!S.still), wxopen: () => { S.wxOpen = true; syncBars(); }, pin: () => { PREFS.wxPin = !PREFS.wxPin; savePrefs(); syncBars(); },
     wxribbon: () => { closeAll(); S.wxOpen = true; syncBars(); shimmer($('botBar')); }, breath: () => { closeSheet(); startSigh('breath'); }, deep: () => { closeSheet(); startSigh('deep'); }, breathnow: () => { closeSheet(); startSigh(); }, go: () => park('Go'),
-    addtask: () => { if (PREFS.todo.length < 4) { PREFS.todo.push({ on: true, text: '', at: -1 }); redraw('.todo', 'todo'); syncControls(); const r = document.querySelector('.trow:last-of-type'); shimmer(r); const inp = r && r.querySelector('input'); if (inp) inp.focus(); setStep(`todo.${PREFS.todo.length - 1}`, 'sw'); } },
-    notime: () => { const i = S.due; PREFS.todo[i].at = -1; S.due = -1; redraw('.todo', 'todo'); syncControls(); setStep(`todo.${i}`, 'amt'); },
+    addtask: () => { if (PREFS.todo.length < 4) { PREFS.todo.push({ on: true, text: '', at: -1 }); redraw('.todo', 'todo'); syncControls(); const r = document.querySelector('.trow:last-of-type'); shimmer(r); const inp = r && r.querySelector('input'); if (inp) inp.focus(); } },
+    continue: () => { loadPool(S.prev); S.prev = null; say('Your last game', placeName()); refill(); },
+    notime: () => { PREFS.todo[S.due].at = -1; S.due = -1; redraw('.todo', 'todo'); syncControls(); },
     moreok: () => { $('morePop').hidden = true; }, sample: playSample,
     leaverest: () => { undoAll(); setMode('play'); } };   // Rest's ✕: put back, and leave
   document.addEventListener('click', (e) => {
@@ -3616,11 +3630,12 @@ function bind() {
     const sv = t.closest('[data-save]'); if (sv) { saveRow(sv.dataset.save); return; }
     const rd = t.closest('[data-ready]'); if (rd) { readyRow(rd.dataset.ready); return; }
     const mo = t.closest('[data-more]'); if (mo) { learnMore(mo.dataset.more); return; }
-    const du = t.closest('[data-due]'); if (du) { openDue(+du.dataset.due); setStep(`todo.${du.dataset.due}`, 'amt'); return; }
+    const du = t.closest('[data-due]'); if (du) { openDue(+du.dataset.due); return; }
+    const an = t.closest('[data-ans]'); if (an) { answer(an.dataset.ans, an.dataset.v === '1'); return; }
     const ch = t.closest('[data-choice]'); if (ch) { const id = rowOf(ch); choose(ch.dataset.choice, parseOpt(ch.dataset.v)); if (id) setStep(id, 'amt'); return; }
     const wi = t.closest('.wi'); if (wi) { wheelTap(wi); return; }
     const el = t.closest('[data-el]'); if (el) { toggleEl(el.dataset.el); setStep('elements', 'amt'); return; }
-    const hw = t.closest('[data-how]'); if (hw) { choose('leave.how', hw.dataset.how); setStep('leave', 'amt'); return; }
+    const hw = t.closest('[data-how]'); if (hw) { S.plan.how = hw.dataset.how; choose('leave.how', hw.dataset.how); refill(); return; }
     const oo = t.closest('[data-onoff]'); if (oo) { const k = oo.dataset.onoff, on = oo.classList.contains('switch') ? !isOn(k) : oo.dataset.v === '1', id = rowOf(oo); if (k === 'soundscape.on') choose(k, on); else setPref(k, ITEMS[k] && ITEMS[k].inv ? !on : on); if (id) setStep(id, oo.classList.contains('switch') && on && hasAmount(id) ? 'sw' : 'amt'); return; }
     if (t.closest('#sheetMute')) { setPref('sound', !PREFS.sound); if (PEND.snap) PEND.snap.sound = PREFS.sound; return; }   // the speaker is a plain tap: it stays
     const sh = t.closest('[data-sheet]'); if (sh) { e.preventDefault(); if (sh.hasAttribute('data-root')) { closeAll(); openSheet(sh.dataset.sheet); } else openSheet(sh.dataset.sheet, true); return; }
@@ -3639,7 +3654,7 @@ function bind() {
     if (e.key === 'Escape') { if (!$('morePop').hidden) $('morePop').hidden = true; else if (S.sheet) closeAll(); }
     else if (e.key === 'Enter' && e.target.matches && e.target.matches('.text-input')) e.target.blur();
   });
-  $('sheetDone').addEventListener('click', startSheet);
+  $('sheetDone').addEventListener('click', () => { const b = $('sheetDone'); if (b.disabled || b.dataset.go) return; b.dataset.go = '1'; b.classList.remove('c-blue'); b.classList.add('c-green'); setTimeout(() => { if (S.sheet === 'checkin') startSheet(); }, 160); });   // green at once, then you are playing
   $('goView').addEventListener('click', goReturn);
   $('cardInput').addEventListener('keydown', (e) => { if (e.key === 'Enter') $('cardA').click(); });
   $('sheetBack').addEventListener('click', backSheet); $('sheetClose').addEventListener('click', closeAll);
@@ -3664,7 +3679,7 @@ function setupDPI() {
   makeSprites(); if ($('topBar')) syncBars();
 }
 // The opening: on dark blue, Settle's breath shape takes one breath, circle to the board's edge and back, then rests as a circle:
-// SoRen shimmers in it, the tagline comes under it, and Start. A tap (any time) fades the app in around it.
+// SoRen shimmers in it, the tagline comes under it, and Your time fades in by itself. A tap (any time) brings it sooner.
 function opening() {
   if (reduceMotion) return;
   S.intro = { t: 0, len: breathLen(), go: null }; document.body.classList.add('intro');
@@ -3674,10 +3689,11 @@ function introGo() { for (const ev of ['pointerdown', 'keydown']) document.remov
 function start() {
   canvas = $('game'); ctx = canvas.getContext('2d'); S.lastInput = performance.now();
   feel(); bind(); newWorld(true); setupDPI();
-  if (!loadPool()) newPool();
+  S.prev = loadJSON(SKEY); if (!(Array.isArray(S.prev.balls) && S.prev.balls.length && !S.prev.gameOver)) S.prev = null;   // every launch is a new game; the last one is one tap away on Your time
+  newPool();
   fillItems($('sleepPanel'), REST_ROWS);
   $('tools').innerHTML = TOOLS.map(t => `<button class="cell" data-tool="${t.id}" aria-label="${t.name}. ${t.desc}">${svg(t.icon)}<span class="sub">${t.name}</span><b class="n"></b></button>`).join('');
-  // Every launch, your time comes second, right after Start: Confirm plays with those times, ✕ stays where you were.
+  // Every launch is a new game, and Your time comes right after the opening: Start plays with those answers, ✕ stays where you were.
   S.mode = PREFS.mode = PREFS.mode === 'rest' ? 'play' : PREFS.mode;
   if (S.mode === 'settle') openSpace();
   $('app').dataset.mode = S.mode; document.body.classList.toggle('settle', S.mode === 'settle');
