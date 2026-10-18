@@ -124,6 +124,7 @@ body.lamp { --glint: rgba(255, 236, 196, 0.95); --glint-soft: rgba(255, 205, 130
 .cell.open { background: rgba(255, 255, 255, 0.08); }
 .cell.held { box-shadow: inset 0 0 0 2px rgba(var(--off), 0.7), inset 0 0 12px rgba(var(--off), 0.16); border-radius: 13px; }   /* a tool in hand: blue, until you arm it */
 .cell.none { opacity: 0.38; }
+.cell[data-act=weather] svg, .cell[data-act=still] svg { width: 18px; height: 18px; }
 .cell .n { position: absolute; top: 4px; right: 5px; min-width: 15px; height: 14px; padding: 0 4px; border-radius: 7px; background: rgba(242, 248, 252, 0.88); color: #0b1424; font-size: 9.5px; font-weight: 700; line-height: 14px; text-align: center; }
 .cell canvas { display: block; width: 100%; height: 100%; pointer-events: none; }
 .cell.breath::before { content: ""; position: absolute; inset: 3px; border-radius: 12px; pointer-events: none;   /* the breath, like the pool's edge: a band of light comes in from the edges as you breathe in, and goes back out */
@@ -1274,7 +1275,7 @@ const INK = '242,248,252', LIGHT = '240,246,255', GOLD = '255,200,90', RED = '25
 // Line icons on a 24-unit grid, drawn as SVG in the bars.
 const CLOUD = 'M7.5 14.5h9.5a3.5 3.5 0 0 0 .4-7 5 5 0 0 0-9.6 1.2A3 3 0 0 0 7.5 14.5z', DOT = (x, y, r) => `M${x - r} ${y}a${r} ${r} 0 1 0 ${2 * r} 0a${r} ${r} 0 1 0 ${-2 * r} 0`;
 const ICON = {
-  home: 'M3.5 11.2 12 4l8.5 7.2M6 9.6V20h12V9.6M10 20v-5.2h4V20', play: 'M8 5.5v13l10.5-6.5z', still: 'M9 6v12M15 6v12',
+  home: 'M3.5 11.2 12 4l8.5 7.2M6 9.6V20h12V9.6M10 20v-5.2h4V20', play: 'M8 5.5v13l10.5-6.5z', still: 'M9 6v12M15 6v12', mixer: 'M5 5v14M12 5v14M19 5v14' + DOT(5, 9, 2) + DOT(12, 15, 2) + DOT(19, 11, 2),
   goal: 'M7 20.5V4M7 4.5h10l-2.2 3.6L17 11.7H7', speaker: 'M4.5 9.5h3.2L12 6v12l-4.3-3.5H4.5z', waves: 'M15 9.5a3.5 3.5 0 0 1 0 5M17.5 7a7 7 0 0 1 0 10', hush: 'M15.5 9.5l5 5M20.5 9.5l-5 5',
   bolt: 'M13 2.5 5.5 13.5h5.5L10 21.5l8-11.5h-5.5z', wind: 'M3.5 9h10a2.5 2.5 0 1 0-2.4-3.2M3.5 13h15a2.8 2.8 0 1 1-2.6 3.8M3.5 17h6',
   rain: CLOUD + 'M9 17l-1 2.5M13 17l-1 2.5M17 17l-1 2.5', snow: CLOUD + 'M9 18.5h.01M13 20h.01M17 18.5h.01M11 21.5h.01M15 21.5h.01',
@@ -2973,7 +2974,7 @@ const SHEETS = {
   score: { title: 'Score', note: 'Nothing is for sale; nothing counts against you.', items: ['stats'] },
   setup: { title: 'Settings', note: 'Each row opens its own card.', items: [link('Weather settings', 'weather', 'Lightning, wind, rain and time.'), link('Sky settings', 'sky', 'Clouds, and what the wind touches.'), link('Game rules', 'play', 'How a game ends, and what it shows.'),
     link('Breathe settings', 'breath', 'The breath in the game, and guided breaths.'), link('Sound settings', 'sound', 'Volume, each sound, and a sample.'), link('Accessibility settings', 'comfort', 'Less light, nothing sudden.')] },
-  weather: { title: 'Weather settings', note: 'The sky over the game. ❙❙ stills it; only ▶ brings it back.', items: () => [
+  weather: { title: 'Weather settings', note: 'How much of each. The tiles in the bar switch them.', items: () => [
     row('Lightning', ['atmo.bolt.on', 'atmo.bolt.lv'], 'Strikes now and then; how much is how often.', 'Lightning flashes over the game, and a little after each flash, thunder. How much sets how often it strikes. Flash, in Accessibility settings, sets how bright; Thunder, in Sound settings, how loud.'),
     row('Wind', ['atmo.wind.on', 'atmo.wind.lv'], 'Blows across the game, and can move the spheres.', 'The wind swings round, picks up and eases on its own; how much is how strong it blows. Whether it touches the spheres is set in Sky settings: Sway, Carry and Nudge.'),
     row(here().snow ? 'Snow' : 'Rain', ['atmo.rain.on', 'atmo.rain.lv'], 'Falls over the game; the sound comes with it.', 'Rain falls over the game, with its sound; how much is how hard it falls. In winter places it snows instead.'),
@@ -3012,7 +3013,7 @@ const FAQ = [
   ['How do I play?', 'Touch anywhere on the board and slide to move the waiting sphere; let go to drop it. A quick tap drops it where it is. Two spheres of the same kind merge into the next one up, and the two largest make a Full Bloom. Every merge plays a note from the same calm scale. Whenever you come back to Play, the game waits for a tap.'],
   ['What do the colours mean?', 'Green is on, and green is chosen. Blue is off, or a tool in hand, or a row you changed and haven’t ticked yet. Gold only ever means you did something right: a chain of merges, a row made ready, a task done. Red is trouble: a sphere that goes unless you act. Plain is nothing chosen; dim means there is none, or it can’t change right now. A silver shimmer means this, now.'],
   ['How do I change things?', 'Every card is the same: ‹ and ✕ top left, the speaker and ? top right. Every row is the same: its name and Learn more, one line on what it does, then Off or On if it can be off, its control, and ✓. A change rings the row blue; ✓ makes it ready, gold. Confirm & Proceed at the bottom keeps every ready row and goes on; Confirm & back goes back a card instead. ‹ and ✕ put everything back. The house pauses; the speaker mutes, from anywhere.'],
-  ['How does the weather work?', 'Lightning, Wind, Rain (Snow where it snows) and Time sit in the bottom bar, and they are the only source of the rain, the wind and the storm. Tap one and the Weather settings card opens on that row. Only On turns one on. ❙❙ stills it all, and only ▶ brings it back.'],
+  ['How does the weather work?', 'Lightning, Wind, Rain (Snow where it snows) and Time sit in the bottom bar, and they are the only source of the rain, the wind and the storm. In a bar a tap is a switch: tap one and it turns on or off, at the level it has; Time goes between Live and Hold. ❙❙ stills it all (green while it does), and only ▶ brings it back. ⚙ opens Weather settings, where how much lives.'],
   ['What are the tools?', () => `They sit in their own row under the weather. ${TOOLS.map(t => `${t.name}: ${t.desc.toLowerCase()}.`).join(' ')} You start with none: a Full Bloom or a chain of three earns one, up to three of each, for this game. Blue is one in hand. Tap it to arm it (green), then touch the board to use it; tap it again to put it away. Nothing is for sale.`],
   ['What is the screen before I play?', 'Your goal, up to three tasks, and when you leave. Each line is Off or On, the words, a due time, and ✓. Then a timer, a time of day, or I’ll decide: if a task has a due time, the time of day starts just before it. Five minutes before, SoRen asks. In the last two minutes the line turns red and the last spheres come frosted: the game ends itself. At your time the game parks with your list on it; Go sends you out with it, one line a breath. Tap a line there and it is done.'],
   ['What are the modes?', () => Object.keys(MODE_NAMES).map(m => `${MODE_NAMES[m]}: ${MODE_NOTES[m]}`).join(' ') + ' Lay the phone flat on your chest in Settle, hands off, and after a few breaths it follows yours.'],
@@ -3284,8 +3285,9 @@ function bindWheels() {
 /* ---------- The bars ---------- */
 // The top bar reads how things are: seven even cells, each an icon over a word, and a cell is green when what it shows is on.
 // Home pauses, the speaker mutes, Breathe is a tap, the flag is your time, and Mode, Scene and Score open their cards. The
-// bottom bar holds the weather cells (or Settle's breaths); a tap on a cell opens Weather settings on that row. Under it, in
-// Play, the tools have a row of their own that stays.
+// bottom bar holds the weather cells (or Settle's breaths): in a bar, a tap is a switch, so a weather cell turns on or off on
+// the spot, at the level it has; ❙❙ stills it all (green while it does); ⚙ opens Weather settings, where how much lives and
+// waits for ✓ and Confirm. Under it, in Play, the tools have a row of their own that stays.
 const BAR = { key: {} };
 const SHORT = { Rainforest: 'Forest', Campsite: 'Camp' };   // when a name won't fit a small phone
 const SKY_LOOK = { bolt: ['Lightning', () => ICON.bolt], wind: ['Wind', () => ICON.wind], rain: [() => (here().snow ? 'Snow' : 'Rain'), () => (here().snow ? ICON.snow : ICON.rain)], time: ['Time', () => ICON.time] };
@@ -3298,7 +3300,7 @@ function barHTML(which) {
     + '<button class="cell" data-cell="score" aria-label="Score"><canvas></canvas></button>', 'repeat(7, minmax(0, 1fr))'];
   if (S.mode === 'settle') return [cellHTML('data-act="breath" aria-label="Take a breath"', ICON.breathe, 'Take a breath') + cellHTML('data-act="deep" aria-label="Take a deep breath"', ICON.deep, 'Take a deep breath') + cellHTML('data-act="go" aria-label="Go: to your list"', ICON.goal, 'Go'), 'repeat(3, minmax(0, 1fr))'];   // Settle: a breath, a deep breath, or out of the door
   return [ATMO.map(k => cellHTML(`data-sky="${k}" aria-label="${skyName(k)}"`, SKY_LOOK[k][1](), skyName(k))).join('')
-    + `<button class="cell" data-act="still" aria-label="Still all the weather, or bring it back">${svg(S.still ? ICON.play : ICON.still)}</button>`, 'repeat(4, minmax(0, 1fr)) 40px'];
+    + `<button class="cell" data-act="still" aria-label="Still all the weather, or bring it back">${svg(S.still ? ICON.play : ICON.still)}</button><button class="cell" data-act="weather" aria-label="Weather settings">${svg(ICON.mixer)}</button>`, 'repeat(4, minmax(0, 1fr)) 38px 38px'];   // ❙❙ and ⚙ share one cell's width
 }
 const MODE_ICON = { play: ICON.sphere, rain: ICON.rain, settle: ICON.calm, rest: ICON.moon };
 function fit(el, full) {   // a long name draws in, then shortens, before anything is cut
@@ -3332,10 +3334,12 @@ function skyCells() {   // the weather: on is green, off is plain. Time's word i
     b.classList.toggle('on', on);
     if (t) { const w = timeWord(), sub = b.querySelector('.sub'); if (sub.textContent !== w) sub.textContent = w; }
   });
+  const st = $('botBar').querySelector('[data-act=still]'); if (st) st.classList.toggle('on', !!S.still);   // ❙❙ green while the weather is stilled
 }
-function cellTap(k) {   // a weather cell: Weather settings opens on its row, which shimmers: this, now
-  openSheet('weather');
-  const r = document.querySelector(`#sheetBody [data-row^="atmo.${k}."]`); if (r) { r.scrollIntoView({ block: 'nearest' }); shimmer(r); }
+function cellTap(k) {   // a weather cell is a switch: on or off on the spot, at the level it has (Time: Live or Hold)
+  const on = !PREFS.atmo[k].on;
+  if (k === 'time') timeTo(on, PREFS.tod / 4); else { setPrefRaw(`atmo.${k}.on`, on); atmoOn(k, on); }
+  savePrefs(); syncControls(); shimmer($('botBar').querySelector(`[data-sky=${k}]`));
 }
 function sizeCanvas(cv) { const dpr = Math.min(3, window.devicePixelRatio || 1), r = cv.getBoundingClientRect(); cv._w = r.width || 50; cv._h = r.height || 46; cv.width = Math.round(cv._w * dpr); cv.height = Math.round(cv._h * dpr); }
 // Every frame: the breath in the bar draws a band in from its edges as you breathe in, and lets it back out; your time's line
@@ -3491,7 +3495,7 @@ function bind() {
 
   bindWheels();
   // One listener for every setting, card, bar cell and action, wherever it was built.
-  const ACTS = { still: () => setStill(!S.still), breath: () => { closeSheet(); startSigh('breath'); }, deep: () => { closeSheet(); startSigh('deep'); }, breathnow: () => { closeSheet(); startSigh(); }, go: () => park('Go'),
+  const ACTS = { still: () => setStill(!S.still), weather: () => openSheet('weather'), breath: () => { closeSheet(); startSigh('breath'); }, deep: () => { closeSheet(); startSigh('deep'); }, breathnow: () => { closeSheet(); startSigh(); }, go: () => park('Go'),
     addtask: () => { if (PREFS.todo.length < 4) { PREFS.todo.push({ on: true, text: '', at: -1 }); redraw('.todo', 'todo'); syncControls(); const r = document.querySelector('.trow:last-of-type'); shimmer(r); const inp = r && r.querySelector('input'); if (inp) inp.focus(); } },
     notime: () => { PREFS.todo[S.due].at = -1; S.due = -1; redraw('.todo', 'todo'); syncControls(); },
     ok: () => { confirmRows($('sleepPanel')); if (S.sleep) $('sleepView').classList.add('idle'); },   // Rest's Confirm: keep the ready rows; the controls then fade
