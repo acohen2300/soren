@@ -186,7 +186,7 @@ body.lamp { --glint: rgba(255, 236, 196, 0.95); --glint-soft: rgba(255, 205, 130
 /* Fixed columns, in every row, every card and the strip: what turns it on (a switch) · how much · ✓ · ▶. A switch is always in the
    same place; a row with none leaves its column empty. A choice or a wheel picks which, so it takes the first two columns. */
 .rctl { display: grid; grid-template-columns: 52px minmax(0, 1fr) 50px 38px 38px; align-items: center; gap: 6px; min-width: 0; margin-top: 4px; }
-.rctl > .sw { grid-column: 1; } .rctl > .range { grid-column: 2; min-width: 0; } .rctl > .item:not(.sw):not(.range) { grid-column: 1 / 4; min-width: 0; } .rctl > .rval { grid-column: 3; font-size: 11.5px; letter-spacing: -0.01em; font-weight: 600; font-variant-numeric: tabular-nums; text-align: left; white-space: nowrap; overflow: hidden; color: var(--ink-dim); } .rctl > .check { grid-column: 4; } .rctl > .save { grid-column: 5; }
+.rctl > .sw { grid-column: 1; } .rctl > .range { grid-column: 2; min-width: 0; } .rctl > .item:not(.sw):not(.range), .rctl > .choice { grid-column: 1 / 4; min-width: 0; } .rctl > .rval { grid-column: 3; font-size: 11.5px; letter-spacing: -0.01em; font-weight: 600; font-variant-numeric: tabular-nums; text-align: left; white-space: nowrap; overflow: hidden; color: var(--ink-dim); } .rctl > .check { grid-column: 4; } .rctl > .save { grid-column: 5; }
 .rctl > .item:not(.sw):not(.range) + .rval { display: none; }   /* a choice or a wheel has no amount to read */
 .link .rctl, .row:has(.act) .rctl { display: flex; justify-content: flex-end; }
 .rctl .tog { white-space: normal; line-height: 1.1; }
