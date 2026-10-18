@@ -185,8 +185,8 @@ body.lamp { --glint: rgba(255, 236, 196, 0.95); --glint-soft: rgba(255, 205, 130
 .rdesc { display: block; font-style: italic; font-size: 12.5px; line-height: 1.3; color: var(--ink-dim); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }   /* one line, never two */
 /* Fixed columns, in every row, every card and the strip: what turns it on (a switch) · how much · ✓ · ▶. A switch is always in the
    same place; a row with none leaves its column empty. A choice or a wheel picks which, so it takes the first two columns. */
-.rctl { display: grid; grid-template-columns: 52px minmax(0, 1fr) 64px 38px 38px; align-items: center; gap: 6px; min-width: 0; margin-top: 4px; }
-.rctl > .sw { grid-column: 1; } .rctl > .range { grid-column: 2; min-width: 0; } .rctl > .item:not(.sw):not(.range) { grid-column: 1 / 4; min-width: 0; } .rctl > .rval { grid-column: 3; font-size: 11.5px; letter-spacing: -0.01em; font-weight: 600; font-variant-numeric: tabular-nums; text-align: right; white-space: nowrap; overflow: hidden; color: var(--ink-dim); } .rctl > .check { grid-column: 4; } .rctl > .save { grid-column: 5; }
+.rctl { display: grid; grid-template-columns: 52px minmax(0, 1fr) 50px 38px 38px; align-items: center; gap: 6px; min-width: 0; margin-top: 4px; }
+.rctl > .sw { grid-column: 1; } .rctl > .range { grid-column: 2; min-width: 0; } .rctl > .item:not(.sw):not(.range) { grid-column: 1 / 4; min-width: 0; } .rctl > .rval { grid-column: 3; font-size: 11.5px; letter-spacing: -0.01em; font-weight: 600; font-variant-numeric: tabular-nums; text-align: left; white-space: nowrap; overflow: hidden; color: var(--ink-dim); } .rctl > .check { grid-column: 4; } .rctl > .save { grid-column: 5; }
 .rctl > .item:not(.sw):not(.range) + .rval { display: none; }   /* a choice or a wheel has no amount to read */
 .link .rctl, .row:has(.act) .rctl { display: flex; justify-content: flex-end; }
 .rctl .tog { white-space: normal; line-height: 1.1; }
@@ -748,7 +748,7 @@ function clockTod(d = new Date()) { return todAt(d.getHours() + d.getMinutes() /
 const TIME_AT = { dawn: 6.5, morning: 9, noon: 12.5, eve: 16, dusk: 19.25, night: 23 };
 function timeKey(u = PREFS.tod) { const h = todMinutes(u) / 60; return h < 5 ? 'night' : h < 7.5 ? 'dawn' : h < 11 ? 'morning' : h < 14 ? 'noon' : h < 18 ? 'eve' : h < 20.5 ? 'dusk' : 'night'; }
 const cap = (w) => w[0].toUpperCase() + w.slice(1);
-const clockWords = (mins) => { const h = Math.floor(mins / 60) % 24, m = mins % 60; return `${(h + 11) % 12 + 1}:${String(m).padStart(2, '0')} ${h >= 12 ? 'PM' : 'AM'}`; };   // 6:30 AM
+const clockWords = (mins) => { const h = Math.floor(mins / 60) % 24, m = mins % 60; return `${(h + 11) % 12 + 1}:${String(m).padStart(2, '0')}${h >= 12 ? 'pm' : 'am'}`; };   // 6:30am: every time in the app reads this way
 const timeWord = () => (PREFS.atmo.time.on ? clockWords(todMinutes(PREFS.tod)) : 'Live');   // held: the hour it holds; otherwise Live
 // Every way of moving time comes through here: held at an hour, or Live, following your clock.
 function timeTo(on, lv) {
@@ -2633,7 +2633,7 @@ function leaveAt() {
   const d = new Date(), t = new Date(d.getFullYear(), d.getMonth(), d.getDate(), Math.floor(L.at / 60), L.at % 60).getTime();
   return t > Date.now() ? t : t + 24 * 60 * MIN;   // the next time it comes round
 }
-const clockOf = (ms) => new Date(ms).toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' });
+const clockOf = (ms) => { const d = new Date(ms); return clockWords(d.getHours() * 60 + d.getMinutes()); };   // 5:30pm
 function freshClock() {   // a time to leave that's still ahead; if not, now and twenty minutes, to the five
   const L = PREFS.leave, d = new Date(), now = d.getHours() * 60 + d.getMinutes(), ahead = ((L.at - now) + 1440) % 1440;
   if (L.at < 0 || ahead === 0 || ahead > 12 * 60) L.at = (Math.ceil((now + 20) / 5) * 5) % 1440;
@@ -2993,7 +2993,7 @@ const placeOpts = () => Object.keys(PLACES).map(k => `${k}:${PLACES[k].label}`).
 const PALETTE_NAMES = { spring: 'Mint', summer: 'Gold', autumn: 'Ember', winter: 'Ice', rainforest: 'Moss', camp: 'Lantern', woods: 'Heather', beach: 'Tide', stars: 'Midnight' };   // a palette by its colours, not its place
 const paletteOpts = () => Object.keys(PALETTE_NAMES).map(k => `${k}:${PALETTE_NAMES[k]}`).join('|');
 const soundOff = () => !PREFS.sound;
-const tierName = (t) => (t >= 9 ? 'Bloom only' : `${here().tiers[Math.round(t)].name} +`);   // short: it sits in the value column
+const tierName = (t) => (t >= 9 ? 'Bloom' : `Ball ${Math.round(t) + 1}+`);   // by its place in the line: Ball 3+ … Ball 10+, then a Bloom
 const ITEMS = {
   mode: choice('Mode', 'play:Play|rain:SkyPlay|settle:Settle|rest:Rest'),
   place: choice('Scene', 'heritage:Heritage|nature:Nature'),
@@ -3002,7 +3002,7 @@ const ITEMS = {
   rules: choice('Rules', 'end:Classic|zen:Zen', { keys: ['overflow'] }), atline: choice('At the line', 'choose:I choose|dissolve:Dissolve', { keys: ['overflow'], off: () => PREFS.overflow === 'end' }),
   ask: { type: 'ask' }, todo: { type: 'todo' }, leave: { type: 'leave' },
   'leave.h': wheel('Hours', [0, 1, 2, 3].map(n => `${n}:${n}`).join('|')), 'leave.m': wheel('Minutes', [...Array(60).keys()].map(n => `${n}:${n}`).join('|')),   // a timer, as a phone sets one
-  'leave.ch': wheel('Hour', [...Array(12).keys()].map(n => `${n + 1}:${n + 1}`).join('|')), 'leave.cm': wheel('Minute', [...Array(60).keys()].map(n => `${n}:${String(n).padStart(2, '0')}`).join('|')), 'leave.ap': wheel('', 'am:AM|pm:PM'),   // a time, as a phone sets an alarm
+  'leave.ch': wheel('Hour', [...Array(12).keys()].map(n => `${n + 1}:${n + 1}`).join('|')), 'leave.cm': wheel('Minute', [...Array(60).keys()].map(n => `${n}:${String(n).padStart(2, '0')}`).join('|')), 'leave.ap': wheel('', 'am:am|pm:pm'),   // a time, as a phone sets an alarm
   weather: wheel('Clouds', 'changing:Changing|clear:Clear|clouds:Some|rain:Overcast|storm:Dark|clearing:Clearing', { off: indoor, keys: ['weatherFlow', 'wx'] }),   // the sky's look; the weather itself is the Weather card
   'atmo.bolt.lv': slider('Lightning', { min: 0.05, name: pct }), 'atmo.wind.lv': slider('Wind', { min: 0.05, name: pct }), 'atmo.rain.lv': slider('Rain', { min: 0.05, name: pct }),
   'atmo.time.lv': slider('Time', { max: 0.999, name: (v) => (PREFS.atmo.time.on ? clockWords(todMinutes(4 * v)) : 'Live'), off: () => !PREFS.atmo.time.on }),   // held: the hour; off: Live
