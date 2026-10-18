@@ -138,7 +138,7 @@ body.lamp { --glint: rgba(255, 236, 196, 0.95); --glint-soft: rgba(255, 205, 130
 .tools { height: 100%; grid-template-columns: repeat(4, minmax(0, 1fr)); } .tools.covered { visibility: hidden; }
 .strip { position: absolute; inset: 0; display: flex; align-items: center; padding: 0 6px 0 10px; border-radius: 16px; animation: fade .15s ease; transition: border-color .25s, box-shadow .25s; }
 .strip .row { width: 100%; padding: 0; border: 0; } .strip .rctl { margin-top: 0; }
-.wxwords { border-left: 0; } .wxwords .pill { padding: 7px 18px; border-radius: 999px; border: 1px solid var(--chip-line); font-size: 13px; font-weight: 600; color: var(--ink); }
+.wxwords { border-left: 0; align-items: flex-start; padding-left: 14px; } .wxwords .pill { padding: 4px 12px; border-radius: 999px; border: 1px solid var(--chip-line); font-size: 13px; font-style: italic; font-weight: 400; color: var(--ink); }   /* folded: a clean line of words, left, a slim pill round just them */
 .wxwords .pill.on { border-color: rgba(var(--on), 0.85); box-shadow: inset 0 0 0 1px rgba(var(--on), 0.6), inset 0 0 12px rgba(var(--on), 0.18); }   /* green while any weather is on */
 
 /* The card: every menu is this one frame, at one size. ‹ and ✕ top left (back a level, and away: both put everything back),
@@ -744,10 +744,6 @@ function todMinutes(u) {   // and back: a place in the loop as minutes after mid
   return Math.round((h % 24) * 60) % 1440;
 }
 function clockTod(d = new Date()) { return todAt(d.getHours() + d.getMinutes() / 60); }
-// The day in words, never a clock: night, dawn, morning, noon, eve, dusk. Each word also names a moment to go to.
-const TIME_AT = { dawn: 6.5, morning: 9, noon: 12.5, eve: 16, dusk: 19.25, night: 23 };
-function timeKey(u = PREFS.tod) { const h = todMinutes(u) / 60; return h < 5 ? 'night' : h < 7.5 ? 'dawn' : h < 11 ? 'morning' : h < 14 ? 'noon' : h < 18 ? 'eve' : h < 20.5 ? 'dusk' : 'night'; }
-const cap = (w) => w[0].toUpperCase() + w.slice(1);
 const clockWords = (mins) => { const h = Math.floor(mins / 60) % 24, m = mins % 60; return `${(h + 11) % 12 + 1}:${String(m).padStart(2, '0')}${h >= 12 ? 'pm' : 'am'}`; };   // 6:30am: every time in the app reads this way
 const timeWord = () => (PREFS.atmo.time.on ? clockWords(todMinutes(PREFS.tod)) : 'Live');   // held: the hour it holds; otherwise Live
 // Every way of moving time comes through here: held at an hour, or Live, following your clock.
@@ -842,6 +838,7 @@ class SoundBath {
     });
     this.toneLp.connect(this.toneGain); this.toneGain.connect(this.bus.breath);
     this.rub = this.bed('breath', [['bandpass', 1600, 3.5]]);   // Settle: a fingertip on the glass, following its speed
+    this.sweep = this.bed('breath', [['bandpass', 600, 1.2]]);   // Settle: a soft hush of air rising with the breath in and falling with the breath out
     this.applyVolumes();
   }
   bed(bus, filters, buzz) {
@@ -959,6 +956,9 @@ class SoundBath {
     g.gain.setValueAtTime(0.0001, t); g.gain.exponentialRampToValueAtTime(peak, t + attack); g.gain.exponentialRampToValueAtTime(0.0001, t + dur);
     src.connect(f); f.connect(g); g.connect(this.out(bus, pan)); src.start(t, Math.random() * 1.5); src.stop(t + dur + 0.05); src.onended = () => g.disconnect();
   }
+  // Settle. A tap: one note of the breath tone's chord, higher up the screen the higher the note, panned to where it fell.
+  note(x, y) { if (this.live) this.tone(this.out('notes', panFor(x)), [261.63, 329.63, 392.0, 523.25][clamp(Math.floor((1 - y / LH) * 4), 0, 3)], 'sine', 0.06, 0.02, 1.8, this.ctx.currentTime).connect(this.echo); }
+  bead(pan, glass) { if (!this.live) return; if (glass) this.clink(1046.5, pan, 0.03); else this.knock(pan, true); }   // a bead arriving: a soft click of wood, or of glass in Heritage
   tick(pan) { if (this.live) this.tone(this.out('notes', pan), 520, 'sine', 0.012, 0.004, 0.12, this.ctx.currentTime); }   // a tap off the beat: answered, never scolded
   crackle(n) { for (let i = 0; i < n; i++) setTimeout(() => this.noise1({ bus: 'weather', type: 'bandpass', f0: 1500 + Math.random() * 2500, f1: 900, q: 2, peak: 0.02 + Math.random() * 0.03, attack: 0.003, dur: 0.04 + Math.random() * 0.06, pan: (Math.random() - 0.5) * 0.6 }), i * (40 + Math.random() * 90)); }
   crack(peak) {   // a close strike: a sharp tearing crack and a deep boom under it
@@ -1027,7 +1027,9 @@ class SoundBath {
       o.frequency.value = f; pg.gain.value = i === 0 ? 0.45 : 0; o.connect(pg); pg.connect(lp); o.start(t);
       return pg;
     });
-    this.drone = { g, lp, parts }; this.droneAge = 0;
+    const beat = c.createOscillator(), bg = c.createGain();   // Settle: a second low note a hair off the first, so the two beat slowly, slower still on the breath out
+    beat.frequency.value = 65.41; bg.gain.value = 0; beat.connect(bg); bg.connect(lp); beat.start(t);
+    this.drone = { g, lp, parts, beat, bg }; this.droneAge = 0;
   }
   // Ten times a second: every continuous sound follows the scene, the wind and the breath. Your sound plays under everything;
   // in Rest the screen is dark but the world goes on in sound, without the thunder.
@@ -1062,16 +1064,18 @@ class SoundBath {
       this.droneAge += dt;
       const rich = rest ? 0.5 : clamp(Math.log10(S.score + 1) / 5, 0, 1), { g, lp, parts } = this.drone;
       parts.forEach((pg, i) => { if (i) pg.gain.setTargetAtTime(clamp(rich * parts.length - i + 1, 0, 1) * 0.5 / i, t, 1.5); });
-      lp.frequency.setTargetAtTime(260 + 1000 * rich, t, 1.5);
+      const settle = S.mode === 'settle';
+      lp.frequency.setTargetAtTime((260 + 1000 * rich) * (settle ? 0.8 + 0.2 * b : 1), t, 1.5);   // Settle: a little warmer and darker on the breath out
       const want = rest ? 0 : 1;
       g.gain.setTargetAtTime(want * 0.05 * smooth(clamp(this.droneAge / 18, 0, 1)) * (0.75 + 0.25 * b), t, 0.4);
-      if (this.dronePan) this.dronePan.pan.setTargetAtTime(S.mode === 'settle' ? 0.5 * Math.sin((P.phase - 0.25) * TAU) : 0, t, 0.3);   // Settle: the drone sways with the breath
+      this.drone.bg.gain.setTargetAtTime(settle ? 0.3 : 0, t, 1); this.drone.beat.frequency.setTargetAtTime(65.41 + 0.5 + 1.5 * b, t, 0.5);   // beating twice a second at the top of the breath, once every two seconds at the bottom
+      if (this.dronePan) this.dronePan.pan.setTargetAtTime(settle ? 0.5 * Math.sin((P.phase - 0.25) * TAU) : 0, t, 0.3);   // Settle: the drone sways with the breath
     }
-    if (S.mode === 'settle') {   // Settle: the sound bed drifts slowly, like weather a long way off
+    if (S.mode === 'settle') {   // Settle: the sound bed drifts slowly, like weather a long way off, and a hush of air rises and falls with the breath
       const sw = 0.5 + 0.5 * Math.sin(t * TAU * 0.07);
       this.rain.f.frequency.setTargetAtTime(2500 + 1700 * sw, t, 0.8); this.wind.f.Q.setTargetAtTime(0.7 + 0.5 * sw, t, 0.8);
-    } else { this.rain.f.frequency.setTargetAtTime(5200, t, 0.8); this.wind.f.Q.setTargetAtTime(0.7, t, 0.8);
-    }
+      this.sweep.g.gain.setTargetAtTime(0.012 + 0.02 * b, t, 0.3); this.sweep.f.frequency.setTargetAtTime(350 + 1400 * b, t, 0.3);
+    } else { this.rain.f.frequency.setTargetAtTime(5200, t, 0.8); this.wind.f.Q.setTargetAtTime(0.7, t, 0.8); this.sweep.g.gain.setTargetAtTime(0, t, 0.3); }
     if (!this.live) return;
     if ((z === 'fire' || amb.fire) && (this.popT = (this.popT ?? 1) - dt) <= 0) { this.crackle(1); this.popT = 0.3 + Math.random() * 1.6; }   // the fire pops now and then
     if (amb.owl && ENV.dark > 0.35 && OWL.away <= 0 && (this.owlT = (this.owlT ?? 6) - dt) <= 0) { this.hoot(); this.owlT = 10 + Math.random() * 16; }
@@ -2098,40 +2102,70 @@ function stepPacer(dt) {
   if (P.phase >= 1) { P.phase -= 1; if (S.space) S.space.breaths++; }
 }
 
-// Settle: play rests and the weather goes; the world carries on. One surface, nothing to pick and nothing to get right.
-// Leave it alone and it breathes at your pace. Hold the pool to breathe in and let go to breathe out, and it follows you. Or
-// rest a finger on it and trace the light round its figure of eight, as slowly as you like: a soft sound follows your fingertip
-// and dies the moment it stops. Lay the phone flat on your chest, hands off, and after a few breaths it follows yours.
-const CX = LW / 2, CY = LH / 2, HINT = 'Hold to breathe in, let go to breathe out · or trace the light';
+// Settle: play rests and the weather goes; the world carries on. One surface and one rule: the shape breathes at your set pace,
+// always. Hold the pool and it breathes in with you, from wherever it is, over one in-breath, and stays full as long as you hold;
+// let go and it breathes out over one out-breath, never faster, then settles back into its own rhythm. Rest a finger on it and
+// slide, and a ball follows your finger, a soft sound under it, a glass note where it meets the ring. A quick tap is a note.
+// Ten beads along the bottom: one slides across on every out-breath, and at ten they slide back. Lay the phone flat on your
+// chest, hands off, and after a few breaths it follows yours. Nothing is counted, kept or scored.
+const CX = LW / 2, CY = LH / 2, HINT = 'Hold to breathe in, let go to breathe out · trace, tap, or just watch';
+const TAP = 0.25, SLIP = 25, BEADS = 10, BEAD_T = 0.9;   // a press shorter than this is a tap; a finger this far from where it pressed is a trace; the beads, and one bead's slide
 function openSpace() {
   sound.init(); S.aiming = false; P.phase = 0;
-  S.space = { breaths: 0, finger: null, moved: 0, vel: 0, lastMove: 0, hold: newHold(), t: 0, offered: false, chest: null, flat: 0 };
+  S.space = { breaths: 0, finger: null, press: null, vel: 0, lastMove: 0, hold: { state: null, u: 0, t0: 0, heard: false }, ball: null, near: false, beads: { n: 0, x: Array(BEADS).fill(0), back: 0 }, wasIn: true, t: 0, offered: false, chest: null, flat: 0 };
   sound.breath(true, IN * breathLen());   // the first breath in is heard too
   askMotion();
 }
 function closeSpace() { S.space = null; S.sigh = null; sound.rubbing(0); saveJournal(); }
-// The figure of eight: an unbroken loop through the middle of the pool, and the point on it the light has reached. One lap
-// every two breaths, crossing the middle each breath.
+// The figure of eight: an unbroken loop through the middle of the pool, drawn whole and faint, and a ring going round it: one
+// lap every two breaths, through the middle on every breath.
 const EIGHT = { a: 118, k: 0.92 };
 function eightAt(u) { const t = u * TAU, d = 1 + Math.sin(t) ** 2; return [CX + EIGHT.a * Math.cos(t) / d, CY + EIGHT.k * EIGHT.a * Math.sin(t) * Math.cos(t) / d]; }
-const lightAt = () => eightAt(((S.space ? S.space.breaths % 2 : 0) + P.phase) / 2);
-function settleTouch(p, down) {   // your finger in Settle: still, it is a hold (breathing in); moving, it is a trace
-  const sp = S.space;
-  if (down === false) { if (sp.hold.held) holdPress(false); sp.finger = null; sp.vel = 0; sound.rubbing(0); return; }
-  if (down === true) { sp.finger = p; sp.moved = 0; sp.vel = 0; sp.lastMove = animTime; holdPress(true); sp.chest = null; return; }
+const ringAt = () => eightAt(((S.space ? S.space.breaths % 2 : 0) + P.phase) / 2);
+// Your finger in Settle. Down: a hold begins, the shape breathing in from wherever it is. Up before a quarter second: a tap, a
+// note, the hold undone. Up after: let go, breathing out. Moved SLIP from where it pressed: the hold lets go and a trace begins.
+function settleTouch(p, down) {
+  const sp = S.space, H = sp.hold;
+  if (down === true) { sp.finger = p; sp.press = { x: p.x, y: p.y, t: animTime }; sp.vel = 0; sp.lastMove = animTime; sp.ball = null; sp.chest = null; H.wasIn = breathIn(); H.prev = H.state; H.state = 'in'; H.t0 = animTime; H.heard = false; if (!H.prev) H.u = pacerLevel(); return; }
+  if (down === false) { if (sp.press) letGo(sp.press); sp.finger = null; sp.press = null; sp.ball = null; sp.near = false; sp.vel = 0; sound.rubbing(0); return; }
   const d = Math.hypot(p.x - sp.finger.x, p.y - sp.finger.y), dt = Math.max(0.008, animTime - sp.lastMove);
-  sp.moved += d; sp.vel = sp.vel * 0.5 + (d / dt) * 0.5; sp.lastMove = animTime; sp.finger = p;
-  if (sp.moved >= 12 && sp.hold.held) { sp.hold.held = false; sp.hold.pressAt = -1e9; }   // it moved: a trace, not a breath in
+  sp.vel = sp.vel * 0.5 + (d / dt) * 0.5; sp.lastMove = animTime; sp.finger = p;
+  if (sp.press && Math.hypot(p.x - sp.press.x, p.y - sp.press.y) >= SLIP) { letGo(animTime - sp.press.t < TAP ? null : sp.press); sp.press = null; sp.ball = { x: p.x, y: p.y }; }   // it slid: a trace, not a breath
+}
+function letGo(press) {   // the end of a press. A tap: a note, and the hold never was. A hold: let go, breathing out. A quick slide: neither.
+  const H = S.space.hold;
+  if (!press || animTime - press.t < TAP) { if (press) sound.note(press.x, press.y); H.state = H.prev; return; }
+  H.state = 'out'; sound.breath(false, Math.max(0.3, H.u) * (1 - IN) * breathLen());
+}
+// The hold: in at the in-breath's pace, full for as long as you hold; out at the out-breath's pace to empty; then back to the
+// pacer at no more than a breath's pace, and the shape is the pacer's again.
+function updateHold(dt) {
+  const H = S.space.hold, inT = IN * breathLen(), outT = (1 - IN) * breathLen();
+  if (H.state === 'in') { H.u = Math.min(1, H.u + dt / inT); if (!H.heard && animTime - H.t0 >= TAP) { H.heard = true; sound.breath(true, (1 - H.u) * inT); } }
+  else if (H.state === 'out') { H.u = Math.max(0, H.u - dt / outT); if (H.u <= 0) H.state = 'rejoin'; }
+  else if (H.state === 'rejoin') { const g = pacerLevel(); H.u = H.u < g ? Math.min(g, H.u + dt / inT) : Math.max(g, H.u - dt / outT); if (Math.abs(H.u - g) < 0.002) H.state = null; }
 }
 function updateSpace(dt) {
-  const sp = S.space;
+  const sp = S.space, H = sp.hold;
   sp.t += dt;
-  if (sp.finger && animTime - sp.lastMove > 0.12) sp.vel *= Math.max(0, 1 - dt * 14);   // the finger has stopped: the sound dies at once
-  sound.rubbing(sp.finger && sp.moved >= 12 ? sp.vel : 0);
   updateHold(dt);
   updateChest(dt);
+  if (sp.ball) {   // the trace: a ball under your finger, a sound following its speed, and a glass note where it meets the ring
+    sp.ball.x += (sp.finger.x - sp.ball.x) * Math.min(1, dt * 18); sp.ball.y += (sp.finger.y - sp.ball.y) * Math.min(1, dt * 18);
+    if (animTime - sp.lastMove > 0.12) sp.vel *= Math.max(0, 1 - dt * 14);   // the finger has stopped: the sound dies at once
+    const [rx, ry] = ringAt(), near = Math.hypot(sp.ball.x - rx, sp.ball.y - ry) < 30;
+    if (near && !sp.near) sound.chime(panFor(sp.ball.x), 'glass');
+    sp.near = near; sound.rubbing(near ? 0 : sp.vel);
+  }
+  const inNow = breathIn();
+  if (sp.wasIn && !inNow) beadAcross();   // every out-breath, yours or the pacer's, slides one bead
+  sp.wasIn = inNow;
+  const B = sp.beads;
+  for (let i = 0; i < BEADS; i++) { const was = B.x[i]; B.x[i] = clamp(B.x[i] + (i < B.n ? dt : -dt) / BEAD_T, 0, 1); if (was < 1 && B.x[i] >= 1) sound.bead(0.3, here().glass); }   // a click as each one arrives
+  if (B.n >= BEADS && B.x[BEADS - 1] >= 1 && (B.back += dt) > 1.2) { B.n = 0; B.back = 0; }   // all ten across: a moment, then they slide back
   if (!sp.offered && sp.t > 60) { sp.offered = true; say('Ready when you are', 'Go, or stay'); }   // once, softly: the door is there
 }
+function beadAcross() { const B = S.space.beads; if (B.n < BEADS) B.n++; }
 // The phone on your chest: flat and untouched for fifteen seconds, the motion sensor reads your breathing (the chest rises
 // and the phone tilts with it) and the pool follows you instead of leading. Asked once, on the first Settle; read on the
 // phone, never sent anywhere. Not supported, or not allowed: nothing changes.
@@ -2158,45 +2192,10 @@ function updateChest(dt) {
   if (sp.chest && !flat) sp.chest = null;   // picked up, or touched: the pool leads again
   if (sp.chest) sp.chest.t += dt;
 }
-// Breathe: the shape breathes at your pace. Hold the pool as you breathe in, let go as you breathe out, and it follows you;
-// after three breaths it takes over at your own pace and slows you gently, each breath a little longer, to your set pace
-// (never past it). Stop, and it carries on alone.
-const FULL_IN = 4.5;
-const newHold = () => ({ held: false, u: 0, peak: 0, cycles: [], inhales: [], pressAt: -1e9, releaseAt: -1e9, mode: 'guide', cycle: 60 / PREFS.bpm, inF: IN, phase: 0, behind: false });
-const avgOf = (arr, n = 3) => { const a = arr.slice(-n); return a.length ? a.reduce((x, v) => x + v, 0) / a.length : 0; };
-const perMinute = (cycle) => Math.round((60 / cycle) * 2) / 2;
-function holdPress(down) {
-  const H = S.space.hold, now = animTime;
-  if (!down) { if (H.held) { H.held = false; H.releaseAt = now; H.peak = H.u; } return; }
-  const gap = now - H.pressAt;
-  if (gap >= 0.45 && gap <= 30 && H.releaseAt > H.pressAt) { H.cycles.push(gap); H.inhales.push(H.releaseAt - H.pressAt); }
-  H.pressAt = now; H.held = true;
-  if (H.mode === 'guide') H.mode = 'follow';
-  if (H.mode === 'follow' && H.cycles.length >= (H.cycles.length && perMinute(avgOf(H.cycles)) > 20 ? 2 : 3)) {   // fast breathing gets help sooner
-    const cyc = avgOf(H.cycles);
-    Object.assign(H, { mode: 'lead', cycle: cyc, inF: clamp(avgOf(H.inhales) / cyc, 0.25, 0.6), phase: 0.02 });
-    sound.breath(true, H.inF * H.cycle);   // the shape takes the lead on a breath in, and you hear it
-  }
-}
-const holdGuide = (H) => breathAt(H.phase, H.inF);
-function updateHold(dt) {
-  const H = S.space.hold, set = 60 / PREFS.bpm, tapping = animTime - H.pressAt < H.cycle * 2;
-  if (H.held) H.u = Math.min(1, H.u + dt / FULL_IN);
-  else { const out = H.cycles.length ? Math.max(0.3, avgOf(H.cycles) - avgOf(H.inhales)) : 2.5; H.u = Math.max(0, H.u - dt * Math.max(H.peak, 0.05) / out); }
-  const wasIn = H.phase < H.inF;
-  H.phase += dt / H.cycle;
-  if (H.phase >= 1) {
-    H.phase -= 1;
-    if (H.mode === 'lead') { H.behind = tapping && avgOf(H.cycles, 1) < H.cycle * 0.8; if (!H.behind && H.cycle < set) H.cycle = Math.min(set, H.cycle * 1.07); H.inF += (IN - H.inF) * 0.25; }
-    else { H.cycle = set; H.inF = IN; }
-  }
-  if (H.mode !== 'follow' && wasIn !== (H.phase < H.inF)) sound.breath(H.phase < H.inF, (H.phase < H.inF ? H.inF : 1 - H.inF) * H.cycle);
-  if (H.mode === 'follow' && !H.held && animTime - H.pressAt > 15) Object.assign(H, { mode: 'guide', cycle: set, inF: IN, phase: 0.4 });   // you stopped: the shape takes the rhythm back
-}
-const holdLevel = () => { const H = S.space.hold; return H.mode === 'follow' ? H.u : holdGuide(H); };
-// What the Breathe word in the bar reads: In or Out. The deep breath counts its own steps; while the shape follows your hold, the
-// breath is yours.
-const breathIn = () => { const sp = S.space, H = sp && sp.hold; return sp && sp.chest ? MOTION.lvl > 0.5 : H ? (H.mode === 'follow' ? H.held : H.phase < H.inF) : inhaling(); };
+// What the breath is right now, and so the Breathe word in the bar: In or Out. In a hold the breath is yours; the deep breath
+// counts its own steps; otherwise it is the pacer's.
+const spaceLevel = () => { const sp = S.space, H = sp.hold; return sp.chest ? MOTION.lvl : H.state ? H.u : pacerLevel(); };
+const breathIn = () => { const sp = S.space, H = sp && sp.hold; return sp && sp.chest ? MOTION.lvl > 0.5 : H && H.state === 'in' ? (H.heard || H.wasIn) : H && H.state === 'out' ? false : inhaling(); };   // a press is nothing until it has lasted a quarter second
 function breathWord() { if (!S.sigh) return breathIn() ? 'In' : 'Out'; const st = S.sigh.steps[S.sigh.i]; return st.inhale ? 'In' : st.inhale === false ? 'Out' : 'Hold'; }
 
 // Two guided breaths. Take a breath: one breath at your pace. Take a deep breath: two in through the nose, a soft hold, then a long slow breath out through the mouth.
@@ -2238,17 +2237,18 @@ function trackApex() {
 }
 function updateBreath(dt) {
   if (S.sighIn > 0 && (S.sighIn -= dt) <= 0) startSigh();
-  if (S.space) updateSpace(dt);
+  const wasIn = inhaling();
   stepPacer(dt);
-  if (S.sigh) stepSigh(dt); else S.breath = S.space ? (S.space.chest ? MOTION.lvl : holdLevel()) : pacerLevel();   // holding, or on your chest, the breath (and its tone) is yours
+  if (S.space && !S.sigh && wasIn !== inhaling() && !S.space.hold.state && !S.space.chest) sound.breath(inhaling(), (inhaling() ? IN : 1 - IN) * breathLen());   // Settle: the pacer's breaths are heard while the breath is its own
+  if (S.space) updateSpace(dt);
+  if (S.sigh) stepSigh(dt); else S.breath = S.space ? spaceLevel() : pacerLevel();
   trackApex();
 }
 function breatheWords() {
   const sp = S.space;
   if (S.sigh) { const st = S.sigh.steps[S.sigh.i]; return { word: st.word, cue: st.cue || '', status: sp ? '' : 'Tap to skip', a: 1 }; }
   const H = sp.hold, word = breathIn() ? 'In through the nose' : 'Out through the mouth';
-  const status = sp.chest ? 'Following your breath' : H.mode === 'follow' ? 'Following you…' : H.mode === 'lead' ? (H.cycle < 60 / PREFS.bpm - 0.05 ? 'Slowing, together' : 'Breathing together') : sp.breaths < 3 ? HINT : '';
-  return { word, cue: H.behind ? 'A little slower…' : '', status, a: 1 };
+  return { word, cue: '', status: sp.chest ? 'Following your breath' : H.state === 'in' || H.state === 'out' ? 'Following you' : sp.breaths < 3 ? HINT : '', a: 1 };
 }
 // The breath has one shape. At a full breath it is the pool's own border; breathing out, it draws in from the edges,
 // rounds into a circle and shrinks to a point; breathing in, it grows back out until it is the border again.
@@ -2265,30 +2265,33 @@ function rrect(c, x, y, w, h, r) {
 }
 const shapePath = (c, [cx, cy, hw, hh, r]) => rrect(c, cx - hw, cy - hh, 2 * hw, 2 * hh, r);
 // Settle and the deep breath draw here: the whole screen breathes (brighter as you breathe in, dimmer and warmer as you
-// breathe out), the shape breathes, the light goes round its figure of eight, and the pool gives under your finger.
+// breathe out), the shape breathes, the ring goes round its figure of eight, the beads wait along the bottom, and a ball
+// follows your finger.
 function drawBreathe(c, f) {
   const sp = S.space, w = breatheWords(), b = clamp(S.breath, 0, 1);
   c.save(); c.globalAlpha = f;
   if (!here().indoor) { c.fillStyle = `rgba(2,6,12,${(0.52 - 0.16 * b).toFixed(3)})`; c.fillRect(0, 0, LW, LH); c.fillStyle = `rgba(255,170,90,${(0.05 * (1 - b)).toFixed(3)})`; c.fillRect(0, 0, LW, LH); }   // indoors, the lamp turns down instead
   c.lineCap = 'round'; c.lineJoin = 'round';
-  const H = sp && !S.sigh ? sp.hold : null, guide = H && !sp.chest ? holdGuide(H) : S.breath, shape = breathShape(S.breath);
+  const shape = breathShape(b);
   c.strokeStyle = tint(0.16); c.lineWidth = 1; c.setLineDash([3, 6]); c.beginPath(); shapePath(c, breathShape(1)); c.stroke(); c.setLineDash([]);
-  c.fillStyle = `rgba(242,248,252,${(0.06 + 0.1 * S.breath).toFixed(3)})`; c.beginPath(); shapePath(c, shape); c.fill();
-  c.shadowColor = here().accent; c.shadowBlur = 14; c.strokeStyle = tint(0.55 + 0.4 * guide); c.lineWidth = 2.5; c.stroke(); c.shadowBlur = 0;
-  if (H && H.mode === 'lead' && animTime - H.pressAt < H.cycle * 2) {   // while it follows your lead: your own breath is a second line, and the gap glows warm
-    const mine = breathShape(H.u), gap = Math.abs(mine[2] - shape[2]) + Math.abs(mine[3] - shape[3]);
-    if (gap > 10) { c.fillStyle = `rgba(253,206,150,${Math.min(0.24, gap / 400).toFixed(3)})`; c.beginPath(); shapePath(c, mine); shapePath(c, shape); c.fill('evenodd'); c.strokeStyle = 'rgba(253,220,180,0.7)'; c.lineWidth = 1.5; c.beginPath(); shapePath(c, mine); c.stroke(); }
-    else if (H.held) { c.strokeStyle = `rgba(${GOLD},0.85)`; c.lineWidth = 2.5; c.beginPath(); shapePath(c, shape); c.stroke(); }   // together: one gold line
-  }
-  if (sp && !S.sigh) {   // the figure of eight: a faint path, and a soft well of light going round it; nothing to hit
-    c.strokeStyle = tint(0.08); c.lineWidth = 10; c.beginPath(); for (let i = 0; i <= 96; i++) { const [x, y] = eightAt(i / 96); i ? c.lineTo(x, y) : c.moveTo(x, y); } c.stroke();
-    const [lx, ly] = lightAt(), g = c.createRadialGradient(lx, ly, 0, lx, ly, 46), near = sp.finger ? clamp(1 - Math.hypot(sp.finger.x - lx, sp.finger.y - ly) / 90, 0, 1) : 0;
-    g.addColorStop(0, rgba([242, 248, 252], 0.3 + 0.2 * b + 0.3 * near)); g.addColorStop(0.5, rgba([242, 248, 252], 0.08 + 0.1 * near)); g.addColorStop(1, rgba([242, 248, 252], 0));
-    c.fillStyle = g; c.beginPath(); c.arc(lx, ly, 46, 0, TAU); c.fill();
-    if (sp.finger) {   // the pool gives under your finger: a soft dip, and a rim of light
-      const { x, y } = sp.finger, d = c.createRadialGradient(x, y, 0, x, y, 34);
-      d.addColorStop(0, 'rgba(2,6,12,0.35)'); d.addColorStop(0.7, 'rgba(2,6,12,0.1)'); d.addColorStop(1, 'rgba(2,6,12,0)'); c.fillStyle = d; c.beginPath(); c.arc(x, y, 34, 0, TAU); c.fill();
-      c.strokeStyle = rgba([242, 248, 252], 0.25 + 0.3 * Math.min(1, sp.vel / 300)); c.lineWidth = 1.5; c.beginPath(); c.arc(x, y, 22 + 3 * Math.min(1, sp.vel / 300), 0, TAU); c.stroke();
+  c.fillStyle = `rgba(242,248,252,${(0.06 + 0.1 * b).toFixed(3)})`; c.beginPath(); shapePath(c, shape); c.fill();
+  c.shadowColor = here().accent; c.shadowBlur = 14; c.strokeStyle = tint(0.55 + 0.4 * b); c.lineWidth = 2.5; c.stroke(); c.shadowBlur = 0;
+  if (sp && !S.sigh) {
+    c.strokeStyle = tint(0.1); c.lineWidth = 3; c.beginPath(); for (let i = 0; i <= 96; i++) { const [x, y] = eightAt(i / 96); i ? c.lineTo(x, y) : c.moveTo(x, y); } c.stroke();   // the whole path, faint
+    const [rx, ry] = ringAt();   // the ring on it: light, for now
+    c.shadowColor = `rgba(${LIGHT},0.8)`; c.shadowBlur = 12; c.strokeStyle = `rgba(${LIGHT},${(0.55 + 0.35 * b).toFixed(3)})`; c.lineWidth = 2; c.beginPath(); c.arc(rx, ry, 13, 0, TAU); c.stroke(); c.shadowBlur = 0;
+    const B = sp.beads, ry0 = LH - 24, x0 = 26, x1 = LW - 26, pitch = 17, ac = hex(here().accent);   // the rail and its ten beads, in the place's own colour
+    c.strokeStyle = tint(0.22); c.lineWidth = 2; c.beginPath(); c.moveTo(x0 - 8, ry0); c.lineTo(x1 + 8, ry0); c.stroke();
+    for (let i = 0; i < BEADS; i++) {
+      const k = smooth(B.x[i]), x = x0 + i * pitch + (x1 - (BEADS - 1 - i) * pitch - x0 - i * pitch) * k, g = c.createRadialGradient(x - 2, ry0 - 2.5, 1, x, ry0, 7);
+      g.addColorStop(0, rgba(mix(ac, [255, 255, 255], 0.6), 0.95)); g.addColorStop(1, rgba(ac, 0.75));
+      c.fillStyle = g; c.beginPath(); c.arc(x, ry0, 7, 0, TAU); c.fill();
+    }
+    if (sp.ball) {   // the trace: a small glass ball under your finger
+      const { x, y } = sp.ball, g = c.createRadialGradient(x - 6, y - 7, 2, x, y, 18);
+      g.addColorStop(0, 'rgba(255,255,255,0.95)'); g.addColorStop(0.35, rgba([242, 248, 252], 0.55)); g.addColorStop(1, rgba([242, 248, 252], 0.15));
+      c.fillStyle = g; c.beginPath(); c.arc(x, y, 18, 0, TAU); c.fill();
+      c.strokeStyle = rgba([242, 248, 252], sp.near ? 0.9 : 0.4); c.lineWidth = 1.5; c.stroke();
     }
   }
   c.globalAlpha = f * w.a;
@@ -3033,7 +3036,7 @@ const ITEMS = {
 };
 for (const k of ['ch', 'cm', 'ap']) ITEMS['due.' + k] = ITEMS['leave.' + k];   // a due time's pickers are the time's
 // The cards: a title, one italic line, and rows. A row's line can read differently as it is set.
-const MODE_NOTES = { play: 'The spheres, the weather and the world.', rain: 'Only the world and its weather.', settle: 'No weather, nothing to win. Hold to breathe in, let go to breathe out, or trace the light.', rest: 'The screen fades to dark; the sound goes on.' };
+const MODE_NOTES = { play: 'The spheres, the weather and the world.', rain: 'Only the world and its weather.', settle: 'No weather, nothing to win. Hold to breathe in, let go to breathe out; trace, tap, or just watch.', rest: 'The screen fades to dark; the sound goes on.' };
 const RULE_NOTES = { end: 'The game ends at the line, and counts toward your best.', zen: 'Nothing ends. You decide what goes.' };
 const volumeDesc = () => (PREFS.sound ? 'How loud SoRen is, under anything else you play.' : canVibrate && PREFS.haptics ? 'Vibrate only.' : 'Silent.');
 const SOUND_ROWS = [
@@ -3050,7 +3053,7 @@ const SOUND_ROWS = [
 const VIBRATION = row('Vibration', 'haptics', 'A tap you feel on each merge.', 'A short buzz on merges, Full Blooms and close thunder. iPhones can’t vibrate from a web page, so the row only shows where it works.');
 const SHEETS = {
   checkin: { title: '', items: ['ask', 'todo', 'leave'], onDone: startPlan },   // the second screen, every launch: Confirm plays
-  mode: { title: 'Mode', note: 'It is always the same game. Choose what is on it.', items: [row('Mode', 'mode', () => MODE_NOTES[PREFS.mode], 'Play: the spheres, the weather and the world. SkyPlay: only the world and its weather, nothing to drop. Settle: no weather, nothing to win; hold to breathe in, let go to breathe out, or trace the light. Rest: the screen fades to dark while the sound goes on.')] },
+  mode: { title: 'Mode', note: 'It is always the same game. Choose what is on it.', items: [row('Mode', 'mode', () => MODE_NOTES[PREFS.mode], 'Play: the spheres, the weather and the world. SkyPlay: only the world and its weather, nothing to drop. Settle: no weather, nothing to win; hold to breathe in, let go to breathe out; slide a finger to trace, tap for a note, or just watch the ring. A bead slides across on every breath out. Rest: the screen fades to dark while the sound goes on.')] },
   scene: { title: 'Scene', note: 'Where the game is.', items: () => [row('Scene', 'place', 'A wooden tray in lamplight, or the outdoors.', 'Heritage is a wooden tray in lamplight, with ten antique marbles. Nature is the outdoors: one place, or Live, the season where you are.'),
     row('Place', 'outdoor', 'Live is the season where you are; or pick one.', 'Live follows the calendar where you are: spring, summer, autumn or winter. Or hold one place. Custom builds a place from parts.'),
     ...(PREFS.place === 'nature' && PREFS.outdoor === 'custom' ? [row('Start from', 'custom.base', 'A place to build on.', 'Custom starts as a copy of one place; the rows below change it.'), row('Palette', 'custom.palette', 'The colours of the spheres.', 'The ten spheres, in the colours of one place.'),
