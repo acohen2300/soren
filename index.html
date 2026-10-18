@@ -121,8 +121,8 @@ body.lamp { --glint: rgba(255, 236, 196, 0.95); --glint-soft: rgba(255, 205, 130
 .cell.on { box-shadow: inset 0 0 0 2px rgba(var(--on), 0.85), inset 0 0 14px rgba(var(--on), 0.22); border-radius: 13px; }
 .cell.armed { animation: armed 1.4s ease-in-out infinite; }   /* armed and waiting for you: the green breathes slowly, well under once a second */
 @keyframes armed { 50% { box-shadow: inset 0 0 0 2px rgba(var(--on), 0.45), inset 0 0 6px rgba(var(--on), 0.1); } }
-.cell.open { background: rgba(255, 255, 255, 0.08); }
-.cell.held { box-shadow: inset 0 0 0 2px rgba(var(--off), 0.7), inset 0 0 12px rgba(var(--off), 0.16); border-radius: 13px; }   /* a tool in hand: blue, until you arm it */
+
+.cell.held, .cell.open, .cell.on.open { box-shadow: inset 0 0 0 2px rgba(var(--off), 0.7), inset 0 0 12px rgba(var(--off), 0.16); border-radius: 13px; }   /* in hand: a tool held, or a weather tile whose strip is open. Blue wins over green while it is */
 .cell.none { opacity: 0.38; }
 .cell[data-act=pin] svg, .cell[data-act=still] svg { width: 18px; height: 18px; }
 .cell .n { position: absolute; top: 4px; right: 5px; min-width: 15px; height: 14px; padding: 0 4px; border-radius: 7px; background: rgba(242, 248, 252, 0.88); color: #0b1424; font-size: 9.5px; font-weight: 700; line-height: 14px; text-align: center; }
@@ -136,9 +136,10 @@ body.lamp { --glint: rgba(255, 236, 196, 0.95); --glint-soft: rgba(255, 205, 130
 .slot { position: relative; }
 .toolwrap { position: relative; flex: none; height: 52px; margin-top: -2px; }   /* the tools' row; a weather row covers it exactly, so nothing moves */
 .tools { height: 100%; grid-template-columns: repeat(4, minmax(0, 1fr)); } .tools.covered { visibility: hidden; }
-.strip { position: absolute; inset: 0; display: flex; align-items: center; padding: 0 6px 0 12px; border-radius: 16px; animation: fade .15s ease; }
-.strip .row { flex-direction: row; align-items: center; gap: 8px; width: 100%; padding: 2px 4px; }
-.strip .rname { flex: none; width: 58px; font-size: 12.5px; } .strip .rctl { flex: 1; margin-top: 0; } .strip .slider i { display: none; }
+.strip { position: absolute; inset: 0; display: flex; align-items: center; padding: 0 6px 0 10px; border-radius: 16px; animation: fade .15s ease; transition: border-color .25s, box-shadow .25s; }
+.strip:has(.row.changed) { border-color: rgba(var(--off), 0.6); box-shadow: 0 0 0 1px rgba(var(--off), 0.4); }   /* one frame: the strip's own border rings blue */
+.strip .row, .strip .row.changed, .strip .row.ready { flex-direction: row; align-items: center; gap: 8px; width: 100%; padding: 0; border: 0; box-shadow: none; }
+.strip .sval { flex: none; width: 66px; font-size: 13px; font-weight: 600; font-variant-numeric: tabular-nums; white-space: nowrap; } .strip .rctl { flex: 1; margin-top: 0; } .strip .slider i { display: none; }
 .wxwords { border-left: 0; } .wxwords .pill { padding: 7px 18px; border-radius: 999px; border: 1px solid var(--chip-line); font-size: 13px; font-weight: 600; color: var(--ink); }
 .wxwords .pill.on { border-color: rgba(var(--on), 0.85); box-shadow: inset 0 0 0 1px rgba(var(--on), 0.6), inset 0 0 12px rgba(var(--on), 0.18); }   /* green while any weather is on */
 
@@ -186,18 +187,21 @@ body.lamp { --glint: rgba(255, 236, 196, 0.95); --glint-soft: rgba(255, 205, 130
 .rname { font-size: 14px; font-weight: 600; line-height: 1.2; min-width: 0; }
 .learn { flex: none; background: none; border: 0; padding: 0; color: var(--ink-dim); font: inherit; font-size: 12px; font-weight: 500; text-decoration: underline; text-underline-offset: 2px; cursor: pointer; }   /* Learn more: plain, underlined */
 .rdesc { display: block; font-style: italic; font-size: 12.5px; line-height: 1.3; color: var(--ink-dim); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }   /* one line, never two */
-.rctl { display: flex; justify-content: flex-end; align-items: center; gap: 6px; min-width: 0; margin-top: 4px; }
-.rctl > .item { flex: 0 0 auto; min-width: 0; } .rctl > .range { flex: 1 1 0; } .rctl > .choice { flex: 1 1 0; } .rctl > .item:has(.wbox) { flex: 1 1 0; }
+/* Fixed columns, in every row, every card and the strip: what turns it on (a switch) · how much · ✓ · ▶. A switch is always in the
+   same place; a row with none leaves its column empty. A choice or a wheel picks which, so it takes the first two columns. */
+.rctl { display: grid; grid-template-columns: 52px minmax(0, 1fr) 38px 38px; align-items: center; gap: 6px; min-width: 0; margin-top: 4px; }
+.rctl > .sw { grid-column: 1; } .rctl > .range { grid-column: 2; min-width: 0; } .rctl > .item:not(.sw):not(.range) { grid-column: 1 / 3; min-width: 0; } .rctl > .check { grid-column: 3; } .rctl > .save { grid-column: 4; }
+.link .rctl, .row:has(.act) .rctl { display: flex; justify-content: flex-end; }
 .rctl .tog { white-space: normal; line-height: 1.1; }
 .row.ready .check { background: rgb(var(--gold)); border-color: rgb(255, 222, 150); color: #3a2a08; box-shadow: 0 0 18px rgba(var(--gold), 0.55); }   /* gold: you did it */
 .row.flash { animation: goldsweep .9s ease; }
 @keyframes goldsweep { 0% { box-shadow: 0 0 0 0 rgba(var(--gold), 0); } 35% { box-shadow: 0 0 24px 2px rgba(var(--gold), 0.45); } 100% { box-shadow: 0 0 0 0 rgba(var(--gold), 0); } }
-.link .rctl, .act { margin-top: 0; } .link .rhead, .link .rdesc { margin-right: 54px; } .link .rctl { margin-top: -36px; }   /* › sits beside the name and its line */
+.link .rctl, .act { margin-top: 0; } .link .rhead, .link .rdesc, .row:has(.act) .rhead, .row:has(.act) .rdesc { margin-right: 54px; } .link .rctl, .row:has(.act) .rctl { margin-top: -36px; }   /* › sits beside the name and its line */
 #sheetHelp { margin-left: auto; }   /* with no title, ? and ✕ keep to the right */
 .cnt { display: block; text-align: center; font-style: normal; font-size: 11px; color: var(--ink-faint); min-height: 1.2em; }
 .tog.sel { border-color: rgba(var(--on), 0.85); box-shadow: inset 0 0 0 1px rgba(var(--on), 0.6), inset 0 0 12px rgba(var(--on), 0.18); }   /* chosen: green */
 .choice { display: flex; gap: 6px; } .choice > .tog { flex: 1 1 0; min-width: 0; white-space: normal; line-height: 1.15; padding: 0 6px; }   /* two to four, all in view */
-.leave .rctl > .choice { flex: 1 1 0; } .leave .choice > .tog { padding: 0 3px; font-size: 13px; white-space: nowrap; } .leave .picker { margin-top: 6px; }
+.leave .choice > .tog { padding: 0 3px; font-size: 13px; white-space: nowrap; } .leave .picker { margin-top: 6px; }
 .tog.step { width: 44px; min-height: 40px; font-size: 24px; padding: 0; line-height: 1; }
 .onoff { display: flex; gap: 4px; } .onoff > .tog { flex: 0 0 50px; width: 50px; min-width: 0; padding: 0 4px; }
 /* The switch, as phones have it: right and green is on, left and plain is off. The knob moves with the breath's easing. */
@@ -2928,8 +2932,8 @@ const ITEMS = {
   'leave.ch': wheel('Hour', [...Array(12).keys()].map(n => `${n + 1}:${n + 1}`).join('|')), 'leave.cm': wheel('Minute', [...Array(60).keys()].map(n => `${n}:${String(n).padStart(2, '0')}`).join('|')), 'leave.ap': wheel('', 'am:AM|pm:PM'),   // a time, as a phone sets an alarm
   weather: wheel('Clouds', 'changing:Changing|clear:Clear|clouds:Some|rain:Overcast|storm:Dark|clearing:Clearing', { off: indoor, keys: ['weatherFlow', 'wx'] }),   // the sky's look; the weather itself is the Weather card
   'atmo.bolt.lv': slider('Lightning', { min: 0.05, name: pct }), 'atmo.wind.lv': slider('Wind', { min: 0.05, name: pct }), 'atmo.rain.lv': slider('Rain', { min: 0.05, name: pct }),
-  'atmo.time.lv': slider('Time', { max: 0.999, name: (v) => clockWords(todMinutes(4 * v)), off: () => !PREFS.atmo.time.on }),
-  'atmo.bolt.on': onoff(), 'atmo.wind.on': onoff(), 'atmo.rain.on': onoff(), 'atmo.time.on': onoff({ words: ['Live', 'Hold'] }),
+  'atmo.time.lv': slider('Time', { max: 0.999, name: (v) => (PREFS.atmo.time.on ? clockWords(todMinutes(4 * v)) : 'Live'), off: () => !PREFS.atmo.time.on }),   // held: the hour; off: Live
+  'atmo.bolt.on': onoff(), 'atmo.wind.on': onoff(), 'atmo.rain.on': onoff(), 'atmo.time.on': onoff(),   // Hold: on holds the hour
   windAim: onoff(), windFall: onoff(), windStack: onoff(),
   bpm: slider('Pace', { min: 4, max: 8, name: (v) => `${(+v).toFixed(1)} a minute` }),
   breathing: onoff(), breathStrength: slider('Breathing', { min: 0.05, name: pct, off: () => !PREFS.breathing }),
@@ -2987,7 +2991,7 @@ const WX_ROWS = () => [
     row('Lightning', ['atmo.bolt.on', 'atmo.bolt.lv'], 'Strikes now and then; how much is how often.', 'Lightning flashes over the game, and a little after each flash, thunder. How much sets how often it strikes. Flash, in Accessibility settings, sets how bright; Thunder, in Sound settings, how loud.'),
     row('Wind', ['atmo.wind.on', 'atmo.wind.lv'], 'Blows across the game, and can move the spheres.', 'The wind swings round, picks up and eases on its own; how much is how strong it blows. Whether it touches the spheres is set in Sky settings: Sway, Carry and Nudge.'),
     row(here().snow ? 'Snow' : 'Rain', ['atmo.rain.on', 'atmo.rain.lv'], 'Falls over the game; the sound comes with it.', 'Rain falls over the game, with its sound; how much is how hard it falls. In winter places it snows instead.'),
-    row('Time', ['atmo.time.on', 'atmo.time.lv'], 'Live follows your clock. Hold keeps the hour you set.', 'Live: the sky follows the time where you are, dawn to night. Hold: the sky stays at the hour on the slider, whatever the time is.')];
+    row('Time', ['atmo.time.on', 'atmo.time.lv'], 'Hold keeps the hour you set; off follows your clock.', 'Off, the sky follows the time where you are, dawn to night. On, it holds at the hour on the slider, whatever the time is.')];
 Object.assign(SHEETS, {
   sky: { title: 'Sky settings', note: 'How the sky looks. <a data-act="wxribbon">Go to weather settings</a>', items: [
     row('Clouds', 'weather', 'How much cloud is in the sky.', 'Clear to dark, or Changing, which lets the sky move on by itself. Clouds change only how the sky looks; rain and wind are in weather settings.'),
@@ -3057,9 +3061,9 @@ function itemEl(key) {
   if (it.off) el.dataset.off = key;
   switch (it.type) {
     case 'row': {   // name and Learn more; one line on what it does; then Off | On, its control, and ✓, on one line
-      const id = rowId(it);
+      const id = rowId(it), val = it.main.find(k => ITEMS[k] && ITEMS[k].type === 'range');
       el.className = 'item row'; el.dataset.row = id; el.dataset.name = it.name;
-      if (it.compact) { el.classList.add('compact'); el.innerHTML = `<span class="rname">${it.name}</span><div class="rctl"></div>`; }   // over the tools: the name and the controls, one line
+      if (it.compact) { el.classList.add('compact'); el.innerHTML = `<span class="sval"${val ? ` data-val="${val}"` : ''}></span><div class="rctl"></div>`; }   // over the tools: the value, then the controls; the open tile says which
       else el.innerHTML = `<div class="rhead"><span class="rname">${it.name}</span>${it.more ? `<button class="learn" data-more="${id}">Learn more</button>` : ''}</div><i class="rdesc" data-desc="${id}">${text(it.desc)}</i><div class="rctl"></div>`;
       const c = el.lastElementChild; fillItems(c, it.main);
       if (!it.noCheck) c.insertAdjacentHTML('beforeend', checkGo(id));
