@@ -184,8 +184,6 @@ body.lamp { --glint: rgba(255, 236, 196, 0.95); --glint-soft: rgba(255, 205, 130
 .rctl { display: flex; justify-content: flex-end; align-items: center; gap: 6px; min-width: 0; margin-top: 4px; }
 .rctl > .item { flex: 0 0 auto; min-width: 0; } .rctl > .range { flex: 1 1 0; } .rctl > .choice { flex: 1 1 0; } .rctl > .item:has(.wbox) { flex: 1 1 0; }
 .rctl .tog { white-space: normal; line-height: 1.1; }
-.rctl .ready { display: none; font-style: normal; font-size: 11px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: rgb(var(--gold)); }
-.row.ready .ready { display: block; animation: fade .4s ease; }
 .row.ready .check { background: rgb(var(--gold)); border-color: rgb(255, 222, 150); color: #3a2a08; box-shadow: 0 0 18px rgba(var(--gold), 0.55); }   /* gold: you did it */
 .row.flash { animation: goldsweep .9s ease; }
 @keyframes goldsweep { 0% { box-shadow: 0 0 0 0 rgba(var(--gold), 0); } 35% { box-shadow: 0 0 24px 2px rgba(var(--gold), 0.45); } 100% { box-shadow: 0 0 0 0 rgba(var(--gold), 0); } }
@@ -3052,7 +3050,7 @@ function itemEl(key) {
       el.className = 'item row'; el.dataset.row = id; el.dataset.name = it.name;
       el.innerHTML = `<div class="rhead"><span class="rname">${it.name}</span>${it.more ? `<button class="learn" data-more="${id}">Learn more</button>` : ''}</div><i class="rdesc" data-desc="${id}">${text(it.desc)}</i><div class="rctl"></div>`;
       const c = el.lastElementChild; fillItems(c, it.main);
-      if (!it.noCheck) c.insertAdjacentHTML('beforeend', `<em class="ready">Ready</em><button class="check" data-ready="${id}" aria-label="Ready">✓</button>`);
+      if (!it.noCheck) c.insertAdjacentHTML('beforeend', `<button class="check" data-ready="${id}" aria-label="Ready">✓</button>`);
       break; }
     case 'link': el.className = 'item row link'; el.dataset.name = it.name; el.innerHTML = `<div class="rhead"><span class="rname">${it.name}</span></div><i class="rdesc">${text(it.desc)}</i><div class="rctl"><button class="tog step" data-sheet="${it.sheet}"${it.root ? ' data-root' : ''} aria-label="Open ${it.name}">›</button></div>`; break;
     case 'wheel': { const o = optsOf(it);
@@ -3069,7 +3067,7 @@ function itemEl(key) {
     case 'leave': {   // when you leave: a timer (hours, min), a time (hour, minute, AM/PM), or I'll decide
       const h = PREFS.leave.how;
       el.className = 'item row leave'; el.dataset.row = 'leave'; el.dataset.name = 'When you leave';
-      el.innerHTML = `<div class="rhead"><span class="rname">When you leave</span><button class="learn" data-more="leave">Learn more</button></div><i class="rdesc" id="leaveWords"></i><div class="rctl"><div class="choice">${[['timer', 'A timer'], ['clock', 'A time'], ['decide', 'I’ll decide']].map(([k, l]) => `<button class="tog${h === k ? ' sel' : ''}" data-how="${k}">${l}</button>`).join('')}</div><em class="ready">Ready</em><button class="check" data-ready="leave" aria-label="Ready">✓</button></div>`;
+      el.innerHTML = `<div class="rhead"><span class="rname">When you leave</span><button class="learn" data-more="leave">Learn more</button></div><i class="rdesc" id="leaveWords"></i><div class="rctl"><div class="choice">${[['timer', 'A timer'], ['clock', 'A time'], ['decide', 'I’ll decide']].map(([k, l]) => `<button class="tog${h === k ? ' sel' : ''}" data-how="${k}">${l}</button>`).join('')}</div><button class="check" data-ready="leave" aria-label="Ready">✓</button></div>`;
       const picks = { timer: [['leave.h', 'hours'], ['leave.m', 'min']], clock: [['leave.ch', ''], ['leave.cm', ''], ['leave.ap', '']] }[h];
       if (picks) el.appendChild(pickerEl(picks));
       break; }
