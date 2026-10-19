@@ -141,18 +141,26 @@ body.lamp { --glint: rgba(255, 236, 196, 0.95); --glint-soft: rgba(255, 205, 130
 .strip .row { width: 100%; padding: 0; border: 0; } .strip .rctl { margin-top: 0; }
 /* The score row: between the top bar and the pool. The score, big; pause and mute; and Hide, which leaves a small arrow to bring it back. */
 .scorerow { transition: opacity .5s; flex: none; height: 30px; display: flex; align-items: center; justify-content: space-between; padding: 0 6px 0 10px; gap: 8px; }
-.sr-score { position: relative; flex: 0 1 150px; min-width: 96px; height: 30px; padding: 0; background: none; border: 0; color: inherit; cursor: pointer; } .sr-score canvas { display: block; width: 100%; height: 100%; pointer-events: none; }
+.sr-score { display: flex; flex: 0 1 auto; height: 30px; min-width: 0; }   /* the Stats tile and the counter: one piece, one shared edge */
+.sr-tile { display: inline-flex; align-items: center; gap: 4px; height: 30px; padding: 0 8px; border-radius: 10px 0 0 10px; border: 1px solid var(--chip-line); border-right: 0; background: rgba(0, 0, 0, 0.22); color: var(--ink); font: inherit; font-size: 11px; font-weight: 600; cursor: pointer; white-space: nowrap; }
+.sr-stats { flex: none; margin-left: 8px; padding: 4px 12px; border-radius: 999px; border: 1px solid var(--chip-line); background: none; color: var(--ink); font: inherit; font-size: 13px; font-style: italic; cursor: pointer; transition: border-color 1.2s ease, box-shadow 1.2s ease; position: relative; }   /* the Weather Settings style: blue while waiting, then plain */
+.sr-stats.hint { border-color: rgba(var(--off), 0.9); box-shadow: 0 0 0 1px rgba(var(--off), 0.6), 0 0 12px rgba(var(--off), 0.25); }
+.sr-stats::after { content: ''; position: absolute; left: 50%; top: 50%; width: max(100%, 44px); height: max(100%, 44px); transform: translate(-50%, -50%); }
+.sr-count { position: relative; width: clamp(92px, 28vw, 112px); height: 30px; padding: 0; background: none; border: 0; color: inherit; cursor: pointer; } .sr-count canvas { display: block; width: 100%; height: 100%; pointer-events: none; }
+@media (max-width: 400px) { .scorerow { gap: 4px; padding-left: 6px; } .sr-tile { padding: 0 6px; } .sr-stats { margin-left: 4px; padding: 3px 9px; font-size: 12px; } [data-cell=volume] .sub { display: none; } .sr-btn { padding: 0 6px; min-width: 30px; } .sr-ctl { gap: 3px; } .sr-count { flex: none; width: clamp(76px, 25vw, 92px); } .sr-score { flex: none; } }   /* phones narrower than a Pro Max: the row stays on one line (the speaker's words wait in Sound) */
+@media (max-width: 340px) { .sr-tile { padding: 0 5px; font-size: 10.5px; } .sr-stats { padding: 2px 7px; font-size: 11px; } .sr-count { width: 70px; } .sr-ctl .hide-link { padding: 4px 3px; } .sr-btn { min-width: 28px; padding: 0 5px; } }
+.scorerow.nonum .sr-count { display: none; } .scorerow.nonum .sr-tile { border-right: 1px solid var(--chip-line); border-radius: 10px; }
 .sr-ctl { display: flex; align-items: center; gap: 6px; }
 .sr-btn { display: inline-flex; align-items: center; justify-content: center; gap: 4px; height: 28px; min-width: 34px; padding: 0 8px; border-radius: 14px; border: 1px solid var(--chip-line); background: rgba(0, 0, 0, 0.22); color: var(--ink); font: inherit; font-size: 10.5px; font-weight: 600; cursor: pointer; }
 .sr-btn svg { width: 16px; height: 16px; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
 .sr-btn.on { border-color: rgba(var(--on), 0.85); box-shadow: inset 0 0 0 1px rgba(var(--on), 0.6), inset 0 0 10px rgba(var(--on), 0.18); }
 /* Every small control reaches at least 44 × 44 for a finger, however small it looks: an invisible pad around it */
-.sr-btn, .learn, .hide-link, .sr-show, .wx-show, .rhead .sample-pill { position: relative; }
-.sr-btn::after, .learn::after, .hide-link::after, .sr-show::after, .wx-show::after, .rhead .sample-pill::after { content: ''; position: absolute; left: 50%; top: 50%; width: max(100%, 44px); height: max(100%, 44px); transform: translate(-50%, -50%); }
+.sr-btn, .sr-tile, .learn, .hide-link, .sr-show, .wx-show, .rhead .sample-pill, .rplus { position: relative; }
+.sr-btn::after, .sr-tile::after, .learn::after, .hide-link::after, .sr-show::after, .wx-show::after, .rhead .sample-pill::after, .rplus::after { content: ''; position: absolute; left: 50%; top: 50%; width: max(100%, 44px); height: max(100%, 44px); transform: translate(-50%, -50%); }
 .hide-link, .sr-show, .wx-show { background: none; border: 0; padding: 4px 6px; color: var(--ink-dim); font: inherit; font-size: 12px; font-weight: 500; cursor: pointer; } .hide-link { text-decoration: underline; text-underline-offset: 2px; }
 .sr-show, .wx-show { font-size: 15px; margin-left: auto; }
-.scorerow.nogame .sr-score, .scorerow.nogame [data-act=pause] { visibility: hidden; }
-.scorerow.hidden .sr-score, .scorerow.hidden .sr-ctl { display: none; } .scorerow:not(.hidden) .sr-show { display: none; }
+.scorerow.nogame .sr-score, .scorerow.nogame .sr-stats, .scorerow.nogame [data-act=pause] { visibility: hidden; }
+.scorerow.hidden .sr-score, .scorerow.hidden .sr-stats, .scorerow.hidden .sr-ctl { display: none; } .scorerow:not(.hidden) .sr-show { display: none; }
 /* Weather Settings, folded: just the words, no box round them. Blue for five seconds (the next touch), then plain; green as it opens. */
 .bar.plain { background: none; border-color: transparent; box-shadow: none; }
 .bar.plain .hide-link { align-self: center; justify-self: end; }
@@ -207,6 +215,17 @@ body.lamp { --glint: rgba(255, 236, 196, 0.95); --glint-soft: rgba(255, 205, 130
 .row { display: flex; flex-direction: column; gap: 4px; padding: 8px 10px 10px; border-radius: 14px; border: 1px solid transparent; transition: border-color .25s, box-shadow .25s; }
 .rhead { display: flex; justify-content: space-between; align-items: baseline; gap: 10px; }
 .rname { font-size: 14px; font-weight: 600; line-height: 1.2; min-width: 0; }
+.rhead { flex-wrap: wrap; row-gap: 2px; }
+.rhead .rset, .rhead .rplus { display: none; }
+.rhead .rfold { flex: none; background: none; border: 0; padding: 0; color: var(--ink-dim); font: inherit; font-size: 12px; font-weight: 500; text-decoration: underline; text-underline-offset: 2px; cursor: pointer; position: relative; }
+.rhead .rfold::after { content: ''; position: absolute; left: 50%; top: 50%; width: max(100%, 44px); height: max(100%, 44px); transform: translate(-50%, -50%); }
+@media (max-width: 360px) { .item.row:not(.folded) .rhead { gap: 6px; } .rhead .sample-pill { margin-right: 2px; padding: 1px 4px; font-size: 11px; } .rhead .learn, .rhead .rfold { font-size: 11px; } }   /* small phones: name, sample, Learn more and Hide still share a line */
+.item.row.folded > :not(.rhead) { display: none; }   /* folded: the name, and a + (the card keeps its size) */
+.item.row.folded .rhead { flex-wrap: nowrap; } .item.row.folded .rhead .learn, .item.row.folded .rhead .sample-pill, .item.row.folded .rhead .rfold { display: none; }
+.item.row.folded .rhead .rname { margin-right: auto; }
+.item.row.folded .rhead .rplus { display: inline-flex; align-items: center; justify-content: center; flex: none; width: 34px; height: 28px; padding: 0; border-radius: 14px; border: 1px solid var(--chip-line); background: rgba(0, 0, 0, 0.22); color: var(--ink); font: inherit; font-size: 18px; line-height: 1; cursor: pointer; }
+.item.row.isset .rhead .rset { display: inline-flex; flex: none; padding: 1px 12px; border-radius: 999px; background: rgb(var(--gold)); color: #1a1405; font-size: 11.5px; font-weight: 700; }   /* Set: gold fill, the same on every row */
+.item.row.folded:not(.isset) .rname { padding: 3px 14px; border-radius: 999px; border: 1px solid rgba(var(--off), 0.9); box-shadow: 0 0 0 1px rgba(var(--off), 0.5); }   /* blue: ready, not set yet */
 .learn { flex: none; background: none; border: 0; padding: 0; color: var(--ink-dim); font: inherit; font-size: 12px; font-weight: 500; text-decoration: underline; text-underline-offset: 2px; cursor: pointer; }   /* Learn more: plain, underlined */
 .rdesc { display: block; font-style: italic; font-size: 12.5px; line-height: 1.3; color: var(--ink-dim); }   /* one line where it fits; on a small phone it wraps rather than lose words */
 /* Fixed columns, in every row, every card and the strip: what turns it on (a switch) · how much · ✓ · ▶. A switch is always in the
@@ -993,6 +1012,7 @@ class SoundBath {
   // Settle. A tap: one note of the breath tone's chord, higher up the screen the higher the note, panned to where it fell.
   note(x, y) { if (this.live) this.tone(this.out('notes', panFor(x)), [261.63, 329.63, 392.0, 523.25][clamp(Math.floor((1 - y / LH) * 4), 0, 3)], 'sine', 0.06, 0.02, 1.8, this.ctx.currentTime).connect(this.echo); }
   bead(pan, glass) { if (!this.live) return; if (glass) this.clink(1046.5, pan, 0.03); else this.knock(pan, true); }   // a bead arriving: a soft click of wood, or of glass in Heritage
+  tock() { if (this.live) this.tone(this.out('notes', 0), 180, 'sine', 0.014, 0.006, 0.09, this.ctx.currentTime); }   // a drum turns: low, round, soft, no edge
   tick(pan) { if (this.live) this.tone(this.out('notes', pan), 520, 'sine', 0.012, 0.004, 0.12, this.ctx.currentTime); }   // a tap off the beat: answered, never scolded
   crackle(n, bus = 'weather') { for (let i = 0; i < n; i++) setTimeout(() => this.noise1({ bus, type: 'bandpass', f0: 1500 + Math.random() * 2500, f1: 900, q: 2, peak: 0.02 + Math.random() * 0.03, attack: 0.003, dur: 0.04 + Math.random() * 0.06, pan: (Math.random() - 0.5) * 0.6 }), i * (40 + Math.random() * 90)); }
   crack(peak) {   // a close strike: a sharp tearing crack and a deep boom under it
@@ -1362,23 +1382,41 @@ function nextShine() {
 const ODO = { pos: [], t: 0 };
 const SG = { t0: -1e9, gold: false };
 function scoreGlow() { const x = (performance.now() - SG.t0) / 1000; return { a: x < 0 || x > 3 ? 0 : x < 0.15 ? x / 0.15 : Math.exp(-(x - 0.15) / 0.55), gold: SG.gold }; }
-function odometer(c, w, y, glow = { a: 0 }, size = 20) {
-  const now = performance.now(), dt = Math.min(0.1, (now - (ODO.t || now)) / 1000), want = String(Math.max(0, Math.floor(S.score))).split('').reverse().map(Number);
-  ODO.t = now; ODO.pos = want.map((d, i) => { const p = ODO.pos[i] || 0, gap = (d - p + 10) % 10; return gap < 0.01 ? d : (p + gap * Math.min(1, dt * 9)) % 10; });
-  const n = want.length, commas = Math.floor((n - 1) / 3);
-  c.font = `500 ${size}px ${FONT.serif}`;
-  const fs = Math.min(size, size * (w - 10) / (n * c.measureText('0').width + commas * c.measureText(',').width));
-  c.font = `500 ${fs.toFixed(1)}px ${FONT.serif}`; c.textAlign = 'center'; c.textBaseline = 'middle'; c.fillStyle = `rgb(${INK})`;
+const DRUMS = 6, ODO_MAX = 10 ** DRUMS - 1;
+// Six drums with their leading zeros: the ones drum is black with a white digit, the rest white with black. A drum turns only
+// when its digit does; with Reduce motion on, it just shows the new digit. Each turn is a soft tock, never more than ten a second.
+function odometer(c, W, H, glow = { a: 0 }) {
+  const now = performance.now(), dt = Math.min(0.1, (now - (ODO.t || now)) / 1000), first = !ODO.t, n = Math.min(ODO_MAX, Math.max(0, Math.floor(S.score)));
+  const want = String(n).padStart(DRUMS, '0').split('').reverse().map(Number);
+  ODO.t = now; let turned = false;
+  ODO.pos = want.map((d, k) => { const p = ODO.pos[k] === undefined ? d : ODO.pos[k], gap = (d - p + 10) % 10; if (lessMo() || first || gap < 0.01) return d; turned = turned || Math.floor(p + gap * Math.min(1, dt * 9)) !== Math.floor(p); return (p + gap * Math.min(1, dt * 9)) % 10; });
+  if (turned && !PREFS.hideNumbers && now - (ODO.tock || 0) > 100) { ODO.tock = now; sound.tock(); }
+  // An old mechanical counter: a dark metal frame under glass; aged drums, rounded like cylinders, with the next and last digits
+  // just showing at their edges; ridged dividers between the drums; the ones drum black.
+  const r = 9, dw = (W - 4) / DRUMS, top = 2, h = H - 4, fs = Math.min(h * 0.66, dw * 1.2), lh = h * 0.64, ink = '#15110c', paper = '#e9e1cd';
+  c.save();
+  const body = new Path2D(); body.moveTo(0, 0.5); body.lineTo(W - r, 0.5); body.arcTo(W - 0.5, 0.5, W - 0.5, r, r); body.lineTo(W - 0.5, H - r); body.arcTo(W - 0.5, H - 0.5, W - r, H - 0.5, r); body.lineTo(0, H - 0.5); body.closePath();
   if (glow.a > 0.01) { c.shadowColor = `rgba(${glow.gold ? GOLD : '255,255,255'},${(0.9 * glow.a).toFixed(3)})`; c.shadowBlur = 10 * glow.a; }
-  const cw = c.measureText('0').width, kw = c.measureText(',').width, lh = fs * 1.2;
-  let x = w / 2 - (n * cw + commas * kw) / 2;
-  for (let i = n - 1; i >= 0; i--) {   // most significant first
-    const p = ODO.pos[i], d = Math.floor(p), f = p - d;
-    c.fillText(d % 10, x + cw / 2, y - f * lh); if (f > 0.001) c.fillText((d + 1) % 10, x + cw / 2, y + (1 - f) * lh);
-    x += cw;
-    if (i && i % 3 === 0) { c.fillText(',', x + kw / 2, y); x += kw; }
+  const fr = c.createLinearGradient(0, 0, 0, H); fr.addColorStop(0, '#4a4640'); fr.addColorStop(0.5, '#1d1b18'); fr.addColorStop(1, '#2d2a26');   // the worn metal frame
+  c.fillStyle = fr; c.fill(body); c.shadowBlur = 0; c.clip(body);
+  c.font = `700 ${fs.toFixed(1)}px ${FONT.sans}`; c.textAlign = 'center'; c.textBaseline = 'middle';
+  c.fillStyle = '#050403'; c.fillRect(2, top, W - 3, h);   // the well the drums sit in
+  for (let k = DRUMS - 1; k >= 0; k--) {   // most significant first
+    const x = 2 + (DRUMS - 1 - k) * dw, ones = k === 0, p = ODO.pos[k], d = Math.floor(p), f = p - d, cx = x + dw / 2, cy = top + h / 2 + 1;
+    c.save(); c.beginPath(); c.rect(x + 1, top, dw - 1.5, h); c.clip();
+    c.fillStyle = ones ? '#0c0a08' : paper; c.fillRect(x, top, dw, h);
+    if (!ones) { const age = c.createLinearGradient(x, 0, x + dw, 0); age.addColorStop(0, 'rgba(120,90,40,0.18)'); age.addColorStop(0.5, 'rgba(255,255,255,0.10)'); age.addColorStop(1, 'rgba(120,90,40,0.18)'); c.fillStyle = age; c.fillRect(x, top, dw, h); }   // paper that has yellowed at its edges
+    c.fillStyle = ones ? '#efe8d6' : ink;
+    for (const o of [-1, 0, 1]) { const y = cy + (o - f) * lh; if (y > top - lh && y < top + h + lh) c.fillText(((d + o) % 10 + 10) % 10, cx, y); }   // the digit and its neighbours, rolled
+    const cyl = c.createLinearGradient(0, top, 0, top + h); cyl.addColorStop(0, 'rgba(0,0,0,0.72)'); cyl.addColorStop(0.22, 'rgba(0,0,0,0.16)'); cyl.addColorStop(0.45, 'rgba(255,255,255,0.06)'); cyl.addColorStop(0.55, 'rgba(0,0,0,0)'); cyl.addColorStop(0.8, 'rgba(0,0,0,0.2)'); cyl.addColorStop(1, 'rgba(0,0,0,0.78)');   // a cylinder: dark at the turn, a soft highlight just above the middle
+    c.fillStyle = cyl; c.fillRect(x, top, dw, h);
+    c.restore();
+    c.fillStyle = 'rgba(0,0,0,0.85)'; c.fillRect(x, top, 1, h);   // the divider, with a ridged tooth
+    c.fillStyle = 'rgba(255,255,255,0.10)'; for (let ty = top + 2; ty < top + h - 1; ty += 3) c.fillRect(x + dw - 1, ty, 1, 1.5);
   }
-  c.shadowBlur = 0;
+  const gl2 = c.createLinearGradient(0, top, 0, top + h * 0.5); gl2.addColorStop(0, 'rgba(255,255,255,0.20)'); gl2.addColorStop(1, 'rgba(255,255,255,0)'); c.fillStyle = gl2; c.fillRect(2, top, W - 3, h * 0.5);   // glass over it all
+  c.restore();
+  c.strokeStyle = 'rgba(255,255,255,0.22)'; c.lineWidth = 1; c.stroke(body);   // the rim
 }
 
 /* ---------- Effects ---------- */
@@ -3209,7 +3247,7 @@ Object.assign(SHEETS, {
     row('Aim', 'aim', 'A guide line under the waiting sphere.', 'A faint line shows where the waiting sphere will fall. Off, you judge it.'),
     row('Next', 'next', 'Shows the sphere that comes after.', 'With Next on, the sphere after the waiting one is shown beside it. Off, each is a surprise.'),
     row('Numbers', 'hideNumbers', 'The score, and the points each merge shows.', 'Off hides the score, the points and your best. The game is the same; only the counting goes.'),
-    row('Session clock', 'clock', 'How long you have been here, in place of the star.', 'The minutes you have been in this session show under the star in the top bar.')] },
+    row('Session clock', 'clock', 'How long you have been here, in place of the word Score.', 'The minutes you have been in this session show in place of the word Score above the game.')] },
   breath: { title: 'Breathe settings', note: 'In for four, out for six, at your pace.', items: [
     row('Breathing', ['breathing', 'breathStrength'], 'The edge and the spheres breathe with you.', 'With Breathing on, a band of light grows in from the edge as you breathe in and lets go as you breathe out, and the spheres swell a little with it. The slider sets how far they move.'),
     row('Pace', 'bpm', 'Breaths a minute, in and out.', 'Six a minute is in for four seconds, out for six. Slower is calmer; the breath tone and Settle follow the same pace.'),
@@ -3260,6 +3298,9 @@ function shown(key) {
 const isOn = (key) => (key === 'soundscape.on' ? PREFS.soundscape !== 'off' : !!getPref(key) !== !!(ITEMS[key] && ITEMS[key].inv));   // Numbers reads On when they show
 const WX_WORDS = ['clear', 'clouds', 'rain', 'storm', 'clearing'];
 const rowId = (it) => it.main.join('+');
+// A row opens by default. Hide folds it to its name and a +; ✓ then ▶ folds it too, with a gold Set. The card keeps its size.
+const FOLD = {};   // row id → 'set' (finished) or 'hid' (folded unfinished); gone when the row is open
+function foldRow(id) { if (FOLD[id]) delete FOLD[id]; else FOLD[id] = 'hid'; syncRows(); }
 function itemEl(key) {
   const it = ITEMS[key] || key, el = document.createElement('div');
   el.className = 'item';
@@ -3269,7 +3310,7 @@ function itemEl(key) {
       const id = rowId(it), val = it.main.find(k => ITEMS[k] && ITEMS[k].type === 'range');
       el.className = 'item row'; el.dataset.row = id; el.dataset.name = it.name;
       if (it.compact) { el.classList.add('compact'); el.innerHTML = '<div class="rctl"></div>'; }   // over the tools: just the controls; the open tile says which
-      else el.innerHTML = `<div class="rhead"><span class="rname">${it.name}</span>${SAMPLE_OF[id] ? '<button class="sample-pill" data-act="sample">Play sample</button>' : ''}${it.more ? `<button class="learn" data-more="${id}">Learn more</button>` : ''}</div><i class="rdesc" data-desc="${id}">${text(it.desc)}</i><div class="rctl"></div>`;
+      else el.innerHTML = `<div class="rhead"><span class="rname">${it.name}</span>${SAMPLE_OF[id] ? '<button class="sample-pill" data-act="sample">Play sample</button>' : ''}${it.more ? `<button class="learn" data-more="${id}">Learn more</button>` : ''}<button class="hide-link rfold" data-act="fold" data-fold="${id}">Hide</button><span class="rset">Set</span><button class="rplus" data-act="fold" data-fold="${id}" aria-label="Open ${it.name}">+</button></div><i class="rdesc" data-desc="${id}">${text(it.desc)}</i><div class="rctl"></div>`;
       const c = el.lastElementChild; fillItems(c, it.main);
       if (!it.noCheck) c.insertAdjacentHTML('beforeend', `<span class="rval"${val ? ` data-val="${val}"` : ''}></span>` + checkGo(id));   // the value's column, then ✓ and ▶
       break; }
@@ -3343,7 +3384,6 @@ function fillItems(box, items) { for (const k of items) box.appendChild(itemEl(k
 const redraw = (sel, key) => document.querySelectorAll(sel).forEach(e => e.replaceWith(itemEl(key)));   // a control that changes shape is drawn again
 const parseOpt = (v) => (v !== '' && !isNaN(v) ? Number(v) : v);
 function choose(k, v) {
-  if (k === 'game' && v === 'resume') { closeSheet(); S.held = S.pauseBtn = false; return; }   // Resume: one tap, and you're playing
   const it = ITEMS[k]; if (it && it.set) { it.set(v); syncControls(); return; }
   if (k === 'mode') { if (v === 'rest' && S.sheet) PREFS.mode = v; else setMode(v); syncControls(); return; }   // Rest covers the screen, so it waits for Confirm
   if (k === 'leave.how') {
@@ -3426,14 +3466,14 @@ const rowState = (id) => (!PEND.snap ? '' : PEND.ready[id] === rowNow(id) ? 'rea
 // The settings a card (or a weather row, or Rest) can change: only these go back when you leave without saving.
 const keysOf = (items) => items.flatMap(x => (typeof x === 'string' ? (['task', 'leave', 'goalq', 'todo'].includes(x) ? ['leave', 'todo'] : []) : x.type === 'row' ? rowKeys(rowId(x)) : []));
 function remember(keys) {   // the first card takes the snapshot; a card opened from it adds what it can change
-  if (!PEND.snap) { PEND.snap = clone(PREFS); PEND.keys.clear(); PEND.ready = {}; PEND.step = {}; PEND.fair = S.fair; PEND.virt = { game: 'resume' }; S.gameChoice = 'resume'; }
+  if (!PEND.snap) { PEND.snap = clone(PREFS); PEND.keys.clear(); PEND.ready = {}; PEND.step = { game: 'amt' }; PEND.fair = S.fair; PEND.virt = { game: '' }; S.gameChoice = 'resume'; }   // Paused: Resume is chosen and waits for ✓ then ▶, like every row
   for (const k of keys) PEND.keys.add(k);
 }
 function forget() { PEND.snap = null; PEND.keys.clear(); PEND.ready = {}; PEND.step = {}; }   // the snapshot is spent
 const virtual = (k) => !!(ITEMS[k] && ITEMS[k].get);
 function undoKeys(keys) {   // put these settings back as they were when the card opened
   if (!PEND.snap) return;
-  for (const k of keys) { if (virtual(k)) { if (k === 'game') S.gameChoice = PEND.virt.game; } else setPath(PREFS, k, clone(pathGet(PEND.snap, k))); if (k === 'overflow') S.fair = PEND.fair; }
+  for (const k of keys) { if (virtual(k)) { if (k === 'game') S.gameChoice = PEND.virt.game || 'resume'; } else setPath(PREFS, k, clone(pathGet(PEND.snap, k))); if (k === 'overflow') S.fair = PEND.fair; }
 }
 function keep(k) { if (PEND.snap && !virtual(k)) setPath(PEND.snap, k, clone(pathGet(PREFS, k))); savePrefs(); }   // a plain tap (mute): it stays, card or no card
 // Each control in a row goes dim → blue → green, and only one is blue at a time: the next thing to touch. The switch goes green
@@ -3448,18 +3488,20 @@ function readyRow(id) {   // ✓: green with a gold tick, and ▶ lights. ✓ ag
 const setPath = (o, k, v) => { const ps = k.split('.'), last = ps.pop(); ps.reduce((x, p) => x[p], o)[last] = v; };
 function saveRow(id) {   // ▶: this row is kept, there and then, with one sweep of gold
   if (rowState(id) !== 'ready') return;
-  const restart = id === 'game' && S.gameChoice === 'restart';
+  const restart = id === 'game' && S.gameChoice === 'restart', resume = id === 'game' && !restart;
   for (const k of rowKeys(id)) { if (virtual(k)) PEND.virt[k] = ITEMS[k].get(); else setPath(PEND.snap, k, clone(pathGet(PREFS, k))); if (k === 'overflow') PEND.fair = S.fair; }
   if (id.startsWith('todo.')) PREFS.todo.forEach((l, i) => { if (!PEND.snap.todo[i]) PEND.snap.todo[i] = clone(l); });   // a task kept keeps the lines above it: the list is one thing
   delete PEND.ready[id]; savePrefs(); sound.chime(0, here().synth); haptic(15); setStep(id, 'save');
   const strip = S.strip;
-  setTimeout(() => { if (PEND.step[id] === 'save') { delete PEND.step[id]; syncRows(); } if (strip && S.strip === strip && id.startsWith('atmo.')) { closeStrip(false); foldWx(); } }, 250);   // ▶ green for a moment, then the row rests; the strip it came from goes, and only that one
+  setTimeout(() => { if (PEND.step[id] === 'save') { delete PEND.step[id]; if (!resume && !restart && document.querySelector(`[data-row="${id}"] .rhead .rplus`)) FOLD[id] = 'set'; syncRows(); } if (strip && S.strip === strip && id.startsWith('atmo.')) { closeStrip(false); foldWx(); } }, 250);   // ▶ green for a moment, then the row rests; the strip it came from goes, and only that one
   if (restart) { doRestart(); return; }
+  if (resume) setTimeout(() => { if (S.sheet === 'pause') { closeSheet(); S.held = S.pauseBtn = false; } }, 250);   // ▶: the game goes on
   if (id === 'mode') { if (PREFS.mode !== S.mode) setMode(PREFS.mode); setTimeout(() => { if (S.sheet === 'mode') closeSheet(); }, 250); }   // Go: into the mode
 }
 function syncRows() {   // paint each control of each row by where the row is: plain at rest, blue for the next touch, green once done
   document.querySelectorAll('[data-row]').forEach(el => {
-    const id = el.dataset.row, step = stepOf(id), done = ['sw', 'amt', 'tick', 'save'].indexOf(step);
+    const id = el.dataset.row; el.classList.toggle('folded', !!FOLD[id]); el.classList.toggle('isset', FOLD[id] === 'set');
+    const step = stepOf(id), done = ['sw', 'amt', 'tick', 'save'].indexOf(step);
     const sw = el.querySelector('.switch'), amt = [...el.querySelectorAll('.rctl > .item:not(.sw), .text-input, .chip, .picker')], ck = el.querySelector('.check'), sv = el.querySelector('.save');
     const paint = (n, k) => { if (n) { n.classList.remove('c-blue', 'c-green'); if (k) n.classList.add('c-' + k); } };
     paint(sw, done >= 0 ? 'green' : '');
@@ -3624,13 +3666,14 @@ function sizeCanvas(cv) { const dpr = Math.min(3, window.devicePixelRatio || 1),
 // The score row: built once; its words and states follow the game.
 function syncRow() {
   const r = $('scoreRow'); if (!r) return;
-  if (!r.firstElementChild) r.innerHTML = `<button class="sr-score" data-cell="score" aria-label="Score"><canvas></canvas></button><div class="sr-ctl"><button class="sr-btn" data-act="pause" aria-label="Pause"></button><button class="sr-btn" data-cell="volume" data-mute aria-label="Mute">${VOL}<span class="sub"></span></button><button class="hide-link" data-act="hidesr">Hide</button></div><button class="sr-show" data-act="showsr" aria-label="Show score, pause and mute">▾</button>`;
+  if (!r.firstElementChild) r.innerHTML = `<div class="sr-score"><button class="sr-tile" data-cell="score" aria-label="Score"><span class="sr-word">Score</span></button><button class="sr-count" data-cell="score" aria-label="Score"><canvas></canvas></button></div><button class="sr-stats hint" data-cell="score" aria-label="Stats">Stats</button><div class="sr-ctl"><button class="sr-btn" data-act="pause" aria-label="Pause"></button><button class="sr-btn" data-cell="volume" data-mute aria-label="Mute">${VOL}<span class="sub"></span></button><button class="hide-link" data-act="hidesr">Hide</button></div><button class="sr-show" data-act="showsr" aria-label="Show score, pause and mute">▾</button>`;
+  if (!r._hint) { r._hint = setTimeout(() => { const sp = r.querySelector('.sr-stats'); if (sp) sp.classList.remove('hint'); }, 5000); }   // Stats waits, blue, for five seconds, then goes plain
   r.classList.toggle('hidden', !!PREFS.hideRow); r.classList.toggle('nogame', !has('spheres'));
   const vt = PREFS.sound ? `${Math.round(PREFS.vol.master * 100)}%` : canVibrate && PREFS.haptics ? 'Vibrate' : 'Silent', sub = r.querySelector('.sub'); if (sub.textContent !== vt) sub.textContent = vt;
   const pb = r.querySelector('[data-act=pause]'), paused = !!S.held && !!S.pauseBtn; pb.classList.toggle('on', paused); const want = paused ? 'play' : 'still'; if (pb.dataset.k !== want) { pb.dataset.k = want; pb.innerHTML = svg(paused ? ICON.play : ICON.still); pb.setAttribute('aria-label', paused ? 'Resume' : 'Pause'); }
-  r.querySelector('[data-cell=volume]').classList.toggle('on', PREFS.sound); const cv = r.querySelector('canvas'); if (cv && !PREFS.hideRow && !(cv._w > 100)) sizeCanvas(cv);
+  r.querySelector('[data-cell=volume]').classList.toggle('on', PREFS.sound); const cv = r.querySelector('canvas'); if (cv && !PREFS.hideRow && !cv._w) sizeCanvas(cv);
+  const nn = !!PREFS.hideNumbers; if (r.classList.contains('nonum') !== nn) { r.classList.toggle('nonum', nn); const c2 = r.querySelector('canvas'); if (c2) c2._w = 0; }   // numbers back: the drums are measured again
 }
-let STAR_PATH = null;
 function tickBars() {
   const top = $('topBar'), br = top.querySelector('[data-cell=breathe]');
   if (br) {
@@ -3645,12 +3688,10 @@ function tickBars() {
   top.querySelector('[data-cell=breathe]').classList.toggle('on', PREFS.breathing || S.mode === 'settle');
   const cv = $('scoreRow').querySelector('canvas');
   if (cv && cv._w && !PREFS.hideRow) {
-    const c = cv.getContext('2d'), d = cv.width / cv._w, gl = scoreGlow(), W = cv._w, H = cv._h, mins = PREFS.clock ? `${Math.floor((performance.now() - S.born) / 60000)} min` : '';
+    const c = cv.getContext('2d'), d = cv.width / cv._w, gl = scoreGlow(), W = cv._w, H = cv._h, wd = $('scoreRow').querySelector('.sr-word'), word = PREFS.clock ? `${Math.floor((performance.now() - S.born) / 60000)} min` : 'Score';
+    if (wd && wd.textContent !== word) wd.textContent = word;   // with the session clock on, the minutes take the word's place
     c.setTransform(d, 0, 0, d, 0, 0); c.clearRect(0, 0, W, H);
-    if (gl.a > 0.01 && !PREFS.hideNumbers) { const rgb = gl.gold ? GOLD : LIGHT, gr = c.createRadialGradient(W / 2, H / 2, 2, W / 2, H / 2, W * 0.5); gr.addColorStop(0, `rgba(${rgb},${(0.4 * gl.a).toFixed(3)})`); gr.addColorStop(1, `rgba(${rgb},0)`); c.fillStyle = gr; c.fillRect(0, 0, W, H); }
-    if (mins) { c.font = `600 11px ${FONT.sans}`; c.textAlign = 'left'; c.textBaseline = 'middle'; c.fillStyle = `rgb(${INK})`; c.fillText(mins, 4, H / 2); }
-    else { STAR_PATH = STAR_PATH || new Path2D(ICON.star); c.save(); c.translate(4, H / 2 - 11); c.scale(22 / 24, 22 / 24); c.strokeStyle = `rgb(${INK})`; c.lineWidth = 1.8 * 24 / 22; c.lineJoin = 'round'; c.stroke(STAR_PATH); c.restore(); }
-    if (!PREFS.hideNumbers) { c.save(); c.translate(34, 0); odometer(c, W - 38, H / 2 + 1, gl, 24); c.restore(); }   // the rolling digits, big, beside the star
+    if (!PREFS.hideNumbers) odometer(c, W, H, gl);   // six drums, joined to the Stats tile
   }
   skyCells();
 }
@@ -3684,6 +3725,7 @@ function openSheet(name, push = false, back = false) {
   if (name === 'pause') S.held = true;   // the game waits for a tap when you come back to it
   if (name === 'checkin' && PREFS.leave.how === 'clock' && !(S.goal && S.goal.phase === 'play')) freshClock();
   if (name === 'checkin' && !back) { const live = S.goal && S.goal.phase === 'play'; S.plan = live ? { task: true, how: PREFS.leave.how, goal: !!PREFS.todo[0].on } : { task: null, how: null, goal: null }; $('sheetDone').classList.remove('c-green'); delete $('sheetDone').dataset.go; }   // coming back from Help keeps your answers; a timer already running shows its answers; a fresh one asks again
+  if (!back) for (const k in FOLD) delete FOLD[k];   // a card opens with every row open
   closeStrip(true); S.sheet = name; S.aiming = false; S.due = -1; remember(keysOf(itemsOf(def)));
   $('sheetTitle').textContent = def.title; $('sheetTitle').hidden = !def.title; const note = typeof def.note === 'function' ? def.note() : def.note; $('sheetNote').innerHTML = note || ''; $('sheetNote').hidden = !note;
   $('sheetHelp').hidden = name === 'help'; $('sheetDone').hidden = !def.onDone; $('sheetFoot').hidden = !def.onDone; $('morePop').hidden = true;   // the foot only when a card has something to start or play
@@ -3773,6 +3815,7 @@ function bind() {
   const ACTS = { still: () => setStill(!S.still),
     wxopen: (el) => { const p = el.querySelector('.pill'); if (p) { p.classList.remove('hint'); p.classList.add('pgo'); } setTimeout(() => { S.wxOpen = true; syncBars(); }, 160); },   // green at once, then the ribbon
     pin: () => { PREFS.wxPin = !PREFS.wxPin; savePrefs(); if (!PREFS.wxPin) { if (S.strip) closeStrip(true); foldWx(); } syncBars(); },   // unpinned: back to the words
+    fold: (el) => foldRow(el.dataset.fold),
     pause: () => { if (!has('spheres')) return; if (S.held) { S.held = false; S.pauseBtn = false; } else { S.held = true; S.pauseBtn = true; } syncRow(); },   // ❙❙: the one paused screen; the same tap, or a touch on the board, goes on
     hidesr: () => { PREFS.hideRow = true; savePrefs(); syncRow(); }, showsr: () => { PREFS.hideRow = false; savePrefs(); syncRow(); },
     hidewx: () => { PREFS.hideWx = true; savePrefs(); syncBars(); }, showwx: () => { PREFS.hideWx = false; savePrefs(); syncBars(); },
