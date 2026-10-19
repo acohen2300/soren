@@ -1405,7 +1405,7 @@ function updateEffects(k) {
     if (p.alpha <= 0) particles.splice(i, 1);
   }
   for (let i = ripples.length - 1; i >= 0; i--) { const r = ripples[i]; r.r += (r.max - r.r) * (1 - Math.pow(0.82, k)); r.alpha -= 0.032 * k; if (r.alpha <= 0) ripples.splice(i, 1); }
-  for (let i = floaters.length - 1; i >= 0; i--) { const f = floaters[i]; f.y -= (f.praise ? 0.45 : 0.6) * k; f.alpha -= (f.praise ? 0.012 : 0.009) * k; if (f.alpha <= 0) floaters.splice(i, 1); }
+  for (let i = floaters.length - 1; i >= 0; i--) { const f = floaters[i]; f.y -= (f.praise ? 0.45 : 0.6) * k; f.alpha -= (f.praise ? 0.012 : 0.017) * k; if (f.alpha <= 0) floaters.splice(i, 1); }
   S.flash *= Math.pow(0.86, k);
 }
 /* ---------- Scenery ---------- */
@@ -2533,9 +2533,9 @@ function handleEvents(events) {
     if (shows()) {   // a chain adds up into ONE result that floats about a second longer, rather than a pile of small ones
       const F = S.chainF, grow = S.combo >= 2 && F && floaters.includes(F.a), txt = [PREFS.hideNumbers ? '' : `+${fmt(grow ? F.sum + pts : pts)}`, w.glass ? '' : T.note].filter(Boolean).join(' · ');
       if (grow) {   // the chain so far is one result: it grows, and its gold count appears from the second merge
-        F.sum += pts; F.a.x = e.x; F.a.y = e.y - 10; F.a.alpha = 1.6; F.a.text = txt;
+        F.sum += pts; F.a.x = e.x; F.a.y = e.y - 10; F.a.alpha = 1.5; F.a.text = txt;
         if (!F.b || !floaters.includes(F.b)) { F.b = { text: '', color: `rgb(${GOLD})`, alpha: 1, gold: true }; floaters.push(F.b); }
-        F.b.x = e.x; F.b.y = e.y + 12; F.b.alpha = 1.6; F.b.text = `${S.combo} merged`;
+        F.b.x = e.x; F.b.y = e.y + 12; F.b.alpha = 1.5; F.b.text = `${S.combo} merged`;
       } else {
         const a = { x: e.x, y: e.y - 10, text: txt, color: T.c1, alpha: 1 };
         floaters.push(a); S.chainF = { a, b: null, sum: pts };
@@ -2962,13 +2962,13 @@ function render() {
   }
   ctx.textAlign = 'center';
   for (const f of floaters) {
-    ctx.globalAlpha = clamp(f.alpha, 0, 1) * fade; ctx.fillStyle = f.color;
-    ctx.font = f.praise ? `italic 600 26px ${FONT.serif}` : `700 15px ${FONT.mono}`;
+    ctx.globalAlpha = clamp(f.alpha, 0, 1) * fade * (f.praise ? 1 : f.gold ? 0.8 : 0.6); ctx.fillStyle = f.color;   // merge words are quiet: 60% (the gold count 80%)
+    ctx.font = f.praise ? `italic 600 26px ${FONT.serif}` : `italic 500 16px ${FONT.serif}`;
     const half = ctx.measureText(f.text).width / 2, x = clamp(f.x, half + 8, LW - half - 8);   // always wholly inside the board
     if (f.gold) { const g = ctx.createLinearGradient(x - 40, 0, x + 40, 0), k = ((animTime * 1.4) % 1 + 1) % 1;   // the chain's count shimmers gold
       g.addColorStop(0, `rgb(${GOLD})`); g.addColorStop(clamp(k, 0.01, 0.99), '#fff7d6'); g.addColorStop(1, `rgb(${GOLD})`); ctx.fillStyle = g; }
-    ctx.lineJoin = 'round'; ctx.lineWidth = 4; ctx.strokeStyle = 'rgba(0,0,0,0.55)'; ctx.strokeText(f.text, x, f.y);   // a dark edge: no line behind can run through the words
-    ctx.shadowColor = 'rgba(0,0,0,0.8)'; ctx.shadowBlur = f.gold ? 0 : f.praise ? 10 : 6;   // set off from whatever is behind; the gold count has no shadow (Safari drew a gold gradient's shadow as a dark bar under the words), its dark edge is enough
+    ctx.lineJoin = 'round'; ctx.lineWidth = f.praise ? 4 : 2; ctx.strokeStyle = f.praise ? 'rgba(0,0,0,0.55)' : 'rgba(0,0,0,0.3)'; ctx.strokeText(f.text, x, f.y);   // a dark edge: no line behind can run through the words
+    ctx.shadowColor = 'rgba(0,0,0,0.8)'; ctx.shadowBlur = f.gold ? 0 : f.praise ? 10 : 3;   // set off from whatever is behind; the gold count has no shadow (Safari drew a gold gradient's shadow as a dark bar under the words), its dark edge is enough
     ctx.fillText(f.text, x, f.y); ctx.shadowBlur = 0;
   }
   ctx.globalAlpha = 1;
