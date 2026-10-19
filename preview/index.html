@@ -1,4 +1,4 @@
-<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="robots" content="noindex"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><meta name="theme-color" content="#081428"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"><meta name="apple-mobile-web-app-title" content="SoRen"><link rel="manifest" href="../manifest.webmanifest"><link rel="apple-touch-icon" href="../apple-touch-icon.png"><link rel="icon" href="../icon-192.png"><style>html{height:100vh}body{padding-top:calc(8px + env(safe-area-inset-top,0px))!important;padding-bottom:calc(8px + env(safe-area-inset-bottom,0px))!important;overscroll-behavior:none}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body><title>SoRen preview p3</title>
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="robots" content="noindex"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><meta name="theme-color" content="#081428"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"><meta name="apple-mobile-web-app-title" content="SoRen"><link rel="manifest" href="../manifest.webmanifest"><link rel="apple-touch-icon" href="../apple-touch-icon.png"><link rel="icon" href="../icon-192.png"><style>html{height:100vh}body{padding-top:calc(8px + env(safe-area-inset-top,0px))!important;padding-bottom:calc(8px + env(safe-area-inset-bottom,0px))!important;overscroll-behavior:none}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body><title>SoRen preview p4</title>
 <meta name="claude:viewport-fit-sides" content="cover">
 <style>
 /* Layout: one screen, never scrolls. A bar above the pool reads how things are; a bar below it is for playing, with a panel
@@ -439,28 +439,6 @@ body.intro .sheet, body.intro .scrim { animation: none; }
 .addtask { align-self: flex-start; display: inline-flex; align-items: center; gap: 8px; min-height: 32px; padding: 0; background: none; border: 0; color: var(--ink-dim); font: inherit; font-size: var(--t5); cursor: pointer; position: relative; }
 .addtask .addmark { display: inline-grid; place-items: center; width: 32px; height: 32px; border-radius: 50%; border: 1px solid var(--chip-line); font-size: var(--t2); font-style: normal; line-height: 1; color: var(--ink); }
 .item.row.plan > .todo, .item.row.plan > .dues, .item.row.plan > .picker, .item.row.plan > .before { margin-top: 8px; }
-/* The top: two pills. Mode and Scene (Game & Mode Settings); Timer and Tasks. Then Score (Statistics), pause and sound, and the mark */
-#topBar { background: none; border: 0; box-shadow: none; overflow: visible; gap: 8px; }
-#topBar .cell { border: 1px solid var(--chip-line); border-radius: 24px; background: rgba(0, 0, 0, 0.28); }
-.scorerow { padding: 0 2px; } .scorerow .marks { margin-left: auto; }
-.marks { display: inline-flex; align-items: center; gap: 6px; flex: none; }   /* ?, ⏯ and the mark: each its own circle */
-.marks > .learn { width: 32px; height: 32px; margin: 0; display: inline-flex; align-items: center; justify-content: center; padding: 0; border-radius: 50%; border: 1px solid var(--chip-line); background: none; color: var(--ink-dim); font: inherit; font-size: var(--t4); font-weight: 600; font-style: normal; text-decoration: none; cursor: pointer; }
-#topBar .marks { align-self: center; }
-#topBar .gear { width: 40px; height: 40px; align-self: center; padding: 0; border-radius: 50% !important; } #topBar .gear svg { width: 20px; height: 20px; }
-#topBar .tpill { flex-direction: row; gap: 6px; padding: 0 12px; } #topBar .tpill b { font-weight: 600; } #topBar .tpill .ln { font-weight: 400; color: var(--ink-dim); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; min-width: 0; }   /* Mode, bold; the mode, not */
-#scoreRow .tpill { flex: none; flex-direction: row; height: 30px; margin-left: 8px; padding: 0 12px; border: 1px solid var(--chip-line); border-radius: 15px; background: rgba(0, 0, 0, 0.22); font-size: var(--t5); font-weight: 600; position: relative; } #scoreRow .tpill.on { box-shadow: inset 0 0 0 2px rgba(var(--on), 0.85); }
-#scoreRow .tpill .goal-left { bottom: 3px; left: 10px; right: 10px; height: 2px; }
-.scorerow.hidden .tpill { display: none; } .marks .learn { text-decoration: none; }
-@media (max-width: 360px) { #topBar .tpill b { display: none; } #topBar .tpill { padding: 0 6px; } #topBar .gear { width: 34px; height: 34px; } #topBar { grid-template-columns: 34px minmax(0, 1fr) minmax(0, 1fr) auto auto !important; } }   /* a small phone: the mode and the place, the words that change */
-@media (max-width: 360px) { #topBar { gap: 4px; } #topBar .marks { gap: 3px; } #topBar .marks .learn, #topBar .marks .pm { width: 28px; height: 28px; } #topBar .tctl { padding: 0 2px; } #topBar .tctl .sr-btn { min-width: 30px; padding: 0 3px; } } #topBar.hidden .cell { display: none; } #topBar.hidden { grid-template-columns: 1fr auto !important; } #topBar.hidden .marks { grid-column: 2; }
-.bar.plain .marks { align-self: center; justify-self: end; }
-#topBar .tctl { flex-direction: row; flex-wrap: nowrap; min-width: max-content; gap: 2px; padding: 0 5px; } #topBar .tctl .sr-btn { border-color: transparent; background: none; height: 38px; min-width: 36px; padding: 0 6px; border-radius: 19px; } #topBar .tctl .sr-btn.on { border-color: rgba(var(--on), 0.85); }   /* pause and sound: one pill in the top row */
-.scorerow.hidden .sr-score { display: none; }
-/* Every tile is a pill */
-#botBar:not(.plain), #tools { background: none; border: 0; box-shadow: none; overflow: visible; gap: 6px; }
-#botBar .cell:not(.wxwords), #tools .cell { border: 1px solid var(--chip-line); border-radius: 24px; background: rgba(0, 0, 0, 0.28); }
-#botBar .cell.on, #tools .cell.on, #botBar .cell.held, #tools .cell.held, #botBar .cell.open { border-radius: 24px; }
-@media (max-width: 360px) { #botBar:not(.plain) { gap: 3px; grid-template-columns: 32px repeat(4, minmax(0, 1fr)) 32px !important; } #botBar .cell:not(.wxwords) { padding: 0 1px; } #tools { gap: 3px; } }
 /* The heave, for what is live right now (a running timer, a tool in hand to use): glow and grow, slim and dim, with your breath */
 .live { transform: scale(calc(1 + 0.03 * var(--b, 0))); box-shadow: inset 0 0 0 2px rgba(var(--on), calc(0.45 + 0.45 * var(--b, 0))), 0 0 calc(2px + 12px * var(--b, 0)) rgba(var(--on), calc(0.1 + 0.35 * var(--b, 0))) !important; animation: none !important; }
 body.rm .live { transform: none; }
@@ -473,17 +451,85 @@ body:not(.intro) .intro-pill, body:not(.intro) .intro-work { transition: opacity
 /* The weather's row over the tools: the same three lines, rising over the board */
 .strip { inset: auto 0 calc(100% + 62px) 0; padding: 10px 12px; z-index: 5; } .tools.covered { visibility: visible; }   /* the weather's row rises above the ribbon, over the foot of the board; the tiles stay in reach */
 .sheet-body > .row, #sleepPanel > .row { padding-inline: 0; }   /* everything lines up with ‹ on the left and ✕ on the right */
+/* p4: three ribbons, one style. Every ribbon, the score and the clock share one outline (--rib-*): a solid bar of touching
+   cells, a hairline between them, fully round ends. The top ribbon is one line; the weather and the tools carry an icon and a word. */
+:root { --rib-border: 1px solid var(--chip-line); --rib-bg: rgba(0, 0, 0, 0.3); --rib-shadow: inset 0 2px 6px rgba(0, 0, 0, 0.45); }
+.bar, .sr-box { border: var(--rib-border); background: var(--rib-bg); box-shadow: var(--rib-shadow); border-radius: 999px; }
+.slot.top { height: 48px; margin: -5px 0; } .scorerow { position: relative; z-index: 1; pointer-events: none; } .sr-star { pointer-events: auto; }   /* the ribbon's touch reaches 7 above and below it; a touch there finds the cell under it */ #topBar { height: 34px; font-size: var(--t6); }
+#topBar .cell { flex-direction: row; gap: 0; padding: 0 2px; position: relative; overflow: visible; }
+#topBar .cell::after { content: ''; position: absolute; left: 0; right: 0; top: 50%; height: 48px; transform: translateY(-50%); }   /* a 48-high touch, however slim it looks */
+#topBar .cell svg { width: 17px; height: 17px; }
+#topBar .cell.word { cursor: default; color: var(--ink); font-weight: 600; overflow: hidden; } #topBar .cell.word:active { background: none; } #topBar .cell.word::after { content: none; }
+#topBar .cell.word span { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+#topBar .cell.on { box-shadow: inset 0 0 0 1.5px rgba(var(--on), 0.9), inset 0 0 10px rgba(var(--on), 0.2); border-radius: 0; }   /* active: a green outline inside the cell; nothing moves */
+#topBar .cell:first-child.on { border-radius: 999px 0 0 999px; } #topBar .cell:last-child.on { border-radius: 0 999px 999px 0; }
+#topBar .vpct { font-size: var(--t6); font-weight: 600; font-variant-numeric: tabular-nums; font-style: normal; }
+#topBar [data-muted="true"] { color: var(--ink-faint); }
+.scorerow { height: 28px; padding: 0; justify-content: space-between; }
+.sr-box { display: inline-flex; align-items: center; height: 28px; padding: 0 4px 0 12px; gap: 8px; width: 132px; color: var(--ink); white-space: nowrap; }
+.sr-score .sr-num { margin-left: auto; }   /* the number to the right of its box */
+.sr-star { position: relative; flex: none; display: grid; place-items: center; width: 24px; height: 24px; padding: 0; border: 0; background: none; color: var(--ink-dim); cursor: pointer; }
+.sr-star svg { width: 15px; height: 15px; fill: none; stroke: currentColor; stroke-width: 1.7; stroke-linejoin: round; }
+.sr-star::after { content: ''; position: absolute; left: 50%; top: 50%; width: 44px; height: 38px; transform: translate(-50%, -40%); }   /* 44 wide; it stops short of the ribbon above */
+.sr-clock { justify-content: center; padding: 0 12px; color: var(--ink-dim); font-size: var(--t5); font-weight: 600; font-variant-numeric: tabular-nums; font-style: normal; }   /* a readout, a step dimmer than the score */
+.scorerow.nogame .sr-score { visibility: hidden; }
+.slot:not(.top) { height: 48px; } #botBar:not(.plain) { height: 44px; } .toolwrap { height: 46px; margin-top: 0; } .tools { height: 44px; }
+.bar .cell { border-left: 1px solid rgba(255, 255, 255, 0.09); } .bar .cell:first-child { border-left: 0; }
+.bar.plain { box-shadow: none; border-color: transparent; background: none; }
+#botBar .cell.on, #tools .cell.on, #botBar .cell.held, #tools .cell.held, #botBar .cell.open { border-radius: 10px; }
+.marks { display: inline-flex; align-items: center; gap: 6px; flex: none; } .bar.plain .marks { align-self: center; justify-self: end; }
+@media (max-width: 340px) { #topBar { grid-template-columns: 32px repeat(4, minmax(0, 1fr)) 32px 32px 40px !important; } #topBar .cell.word { letter-spacing: -0.02em; } }
+@media (max-width: 360px) { #topBar .cell { padding: 0 1px; } #topBar .cell svg { width: 15px; height: 15px; } .sr-box { width: 118px; } #botBar .cell, #tools .cell { padding: 0 1px; } }
+/* ✓ and › are one ribbon: one block, a line between. The blue slides from ✓ to › as you go. */
+.cgo { position: relative; flex: none; display: inline-flex; width: 66px; height: 34px; border: 1px solid var(--chip-line); border-radius: 10px; background: var(--well); }
+.cgo > .check, .cgo > .save { width: 50%; height: 100%; border: 0; border-radius: 0; background: none; box-shadow: none !important; }
+.cgo > .save { border-left: 1px solid var(--chip-line); }
+.cgo > .check.c-blue, .cgo > .save.c-blue, .cgo > .check.c-done { border-color: var(--chip-line) !important; }
+.cgo > .check.c-green { color: rgb(var(--gold)); } .cgo > .save.c-fill { background: rgba(var(--on), 0.32) !important; }
+.cgo > .save.c-fill { border-radius: 0 8px 8px 0; }
+.cgo::before { content: ''; position: absolute; top: -1px; bottom: -1px; left: -1px; width: calc(50% + 1px); border-radius: 10px; border: 1.5px solid rgba(var(--off), 0.9); box-shadow: 0 0 0 1px rgba(var(--off), 0.5), 0 0 12px rgba(var(--off), 0.25); opacity: 0; pointer-events: none; transition: transform .45s cubic-bezier(.45, 0, .25, 1), opacity .3s; }
+.cgo.b-ck::before { opacity: 1; transform: none; } .cgo.b-sv::before { opacity: 1; transform: translateX(calc(100% - 1px)); }   /* the ring slides across */
+.cgo.g-ck { border-color: rgba(var(--on), 0.6); }
+.rctl { grid-template-columns: 52px minmax(0, 1fr) 50px 66px; } .rctl > .cgo { grid-column: 4; }
+.link .rctl, .row:has(.act) .rctl { display: flex; }
+/* The card's own ribbon, at its foot; and Are you sure? */
+.sheet-foot { flex-direction: row; align-items: center; justify-content: space-between; } .sheet-foot .cgo { margin-left: auto; }
+.sheet-foot .cgo[hidden] { display: none; }
+.more-pop .ptitle { display: flex; align-items: center; gap: 8px; margin-bottom: 8px; } .more-pop .ptitle b { flex: 1; margin: 0; }
+.more-pop .plist p { margin: 0 0 8px; } .more-pop .plist p b { display: inline; font-size: var(--t4); margin: 0; color: var(--ink); font-style: italic; }
+.more-pop .plist { max-height: 52vh; overflow-y: auto; }
+.more-pop .names { margin: 0 0 10px; color: var(--ink); font-size: var(--t4); font-weight: 600; }
+.more-pop .pfoot { display: flex; justify-content: flex-end; align-items: center; gap: 8px; } .more-pop .pfoot .howlink { margin-right: auto; }
+/* A task: the switch, the words with the eye inside them, ✓|› */
+.trow.line { grid-template-columns: 52px minmax(0, 1fr) 66px; gap: 6px; padding: 0; }
+.tbox { position: relative; min-width: 0; } .tbox .text-input { padding-right: 40px; min-height: 40px; }
+.tbox .text-input.dots { -webkit-text-security: disc; }
+.eye { position: absolute; right: 2px; top: 50%; transform: translateY(-50%); width: 36px; height: 36px; display: grid; place-items: center; padding: 0; border: 0; background: none; color: var(--ink-dim); cursor: pointer; }
+.eye svg { width: 18px; height: 18px; fill: none; stroke: currentColor; stroke-width: 1.7; stroke-linecap: round; stroke-linejoin: round; }
+.eye::after { content: ''; position: absolute; left: 50%; top: 50%; width: 44px; height: 44px; transform: translate(-50%, -50%); }
+.trow.line.off .tbox { opacity: 0.4; }
+/* A time due: the switch, a one-row counter, ✓|› */
+.trow.dline { display: grid; grid-template-columns: 52px minmax(0, 1fr) 66px; gap: 6px; align-items: center; padding: 0; border: 0; }
+.dname { display: block; font-size: var(--t6); color: var(--ink-dim); margin: 2px 0 2px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.counter { display: flex; gap: 4px; min-width: 0; border-radius: 12px; } .counter > .item { flex: 1 1 0; min-width: 44px; }
+.counter .wheel { --ih: 36px; height: var(--ih); padding-block: 0; -webkit-mask-image: none; mask-image: none; } .counter .wbox::after { top: 0; height: 36px; background: none; box-shadow: none; } .counter .cnt { display: none; }
+.counter .wi { font-size: var(--t4); font-variant-numeric: tabular-nums; font-style: normal; color: var(--ink); }
+.trow.dline.off .counter, .trow.line.locked .tbox { opacity: 0.4; } .trow.dline.off .counter .wbox { pointer-events: none; }
+.trow.dline.locked { opacity: 0.5; }
+.sheet-title.done::after { content: 'Done'; display: inline-block; margin-left: 8px; padding: 1px 10px; border-radius: 999px; background: rgb(var(--gold)); color: #1a1405; font-size: var(--t6); font-weight: 600; font-style: normal; vertical-align: middle; }
+.sheet-title { display: flex; align-items: center; justify-content: center; }
+.more-pop .pfoot .cgo { width: 34px; } .more-pop .pfoot .cgo .check { width: 100%; }
 </style>
 <script>document.body.classList.add('intro')</script>   <!-- dark from the first frame: nothing shows before the opening -->
 
 <div class="app" id="app" data-mode="play">
-  <div class="slot"><nav class="bar" id="topBar" aria-label="How things are"></nav></div>
+  <div class="slot top"><nav class="bar" id="topBar" aria-label="How things are"></nav></div>
   <div class="scorerow" id="scoreRow" aria-label="Score, pause and mute"></div>
   <div class="pool-wrap">
     <div class="pool" id="pool">
       <canvas id="game" tabindex="0" aria-label="Sphere pool. Touch anywhere and slide to move the waiting sphere, let go to drop it, or use the arrow keys and Space. In Relax, breathe with the guide at your pace."></canvas>
       <div class="float-banner" id="banner" aria-live="polite"><div id="bannerTitle"></div><div id="bannerSub"></div></div>
-      <div class="intro-pill" id="introFrame" aria-hidden="true"></div><div class="gorow intro-work" id="introGoRow"><button class="ilabel" id="introPick">Session Setup</button><button class="check" id="introOk" aria-label="Tick">✓</button><button class="save" id="introNext" aria-label="Go" disabled>›</button></div>
+      <div class="intro-pill" id="introFrame" aria-hidden="true"></div><div class="gorow intro-work" id="introGoRow"><button class="ilabel" id="introPick">Session Setup</button><span class="cgo"><button class="check" id="introOk" aria-label="Tick">✓</button><button class="save" id="introNext" aria-label="Go" disabled>›</button></span></div>
       <div class="pool-alert" id="alert" hidden><span id="alertText"></span><span id="alertTime"></span></div>
       <div class="pool-card" id="poolCard" hidden>
         <div class="card">
@@ -508,9 +554,9 @@ body:not(.intro) .intro-pill, body:not(.intro) .intro-work { transition: opacity
   <div class="sheet-head" id="sheetHead"><button class="nav" id="sheetBack" aria-label="Back">‹</button><button class="nav mute" id="sheetMute" data-mute aria-label="Mute"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4.5 9.5h3.2L12 6v12l-4.3-3.5H4.5z"/><path class="waves" d="M15 9.5a3.5 3.5 0 0 1 0 5M17.5 7a7 7 0 0 1 0 10"/><path class="hush" d="M15.5 9.5l5 5M20.5 9.5l-5 5"/></svg></button><span class="sheet-title" id="sheetTitle"></span><button class="nav help" id="sheetHelp" aria-label="How to play">?</button><button class="nav" id="sheetClose" aria-label="Close">✕</button></div>
   <p class="sheet-note" id="sheetNote" hidden></p>
   <div class="sheet-body" id="sheetBody"></div>
-  <div class="sheet-foot" id="sheetFoot"><button class="reset-link" id="sheetReset" hidden>Reset</button><button class="adv-pill" id="sheetAdv" hidden>Advanced settings</button></div>
+  <div class="sheet-foot" id="sheetFoot"><button class="reset-link" id="sheetReset" hidden>Reset</button><button class="adv-pill" id="sheetAdv" hidden>Advanced settings</button><span class="cgo" id="footGo" hidden><button class="check" id="footOk" aria-label="This card is done">✓</button><button class="save" id="footNext" aria-label="Go on" disabled>›</button></span></div>
 </div>
-<div class="more-pop" id="morePop" hidden role="dialog"><b id="moreTitle"></b><p id="moreText"></p><button class="tog" data-act="moreok">Close</button></div>
+<div class="more-pop" id="morePop" hidden role="dialog"><div class="ptitle"><b id="moreTitle"></b><button class="pm x" data-act="moreok" aria-label="Close"><i></i><i></i></button></div><div class="plist" id="moreText"></div><div class="pfoot" id="moreFoot"></div></div>
 
 <div class="sleep" id="sleepView" hidden>
   <div class="sleep-glow" id="sleepGlow"></div>
@@ -863,7 +909,7 @@ const S = {
   breath: 0.5, sigh: null, sighIn: 0, space: null, ballFade: 0, rescueAt: 0, life: 0.5, rainMem: 0,
   held: false, wxState: -1, wxLen: 1, pulses: [], rumbles: [], lit: 0, growl: 0, cellA: 0, flash: 0,
   lastInput: -1e9, born: performance.now(),
-  sleep: null, wakeLock: null, goal: null, ending: false, thaw: false, roundDone: false, merges: 0, pauseBtn: false, plan: { task: null, due: null, how: null, step: 0, ok: [false, false, false], fold: [false, false, false], going: null }, lpos: {}, lock: new Set(), prev: null, gone: null, due: -1
+  sleep: null, wakeLock: null, goal: null, ending: false, thaw: false, roundDone: false, merges: 0, pauseBtn: false, frozen: false, plan: { task: null, due: null, how: null, step: 0, ok: [false, false, false], fold: [false, false, false], going: null }, lpos: {}, lock: new Set(), dpos: {}, dlock: new Set(), footOk: false, footGo: false, prev: null, gone: null, due: -1
 };
 // The spheres move only when their layer is on and nothing is asking for you: no card, no deep breath, no choice to make,
 // and not held (Play waits for a tap whenever you come back to it).
@@ -871,7 +917,7 @@ const awakeBut = (k) => has('spheres') && !['sigh', 'pick', 'loosen', 'gameOver'
 const awake = () => awakeBut();
 // Paused: the game waits for a tap (❙❙, the Paused card, or coming back to Play). The world waits with it: the sky, the weather,
 // the timer. Only the breath goes on.
-const paused = () => has('spheres') && (S.held || S.sheet === 'pause');
+const paused = () => S.frozen || (has('spheres') && (S.held || S.sheet === 'pause'));   // ⏯ stops everything, in every mode
 // Reduce motion: Some (1) stills what moves on its own in the scene and the breath only glows; Most (2) stills everything but the game.
 const lessMo = (n = 1) => PREFS.lessMotion >= n;
 let particles = [], ripples = [], floaters = [], animTime = 0, canvas, ctx;
@@ -1212,7 +1258,7 @@ class SoundBath {
     const solo = this.solo && this.solo.until > performance.now() ? this.solo.key : null, t = this.ctx.currentTime, b = S.breath, blow = Math.abs(ENV.blow), rest = S.mode === 'rest';
     const z = solo === 'ambient' ? PREFS.lastSound : solo ? null : PREFS.soundscape === 'off' ? null : PREFS.soundscape, A = 2 * PREFS.vol.ambient;   // the ambient bed, at its own level
     const drift = 0.75 + 0.25 * Math.sin(t * 0.11);   // the sleep wind rises and falls slowly
-    this.master.gain.setTargetAtTime(PREFS.sound ? launchLevel(t) * sleepFade() * (S.ending ? 0.75 : 1) * (S.gone && S.gone.quiet ? 0 : 1) * (!solo && has('spheres') && (S.held && S.pauseBtn || S.sheet === 'pause') ? 0 : 1) : 0, t, PREFS.sound ? 0.6 : 0.005);   // mute is a cut; sound comes back slowly
+    this.master.gain.setTargetAtTime(PREFS.sound && !S.frozen ? launchLevel(t) * sleepFade() * (S.ending ? 0.75 : 1) * (S.gone && S.gone.quiet ? 0 : 1) * (!solo && has('spheres') && (S.held && S.pauseBtn || S.sheet === 'pause') ? 0 : 1) : 0, t, PREFS.sound ? 0.6 : 0.005);   // mute is a cut; sound comes back slowly
     const asleep = !PREFS.sound || (rest && sleepFade() <= 0);   // muted, or Rest has faded out: the whole engine sleeps, saving battery
     if (asleep) { if ((this.hush = (this.hush || 0) + dt) > (PREFS.sound ? 2 : 0.15) && this.ctx.state === 'running') this.ctx.suspend().catch(() => {}); return; }
     this.hush = 0; if (this.ctx.state === 'suspended') this.ctx.resume().catch(() => {});   // awake again (Rest's timer set longer)
@@ -1475,6 +1521,7 @@ const CLOUD = 'M7.5 14.5h9.5a3.5 3.5 0 0 0 .4-7 5 5 0 0 0-9.6 1.2A3 3 0 0 0 7.5 
 const ICON = {
   gear: 'M12 9.2a2.8 2.8 0 1 0 0 5.6 2.8 2.8 0 0 0 0-5.6zM19.3 13.4a7.4 7.4 0 0 0 0-2.8l1.9-1.5-1.9-3.3-2.3.9a7.4 7.4 0 0 0-2.4-1.4L14.2 3h-3.8l-.4 2.3a7.4 7.4 0 0 0-2.4 1.4l-2.3-.9-1.9 3.3 1.9 1.5a7.4 7.4 0 0 0 0 2.8l-1.9 1.5 1.9 3.3 2.3-.9a7.4 7.4 0 0 0 2.4 1.4l.4 2.3h3.8l.4-2.3a7.4 7.4 0 0 0 2.4-1.4l2.3.9 1.9-3.3z',
   home: 'M3.5 11.2 12 4l8.5 7.2M6 9.6V20h12V9.6M10 20v-5.2h4V20', play: 'M8 5.5v13l10.5-6.5z', still: 'M9 6v12M15 6v12', pp: 'M3.5 6.5v11l8-5.5zM16 6.5v11M20.5 6.5v11', pin: 'M9 3.5h6l-1 5.5 3 3H7l3-3zM12 12v8.5',
+  eye: 'M2.5 12s3.5-6.5 9.5-6.5 9.5 6.5 9.5 6.5-3.5 6.5-9.5 6.5S2.5 12 2.5 12zM12 9.3a2.7 2.7 0 1 0 0 5.4 2.7 2.7 0 0 0 0-5.4z', eyeoff: 'M2.5 12s3.5-6.5 9.5-6.5 9.5 6.5 9.5 6.5-3.5 6.5-9.5 6.5S2.5 12 2.5 12zM12 9.3a2.7 2.7 0 1 0 0 5.4 2.7 2.7 0 0 0 0-5.4zM4 20L20 4',
   goal: 'M7 20.5V4M7 4.5h10l-2.2 3.6L17 11.7H7', speaker: 'M4.5 9.5h3.2L12 6v12l-4.3-3.5H4.5z', waves: 'M15 9.5a3.5 3.5 0 0 1 0 5M17.5 7a7 7 0 0 1 0 10', hush: 'M15.5 9.5l5 5M20.5 9.5l-5 5',
   bolt: 'M13 2.5 5.5 13.5h5.5L10 21.5l8-11.5h-5.5z', wind: 'M3.5 9h10a2.5 2.5 0 1 0-2.4-3.2M3.5 13h15a2.8 2.8 0 1 1-2.6 3.8M3.5 17h6',
   rain: CLOUD + 'M9 17l-1 2.5M13 17l-1 2.5M17 17l-1 2.5', snow: CLOUD + 'M9 18.5h.01M13 20h.01M17 18.5h.01M11 21.5h.01M15 21.5h.01',
@@ -1535,7 +1582,7 @@ function updateEffects(k) {
 // The blue ring: anything you can choose (never a door) is ringed in blue, one after another, clockwise round the screen. Each
 // ring stays three seconds and leaves the way a shimmer passes, like a shadow going across it; the next comes just before it goes.
 const RING = { t: [] }, RING_LIFE = 3, RING_STEP = 2.4;
-const RING_OF = '.choice > .tog, .switch, .wbox, .slider, .trow .text-input, #topBar .cell:not(.tctl), .sr-score, #scoreRow .tpill, #topBar .sr-btn, #botBar .cell, #botBar .wxwords .pill, #tools .cell:not(.none), .link .tog.step, #sheetAdv, .addtask .addmark';   // every pill and every control you can use; not the small round marks
+const RING_OF = '.choice > .tog, .switch, .wbox, .slider, .trow .text-input, #topBar .cell:not(.word), .sr-star, #botBar .cell, #botBar .wxwords .pill, #tools .cell:not(.none), .link .tog.step, #sheetAdv, .addtask .addmark, .eye, #footOk:not(:disabled)';   // every pill and every control you can use; not the small round marks
 function ringClear() { RING.t.forEach(clearTimeout); RING.t = []; const L = $('rings'); if (L) L.innerHTML = ''; }
 function ringSeq(root) {
   ringClear();
@@ -2920,7 +2967,7 @@ function startPlan(noTimer) {   // ✓ on your time: it plays at once. A timer a
     S.goal = end && { start: Date.now(), end, warned: false, phase: 'play', how: PREFS.leave.how, leave: JSON.stringify(PREFS.leave) };
   }
   setMode('play'); S.held = false;
-  if (!same && S.goal) { say(todoLines()[0] || 'Your time', leaveWords(), 3200); shimmer($('scoreRow').querySelector('[data-cell=goal]')); }   // this, now
+  if (!same && S.goal) { say(todoLines()[0] || 'Your time', leaveWords(), 3200); shimmer($('topBar').querySelector('[data-w=timer]')); }   // this, now
 }
 function stopPlan() { if (S.goal) goalBack(); }
 // Session Setup: one question at a time, each with the same steps as every row: a switch (on is yes) or a choice, ✓, ›.
@@ -2932,7 +2979,7 @@ const hasDue = () => PREFS.todo.some(l => l.on && l.at >= 0);
 function planBack(q) { if (S.plan.step > q || S.plan.ok[q]) { S.plan.step = q; for (let i = q; i < 3; i++) S.plan.ok[i] = false; } }   // a changed answer: this question is open again, and the ones after it wait
 function answer(id, yes) {   // the switch on a question
   if (id === 'task') { if (S.plan.task === yes) return; S.plan.task = yes; S.plan.due = null; planBack(0); PREFS.todo.forEach(l => { l.on = yes; if (!yes) l.at = -1; }); }
-  else { if (S.plan.due === yes) return; S.plan.due = yes; planBack(1); if (!yes) { PREFS.todo.forEach(l => { l.at = -1; }); S.due = -1; } else if (dueOf(0) < 0) openDue(0); }   // yes: the first line's time opens
+  else { if (S.plan.due === yes) return; S.plan.due = yes; planBack(1); if (!yes) { PREFS.todo.forEach(l => { l.at = -1; }); S.due = -1; } else { S.dpos = {}; S.dlock = new Set(); if (dueOf(0) < 0) openDue(0); } }   // yes: the first line's time opens
   sound.tick(0); refill();
 }
 function planTick(q) {   // ✓: green, the tick gold, and › lights; again, not after all
@@ -2947,27 +2994,30 @@ function planGo(q) {   // ›: green a moment, then this question folds up with 
   setTimeout(() => {
     if (S.sheet !== 'checkin' || S.plan.going !== q) return;
     S.plan.going = null; S.plan.step = planNext(q); S.plan.fold[q] = true;
-    if (S.plan.step >= 3) { startSheet(); return; }
+    if (S.plan.step >= 3) { refill(); setTimeout(() => ringSeq($('sheetFoot')), 350); return; }   // the last question kept: the card's own ✓ and › start the session
     if (S.plan.step === 2 && S.plan.how == null && hasDue()) { S.plan.how = 'due'; PREFS.leave.how = 'due'; }   // something is due: until then, by default
     refill();
     const nx = document.querySelector(`[data-q="${S.plan.step}"]`); if (nx) { nx.scrollIntoView({ block: 'nearest', behavior: lessMo() ? 'auto' : 'smooth' }); setTimeout(() => ringSeq(nx), 350); }
   }, GO_MS);
 }
 // A task line: Private, the words, ✓, ›. › keeps it, and it rests (dim); a tap on it opens it again. Kept empty, an added line goes.
-function linePriv(i) { const l = PREFS.todo[i]; if (!l || S.lock.has(i)) return; l.priv = !l.priv; S.lpos[i] = l.priv ? 2 : 1; sound.tick(0); savePrefs(); redraw('.todo', 'todo'); syncControls(); }
-function lineTyped(i) { const l = PREFS.todo[i]; if (!l || (S.lpos[i] || 0) >= 3) return; S.lpos[i] = l.text.trim() || l.priv ? 2 : 1; syncPlan(); }
-function lineTick(i) { const l = PREFS.todo[i]; if (!l || !(l.text.trim() || l.priv) || (S.lpos[i] || 0) >= 4) return; S.lpos[i] = S.lpos[i] === 3 ? 2 : 3; sound.tick(0); syncPlan(); }
+function linePriv(i) { const l = PREFS.todo[i]; if (!l) return; l.priv = !l.priv; sound.tick(0); savePrefs(); redraw('.todo', 'todo'); redraw('.dues', 'dues'); syncControls(); }   // the eye: the words as dots (private), or shown; kept or not
+function lineOn(i) { const l = PREFS.todo[i]; if (!l || S.lock.has(i)) return; l.on = !l.on; S.lpos[i] = !l.on ? 2 : l.text.trim() ? 2 : 1; sound.tick(0); savePrefs(); redraw('.todo', 'todo'); redraw('.dues', 'dues'); syncControls(); }   // off: nothing to write, ✓ is next
+function lineTyped(i) { const l = PREFS.todo[i]; if (!l || (S.lpos[i] || 0) >= 3) return; S.lpos[i] = l.text.trim() ? 2 : 1; syncPlan(); }
+function lineTick(i) { const l = PREFS.todo[i]; if (!l || !(l.text.trim() || !l.on) || (S.lpos[i] || 0) >= 4) return; S.lpos[i] = S.lpos[i] === 3 ? 2 : 3; sound.tick(0); syncPlan(); }
+function dueTick(i) { const p = S.dpos[i] ?? (PREFS.todo[i] && PREFS.todo[i].at >= 0 ? 2 : 0); if (p < 1 || p >= 4) return; S.dpos[i] = p === 3 ? 2 : 3; sound.tick(0); syncPlan(); }
+function dueGo(i) { if (S.dpos[i] !== 3) return; S.dpos[i] = 4; sound.chime(0, here().synth); haptic(15); syncPlan(); setTimeout(() => { S.dlock.add(i); S.dpos[i] = 0; redraw('.dues', 'dues'); syncControls(); }, GO_MS); }   // kept: it rests, dim; a tap opens it again
 function lineGo(i) {
   if (S.lpos[i] !== 3) return; S.lpos[i] = 4; sound.chime(0, here().synth); haptic(15); syncPlan();
   setTimeout(() => {
     const l = PREFS.todo[i]; if (!l) return;
-    if (i && !l.text.trim() && !l.priv) { PREFS.todo.splice(i, 1); S.lock = new Set([...S.lock].filter(k => k < i)); for (const k in S.lpos) if (+k >= i) delete S.lpos[k]; }
+    if (i && !l.text.trim()) { PREFS.todo.splice(i, 1); S.lock = new Set([...S.lock].filter(k => k < i)); for (const k in S.lpos) if (+k >= i) delete S.lpos[k]; }
     else { S.lock.add(i); S.lpos[i] = 0; }
     savePrefs(); redraw('.todo', 'todo'); redraw('.dues', 'dues'); syncControls();
   }, GO_MS);
 }
 function lineOpen(i) { if (!S.lock.has(i)) return; S.lock.delete(i); S.lpos[i] = 1; redraw('.todo', 'todo'); syncControls(); const inp = document.querySelector(`.trow.line[data-line="${i}"] input`); if (inp) inp.focus(); }
-function planReset() { S.plan = freshPlan(); S.lpos = {}; S.lock = new Set(); PREFS.todo = [{ on: false, text: '', at: -1 }]; S.due = -1; savePrefs(); sound.tick(0); refill(); }
+function planReset() { S.plan = freshPlan(); S.lpos = {}; S.lock = new Set(); S.dpos = {}; S.dlock = new Set(); PREFS.todo = [{ on: false, text: '', at: -1 }]; S.due = -1; savePrefs(); sound.tick(0); refill(); }
 function applyTimer() {   // Settings' Timer, kept: it runs from now (No timer: off)
   stopPlan(); const end = PREFS.leave.how === 'decide' ? 0 : leaveAt();
   S.goal = end ? { start: Date.now(), end, warned: false, phase: 'play', how: PREFS.leave.how, leave: JSON.stringify(PREFS.leave) } : null; syncBars();
@@ -3280,7 +3330,8 @@ function update(k, dt) {
 function frame(now) {
   const dark = S.mode === 'rest' && S.sleep && S.sleep.t > WIND_IN + 1, ms = Math.min(dark ? 250 : 50, Math.max(4, now - lastFrame));   // Rest, once dark: ten frames a second is plenty
   lastFrame = now;
-  update(ms / (1000 / 60), ms / 1000);
+  if (S.frozen) { if (S.goal && S.goal.phase === 'play' && S.goal.how === 'timer') S.goal.end += ms; }   // the full pause: nothing moves, a countdown waits with you
+  else update(ms / (1000 / 60), ms / 1000);
   render(); tickBars(ms / 1000);
   { const b = clamp(S.breath, 0, 1).toFixed(2); if (b !== frame.b) { frame.b = b; document.documentElement.style.setProperty('--b', b); } }   // the heave, for what is live: glow and grow, slim and dim
   tickBanner(now);
@@ -3349,7 +3400,6 @@ const ITEMS = {
   'custom.bg': choice('Background', 'hills:Hills|mountains:Mountains|sea:Sea'),
   'custom.ground': wheel('Ground', 'meadow:Meadow|field:Field|forest:Forest|snow:Snow|sand:Sand'), elements: { type: 'elements', keys: ['custom.el'] }
 };
-for (const k of ['ch', 'cm', 'ap']) ITEMS['due.' + k] = ITEMS['leave.' + k];   // a due time's pickers are the time's
 // The cards: a title, one italic line, and rows. A row's line can read differently as it is set.
 const MODE_NOTES = { play: 'Play a soothing merge game. You can set up rules & weather.', rain: 'Interact with the screen in calming ways.', settle: 'Watch & interact in deep breathing & grounding exercises to help regulate.', rest: 'Set up ambient sound to help you concentrate, get tasks done, or sleep.' };
 const MOTION_NOTES = ['Everything moves as it was made to.', 'What moves on its own is stilled; the breath only glows.', 'Only the game moves.'];
@@ -3418,6 +3468,9 @@ Object.assign(SHEETS, {
     TIMER_ROW, MODE_ROW, ...sceneRows()] },   // every setting here, no cards under it but Advanced settings
   help: { title: 'How to play', items: ['help'] }
 });
+SHEETS.volume = { title: 'Volume', note: 'How loud SoRen is.', items: () => [SOUND_ROWS[0]] };
+// The full pause: the world stops where it is, sound and all. Only ⏯ starts it again.
+function freeze(on) { S.frozen = on; S.aiming = false; if (on && sound.master) sound.master.gain.setTargetAtTime(0, sound.ctx.currentTime, 0.04); syncRow(); }
 const REST_ROWS = [SOUND_ROWS[7], SOUND_ROWS[8], row('Fades after', 'sleepTimer', 'The sound fades out after this long.', 'Rest keeps the screen on and dark while the sound plays. After this long the sound fades to nothing. Never keeps it going.'), SOUND_ROWS[0], SOUND_ROWS[4], SOUND_ROWS[6]];
 // How to play: a few questions, then every card and its rows, from the same words.
 const FAQ = [
@@ -3442,7 +3495,7 @@ const optsOf = (it) => (typeof it.opts === 'function' ? it.opts() : it.opts).spl
 function shown(key) {
   const it = ITEMS[key]; if (it && it.get) return String(it.get());
   if (key.startsWith('leave.')) { const { mins, at } = PREFS.leave, a = at < 0 ? 0 : at; return String({ h: Math.floor(mins / 60), m: mins % 60, ch: (Math.floor(a / 60) + 11) % 12 + 1, cm: a % 60, ap: a >= 720 ? 'pm' : 'am' }[key.slice(6)]); }
-  if (key.startsWith('due.')) { const a = Math.max(0, dueOf(S.due)); return String({ ch: (Math.floor(a / 60) + 11) % 12 + 1, cm: a % 60, ap: a >= 720 ? 'pm' : 'am' }[key.slice(4)]); }
+  if (key.startsWith('due.')) { const [, i, part] = key.split('.'), a = Math.max(0, dueOf(+i)); return String({ ch: (Math.floor(a / 60) + 11) % 12 + 1, cm: a % 60, ap: a >= 720 ? 'pm' : 'am' }[part]); }
   if (key === 'weather') return PREFS.weatherFlow ? 'changing' : WX_WORDS[Math.round(PREFS.wx) % 5];
   if (key === 'soundscape') return PREFS.soundscape === 'off' ? PREFS.lastSound : PREFS.soundscape;
   if (key === 'rules') return PREFS.overflow === 'end' ? 'end' : 'zen';
@@ -3475,14 +3528,14 @@ function resetQ(q) {   // ↻ on a Session Setup question: its answer cleared, o
   sound.tick(0); refill();
 }
 function itemEl(key) {
-  const it = ITEMS[key] || key, el = document.createElement('div');
+  const it = ITEMS[key] || (/^due\.\d+\./.test(key) && ITEMS['leave.' + key.split('.')[2]]) || key, el = document.createElement('div');
   el.className = 'item';
   if (it.off) el.dataset.off = key;
   switch (it.type) {
     case 'row': {   // three lines, the same everywhere: the name with ? and ±; the work (switch, control, ✓, ›); what it does, in italics
       const id = rowId(it), val = it.main.find(k => ITEMS[k] && ITEMS[k].type === 'range');
       el.className = 'item row' + (it.compact ? ' compact' : ''); el.dataset.row = id; el.dataset.name = it.name;
-      el.innerHTML = `<div class="rhead"><span class="rname">${it.name}</span><span class="rset">Done</span><button class="rredo" data-act="redo" data-fold="${id}" aria-label="Reset ${it.name}">↻</button><span class="marks">${SAMPLE_OF[id] ? `<button class="sample-pill" data-act="sample" aria-label="Play sample">${svg(ICON.pp)}</button>` : ''}${it.more ? `<button class="learn" data-more="${id}" aria-label="Learn more">?</button>` : ''}${pmHTML(`data-act="fold" data-fold="${id}"`, it.name)}</span></div><div class="rctl"></div><i class="rdesc" data-desc="${id}">${text(it.desc)}</i>`;
+      el.innerHTML = `<div class="rhead"><span class="rname">${it.name}</span><span class="rset">Done</span><button class="rredo" data-act="redo" data-fold="${id}" aria-label="Reset ${it.name}">↻</button><span class="marks">${SAMPLE_OF[id] ? `<button class="sample-pill" data-act="sample" aria-label="Play sample">${svg(ICON.pp)}</button>` : ''}${pmHTML(`data-act="fold" data-fold="${id}"`, it.name)}</span></div><div class="rctl"></div><i class="rdesc" data-desc="${id}">${text(it.desc)}</i>`;
       const c = el.querySelector('.rctl'); fillItems(c, it.main);
       if (!it.noCheck) c.insertAdjacentHTML('beforeend', `<span class="rval"${val ? ` data-val="${val}"` : ''}></span>` + checkGo(id));
       if (id === 'mode') el.insertAdjacentHTML('beforeend', '<i class="rdesc mnote"></i>');   // the mode chosen, in a line
@@ -3508,7 +3561,7 @@ function itemEl(key) {
       break; }
     case 'dues': {   // a due time for each line: blue none, green set; a tap opens the pickers under it, with No time
       el.className = 'item dues'; el.innerHTML = PREFS.todo.map((l, i) => (l.on ? dueRow(l, i) : '')).join('');
-      const box = el.querySelector('.due-pick'); if (box) { box.appendChild(pickerEl([['due.ch', ''], ['due.cm', ''], ['due.ap', '']])); box.insertAdjacentHTML('beforeend', '<button class="tog notime" data-act="notime">No time</button>'); }
+      el.querySelectorAll('.counter').forEach(c => { const i = c.parentElement.dataset.dline; for (const p of ['ch', 'cm', 'ap']) c.appendChild(itemEl(`due.${i}.${p}`)); });
       break; }
     case 'leave': {   // how long: until it's due, a countdown, until a time, or no timer; then ✓ and ›
       const h = S.plan.how;
@@ -3537,9 +3590,39 @@ const MORE = { leave: ['How long', 'Until due time (when something has a due tim
   score: ['Score', 'Your score this game; tap it for Statistics. − hides the row; + brings it back.'],
   wx: ['Weather Settings', 'Opens the weather: lightning, wind, rain or snow, and the time of day. − hides it; + brings it back.'],
   due: ['A time it’s due', 'Yes opens a time for each line. Until a time, below, then starts just before the soonest one.'] };
-function learnMore(id) {   // Learn more: the row's words, in a small pop-up over the card
-  const it = findRow(id), [name, more] = it ? [it.name, it.more] : MORE[id] || ['', ''];
-  $('moreTitle').textContent = name; $('moreText').textContent = more; $('morePop').hidden = false;
+function pop(title, body, foot) { ringClear(); $('moreTitle').textContent = title; $('moreText').innerHTML = body; $('moreFoot').innerHTML = foot || ''; $('morePop').hidden = false; }   // one small card over the card: a title and ✕, the words, its foot
+function learnMore(id) { const it = findRow(id), [name, more] = it ? [it.name, it.more] : MORE[id] || ['', '']; pop(name, `<p>${esc(more)}</p>`); }
+const helpList = (def) => (def === SHEETS.checkin ? ['task', 'dueq', 'leave'] : itemsOf(def)).map(x => (typeof x === 'string' ? { task: MORE.task, dueq: MORE.due, leave: MORE.leave }[x] : x.type === 'row' ? [x.name, x.more] : x.type === 'link' ? [x.name, text(x.desc)] : null)).filter(r => r && r[1]);
+function cardHelp() {   // the card's ?: every row on it, explained, in one place; How to play from there
+  const def = SHEETS[S.sheet]; if (!def) return;
+  pop(def.title, helpList(def).map(([n, m]) => `<p><b>${n}</b> · ${esc(m)}</p>`).join(''), '<button class="adv-pill howlink" data-act="howto">How to play</button>');
+}
+// ✕ on a card: if a row was touched and not kept, it asks first, and names those rows.
+function unkept() {
+  if (S.sheet === 'checkin') { const out = []; ['A task', 'A time', 'How long'].forEach((n, q) => { const v = q === 0 ? S.plan.task : q === 1 ? S.plan.due : S.plan.how; if (!S.plan.fold[q] && S.plan.step <= q && (v != null || S.plan.ok[q])) out.push(n); });
+    PREFS.todo.forEach((l, i) => { if (!S.lock.has(i) && (S.lpos[i] || 0) >= 2 && l.on && l.text.trim()) out.push(l.priv ? 'Private task' : esc(l.text.trim())); }); return out; }
+  return rowsOf(SHEETS[S.sheet] || { items: [] }).filter(id => (rowState(id) !== '' || PEND.step[id] === 'save') && !(id === 'game' && S.gameChoice === 'resume')).map(id => { const r = findRow(id); return r ? r.name : id; });
+}
+function askClose() {
+  if (!S.sheet) return; const u = unkept(); if (!u.length) { closeSheet(); return; }
+  pop('Are you sure?', `<p>Selections are not saved.</p><p class="names">${u.join(' · ')}</p>`, '<span class="cgo"><button class="check" data-act="leaveok" aria-label="Leave">✓</button></span>');
+}
+// The card's own ✓ and ›, at its foot: ✓ once every row is done (the card shows Done), then › goes on.
+const cardRows = () => (S.sheet === 'checkin' ? [0, 1, 2] : rowsOf(SHEETS[S.sheet] || { items: [] }));
+const cardDone = () => (S.sheet === 'checkin' ? S.plan.step >= 3 : cardRows().length > 0 && cardRows().every(r => DONE[r]));
+function syncFoot() {
+  const g = $('footGo'); if (!g || !S.sheet) return; const has = cardRows().length > 0; g.hidden = !has;
+  $('sheetFoot').hidden = !has && S.sheet !== 'checkin' && !(SHEETS[S.sheet] || {}).foot;
+  const done = cardDone(); if (!done) S.footOk = false;
+  const ck = $('footOk'), sv = $('footNext');
+  paintStep(ck, S.footGo ? 'green' : S.footOk ? 'green' : done ? 'blue' : ''); ck.disabled = !done || !!S.footGo;
+  paintStep(sv, S.footGo ? 'fill' : S.footOk ? 'blue' : ''); sv.disabled = !S.footOk || !!S.footGo;
+  $('sheetTitle').classList.toggle('done', !!S.footOk);
+}
+function footTick() { if (!cardDone() || S.footGo) return; S.footOk = !S.footOk; sound.tick(0); syncFoot(); }
+function footNext() {
+  if (!S.footOk || S.footGo) return; S.footGo = true; sound.chime(0, here().synth); haptic(15); syncFoot();
+  const was = S.sheet; setTimeout(() => { S.footGo = false; if (S.sheet !== was) return; if (was === 'checkin') startSheet(); else if (NAV.stack.length) backSheet(); else closeSheet(); }, GO_MS);
 }
 const findRow = (id) => { for (const n in SHEETS) { const r = itemsOf(SHEETS[n]).find(x => x.type === 'row' && rowId(x) === id); if (r) return r; } return [...REST_ROWS, ...WX_ROWS()].find(x => rowId(x) === id); };
 const switchHTML = (key) => `<button class="switch" role="switch" data-onoff="${key}" aria-label="On or off"><i></i></button>`;
@@ -3548,8 +3631,8 @@ const beforeHTML = () => `<div class="before"><i class="rdesc">Stop playing how 
 const howHTML = (h, set) => `<div class="choice">${[...(hasDue() || h === 'due' ? [['due', 'Until due time']] : []), ['timer', 'Countdown'], ['clock', 'Until a time'], ['decide', 'No timer']].map(([k, l]) => `<button class="tog${h === k ? ' sel' : !h && !set ? ' c-blue' : ''}" data-how="${k}">${l}</button>`).join('')}</div>`;
 // Session Setup's questions keep every row's rules: ✓ (blue) then › (blue); › green a moment, then the question folds up, − becomes +
 const planCls = (q) => `item row plan${S.plan.fold[q] ? ' folded' : ''}${S.plan.step > q ? ' isset' : ''}`;
-const planHead = (q, id) => `<span class="rset">Done</span><button class="rredo" data-act="qredo" data-qf="${q}" aria-label="Reset">↻</button><span class="marks"><button class="learn" data-more="${id}" aria-label="Learn more">?</button>${pmHTML(`data-act="qfold" data-qf="${q}"`, 'this question', S.plan.fold[q] ? 'plus' : S.plan.step > q ? 'minus' : 'x')}</span>`;
-const planWork = (q) => `<button class="check" data-pok="${q}" aria-label="Tick">✓</button><button class="save" data-pnext="${q}" aria-label="Next" disabled>›</button>`;
+const planHead = (q, id) => `<span class="rset">Done</span><button class="rredo" data-act="qredo" data-qf="${q}" aria-label="Reset">↻</button><span class="marks">${pmHTML(`data-act="qfold" data-qf="${q}"`, 'this question', S.plan.fold[q] ? 'plus' : S.plan.step > q ? 'minus' : 'x')}</span>`;
+const planWork = (q) => cgo(`data-pok="${q}"`, `data-pnext="${q}"`, 'Next');
 // One mark for everything that hides and shows, two bars that roll: ✕ closes something open and not finished; closed, it is +
 // (✕ turned a quarter); + opens it again, and turns back to ✕, or flattens to − when it is finished (a gold Done); − folds it to Done.
 const pmHTML = (attrs, name, st = 'x') => `<button class="pm ${st}" ${attrs} aria-label="Close or open ${name}"><i></i><i></i></button>`;
@@ -3564,6 +3647,8 @@ function paintStep(n, k) {
     return;
   }
   for (const c of STEP_CLS) { const on = c === 'c-' + k; if (n.classList.contains(c) !== on) n.classList.toggle(c, on); }
+  const g = n.parentElement; if (g && g.classList.contains('cgo')) { const ck = g.firstElementChild, sv = g.lastElementChild;   // the ribbon's ring sits on whichever half is next
+    g.classList.toggle('b-ck', ck.classList.contains('c-blue')); g.classList.toggle('b-sv', sv.classList.contains('c-blue')); g.classList.toggle('g-ck', ck.classList.contains('c-green')); }
 }
 function paintSeq(items, pos) { items.forEach((n, i) => paintStep(n, i < pos ? 'done' : i === pos ? 'blue' : '')); }   // before the blue: done; the blue; after: plain
 function syncPlan() {   // Session Setup: the same steps as every row
@@ -3576,16 +3661,29 @@ function syncPlan() {   // Session Setup: the same steps as every row
     paintStep(sv, going || past ? 'fill' : ok ? 'blue' : ''); sv.disabled = past || !ok || going;
     setPM(b.querySelector('.pm'), S.plan.fold[q] ? 'plus' : past ? 'minus' : 'x');
   });
-  document.querySelectorAll('.trow.line').forEach(r => {   // each task line: Private, the words, ✓, ›
-    const i = +r.dataset.line, l = PREFS.todo[i]; if (!l) return; const pos = S.lpos[i] || 0, lk = S.lock.has(i);
-    const sw = r.querySelector('[data-priv]'), inp = r.querySelector('.text-input'), ck = r.querySelector('[data-lok]'), sv = r.querySelector('[data-lgo]');
-    sw.setAttribute('aria-checked', String(!!l.priv)); r.classList.toggle('locked', lk); inp.readOnly = lk; const pn = document.querySelector(`[data-pnote="${i}"]`); if (pn) pn.hidden = !(l.priv && l.text.trim());
+  document.querySelectorAll('.trow.line').forEach(r => {   // each task line: its switch, the words, ✓|›
+    const i = +r.dataset.line, l = PREFS.todo[i]; if (!l) return; const lk = S.lock.has(i), pos = S.lpos[i] ?? (l.on ? 1 : 0);
+    const sw = r.querySelector('[data-lon]'), inp = r.querySelector('.text-input'), ck = r.querySelector('[data-lok]'), sv = r.querySelector('[data-lgo]');
+    sw.setAttribute('aria-checked', String(!!l.on)); r.classList.toggle('locked', lk); r.classList.toggle('off', !l.on); inp.readOnly = lk; inp.classList.toggle('dots', !!l.priv);
+    if (l.priv && !CSS.supports('-webkit-text-security', 'disc')) inp.type = 'password'; else if (inp.type !== 'text') inp.type = 'text';   // dots, where the phone has no other way
+    const pn = document.querySelector(`[data-pnote="${i}"]`); if (pn) pn.hidden = !(l.priv && l.text.trim());
     if (lk) { [sw, inp, ck, sv].forEach(n => paintStep(n, '')); ck.disabled = sv.disabled = true; return; }
-    paintSeq([sw, inp, ck], Math.min(pos, 3)); if (pos >= 3) paintStep(ck, 'green'); paintStep(sv, pos === 4 ? 'fill' : pos === 3 ? 'blue' : '');
-    ck.disabled = !(l.text.trim() || l.priv) || pos >= 4; sv.disabled = pos !== 3;
+    paintSeq([sw, l.on ? inp : null, ck].filter(Boolean), l.on ? Math.min(pos, 3) : (pos >= 2 ? 2 : 1)); if (!l.on) paintStep(inp, '');
+    if (pos >= 3) paintStep(ck, 'green'); paintStep(sv, pos === 4 ? 'fill' : pos === 3 ? 'blue' : '');
+    ck.disabled = !(l.text.trim() || !l.on) || pos >= 4; sv.disabled = pos !== 3;
+  });
+  document.querySelectorAll('.trow.dline').forEach(r => {   // each due line: its switch, the counter, ✓|›
+    const i = +r.dataset.dline, l = PREFS.todo[i]; if (!l) return; const lk = S.dlock.has(i), on = l.at >= 0, pos = S.dpos[i] ?? (on ? 2 : 0);
+    const sw = r.querySelector('[data-don]'), cn = r.querySelector('.counter'), ck = r.querySelector('[data-dok]'), sv = r.querySelector('[data-dgo]');
+    sw.setAttribute('aria-checked', String(on)); r.classList.toggle('locked', lk); r.classList.toggle('off', !on);
+    if (lk) { [sw, cn, ck, sv].forEach(n => paintStep(n, '')); ck.disabled = sv.disabled = true; return; }
+    paintSeq(on ? [sw, cn, ck] : [sw, ck], on ? Math.min(pos, 3) : Math.min(Math.max(pos, 1), 2)); if (!on) paintStep(cn, '');
+    if (pos >= 3) paintStep(ck, 'green'); paintStep(sv, pos === 4 ? 'fill' : pos === 3 ? 'blue' : '');
+    ck.disabled = pos < 1 || pos >= 4; sv.disabled = pos !== 3;
   });
 }
-const checkGo = (id) => `<button class="check" data-ready="${id}" aria-label="Tick">✓</button><button class="save" data-save="${id}" aria-label="Save" disabled>›</button>`;   // ✓ then ›: the end of every row's work   // ✓ then ›: half a tile each, the same › that opens a card, like ❙❙ and the pin
+const cgo = (a, b, la = 'Save') => `<span class="cgo"><button class="check" ${a} aria-label="Tick">✓</button><button class="save" ${b} aria-label="${la}" disabled>›</button></span>`;   // ✓ and ›: one ribbon, a line between
+const checkGo = (id) => cgo(`data-ready="${id}"`, `data-save="${id}"`);   // ✓ then ›: the end of every row's work   // ✓ then ›: half a tile each, the same › that opens a card, like ❙❙ and the pin
 function pickerEl(picks) {   // the phone's own pickers, in our wells
   const p = document.createElement('div'); p.className = 'picker';
   for (const [k, unit] of picks) { const w = itemEl(k); if (unit) w.insertAdjacentHTML('beforeend', `<span class="unit">${unit}</span>`); p.appendChild(w); }
@@ -3596,23 +3694,19 @@ function pickerEl(picks) {   // the phone's own pickers, in our wells
 const dueOf = (i) => (PREFS.todo[i] ? PREFS.todo[i].at : -1);
 const dueWords = (at) => (at < 0 ? 'No time' : clockOf(new Date().setHours(Math.floor(at / 60), at % 60, 0, 0)));
 const esc = (t) => String(t).replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' })[c]);
-function todoRow(l, i) {   // one task: Private (a switch), the words, ✓, ›. Private words are never written to the phone, and go when the session does
-  return `<div class="trow line${S.lock.has(i) ? ' locked' : ''}" data-line="${i}"><span class="privw">Private</span><div class="item sw"><button class="switch" role="switch" data-priv="${i}" aria-label="Private" aria-checked="${!!l.priv}"><i></i></button></div>`
-    + `<input class="text-input" type="text" maxlength="60" enterkeyhint="done" autocomplete="off" placeholder="${l.priv ? 'Private task' : i ? 'Another task' : 'What is it?'}" data-key="todo.${i}.text" data-type="text"${S.lock.has(i) ? ' readonly' : ''}>`
-    + `<button class="check" data-lok="${i}" aria-label="Tick">✓</button><button class="save" data-lgo="${i}" aria-label="Keep" disabled>›</button></div>`
+function todoRow(l, i) {   // one task: its switch, the words (the eye inside them: tapped, they show as dots), ✓|›. Private words are never written to the phone
+  const lk = S.lock.has(i);
+  return `<div class="trow line${lk ? ' locked' : ''}${l.on ? '' : ' off'}" data-line="${i}"><div class="item sw"><button class="switch" role="switch" data-lon="${i}" aria-label="Use this task" aria-checked="${!!l.on}"><i></i></button></div>`
+    + `<div class="tbox"><input class="text-input${l.priv ? ' dots' : ''}" type="text" maxlength="60" enterkeyhint="done" autocomplete="off" placeholder="${i ? 'Another task' : 'What is it?'}" data-key="todo.${i}.text" data-type="text"${lk ? ' readonly' : ''}><button class="eye" data-priv="${i}" aria-label="${l.priv ? 'Show it' : 'Keep it private'}">${svg(l.priv ? ICON.eyeoff : ICON.eye)}</button></div>`
+    + cgo(`data-lok="${i}"`, `data-lgo="${i}"`, 'Keep') + `</div>`
     + `<i class="rdesc pnote" data-pnote="${i}"${l.priv && l.text.trim() ? '' : ' hidden'}>Only for this session. Not saved, and no one else sees it.</i>`;
 }
-function dueRow(l, i) {   // the line's words (or Private), and its due time
-  const open = S.due === i;
-  return `<div class="trow goal due" data-line="${i}"><span class="tname">${l.text.trim() ? esc(l.text.trim()) : 'Private'}</span>`
-    + `<button class="tog chip${l.at >= 0 ? ' sel' : ' off'}${open ? ' open' : ''}" data-due="${i}">${dueWords(l.at)}</button></div>`
-    + (open ? `<div class="due-pick" data-line="${i}"></div>` : '');
+function dueRow(l, i) {   // a time it's due, for one task: its name, then the switch, a one-row counter, ✓|›
+  const lk = S.dlock.has(i), name = l.text.trim() ? (l.priv ? 'Private task' : esc(l.text.trim())) : i ? 'Another task' : 'Your task';
+  return `<i class="dname">${name}</i><div class="trow dline${lk ? ' locked' : ''}${l.at < 0 ? ' off' : ''}" data-dline="${i}"><div class="item sw"><button class="switch" role="switch" data-don="${i}" aria-label="A time it’s due" aria-checked="${l.at >= 0}"><i></i></button></div>`
+    + `<div class="counter"></div>${cgo(`data-dok="${i}"`, `data-dgo="${i}"`, 'Keep')}</div>`;
 }
-function openDue(i) {   // the due time's pickers, under their line
-  S.due = S.due === i ? -1 : i;
-  if (S.due >= 0 && dueOf(i) < 0) { const d = new Date(), now = d.getHours() * 60 + d.getMinutes(); PREFS.todo[i].at = (Math.ceil((now + 30) / 5) * 5) % 1440; }   // opened: a time half an hour on, to the five
-  redraw('.dues', 'dues'); syncControls();
-}
+function openDue(i) { const l = PREFS.todo[i]; if (!l) return; if (l.at < 0) { const d = new Date(), now = d.getHours() * 60 + d.getMinutes(); l.at = (Math.ceil((now + 30) / 5) * 5) % 1440; } else l.at = -1; S.dpos[i] = l.at >= 0 ? 1 : 2; sound.tick(0); savePrefs(); redraw('.dues', 'dues'); syncControls(); }   // on: half an hour from now, to the five
 function soonestDue() {   // the nearest due time still ahead, on a line that's on
   const d = new Date(), now = d.getHours() * 60 + d.getMinutes();
   return PREFS.todo.filter(l => l.on && l.at >= 0).map(l => ((l.at - now) + 1440) % 1440).filter(m => m > 0 && m < 12 * 60).sort((a, b) => a - b)[0];
@@ -3629,11 +3723,11 @@ function choose(k, v) {
     redraw('.leave', 'leave'); redraw('.timerctl', 'timerctl'); savePrefs(); syncControls(); return;
   }
   if (k.startsWith('leave.') || k.startsWith('due.')) {   // one wheel of the timer, the time, or a due time
-    const due = k.startsWith('due.'), L = PREFS.leave, a = Math.max(0, due ? dueOf(S.due) : L.at), part = k.slice(due ? 4 : 6), h24 = Math.floor(a / 60);
+    const due = k.startsWith('due.'), di = due ? +k.split('.')[1] : -1, L = PREFS.leave, a = Math.max(0, due ? dueOf(di) : L.at), part = due ? k.split('.')[2] : k.slice(6), h24 = Math.floor(a / 60);
     let at = a;
     if (part === 'h') L.mins = v * 60 + L.mins % 60; else if (part === 'm') L.mins = Math.floor(L.mins / 60) * 60 + v;
     else if (part === 'ch') at = ((v % 12) + (h24 >= 12 ? 12 : 0)) * 60 + a % 60; else if (part === 'cm') at = h24 * 60 + v; else at = (h24 % 12 + (v === 'pm' ? 12 : 0)) * 60 + a % 60;
-    if (due) PREFS.todo[S.due].at = at; else if (part !== 'h' && part !== 'm') L.at = at;
+    if (due) { PREFS.todo[di].at = at; S.dpos[di] = 2; } else if (part !== 'h' && part !== 'm') L.at = at;
     L.mins = Math.max(1, L.mins); savePrefs(); syncControls(); return;
   }
   if (k === 'place' || k === 'outdoor') { const custom = () => PREFS.place === 'nature' && PREFS.outdoor === 'custom', wasC = custom(); PREFS[k] = v; if (k === 'outdoor') PREFS.place = 'nature'; newWorld(); if (S.sheet === 'scene' && wasC !== custom()) refill(); }
@@ -3684,7 +3778,7 @@ function syncControls() {
   document.querySelectorAll('[data-off]').forEach(e => { const off = !!ITEMS[e.dataset.off].off(); e.classList.toggle('off', off); e.querySelectorAll('button, input').forEach(b => { b.disabled = off; }); });
   document.querySelectorAll('.mnote').forEach(n => { const t = MODE_NOTES[PREFS.mode]; if (n.textContent !== t) n.textContent = t; });
   if (S.sheet === 'checkin') syncPlan();   // Start's ✓ lights when every question is answered
-  syncRows(); syncBars();
+  syncRows(); syncFoot(); syncBars();
 }
 
 /* ---------- ✓ and ▶: a change waits for you ---------- */
@@ -3743,7 +3837,7 @@ function syncRows() {   // every row, the same steps: the blue moves along the w
     setPM(el.querySelector(':scope > .rhead .marks > .pm'), f ? 'plus' : DONE[id] ? 'minus' : 'x');
     const step = stepOf(id), c = el.querySelector(':scope > .rctl'); if (!c) return;
     const sw = c.querySelector(':scope > .sw .switch'), on = !sw || isOn(sw.dataset.onoff), amt = c.querySelector(':scope > .item:not(.sw), :scope > .choice'), pk = el.querySelector(':scope > .picker');
-    const ck = c.querySelector(':scope > .check'), sv = c.querySelector(':scope > .save'), work = [sw, on ? amt : null, on ? pk : null].filter(Boolean);
+    const ck = c.querySelector(':scope > .cgo > .check'), sv = c.querySelector(':scope > .cgo > .save'), work = [sw, on ? amt : null, on ? pk : null].filter(Boolean);
     const at = { '': 0, sw: sw ? 1 : 0, amt: work.length, tick: work.length + 1, save: work.length + 2 }[step] ?? 0;   // where the blue is
     paintSeq(work, Math.min(at, work.length)); if (!on && amt) { paintStep(amt, ''); if (pk) paintStep(pk, ''); }
     paintStep(ck, at > work.length ? 'green' : at === work.length && step ? 'blue' : '');
@@ -3828,7 +3922,7 @@ const SKY_LOOK = { bolt: ['Lightning', () => ICON.bolt], wind: ['Wind', () => IC
 const skyName = (k) => { const n = SKY_LOOK[k][0]; return typeof n === 'function' ? n() : n; };
 const cellHTML = (attrs, icon, sub, extra = '', cls = '') => `<button class="cell${cls}" ${attrs}>${icon.startsWith('<svg') ? icon : svg(icon)}<span class="sub">${sub}</span>${extra}</button>`;
 function barHTML(which) {
-  if (which === 'top') return [`<button class="cell gear" data-cell="home" aria-label="Game and mode settings">${svg(ICON.gear)}</button><button class="cell tpill" data-cell="mode" aria-label="Mode"><b>Mode</b> <span class="ln" data-state="mode"></span></button><button class="cell tpill" data-cell="scene" aria-label="Scene"><span class="ln" data-state="scene"></span></button><div class="cell tctl"><button class="sr-btn" data-act="pause" aria-label="Pause"></button><button class="sr-btn" data-cell="volume" data-mute aria-label="Mute">${VOL}<span class="sub"></span></button></div><span class="marks">${pmHTML('data-act="toggletop"', 'the top row', 'minus')}</span>`, '40px minmax(0, 1.15fr) minmax(0, 1fr) auto auto'];   // settings (a gear); Mode, bold, and the mode; the scene; pause and sound; the mark
+  if (which === 'top') return [`<button class="cell gear" data-cell="home" aria-label="Settings">${svg(ICON.gear)}</button>${['Mode', 'Scene', 'Timer', 'Task'].map(w => `<div class="cell word" data-w="${w.toLowerCase()}"><span>${w}</span></div>`).join('')}<button class="cell" data-act="pause" aria-label="Pause">${svg(ICON.pp)}</button><button class="cell" data-cell="volume" data-mute aria-label="Mute">${VOL}</button><button class="cell" data-act="volume" aria-label="Volume"><span class="vpct"></span></button>`, '38px repeat(4, minmax(0, 1fr)) 38px 38px 44px'];   // settings; Mode, Scene, Timer, Task (nothing yet); pause; mute; how loud
   if (S.mode === 'settle') return [cellHTML('data-act="breath" aria-label="Take a breath"', ICON.breathe, 'Take a breath') + cellHTML('data-act="deep" aria-label="Take a deep breath"', ICON.deep, 'Take a deep breath') + cellHTML('data-act="go" aria-label="Go: to your list"', ICON.goal, 'Go'), 'repeat(3, minmax(0, 1fr))'];   // Settle: a breath, a deep breath, or out of the door
   if (!S.wxOpen) return [`<button class="cell wxwords" data-act="wxopen" aria-label="Weather settings"${PREFS.hideWx ? ' hidden' : ''}><span class="pill">Weather Settings</span></button><span class="marks">${pmHTML('data-act="togglewx" data-roll="1"', 'Weather Settings', PREFS.hideWx ? 'minus' : 'plus')}</span>`, '1fr auto'];   // folded: the words, and the mark (it rolls as it is drawn)
   return [`<button class="cell" data-act="pin" aria-label="Keep the weather open">${svg(ICON.pin)}</button>` + ATMO.map(k => cellHTML(`data-sky="${k}" aria-label="${skyName(k)}"`, SKY_LOOK[k][1](), skyName(k))).join('')
@@ -3853,7 +3947,6 @@ function syncBars() {   // build a bar when what it holds has changed, then brin
   $('botBar').parentElement.hidden = S.mode !== 'settle' && !has('weather');   // indoors there is no weather bar
   $('toolwrap').hidden = S.mode !== 'settle' && (!has('weather') && !has('spheres'));   // the tools' row, and the strip's place: kept in SkyPlay so the board stays one size
   const top = $('topBar'), tools = $('tools'), st = (k) => top.querySelector(`[data-state=${k}]`);
-  fit(st('mode'), MODE_NAMES[S.mode]); fit(st('scene'), placeName(), SHORT[placeName()] || placeName());
   syncRow();
   toolRow(); tools.hidden = S.mode !== 'settle' && !has('spheres');
   tools.querySelectorAll('[data-tool]').forEach(b => {
@@ -3900,26 +3993,26 @@ function sizeCanvas(cv) { const dpr = Math.min(3, window.devicePixelRatio || 1),
 // runs down; the score rolls under its star (with the session clock on, the minutes take the star's place); and on Your time,
 // the questions breathe by, one a breath.
 // The score row: built once; its words and states follow the game.
-function syncRow() {
+function syncRow() {   // the score on the left (★ opens Statistics), the time on the right; the top ribbon's states
   const r = $('scoreRow'); if (!r) return;
-  if (!r.firstElementChild) r.innerHTML = `<button class="sr-score" data-cell="score" aria-label="Score and statistics"><span class="sr-word">Score</span><b class="sr-num">0</b></button><button class="cell tpill" data-cell="goal" aria-label="Timer and tasks">Timer &amp; Tasks<i class="goal-left"></i></button><span class="marks">${pmHTML('data-act="togglesr"', 'the score', 'minus')}</span>`;   // the score (it opens Statistics), and the mark
-  setPM(r.querySelector('.pm'), PREFS.hideRow ? 'plus' : 'minus');
-  const T0 = $('topBar'); T0.classList.toggle('hidden', !!PREFS.hideTop); setPM(T0.querySelector('.pm'), PREFS.hideTop ? 'plus' : 'minus');
-  r.classList.toggle('hidden', !!PREFS.hideRow); r.classList.toggle('nogame', !has('spheres'));
+  if (!r.firstElementChild) r.innerHTML = `<div class="sr-box sr-score"><span class="sr-word">Score</span><b class="sr-num">0</b><button class="sr-star" data-act="stats" aria-label="Statistics">${svg(ICON.star)}</button></div><div class="sr-box sr-clock" aria-label="The time"><span class="clk"></span></div>`;
+  r.classList.toggle('nogame', !has('spheres')); r.classList.toggle('nonum', !!PREFS.hideNumbers);
   const T = $('topBar'); if (!T.querySelector('[data-act=pause]')) return;
-  const vt = PREFS.sound ? `${Math.round(PREFS.vol.master * 100)}%` : canVibrate && PREFS.haptics ? 'Vibrate' : 'Silent', sub = T.querySelector('[data-cell=volume] .sub'); if (sub.textContent !== vt) sub.textContent = vt;
-  const pb = T.querySelector('[data-act=pause]'), paused = !!S.held && !!S.pauseBtn; pb.classList.toggle('on', paused); const want = 'pp'; if (pb.dataset.k !== want) { pb.dataset.k = want; pb.innerHTML = svg(ICON.pp); pb.setAttribute('aria-label', paused ? 'Resume' : 'Pause'); }
-  T.querySelector('[data-cell=volume]').classList.toggle('on', PREFS.sound); T.querySelector('[data-act=pause]').style.visibility = has('spheres') ? '' : 'hidden';
-  r.classList.toggle('nonum', !!PREFS.hideNumbers);
+  const vt = PREFS.sound ? `${Math.round(PREFS.vol.master * 100)}%` : 'Off', pc = T.querySelector('.vpct'); if (pc.textContent !== vt) pc.textContent = vt;
+  const pb = T.querySelector('[data-act=pause]'); pb.classList.toggle('on', !!S.frozen); pb.setAttribute('aria-label', S.frozen ? 'Play' : 'Pause');
+  T.querySelector('[data-cell=volume]').classList.toggle('on', false);
+  const G = S.goal && S.goal.phase === 'play';
+  T.querySelector('[data-w=timer]').classList.toggle('on', !!G);   // a timer running: green
+  T.querySelector('[data-w=task]').classList.toggle('on', PREFS.todo.some(l => l.on && (l.text.trim() || l.priv)));   // a task set: green
 }
 function tickBars() {
   const top = $('topBar');
   const bot = $('botBar');
   for (const k of ['breath', 'deep']) { const dp = bot.querySelector(`[data-act=${k}]`); if (dp) dp.classList.toggle('on', !!S.sigh && (S.sigh.steps === DEEP) === (k === 'deep')); }   // green while it runs
-  const g = $('scoreRow').querySelector('[data-cell=goal]'), G = S.goal, live = !!G && G.phase === 'play';
-  if (g) { g.classList.toggle('on', live); g.classList.toggle('live', live); g.style.setProperty('--left', live ? clamp(goalLeft() * 1000 / Math.max(1, G.end - G.start), 0, 1).toFixed(3) : '0'); }
+  const ck = $('scoreRow').querySelector('.clk'), mn = Math.floor(Date.now() / 60000);
+  if (ck && ck._m !== mn) { ck._m = mn; ck.textContent = new Date().toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' }); }   // the phone's own clock, as the phone writes it
   const sr = $('scoreRow'), pill = sr.querySelector('.sr-score');
-  if (pill && !PREFS.hideRow) {   // the score in the standard type; a glow round it for a moment when points come in
+  if (pill) {   // the score in the standard type; a glow round it for a moment when points come in
     const wd = pill.querySelector('.sr-word'), num = pill.querySelector('.sr-num'), gl = scoreGlow(), word = PREFS.clock ? `${Math.floor((performance.now() - S.born) / 60000)} min` : 'Score', n = fmt(S.score);
     if (wd.textContent !== word) wd.textContent = word;   // with the session clock on, the minutes take the word's place
     if (num.textContent !== n) num.textContent = n;
@@ -3931,8 +4024,6 @@ function tickBars() {
 function topTap(el) {
   const k = el.dataset.cell;
   if (k === 'home') openSheet('pause');
-  else if (k === 'goal') openSheet('checkin');
-  else openSheet(k);
 }
 function applySeason() {
   const s = here(), root = document.documentElement.style;
@@ -3962,7 +4053,8 @@ function openSheet(name, push = false, back = false) {
   if (name === 'pause' && !back && !(S.goal && S.goal.phase === 'play')) PREFS.leave.how = 'decide';   // no timer running: Timer reads No timer
   closeStrip(true); S.sheet = name; S.aiming = false; S.due = -1; remember(keysOf(itemsOf(def)));
   $('sheetTitle').textContent = def.title; $('sheetTitle').hidden = !def.title; const note = typeof def.note === 'function' ? def.note() : def.note; $('sheetNote').innerHTML = note || ''; $('sheetNote').hidden = !note;
-  $('sheetHelp').hidden = name === 'help'; $('sheetFoot').hidden = name !== 'checkin' && !def.foot; $('sheetReset').hidden = name !== 'checkin'; $('sheetAdv').hidden = !def.foot; $('morePop').hidden = true;   // the foot only when a card has something to start or play
+  S.footOk = false; S.footGo = false; if (!back) { S.dpos = {}; S.dlock = new Set(); }
+  $('sheetHelp').hidden = !helpList(def).length; $('sheetFoot').hidden = name !== 'checkin' && !def.foot; $('sheetReset').hidden = name !== 'checkin'; $('sheetAdv').hidden = !def.foot; $('morePop').hidden = true;   // the foot only when a card has something to start or play
   document.body.classList.toggle('see', name === 'checkin');   // the world shows through behind your time
   $('sheet').dataset.name = name;
   $('scrim').hidden = false; $('sheet').hidden = false;
@@ -4008,7 +4100,7 @@ function bind() {
   canvas.addEventListener('pointerdown', (e) => {
     if (e.button !== undefined && e.button !== 0) return;
     e.preventDefault();
-    if (S.sheet || S.card) return;
+    if (S.sheet || S.card || S.frozen) return;
     if (S.strip) { closeStrip(true); foldWx(); return; }   // a touch on the board puts an unsaved weather row back
     foldWx();
     if (S.sigh && !S.space) { endSigh(); return; }
@@ -4040,6 +4132,7 @@ function bind() {
   canvas.addEventListener('pointerup', (e) => finish(e, true));
   canvas.addEventListener('pointercancel', (e) => finish(e, false));
   canvas.addEventListener('keydown', (e) => {
+    if (S.frozen) return;
     if (e.key === ' ' || e.key === 'Enter') {
       e.preventDefault();
       if (e.repeat) return;
@@ -4054,15 +4147,13 @@ function bind() {
     pin: () => { PREFS.wxPin = !PREFS.wxPin; savePrefs(); if (!PREFS.wxPin) { if (S.strip) closeStrip(true); foldWx(); } syncBars(); },   // unpinned: back to the words
     fold: (el) => { if (el.closest('#strip')) closeStrip(true); else foldRow(el.dataset.fold); }, qfold: (el) => { const q = +el.dataset.qf; S.plan.fold[q] = !S.plan.fold[q]; refill(); },   // the weather's row: its ✕ closes it, and what wasn't kept goes back
     redo: (el) => resetRow(el.dataset.fold), qredo: (el) => resetQ(+el.dataset.qf),
-    pause: () => { if (!has('spheres')) return; if (S.held) { S.held = false; S.pauseBtn = false; } else { S.held = true; S.pauseBtn = true; } syncRow(); },   // ❙❙: the one paused screen; the same tap, or a touch on the board, goes on
-    togglesr: () => { PREFS.hideRow = !PREFS.hideRow; savePrefs(); syncRow(); },   // − hides, + shows: the same mark turns
+    pause: () => freeze(!S.frozen),   // ⏯: everything stops, sound and all, a sphere in mid-air too; the same tap goes on
+    stats: () => openSheet('score'), volume: () => openSheet('volume'),
     togglewx: () => { PREFS.hideWx = !PREFS.hideWx; savePrefs(); syncBars(); },
-    toggletop: () => { PREFS.hideTop = !PREFS.hideTop; savePrefs(); syncRow(); },
     wxribbon: () => { closeSheet(); S.wxOpen = true; syncBars(); shimmer($('botBar')); }, breath: () => { closeSheet(); startSigh('breath'); }, deep: () => { closeSheet(); startSigh('deep'); }, breathnow: () => { closeSheet(); startSigh(); }, go: () => park('Go'),
-    addtask: () => { if (PREFS.todo.length < 4) { PREFS.todo.push({ on: true, priv: false, text: '', at: -1 }); S.lpos[PREFS.todo.length - 1] = 0; redraw('.todo', 'todo'); redraw('.dues', 'dues'); syncControls(); const r = document.querySelector('.todo .trow.line:last-of-type'); shimmer(r); } },
+    addtask: () => { if (PREFS.todo.length < 4) { PREFS.todo.push({ on: true, priv: false, text: '', at: -1 }); S.lpos[PREFS.todo.length - 1] = 1; redraw('.todo', 'todo'); redraw('.dues', 'dues'); syncControls(); const r = document.querySelector('.todo .trow.line:last-of-type'); shimmer(r); } },
     continue: () => { loadPool(S.prev); say('Your last game', placeName()); forget(); savePrefs(); closeSheet(); startPlan(S.plan.step < 3); },   // straight back into play, with Your time as it stands
-    notime: () => { PREFS.todo[S.due].at = -1; S.due = -1; redraw('.dues', 'dues'); syncControls(); },
-    moreok: () => { $('morePop').hidden = true; }, sample: (el) => playSample(el),
+    moreok: () => { $('morePop').hidden = true; }, howto: () => { $('morePop').hidden = true; openSheet('help', true); }, leaveok: () => { $('morePop').hidden = true; closeSheet(); }, sample: (el) => playSample(el),
     leaverest: () => { undoAll(); welcomeBack(); } };   // Rest's ✕: put back, and leave
   document.addEventListener('click', (e) => {
     const t = e.target;
@@ -4070,13 +4161,17 @@ function bind() {
     const act = t.closest('[data-act]'); if (act) { ACTS[act.dataset.act](act); return; }
     const qs = t.closest('[data-qsw]'); if (qs) { const id = qs.dataset.qsw; answer(id, !(id === 'task' ? S.plan.task : S.plan.due)); return; }   // Session Setup's switches
     const pv = t.closest('[data-priv]'); if (pv) { linePriv(+pv.dataset.priv); return; }
+    const lo = t.closest('[data-lon]'); if (lo) { lineOn(+lo.dataset.lon); return; }
+    const dn = t.closest('[data-don]'); if (dn) { if (!S.dlock.has(+dn.dataset.don)) openDue(+dn.dataset.don); return; }
+    const dk = t.closest('[data-dok]'); if (dk) { dueTick(+dk.dataset.dok); return; }
+    const dg = t.closest('[data-dgo]'); if (dg) { dueGo(+dg.dataset.dgo); return; }
+    const dr = t.closest('.trow.dline.locked'); if (dr) { S.dlock.delete(+dr.dataset.dline); S.dpos[+dr.dataset.dline] = 1; redraw('.dues', 'dues'); syncControls(); return; }
     const lk = t.closest('[data-lok]'); if (lk) { lineTick(+lk.dataset.lok); return; }
     const lg = t.closest('[data-lgo]'); if (lg) { lineGo(+lg.dataset.lgo); return; }
     const lr = t.closest('.trow.line.locked'); if (lr) { lineOpen(+lr.dataset.line); return; }   // a kept task: a tap opens it again
     const sv = t.closest('[data-save]'); if (sv) { saveRow(sv.dataset.save); return; }
     const rd = t.closest('[data-ready]'); if (rd) { readyRow(rd.dataset.ready); return; }
     const mo = t.closest('[data-more]'); if (mo) { learnMore(mo.dataset.more); return; }
-    const du = t.closest('[data-due]'); if (du) { openDue(+du.dataset.due); return; }
     const an = t.closest('[data-ans]'); if (an) { answer(an.dataset.ans, an.dataset.v === '1'); return; }
     const ch = t.closest('[data-choice]'); if (ch) { const id = rowOf(ch); choose(ch.dataset.choice, parseOpt(ch.dataset.v)); if (id) setStep(id, 'amt'); return; }
     const wi = t.closest('.wi'); if (wi) { wheelTap(wi); return; }
@@ -4088,8 +4183,7 @@ function bind() {
     const oo = t.closest('[data-onoff]'); if (oo) { const k = oo.dataset.onoff, on = !isOn(k), id = rowOf(oo); if (k === 'soundscape.on') choose(k, on); else setPref(k, ITEMS[k] && ITEMS[k].inv ? !on : on); if (id) setStep(id, on && hasAmount(id) ? 'sw' : 'amt'); if (on && id && SAMPLE_OF[id]) hintPill(oo.closest('[data-row]')); return; }
     const sh = t.closest('[data-sheet]'); if (sh) { e.preventDefault(); if (sh.hasAttribute('data-root')) { closeSheet(); openSheet(sh.dataset.sheet); } else openSheet(sh.dataset.sheet, true); return; }
     if (t.closest('#sheetMute, #topBar [data-cell=volume]')) { setPref('sound', !PREFS.sound); keep('sound'); return; }   // the speaker is a plain tap: it stays
-    const sc = t.closest('#scoreRow [data-cell=score]'); if (sc) { openSheet('score'); return; }
-    const cell = t.closest('#topBar [data-cell]:not([data-cell=volume]), #scoreRow [data-cell=goal]'); if (cell) { topTap(cell); return; }
+    const cell = t.closest('#topBar [data-cell=home]'); if (cell) { topTap(cell); return; }
     const sky = t.closest('#botBar [data-sky]'); if (sky) { cellTap(sky.dataset.sky); return; }
     const tile = t.closest('[data-tile]'); if (tile) { const k = tile.dataset.tile; PREFS.tiles[k] = !PREFS.tiles[k]; if (k === 'tracer' && S.space) S.space.ball = null; savePrefs(); sound.tick(0); syncBars(); return; }   // remembered
     const tool = t.closest('[data-tool]'); if (tool) { useTool(tool.dataset.tool); syncBars(); return; }
@@ -4101,7 +4195,7 @@ function bind() {
   document.addEventListener('change', (e) => { const r = e.target.closest('[data-type="range"]'); const id = r && rowOf(r); if (id) setStep(id, 'amt'); });   // let go: set, green; ✓ is next
   document.addEventListener('focusout', (e) => { const tx = e.target.closest && e.target.closest('[data-type="text"]'); const id = tx && rowOf(tx); if (id && rowState(id) === 'changed') setStep(id, 'amt'); });   // leaving the words: the row waits for ✓ (a row already ticked is left alone, so ▶ can take the tap)
   document.addEventListener('keydown', (e) => {
-    if (e.key === 'Escape') { if (!$('morePop').hidden) $('morePop').hidden = true; else if (S.sheet) closeSheet(); }
+    if (e.key === 'Escape') { if (!$('morePop').hidden) $('morePop').hidden = true; else if (S.sheet) askClose(); }
     else if (e.key === 'Enter' && e.target.matches && e.target.matches('.text-input')) e.target.blur();
   });
   $('sheetReset').addEventListener('click', planReset);
@@ -4110,9 +4204,11 @@ function bind() {
   $('sheetBody').addEventListener('scroll', ringClear, { passive: true });
   $('goView').addEventListener('click', goReturn);
   $('cardInput').addEventListener('keydown', (e) => { if (e.key === 'Enter') $('cardA').click(); });
-  $('sheetBack').addEventListener('click', backSheet); $('sheetClose').addEventListener('click', closeSheet);
-  $('sheetHelp').addEventListener('click', () => openSheet('help', true));
-  $('scrim').addEventListener('click', closeSheet);   // a touch outside the card puts it back, like ✕
+  $('sheetBack').addEventListener('click', backSheet); $('sheetClose').addEventListener('click', askClose);
+  $('sheetHelp').addEventListener('click', cardHelp);
+  { const slot = $('topBar').parentElement; slot.addEventListener('click', (e) => { if (e.target !== slot) return; const r = $('topBar').getBoundingClientRect(), c = document.elementFromPoint(e.clientX, r.top + r.height / 2), b = c && c.closest('#topBar button'); if (b) b.click(); }); }   // just above or below the ribbon: the cell there
+  $('footOk').addEventListener('click', footTick); $('footNext').addEventListener('click', footNext);
+  $('scrim').addEventListener('click', askClose);   // a touch outside the card, like ✕
   for (const k of ['a', 'b', 'c', 'd']) $('card' + k.toUpperCase()).addEventListener('click', () => { hideCard(); if (cardActions[k]) cardActions[k](); });
   $('sleepView').addEventListener('pointerdown', () => { if (S.sleep) { S.sleep.idle = 0; $('sleepView').classList.remove('idle'); } }, true);
   const flush = () => { savePrefs(); saveJournal(); savePool(); };
