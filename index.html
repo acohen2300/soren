@@ -221,6 +221,7 @@ body.lamp { --glint: rgba(255, 236, 196, 0.95); --glint-soft: rgba(255, 205, 130
 .c-green { border-color: rgba(var(--on), 0.9) !important; box-shadow: 0 0 0 1px rgba(var(--on), 0.6), 0 0 12px rgba(var(--on), 0.2) !important; }
 .switch.c-green { box-shadow: 0 0 0 2px rgba(var(--on), 0.55), 0 0 12px rgba(var(--on), 0.3) !important; }
 .range.c-blue, .range.c-green, .choice.c-blue, .choice.c-green, .item.c-blue, .item.c-green, .picker.c-blue, .picker.c-green { border-radius: 12px; padding: 0 4px; border: 1px solid transparent; }
+.choice.c-green { border-color: transparent !important; box-shadow: none !important; }   /* a choice shows one green: the button chosen, not a ring round both */
 .check.c-green { color: rgb(var(--gold)); text-shadow: 0 0 8px rgba(var(--gold), 0.6); }   /* the tick itself, gold */
 .save.c-green { background: rgba(var(--on), 0.2); } .save.gobtn { font-size: 12px; font-weight: 700; letter-spacing: 0; padding: 0; }
 .link .rctl, .act { margin-top: 0; } .link .rhead, .link .rdesc, .row:has(.act) .rhead, .row:has(.act) .rdesc { margin-right: 54px; } .link .rctl, .row:has(.act) .rctl { margin-top: -36px; }   /* › sits beside the name and its line */
@@ -1883,7 +1884,8 @@ const WX = Object.fromEntries(Object.entries(POOL_MAX).map(([kind, n]) => [kind,
 const active = (kind) => (lessMo(2) ? 0 : Math.round(clamp(ENV[kind] * (kind === 'rain' || kind === 'snow' ? (lessMo() ? 0.5 : 1) : FEEL.life), 0, 1) * POOL_MAX[kind]));
 function updateWeather(k, dt) {
   const t = animTime, w = ENV.blow, k0 = k, kw = k * (lessMo() ? 0.5 : 1);   // Reduce motion: only rain and snow fall at half speed
-  const wrap = (m, kind) => { if (m.y > LH + 12) { if (kind) bwLand(kind, m.x, kind === 'snow' ? 0.9 + 2.6 * m.d : 0.8 + 0.8 * m.d); m.y = -12; m.x = Math.random() * LW; } if (m.x < -24) m.x = LW + 12; else if (m.x > LW + 24) m.x = -12; };
+  const ground = (m, kind) => !kind || !has('spheres') ? LH + 12 : FLOOR - (kind === 'snow' ? BW.snow : BW.water)[clamp(Math.floor(m.x / BW_CW), 0, BW_COLS - 1)];   // a flake or drop ends on the floor, or on the pile, where it lands
+  const wrap = (m, kind) => { if (m.y > ground(m, kind)) { if (kind) bwLand(kind, m.x, kind === 'snow' ? 0.9 + 2.6 * m.d : 0.8 + 0.8 * m.d); m.y = -12; m.x = Math.random() * LW; } if (m.x < -24) m.x = LW + 12; else if (m.x > LW + 24) m.x = -12; };
   for (let i = 0, n = active('rain'); i < n; i++) { const m = WX.rain[i]; m.y += (6 + 6 * m.d) * kw; m.x += w * 3 * kw; wrap(m, 'rain'); }
   for (let i = 0, n = active('snow'); i < n; i++) { const m = WX.snow[i]; m.y += (0.5 + m.d * 1.1) * (1 + Math.abs(w)) * kw; m.x += (Math.sin(t * 0.8 + m.ph) * 0.4 * m.d + w * 2.5) * kw; wrap(m, 'snow'); }
   for (let i = 0, n = active('leaves'); i < n; i++) { const m = WX.leaves[i]; m.y += (0.7 + m.d * 0.9) * k; m.x += (Math.sin(t * 1.1 + m.ph) * 0.9 + w * 2.2) * k; m.rot += (m.vr + w * 0.02) * k; wrap(m); }
