@@ -2869,7 +2869,7 @@ function journalStats() {   // only what was measured: your best, your Full Bloo
 // The pool's frame is anchored at its edges: breathing in, a band of light grows inward from them; breathing out, it draws
 // back. Each sphere breathes in place, around its own centre, between its true size and a little under it, so spheres never
 // overlap and the line holds still. It is only the picture: the physics never moves.
-const heave = () => (has('spheres') && !S.sigh && PREFS.breathing && !lessMo() ? 1 - FEEL.heave * (1 - clamp(S.breath, 0, 1)) : 1);   // a sphere's drawn size (with Reduce motion they only glow)
+const heave = () => (has('spheres') && !S.sigh && PREFS.breathing && !lessMo() ? 1 + FEEL.heave * clamp(S.breath, 0, 1) : 1);   // a sphere's drawn size: full size at the bottom of the breath, so they sit together, and a little more on the breath in (with Reduce motion they only glow)
 const outline = (c, i = 0) => rrect(c, EDGE + i, EDGE + i, LW - 2 * (EDGE + i), LH - 2 * (EDGE + i), Math.max(6, CORNER - i));   // the pool's edge, i px in
 // The frame is a U: open at the top, its arms fading into the sky, so the world flows in and the line reads as the lid.
 const FRAME = { cv: null, c: null, dpr: 0, key: '' };
