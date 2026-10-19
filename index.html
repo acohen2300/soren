@@ -128,35 +128,35 @@ body.lamp { --glint: rgba(255, 236, 196, 0.95); --glint-soft: rgba(255, 205, 130
 .cell[data-act=pin] svg, .cell[data-act=still] svg { width: 18px; height: 18px; }
 .cell .n { position: absolute; top: 4px; right: 5px; min-width: 15px; height: 14px; padding: 0 4px; border-radius: 7px; background: rgba(242, 248, 252, 0.88); color: #0b1424; font-size: 9.5px; font-weight: 700; line-height: 14px; text-align: center; }
 .cell canvas { display: block; width: 100%; height: 100%; pointer-events: none; }
-.cell.breath::before { content: ""; position: absolute; inset: 3px; border-radius: 12px; pointer-events: none;   /* the breath, like the pool's edge: a band of light comes in from the edges as you breathe in, and goes back out */
-  box-shadow: inset 0 0 0 1.5px rgba(var(--lit), calc(0.25 + 0.5 * var(--b, 0))), inset 0 0 calc(4px + 12px * var(--b, 0)) calc(1px + 5px * var(--b, 0)) rgba(var(--lit), calc(0.06 + 0.22 * var(--b, 0))); }
+.states { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 1px; min-width: 0; padding: 0 6px; text-align: center; line-height: 1.15; }
+.state { max-width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-size: 13px; font-weight: 600; color: var(--ink); } .state + .state { font-size: 12px; font-weight: 500; font-style: italic; color: var(--ink-dim); } .state.tight { font-size: 11px; }   /* the mode and the place, said, not tiles */
 .cell .goal-left { position: absolute; left: 8px; right: 8px; bottom: 6px; height: 2.5px; border-radius: 2px; background: rgba(var(--on), 0.85); transform-origin: left; transform: scaleX(var(--left, 0)); }
 .tog svg { width: 20px; height: 20px; vertical-align: middle; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
 [data-muted="true"] .waves, [data-muted="false"] .hush, .tog[aria-checked="true"] .hush, .tog[aria-checked="false"] .waves { display: none; }
 [data-muted="true"] { color: var(--ink-faint); }   /* muted: the speaker dims */
 .slot { position: relative; }
 .toolwrap { position: relative; flex: none; height: 52px; margin-top: -2px; }   /* the tools' row; a weather row covers it exactly, so nothing moves */
-.tools { height: 100%; grid-template-columns: repeat(4, minmax(0, 1fr)); } .tools.covered { visibility: hidden; }
+.tools { height: 100%; grid-template-columns: repeat(4, minmax(0, 1fr)); } .tools[data-kind=settle] { grid-template-columns: repeat(3, minmax(0, 1fr)); } .tools.covered { visibility: hidden; }
 .strip { position: absolute; inset: 0; display: flex; align-items: center; padding: 0 6px 0 10px; border-radius: 16px; animation: fade .15s ease; transition: border-color .25s, box-shadow .25s; }
+.strip { flex-direction: column; justify-content: center; }
 .strip .row { width: 100%; padding: 0; border: 0; } .strip .rctl { margin-top: 0; }
+.row.compact .check, .row.compact .save { height: 34px; }
+.row.compact .rdesc { display: block; margin: 0 0 1px 2px; font-size: 10.5px; line-height: 1.05; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; color: var(--ink-dim); }   /* the weather strip: what it is, then what to do next */
 /* The score row: between the top bar and the pool. The score, big; pause and mute; and Hide, which leaves a small arrow to bring it back. */
 .scorerow { transition: opacity .5s; flex: none; height: 30px; display: flex; align-items: center; justify-content: space-between; padding: 0 6px 0 10px; gap: 8px; }
-.sr-score { display: flex; flex: 0 1 auto; height: 30px; min-width: 0; }   /* the Stats tile and the counter: one piece, one shared edge */
-.sr-tile { display: inline-flex; align-items: center; gap: 4px; height: 30px; padding: 0 8px; border-radius: 10px 0 0 10px; border: 1px solid var(--chip-line); border-right: 0; background: rgba(0, 0, 0, 0.22); color: var(--ink); font: inherit; font-size: 11px; font-weight: 600; cursor: pointer; white-space: nowrap; }
+.sr-score { display: inline-flex; align-items: baseline; gap: 8px; flex: 0 1 auto; min-width: 0; height: 30px; align-items: center; padding: 0 12px; border-radius: 999px; border: 1px solid var(--chip-line); background: rgba(0, 0, 0, 0.22); color: var(--ink); font: inherit; cursor: pointer; position: relative; white-space: nowrap; }   /* the score in the standard type, in an outline */
+.scorerow.nonum .sr-num { display: none; }
+.sr-word { font-size: 11px; font-weight: 600; color: var(--ink-dim); } .sr-num { font-size: 15px; font-weight: 600; font-variant-numeric: tabular-nums; }
 .sr-stats { flex: none; margin-left: 8px; padding: 4px 12px; border-radius: 999px; border: 1px solid var(--chip-line); background: none; color: var(--ink); font: inherit; font-size: 13px; font-style: italic; cursor: pointer; transition: border-color 1.2s ease, box-shadow 1.2s ease; position: relative; }   /* the Weather Settings style: blue while waiting, then plain */
 .sr-stats.hint { border-color: rgba(var(--off), 0.9); box-shadow: 0 0 0 1px rgba(var(--off), 0.6), 0 0 12px rgba(var(--off), 0.25); }
-.sr-stats::after { content: ''; position: absolute; left: 50%; top: 50%; width: max(100%, 44px); height: max(100%, 44px); transform: translate(-50%, -50%); }
-.sr-count { position: relative; width: clamp(92px, 28vw, 112px); height: 30px; padding: 0; background: none; border: 0; color: inherit; cursor: pointer; } .sr-count canvas { display: block; width: 100%; height: 100%; pointer-events: none; }
-@media (max-width: 400px) { .scorerow { gap: 4px; padding-left: 6px; } .sr-tile { padding: 0 6px; } .sr-stats { margin-left: 4px; padding: 3px 9px; font-size: 12px; } [data-cell=volume] .sub { display: none; } .sr-btn { padding: 0 6px; min-width: 30px; } .sr-ctl { gap: 3px; } .sr-count { flex: none; width: clamp(76px, 25vw, 92px); } .sr-score { flex: none; } }   /* phones narrower than a Pro Max: the row stays on one line (the speaker's words wait in Sound) */
-@media (max-width: 340px) { .sr-tile { padding: 0 5px; font-size: 10.5px; } .sr-stats { padding: 2px 7px; font-size: 11px; } .sr-count { width: 70px; } .sr-ctl .hide-link { padding: 4px 3px; } .sr-btn { min-width: 28px; padding: 0 5px; } }
-.scorerow.nonum .sr-count { display: none; } .scorerow.nonum .sr-tile { border-right: 1px solid var(--chip-line); border-radius: 10px; }
-.sr-ctl { display: flex; align-items: center; gap: 6px; }
+.sr-score::after, .sr-stats::after { content: ''; position: absolute; left: 50%; top: 50%; width: max(100%, 44px); height: max(100%, 44px); transform: translate(-50%, -50%); }
+@media (max-width: 400px) { .scorerow { gap: 4px; padding-left: 6px; } .sr-score { padding: 0 9px; gap: 6px; } .sr-stats { margin-left: 4px; padding: 3px 9px; font-size: 12px; } [data-cell=volume] .sub { display: none; } .sr-btn { padding: 0 6px; min-width: 30px; } .sr-ctl { gap: 3px; } }   /* narrower phones: the row stays on one line (the speaker's words wait in Sound) */
 .sr-btn { display: inline-flex; align-items: center; justify-content: center; gap: 4px; height: 28px; min-width: 34px; padding: 0 8px; border-radius: 14px; border: 1px solid var(--chip-line); background: rgba(0, 0, 0, 0.22); color: var(--ink); font: inherit; font-size: 10.5px; font-weight: 600; cursor: pointer; }
 .sr-btn svg { width: 16px; height: 16px; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
 .sr-btn.on { border-color: rgba(var(--on), 0.85); box-shadow: inset 0 0 0 1px rgba(var(--on), 0.6), inset 0 0 10px rgba(var(--on), 0.18); }
 /* Every small control reaches at least 44 × 44 for a finger, however small it looks: an invisible pad around it */
-.sr-btn, .sr-tile, .learn, .hide-link, .sr-show, .wx-show, .rhead .sample-pill, .rplus { position: relative; }
-.sr-btn::after, .sr-tile::after, .learn::after, .hide-link::after, .sr-show::after, .wx-show::after, .rhead .sample-pill::after, .rplus::after { content: ''; position: absolute; left: 50%; top: 50%; width: max(100%, 44px); height: max(100%, 44px); transform: translate(-50%, -50%); }
+.sr-btn, .learn, .hide-link, .sr-show, .wx-show, .rhead .sample-pill, .rplus { position: relative; }
+.sr-btn::after, .learn::after, .hide-link::after, .sr-show::after, .wx-show::after, .rhead .sample-pill::after, .rplus::after { content: ''; position: absolute; left: 50%; top: 50%; width: max(100%, 44px); height: max(100%, 44px); transform: translate(-50%, -50%); }
 .hide-link, .sr-show, .wx-show { background: none; border: 0; padding: 4px 6px; color: var(--ink-dim); font: inherit; font-size: 12px; font-weight: 500; cursor: pointer; } .hide-link { text-decoration: underline; text-underline-offset: 2px; }
 .sr-show, .wx-show { font-size: 15px; margin-left: auto; }
 .scorerow.nogame .sr-score, .scorerow.nogame .sr-stats, .scorerow.nogame [data-act=pause] { visibility: hidden; }
@@ -636,7 +636,7 @@ const SKY = { top: [0, 0, 0], mid: [0, 0, 0], hor: [0, 0, 0], grade: [0, 0, 0, 0
 const ENV = { cover: 0, gloom: 0, precip: 0, rain: 0, snow: 0, wind: 0, blow: 0, light: 1, dark: 0,
   birds: 0, crickets: 0, fireflies: 0, leaves: 0, aurora: 0, butterflies: 0, cicadas: 0, mist: 0 };
 // How alive the world is, and the breath: how far the pool draws in and how much it brightens (set by Breathing strength).
-const FEEL = { life: 0.45, heave: 0.035, glow: 0.55 };
+const FEEL = { life: 0.45, heave: 0.05, glow: 0.65 };
 const TOOL_CAP = 3, START_TOOLS = { strike: 0, pile: 0, mystery: 0, loosen: 0 };   // every tool is earned: a chain of three, or a Bloom
 
 /* ---------- Storage (guarded: private windows and sandboxes can throw) ---------- */
@@ -661,7 +661,7 @@ const DEFAULTS = {
   leave: { how: 'decide', mins: 20, at: -1 },   // when you leave: a timer (mins), a time of day (at: minutes after midnight), or I'll decide
   sound: true, vol: { master: 0.85, notes: 0.7, drone: 0.7, breath: 0.7, weather: 0.6, wildlife: 0.6, ambient: 0.5 }, on: { notes: true, drone: true, breath: true, weather: true, wildlife: true }, thunder: 0.7, thunderOn: true, soundscape: 'off', lastSound: 'rain', sleepTimer: 60,
   calm: false, hideNumbers: false, clock: false, patterns: true, haptics: true, lightning: 1, flashOn: true, seenChain: false, wxPin: false, boardWx: true, hideRow: false, hideWx: false,
-  lessMotion: 0, tiles: { pacer: true, tracer: true, sky: true, fidget: true }   // Reduce motion: 0 Off, 1 Some, 2 Most; Settle's four tiles
+  lessMotion: 0, pacerPath: 'eight', tiles: { pacer: true, tracer: true, sky: true }   // Reduce motion: 0 Off, 1 Some, 2 Most; the Settle pacer's path (eight | line); Settle's three tiles
 };
 const SOUNDSCAPES = ['off', 'rain', 'wind', 'night', 'fire'];
 const PREFS = (() => {
@@ -672,6 +672,7 @@ const PREFS = (() => {
   p.on = { ...DEFAULTS.on, ...obj(s.on) }; p.afterMerge = { ...DEFAULTS.afterMerge, ...obj(s.afterMerge) };
   if (s.sighAfterBloom) p.afterMerge.on = true;   // from v47: After a Bloom
   if (!['breath', 'deep'].includes(p.breathKind)) p.breathKind = 'breath';
+  if (!['eight', 'line'].includes(p.pacerPath)) p.pacerPath = 'eight';
   p.afterMerge.tier = clamp(Math.round(+p.afterMerge.tier) || 9, 0, 9);
   // From v34: Zen and Game become what happens on overflow; places become Nature's wheel; a stepped storm becomes a free one.
   if (s.vol && 'tones' in s.vol && !('drone' in s.vol)) p.vol.drone = p.vol.breath = Number(s.vol.tones) || 0;
@@ -1011,8 +1012,6 @@ class SoundBath {
   }
   // Settle. A tap: one note of the breath tone's chord, higher up the screen the higher the note, panned to where it fell.
   note(x, y) { if (this.live) this.tone(this.out('notes', panFor(x)), [261.63, 329.63, 392.0, 523.25][clamp(Math.floor((1 - y / LH) * 4), 0, 3)], 'sine', 0.06, 0.02, 1.8, this.ctx.currentTime).connect(this.echo); }
-  bead(pan, glass) { if (!this.live) return; if (glass) this.clink(1046.5, pan, 0.03); else this.knock(pan, true); }   // a bead arriving: a soft click of wood, or of glass in Heritage
-  tock() { if (this.live) this.tone(this.out('notes', 0), 180, 'sine', 0.014, 0.006, 0.09, this.ctx.currentTime); }   // a drum turns: low, round, soft, no edge
   tick(pan) { if (this.live) this.tone(this.out('notes', pan), 520, 'sine', 0.012, 0.004, 0.12, this.ctx.currentTime); }   // a tap off the beat: answered, never scolded
   crackle(n, bus = 'weather') { for (let i = 0; i < n; i++) setTimeout(() => this.noise1({ bus, type: 'bandpass', f0: 1500 + Math.random() * 2500, f1: 900, q: 2, peak: 0.02 + Math.random() * 0.03, attack: 0.003, dur: 0.04 + Math.random() * 0.06, pan: (Math.random() - 0.5) * 0.6 }), i * (40 + Math.random() * 90)); }
   crack(peak) {   // a close strike: a sharp tearing crack and a deep boom under it
@@ -1378,46 +1377,9 @@ function nextShine() {
   void el.offsetWidth; el.classList.add('glint');
   setTimeout(nextShine, 500);
 }
-// The score is an odometer: each digit rolls up to its new value instead of jumping, the way a mechanical counter turns.
-const ODO = { pos: [], t: 0 };
+// The score's light: a gold or white glow round the Score pill for a moment after points arrive.
 const SG = { t0: -1e9, gold: false };
 function scoreGlow() { const x = (performance.now() - SG.t0) / 1000; return { a: x < 0 || x > 3 ? 0 : x < 0.15 ? x / 0.15 : Math.exp(-(x - 0.15) / 0.55), gold: SG.gold }; }
-const DRUMS = 6, ODO_MAX = 10 ** DRUMS - 1;
-// Six drums with their leading zeros: the ones drum is black with a white digit, the rest white with black. A drum turns only
-// when its digit does; with Reduce motion on, it just shows the new digit. Each turn is a soft tock, never more than ten a second.
-function odometer(c, W, H, glow = { a: 0 }) {
-  const now = performance.now(), dt = Math.min(0.1, (now - (ODO.t || now)) / 1000), first = !ODO.t, n = Math.min(ODO_MAX, Math.max(0, Math.floor(S.score)));
-  const want = String(n).padStart(DRUMS, '0').split('').reverse().map(Number);
-  ODO.t = now; let turned = false;
-  ODO.pos = want.map((d, k) => { const p = ODO.pos[k] === undefined ? d : ODO.pos[k], gap = (d - p + 10) % 10; if (lessMo() || first || gap < 0.01) return d; turned = turned || Math.floor(p + gap * Math.min(1, dt * 9)) !== Math.floor(p); return (p + gap * Math.min(1, dt * 9)) % 10; });
-  if (turned && !PREFS.hideNumbers && now - (ODO.tock || 0) > 100) { ODO.tock = now; sound.tock(); }
-  // An old mechanical counter: a dark metal frame under glass; aged drums, rounded like cylinders, with the next and last digits
-  // just showing at their edges; ridged dividers between the drums; the ones drum black.
-  const r = 9, dw = (W - 4) / DRUMS, top = 2, h = H - 4, fs = Math.min(h * 0.66, dw * 1.2), lh = h * 0.64, ink = '#15110c', paper = '#e9e1cd';
-  c.save();
-  const body = new Path2D(); body.moveTo(0, 0.5); body.lineTo(W - r, 0.5); body.arcTo(W - 0.5, 0.5, W - 0.5, r, r); body.lineTo(W - 0.5, H - r); body.arcTo(W - 0.5, H - 0.5, W - r, H - 0.5, r); body.lineTo(0, H - 0.5); body.closePath();
-  if (glow.a > 0.01) { c.shadowColor = `rgba(${glow.gold ? GOLD : '255,255,255'},${(0.9 * glow.a).toFixed(3)})`; c.shadowBlur = 10 * glow.a; }
-  const fr = c.createLinearGradient(0, 0, 0, H); fr.addColorStop(0, '#4a4640'); fr.addColorStop(0.5, '#1d1b18'); fr.addColorStop(1, '#2d2a26');   // the worn metal frame
-  c.fillStyle = fr; c.fill(body); c.shadowBlur = 0; c.clip(body);
-  c.font = `700 ${fs.toFixed(1)}px ${FONT.sans}`; c.textAlign = 'center'; c.textBaseline = 'middle';
-  c.fillStyle = '#050403'; c.fillRect(2, top, W - 3, h);   // the well the drums sit in
-  for (let k = DRUMS - 1; k >= 0; k--) {   // most significant first
-    const x = 2 + (DRUMS - 1 - k) * dw, ones = k === 0, p = ODO.pos[k], d = Math.floor(p), f = p - d, cx = x + dw / 2, cy = top + h / 2 + 1;
-    c.save(); c.beginPath(); c.rect(x + 1, top, dw - 1.5, h); c.clip();
-    c.fillStyle = ones ? '#0c0a08' : paper; c.fillRect(x, top, dw, h);
-    if (!ones) { const age = c.createLinearGradient(x, 0, x + dw, 0); age.addColorStop(0, 'rgba(120,90,40,0.18)'); age.addColorStop(0.5, 'rgba(255,255,255,0.10)'); age.addColorStop(1, 'rgba(120,90,40,0.18)'); c.fillStyle = age; c.fillRect(x, top, dw, h); }   // paper that has yellowed at its edges
-    c.fillStyle = ones ? '#efe8d6' : ink;
-    for (const o of [-1, 0, 1]) { const y = cy + (o - f) * lh; if (y > top - lh && y < top + h + lh) c.fillText(((d + o) % 10 + 10) % 10, cx, y); }   // the digit and its neighbours, rolled
-    const cyl = c.createLinearGradient(0, top, 0, top + h); cyl.addColorStop(0, 'rgba(0,0,0,0.72)'); cyl.addColorStop(0.22, 'rgba(0,0,0,0.16)'); cyl.addColorStop(0.45, 'rgba(255,255,255,0.06)'); cyl.addColorStop(0.55, 'rgba(0,0,0,0)'); cyl.addColorStop(0.8, 'rgba(0,0,0,0.2)'); cyl.addColorStop(1, 'rgba(0,0,0,0.78)');   // a cylinder: dark at the turn, a soft highlight just above the middle
-    c.fillStyle = cyl; c.fillRect(x, top, dw, h);
-    c.restore();
-    c.fillStyle = 'rgba(0,0,0,0.85)'; c.fillRect(x, top, 1, h);   // the divider, with a ridged tooth
-    c.fillStyle = 'rgba(255,255,255,0.10)'; for (let ty = top + 2; ty < top + h - 1; ty += 3) c.fillRect(x + dw - 1, ty, 1, 1.5);
-  }
-  const gl2 = c.createLinearGradient(0, top, 0, top + h * 0.5); gl2.addColorStop(0, 'rgba(255,255,255,0.20)'); gl2.addColorStop(1, 'rgba(255,255,255,0)'); c.fillStyle = gl2; c.fillRect(2, top, W - 3, h * 0.5);   // glass over it all
-  c.restore();
-  c.strokeStyle = 'rgba(255,255,255,0.22)'; c.lineWidth = 1; c.stroke(body);   // the rim
-}
 
 /* ---------- Effects ---------- */
 function spawnParticles(x, y, color, count = 16, speed = 4.5) {
@@ -2216,13 +2178,12 @@ function stepPacer(dt) {
 // always. Hold the pool and it breathes in with you, from wherever it is, over one in-breath, and stays full as long as you hold;
 // let go and it breathes out over one out-breath, never faster, then settles back into its own rhythm. Rest a finger on it and
 // slide, and a ball follows your finger, a soft sound under it, a glass note where it meets the ring. A quick tap is a note.
-// Ten beads along the bottom: one slides across on every out-breath, and at ten they slide back. Lay the phone flat on your
-// chest, hands off, and after a few breaths it follows yours. Nothing is counted, kept or scored.
+// Lay the phone flat on your chest, hands off, and after a few breaths it follows yours. Nothing is counted, kept or scored.
 const CX = LW / 2, CY = LH / 2, HINT = 'Hold to breathe in, let go to breathe out · trace, tap, or just watch';
-const TAP = 0.25, SLIP = 25, BEADS = 10, BEAD_T = 0.9;   // a press shorter than this is a tap; a finger this far from where it pressed is a trace; the beads, and one bead's slide
+const TAP = 0.25, SLIP = 25;   // a press shorter than this is a tap; a finger this far from where it pressed is a trace
 function openSpace() {
   sound.init(); S.aiming = false; P.phase = 0;
-  S.space = { breaths: 0, finger: null, press: null, vel: 0, lastMove: 0, hold: { state: null, u: 0, t0: 0, heard: false }, ball: null, near: false, beads: { n: 0, x: Array(BEADS).fill(0), back: 0 }, wasIn: true, t: 0, offered: false, chest: null, flat: 0 };
+  S.space = { breaths: 0, finger: null, press: null, vel: 0, lastMove: 0, hold: { state: null, u: 0, t0: 0, heard: false }, ball: null, near: false, t: 0, offered: false, chest: null, flat: 0 };
   sound.breath(true, IN * breathLen());   // the first breath in is heard too
   askMotion();
 }
@@ -2231,7 +2192,10 @@ function closeSpace() { S.space = null; S.sigh = null; sound.rubbing(0); saveJou
 // lap every two breaths, through the middle on every breath.
 const EIGHT = { a: 118, k: 0.92 };
 function eightAt(u) { const t = u * TAU, d = 1 + Math.sin(t) ** 2; return [CX + EIGHT.a * Math.cos(t) / d, CY + EIGHT.k * EIGHT.a * Math.sin(t) * Math.cos(t) / d]; }
-const ringAt = () => eightAt(((S.space ? S.space.breaths % 2 : 0) + P.phase) / 2);
+const LINE_A = 128;   // the straight pacer: half its length
+// Where the pacer's light is now. On the figure of eight it goes round, one lap every two breaths; on the line it goes across on
+// the breath in and back on the breath out, with the breath itself (so a hold holds it).
+const ringAt = () => (PREFS.pacerPath === 'line' ? [CX + (2 * clamp(S.breath, 0, 1) - 1) * LINE_A, CY] : eightAt(((S.space ? S.space.breaths % 2 : 0) + P.phase) / 2));
 // Your finger in Settle. Down: a hold begins, the shape breathing in from wherever it is. Up before a quarter second: a tap, a
 // note, the hold undone. Up after: let go, breathing out. Moved SLIP from where it pressed: the hold lets go and a trace begins.
 function settleTouch(p, down) {
@@ -2267,15 +2231,8 @@ function updateSpace(dt) {
     if (near && !sp.near) sound.chime(panFor(sp.ball.x), 'glass');
     sp.near = near; sound.rubbing(near ? 0 : sp.vel);
   }
-  const inNow = breathIn();
-  if (sp.wasIn && !inNow) beadAcross();   // every out-breath, yours or the pacer's, slides one bead
-  sp.wasIn = inNow;
-  const B = sp.beads;
-  for (let i = 0; i < BEADS; i++) { const was = B.x[i]; B.x[i] = clamp(B.x[i] + (i < B.n ? dt : -dt) / BEAD_T, 0, 1); if (was < 1 && B.x[i] >= 1) sound.bead(0.3, here().glass); }   // a click as each one arrives
-  if (B.n >= BEADS && B.x[BEADS - 1] >= 1 && (B.back += dt) > 1.2) { B.n = 0; B.back = 0; }   // all ten across: a moment, then they slide back
   if (!sp.offered && sp.t > 60) { sp.offered = true; say('Ready when you are', 'Go, or stay'); }   // once, softly: the door is there
 }
-function beadAcross() { const B = S.space.beads; if (B.n < BEADS) B.n++; }
 // The phone on your chest: flat and untouched for fifteen seconds, the motion sensor reads your breathing (the chest rises
 // and the phone tilts with it) and the pool follows you instead of leading. Asked once, on the first Settle; read on the
 // phone, never sent anywhere. Not supported, or not allowed: nothing changes.
@@ -2376,7 +2333,7 @@ function rrect(c, x, y, w, h, r) {
 const shapePath = (c, [cx, cy, hw, hh, r]) => rrect(c, cx - hw, cy - hh, 2 * hw, 2 * hh, r);
 const skyOff = () => S.mode === 'settle' && !PREFS.tiles.sky;
 // Settle and the deep breath draw here: the whole screen breathes (brighter as you breathe in, dimmer and warmer as you
-// breathe out), the shape breathes, the ring goes round its figure of eight, the beads wait along the bottom, and a ball
+// breathe out), the shape breathes, a light goes round its figure of eight (or across its line), and a ball
 // follows your finger.
 function drawBreathe(c, f) {
   const sp = S.space, w = breatheWords(), b = clamp(S.breath, 0, 1);
@@ -2389,18 +2346,16 @@ function drawBreathe(c, f) {
   c.fillStyle = `rgba(242,248,252,${(0.06 + 0.1 * b).toFixed(3)})`; c.beginPath(); shapePath(c, shape); c.fill();
   c.shadowColor = here().accent; c.shadowBlur = 14; c.strokeStyle = tint(0.55 + 0.4 * b); c.lineWidth = 2.5; c.stroke(); c.shadowBlur = 0;
   if (sp && !S.sigh) {
-    if (PREFS.tiles.pacer) { c.strokeStyle = tint(0.1); c.lineWidth = 3; c.beginPath(); for (let i = 0; i <= 96; i++) { const [x, y] = eightAt(i / 96); i ? c.lineTo(x, y) : c.moveTo(x, y); } c.stroke(); }   // the whole path, faint
-    const [rx, ry] = ringAt();   // the ring on it: light, for now
     if (PREFS.tiles.pacer) {
-    c.shadowColor = `rgba(${LIGHT},0.8)`; c.shadowBlur = 12; c.strokeStyle = `rgba(${LIGHT},${(0.55 + 0.35 * b).toFixed(3)})`; c.lineWidth = 2; c.beginPath(); c.arc(rx, ry, 13, 0, TAU); c.stroke(); c.shadowBlur = 0; }
-    if (PREFS.tiles.fidget) {
-    const B = sp.beads, ry0 = LH - 24, x0 = 26, x1 = LW - 26, pitch = 17, ac = hex(here().accent);   // the rail and its ten beads, in the place's own colour
-    c.strokeStyle = tint(0.22); c.lineWidth = 2; c.beginPath(); c.moveTo(x0 - 8, ry0); c.lineTo(x1 + 8, ry0); c.stroke();
-    for (let i = 0; i < BEADS; i++) {
-      const k = smooth(B.x[i]), x = x0 + i * pitch + (x1 - (BEADS - 1 - i) * pitch - x0 - i * pitch) * k, g = c.createRadialGradient(x - 2, ry0 - 2.5, 1, x, ry0, 7);
-      g.addColorStop(0, rgba(mix(ac, [255, 255, 255], 0.6), 0.95)); g.addColorStop(1, rgba(ac, 0.75));
-      c.fillStyle = g; c.beginPath(); c.arc(x, ry0, 7, 0, TAU); c.fill();
-    } }
+      c.strokeStyle = tint(0.1); c.lineWidth = 3; c.beginPath();   // the whole path, faint
+      if (PREFS.pacerPath === 'line') { c.moveTo(CX - LINE_A, CY); c.lineTo(CX + LINE_A, CY); } else for (let i = 0; i <= 96; i++) { const [x, y] = eightAt(i / 96); i ? c.lineTo(x, y) : c.moveTo(x, y); }
+      c.stroke();
+      // The light on it: Grow, Glow on the breath in; Slim, Dim on the breath out. (Reduce motion: it only glows and dims.)
+      const [rx, ry] = ringAt(), r = lessMo() ? 10 : 6 + 9 * b, a = 0.35 + 0.65 * b, g = c.createRadialGradient(rx, ry, 0, rx, ry, r * 2.6);
+      g.addColorStop(0, `rgba(255,255,255,${a.toFixed(3)})`); g.addColorStop(0.3, `rgba(${LIGHT},${(0.75 * a).toFixed(3)})`); g.addColorStop(1, `rgba(${LIGHT},0)`);
+      c.fillStyle = g; c.beginPath(); c.arc(rx, ry, r * 2.6, 0, TAU); c.fill();
+      c.shadowColor = `rgba(${LIGHT},0.9)`; c.shadowBlur = 8 + 20 * b; c.fillStyle = `rgba(255,255,255,${(0.55 + 0.45 * b).toFixed(3)})`; c.beginPath(); c.arc(rx, ry, r * 0.55, 0, TAU); c.fill(); c.shadowBlur = 0;
+    }
     if (sp.ball && PREFS.tiles.tracer) {   // the trace: a small glass ball under your finger
       const { x, y } = sp.ball, g = c.createRadialGradient(x - 6, y - 7, 2, x, y, 18);
       g.addColorStop(0, 'rgba(255,255,255,0.95)'); g.addColorStop(0.35, rgba([242, 248, 252], 0.55)); g.addColorStop(1, rgba([242, 248, 252], 0.15));
@@ -2915,13 +2870,13 @@ function drawFrame(c, b, breathing, red, pulse = 0) {   // pulse: a cool swell o
   FRAME.key = key;
   const f = FRAME.c, col = mix(mix(here().edgeRGB, [210, 225, 255], pulse), [255, 90, 80], red);
   f.save(); f.setTransform(dpr, 0, 0, dpr, 0, 0); f.clearRect(0, 0, LW, LH);
-  const w = Math.round(breathing ? (lessMo() ? 16 : 4 + 30 * b) : 4), a = breathing ? FEEL.glow * (0.08 + 0.66 * b) : 0.2;   // deeper and brighter at the top of the breath, thin and dim at the bottom (Reduce motion: the band holds its width and only glows)
+  const w = Math.round(breathing ? (lessMo() ? 16 : 4 + 36 * b) : 4), a = breathing ? FEEL.glow * (0.08 + 0.7 * b) : 0.2;   // deeper and brighter at the top of the breath, thin and dim at the bottom (Reduce motion: the band holds its width and only glows)
   for (let i = 0; i < w; i++) { const k = 1 - i / w; f.fillStyle = rgba(col, a * k * k); f.beginPath(); outline(f, i); outline(f, i + 1); f.fill('evenodd'); }   // rings that share edges: no seams
   f.shadowColor = rgba(col, 0.8); f.shadowBlur = 4 + 10 * b + 22 * pulse;
   f.strokeStyle = rgba(col, Math.min(1, 0.28 + 0.62 * b + 0.4 * red + 0.6 * pulse)); f.lineWidth = 2 + 1.5 * b + 3 * pulse;
   f.beginPath(); outline(f); f.stroke(); f.shadowBlur = 0;
   // the top of each breath: the U blooms, a soft near-neon light in its own colour, never gold, once a breath
-  if (halo > 0.01) { const hc = mix(col, [255, 255, 255], 0.6); f.shadowColor = rgba(hc, 0.95); f.shadowBlur = 28 * halo; f.strokeStyle = rgba(hc, 0.8 * halo); f.lineWidth = 3 + 2 * halo; f.beginPath(); outline(f, 2); f.stroke(); f.shadowBlur = 0; }
+  if (halo > 0.01) { const hc = mix(col, [255, 255, 255], 0.6); f.shadowColor = rgba(hc, 1); f.shadowBlur = 38 * halo; f.strokeStyle = rgba(hc, 1 * halo); f.lineWidth = 3.5 + 2.5 * halo; f.beginPath(); outline(f, 2); f.stroke(); f.shadowBlur = 0; }
   f.globalCompositeOperation = 'destination-out';
   const g = f.createLinearGradient(0, 0, 0, 72); g.addColorStop(0, 'rgba(0,0,0,1)'); g.addColorStop(0.35, 'rgba(0,0,0,1)'); g.addColorStop(1, 'rgba(0,0,0,0)');
   f.fillStyle = g; f.fillRect(0, 0, LW, 72);
@@ -3179,7 +3134,7 @@ const ITEMS = {
   bpm: slider('Pace', { min: 4, max: 8, name: (v) => `${(+v).toFixed(1)}/min` }),
   breathing: onoff(), breathStrength: slider('Breathing', { min: 0.05, name: pct, off: () => !PREFS.breathing }),
   'afterMerge.on': onoff(), 'afterMerge.tier': slider('After a merge', { min: 0, max: 9, step: 1, name: tierName, off: () => !PREFS.afterMerge.on }),
-  breathKind: choice('Kind', 'breath:Take a breath|deep:Take a deep breath'), breatheNow: { type: 'act', act: 'breathnow' },
+  pacerPath: choice('Pacer', 'eight:Infinity|line:Line'), breathKind: choice('Kind', 'breath:Take a breath|deep:Take a deep breath'), breatheNow: { type: 'act', act: 'breathnow' },
   aim: onoff(), next: onoff(), hideNumbers: onoff({ inv: true }), clock: onoff(),
   sound: onoff(), 'vol.master': slider('Volume', { name: pct, off: soundOff }),
   'on.notes': onoff({ off: soundOff }), 'vol.notes': slider('Notes', { name: pct, off: () => soundOff() || !PREFS.on.notes }),
@@ -3251,6 +3206,7 @@ Object.assign(SHEETS, {
   breath: { title: 'Breathe settings', note: 'In for four, out for six, at your pace.', items: [
     row('Breathing', ['breathing', 'breathStrength'], 'The edge and the spheres breathe with you.', 'With Breathing on, a band of light grows in from the edge as you breathe in and lets go as you breathe out, and the spheres swell a little with it. The slider sets how far they move.'),
     row('Pace', 'bpm', 'Breaths a minute, in and out.', 'Six a minute is in for four seconds, out for six. Slower is calmer; the breath tone and Settle follow the same pace.'),
+    row('Settle pacer', 'pacerPath', 'The light you follow in Settle.', 'Infinity: the light goes round a figure of eight, a lap every two breaths. Line: it goes across on the breath in and back on the breath out. Either way it grows and glows as you breathe in, and slims and dims as you breathe out.'),
     row('Breathe after a merge', ['afterMerge.on', 'afterMerge.tier'], 'One guided breath after a merge this big or bigger.', 'After a merge of the size you choose, the game pauses for one guided breath of the kind set below, then goes on. At the top of the slider only a Full Bloom brings one.'),
     row('Kind', 'breathKind', 'Which breath the game guides.', 'Take a breath: one breath at your pace. Take a deep breath: two breaths in through the nose, a soft hold, and a long slow breath out through the mouth.'),
     row('Take me there now', 'breatheNow', 'One guided breath, right now.', 'The card closes and the breath begins over the game, of the kind you chose. Tap to skip it.', { noCheck: true })] },
@@ -3261,6 +3217,7 @@ Object.assign(SHEETS, {
     row('Flash', ['flashOn', 'lightning'], 'How bright lightning flashes.', 'The white flash with each strike, never more than three a second. Off, lightning strikes without the flash. Low stimulation dims it.'),
     row('Reduce motion', 'lessMotion', () => MOTION_NOTES[PREFS.lessMotion], 'Some stills what moves on its own: the aurora, shooting stars, wind streaks, the grass and the land, birds in flight; rain and snow fall slower and sparser; the breath glows and dims instead of growing, and lightning is a soft glow with no bolt. Most stills everything but the game itself: no falling rain or snow, no drifting clouds or leaves, no bursts; dropping and merging still move, and so do Settle’s ring, beads and tracer. It starts at Some when your phone’s own Reduce Motion is on.')] },
   pause: { title: 'Paused', note: 'The game waits just as it is.', items: () => [row('Game', 'game', 'Resume plays on at once; Restart asks first.', 'Resume closes this card and the game goes on. Restart clears the board and the tools; your best stays. It only restarts once you confirm with ✓ and ▶.'),
+    link('Mode', 'mode', MODE_NAMES[S.mode], { root: true }), link('Scene', 'scene', placeName(), { root: true }),
     link('Settings', 'setup', 'Sky, rules, breathe, sound, accessibility.'), link('Timer', 'checkin', S.goal && S.goal.phase === 'play' ? `${Math.ceil(goalLeft() / 60)} min left` : 'Off', { root: true })] },
   help: { title: 'How to play', items: ['help'] }
 });
@@ -3309,7 +3266,7 @@ function itemEl(key) {
     case 'row': {   // name and Learn more; one line on what it does; then Off | On, its control, and ✓, on one line
       const id = rowId(it), val = it.main.find(k => ITEMS[k] && ITEMS[k].type === 'range');
       el.className = 'item row'; el.dataset.row = id; el.dataset.name = it.name;
-      if (it.compact) { el.classList.add('compact'); el.innerHTML = '<div class="rctl"></div>'; }   // over the tools: just the controls; the open tile says which
+      if (it.compact) { el.classList.add('compact'); el.dataset.say = text(it.desc); el.innerHTML = '<i class="rdesc"></i><div class="rctl"></div>'; }   // over the tools: a line that says what it is, then the controls; the open tile says which
       else el.innerHTML = `<div class="rhead"><span class="rname">${it.name}</span>${SAMPLE_OF[id] ? '<button class="sample-pill" data-act="sample">Play sample</button>' : ''}${it.more ? `<button class="learn" data-more="${id}">Learn more</button>` : ''}<button class="hide-link rfold" data-act="fold" data-fold="${id}">Hide</button><span class="rset">Set</span><button class="rplus" data-act="fold" data-fold="${id}" aria-label="Open ${it.name}">+</button></div><i class="rdesc" data-desc="${id}">${text(it.desc)}</i><div class="rctl"></div>`;
       const c = el.lastElementChild; fillItems(c, it.main);
       if (!it.noCheck) c.insertAdjacentHTML('beforeend', `<span class="rval"${val ? ` data-val="${val}"` : ''}></span>` + checkGo(id));   // the value's column, then ✓ and ▶
@@ -3415,7 +3372,7 @@ function toggleEl(k) {   // an element on or off in Custom; one that clashes wit
   newWorld(true, true); savePrefs(); syncControls();
 }
 const clashes = (k) => { const Y = PREFS.custom; return (CLASH[k] || []).some(x => x === Y.ground || x === Y.bg || Y.el[x]); };
-const feel = () => { FEEL.glow = 1.1 * PREFS.breathStrength; FEEL.heave = 0.07 * PREFS.breathStrength; };
+const feel = () => { FEEL.glow = 1.3 * PREFS.breathStrength; FEEL.heave = 0.1 * PREFS.breathStrength; };   // the edge glows and the spheres swell a little more than they did
 function onPref(k, v) {
   if (k === 'sound' || k.startsWith('vol.') || k.startsWith('on.')) { sound.init(); sound.applyVolumes(); }
   else if (k === 'sleepTimer' && S.sleep) { S.sleep.left = v * 60; updateSleepText(); sound.init(); }   // a longer timer wakes a faded-out sound
@@ -3498,12 +3455,14 @@ function saveRow(id) {   // ▶: this row is kept, there and then, with one swee
   if (resume) setTimeout(() => { if (S.sheet === 'pause') { closeSheet(); S.held = S.pauseBtn = false; } }, 250);   // ▶: the game goes on
   if (id === 'mode') { if (PREFS.mode !== S.mode) setMode(PREFS.mode); setTimeout(() => { if (S.sheet === 'mode') closeSheet(); }, 250); }   // Go: into the mode
 }
+const FLOW = { sw: 'Now slide for how much.', amt: 'Now tap ✓.', tick: 'Now ▶ keeps it.', save: 'Kept.' };
 function syncRows() {   // paint each control of each row by where the row is: plain at rest, blue for the next touch, green once done
   document.querySelectorAll('[data-row]').forEach(el => {
     const id = el.dataset.row; el.classList.toggle('folded', !!FOLD[id]); el.classList.toggle('isset', FOLD[id] === 'set');
     const step = stepOf(id), done = ['sw', 'amt', 'tick', 'save'].indexOf(step);
     const sw = el.querySelector('.switch'), amt = [...el.querySelectorAll('.rctl > .item:not(.sw), .text-input, .chip, .picker')], ck = el.querySelector('.check'), sv = el.querySelector('.save');
     const paint = (n, k) => { if (n) { n.classList.remove('c-blue', 'c-green'); if (k) n.classList.add('c-' + k); } };
+    if (el.classList.contains('compact')) { const d = el.querySelector('.rdesc'), t = FLOW[step] || el.dataset.say; if (d && d.textContent !== t) d.textContent = t; }   // the weather strip says what to do next
     paint(sw, done >= 0 ? 'green' : '');
     for (const a of amt) paint(a, step === 'sw' ? 'blue' : done >= 1 && !(sw && !isOn(sw.dataset.onoff)) ? 'green' : '');   // a switch off: the amount stays dim
     paint(ck, step === 'amt' ? 'blue' : done >= 2 ? 'green' : ''); paint(sv, step === 'tick' ? 'blue' : step === 'save' ? 'green' : '');
@@ -3587,16 +3546,14 @@ const SKY_LOOK = { bolt: ['Lightning', () => ICON.bolt], wind: ['Wind', () => IC
 const skyName = (k) => { const n = SKY_LOOK[k][0]; return typeof n === 'function' ? n() : n; };
 const cellHTML = (attrs, icon, sub, extra = '', cls = '') => `<button class="cell${cls}" ${attrs}>${icon.startsWith('<svg') ? icon : svg(icon)}<span class="sub">${sub}</span>${extra}</button>`;
 function barHTML(which) {
-  if (which === 'top') return [cellHTML('data-cell="home" aria-label="Menu and pause"', ICON.home, 'Home') + cellHTML('data-cell="mode" aria-label="Mode"', ICON.sphere, '')
-    + cellHTML('data-cell="scene" aria-label="Scene"', ICON.scene, '') + cellHTML('data-cell="breathe" aria-label="Breathe: tap to turn on or off"', ICON.breathe, '', '', ' breath')
-    + cellHTML('data-cell="goal" aria-label="Your time"', ICON.goal, 'Timer', '<i class="goal-left"></i>'), 'repeat(5, minmax(0, 1fr))'];
+  if (which === 'top') return [cellHTML('data-cell="home" aria-label="Menu and pause"', ICON.home, 'Home') + '<div class="states" aria-label="Mode and scene"><span class="state" data-state="mode"></span><span class="state" data-state="scene"></span></div>'
+    + cellHTML('data-cell="goal" aria-label="Your time"', ICON.goal, 'Timer', '<i class="goal-left"></i>'), 'minmax(0, 1fr) minmax(0, 1.7fr) minmax(0, 1fr)'];   // Home and Timer are tiles; the mode and the place are only said
   if (S.mode === 'settle') return [cellHTML('data-act="breath" aria-label="Take a breath"', ICON.breathe, 'Take a breath') + cellHTML('data-act="deep" aria-label="Take a deep breath"', ICON.deep, 'Take a deep breath') + cellHTML('data-act="go" aria-label="Go: to your list"', ICON.goal, 'Go'), 'repeat(3, minmax(0, 1fr))'];   // Settle: a breath, a deep breath, or out of the door
   if (!S.wxOpen) return PREFS.hideWx ? ['<button class="wx-show" data-act="showwx" aria-label="Show weather settings">▴</button>', '1fr']
     : ['<button class="cell wxwords" data-act="wxopen" aria-label="Weather settings"><span class="pill">Weather Settings</span></button><button class="hide-link" data-act="hidewx">Hide</button>', '1fr auto'];   // folded: just the words, and Hide
   return [`<button class="cell" data-act="pin" aria-label="Keep the weather open">${svg(ICON.pin)}</button>` + ATMO.map(k => cellHTML(`data-sky="${k}" aria-label="${skyName(k)}"`, SKY_LOOK[k][1](), skyName(k))).join('')
     + `<button class="cell" data-act="still" aria-label="Still all the weather, or bring it back">${svg(S.still ? ICON.play : ICON.still)}</button>`, '38px repeat(4, minmax(0, 1fr)) 38px'];   // the pin on the left, ❙❙ on the right
 }
-const MODE_ICON = { play: ICON.sphere, rain: ICON.rain, settle: ICON.calm, rest: ICON.moon };
 function fit(el, full) {   // a long name draws in, then shortens, before anything is cut
   const over = () => el.scrollWidth > el.clientWidth + 0.5;
   if (el.dataset.t !== full) { el.textContent = full; el.dataset.t = full; el.classList.remove('tight'); }
@@ -3614,9 +3571,8 @@ function syncBars() {   // build a bar when what it holds has changed, then brin
   }
   $('botBar').parentElement.hidden = S.mode !== 'settle' && !has('weather');   // indoors there is no weather bar
   $('toolwrap').hidden = S.mode !== 'settle' && (!has('weather') && !has('spheres'));   // the tools' row, and the strip's place: kept in SkyPlay so the board stays one size
-  const top = $('topBar'), tools = $('tools'), sub = (cell) => top.querySelector(`[data-cell=${cell}] .sub`);
-  fit(sub('scene'), placeName()); fit(sub('mode'), MODE_NAMES[S.mode]);
-  const mi = top.querySelector('[data-cell=mode] svg path'); if (mi.getAttribute('d') !== MODE_ICON[S.mode]) mi.setAttribute('d', MODE_ICON[S.mode]);
+  const top = $('topBar'), tools = $('tools'), st = (k) => top.querySelector(`[data-state=${k}]`);
+  fit(st('mode'), MODE_NAMES[S.mode]); fit(st('scene'), placeName());
   syncRow();
   toolRow(); tools.hidden = S.mode !== 'settle' && !has('spheres');
   tools.querySelectorAll('[data-tool]').forEach(b => {
@@ -3625,14 +3581,13 @@ function syncBars() {   // build a bar when what it holds has changed, then brin
   });
   skyCells();
 }
-// Settle's four tiles, in the same row and the same style as Play's tools. Green: shown. Plain: put away.
+// Settle's three tiles, in the same row and the same style as Play's tools. Green: shown. Plain: put away.
 const SETTLE_TILES = [
-  { id: 'pacer', name: 'Pacer', desc: 'The ring that goes round the figure of eight, one lap every two breaths', icon: 'M12 12c-2.5-3.5-7-3.5-7 0s4.5 3.5 7 0 7-3.5 7 0-4.5 3.5-7 0z' },
+  { id: 'pacer', name: 'Pacer', desc: 'A light that goes round the figure of eight, one lap every two breaths (or across a line: Breathe settings)', icon: 'M12 12c-2.5-3.5-7-3.5-7 0s4.5 3.5 7 0 7-3.5 7 0-4.5 3.5-7 0z' },
   { id: 'tracer', name: 'Tracer', desc: 'A small glass ball that follows your finger', icon: DOT(12, 12, 5) + 'M4 20c3-1 5-3 6-6' },
-  { id: 'sky', name: 'Sky', desc: 'The place’s sky behind the breath; off, the screen is dark', icon: 'M6.5 17a4 4 0 0 1 .6-7.9 5.5 5.5 0 0 1 10.6 1.4A3.3 3.3 0 0 1 17.5 17z' },
-  { id: 'fidget', name: 'Fidget', desc: 'Ten beads along the bottom; one slides across on each out-breath', icon: DOT(5, 12, 2) + DOT(10, 12, 2) + DOT(15, 12, 2) + DOT(20, 12, 2) }
+  { id: 'sky', name: 'Sky', desc: 'The place’s sky behind the breath; off, the screen is dark', icon: 'M6.5 17a4 4 0 0 1 .6-7.9 5.5 5.5 0 0 1 10.6 1.4A3.3 3.3 0 0 1 17.5 17z' }
 ];
-function toolRow() {   // the row under the weather: the play tools, or Settle's four tiles
+function toolRow() {   // the row under the weather: the play tools, or Settle's three tiles
   const settle = S.mode === 'settle', t = $('tools');
   if (t.dataset.kind !== (settle ? 'settle' : 'play')) {
     t.dataset.kind = settle ? 'settle' : 'play';
@@ -3666,32 +3621,27 @@ function sizeCanvas(cv) { const dpr = Math.min(3, window.devicePixelRatio || 1),
 // The score row: built once; its words and states follow the game.
 function syncRow() {
   const r = $('scoreRow'); if (!r) return;
-  if (!r.firstElementChild) r.innerHTML = `<div class="sr-score"><button class="sr-tile" data-cell="score" aria-label="Score"><span class="sr-word">Score</span></button><button class="sr-count" data-cell="score" aria-label="Score"><canvas></canvas></button></div><button class="sr-stats hint" data-cell="score" aria-label="Stats">Stats</button><div class="sr-ctl"><button class="sr-btn" data-act="pause" aria-label="Pause"></button><button class="sr-btn" data-cell="volume" data-mute aria-label="Mute">${VOL}<span class="sub"></span></button><button class="hide-link" data-act="hidesr">Hide</button></div><button class="sr-show" data-act="showsr" aria-label="Show score, pause and mute">▾</button>`;
+  if (!r.firstElementChild) r.innerHTML = `<button class="sr-score" data-cell="score" aria-label="Score"><span class="sr-word">Score</span><b class="sr-num">0</b></button><button class="sr-stats hint" data-cell="score" aria-label="Stats">Stats</button><div class="sr-ctl"><button class="sr-btn" data-act="pause" aria-label="Pause"></button><button class="sr-btn" data-cell="volume" data-mute aria-label="Mute">${VOL}<span class="sub"></span></button><button class="hide-link" data-act="hidesr">Hide</button></div><button class="sr-show" data-act="showsr" aria-label="Show score, pause and mute">▾</button>`;
   if (!r._hint) { r._hint = setTimeout(() => { const sp = r.querySelector('.sr-stats'); if (sp) sp.classList.remove('hint'); }, 5000); }   // Stats waits, blue, for five seconds, then goes plain
   r.classList.toggle('hidden', !!PREFS.hideRow); r.classList.toggle('nogame', !has('spheres'));
   const vt = PREFS.sound ? `${Math.round(PREFS.vol.master * 100)}%` : canVibrate && PREFS.haptics ? 'Vibrate' : 'Silent', sub = r.querySelector('.sub'); if (sub.textContent !== vt) sub.textContent = vt;
   const pb = r.querySelector('[data-act=pause]'), paused = !!S.held && !!S.pauseBtn; pb.classList.toggle('on', paused); const want = paused ? 'play' : 'still'; if (pb.dataset.k !== want) { pb.dataset.k = want; pb.innerHTML = svg(paused ? ICON.play : ICON.still); pb.setAttribute('aria-label', paused ? 'Resume' : 'Pause'); }
-  r.querySelector('[data-cell=volume]').classList.toggle('on', PREFS.sound); const cv = r.querySelector('canvas'); if (cv && !PREFS.hideRow && !cv._w) sizeCanvas(cv);
-  const nn = !!PREFS.hideNumbers; if (r.classList.contains('nonum') !== nn) { r.classList.toggle('nonum', nn); const c2 = r.querySelector('canvas'); if (c2) c2._w = 0; }   // numbers back: the drums are measured again
+  r.querySelector('[data-cell=volume]').classList.toggle('on', PREFS.sound);
+  r.classList.toggle('nonum', !!PREFS.hideNumbers);
 }
 function tickBars() {
-  const top = $('topBar'), br = top.querySelector('[data-cell=breathe]');
-  if (br) {
-    const on = PREFS.breathing || S.mode === 'settle' || S.sigh, b = on ? clamp(S.breath + 0.4 * apexAmp(), 0, 1.2) : 0, w = br.querySelector('.sub'), word = on ? breathWord() : 'Breathe';
-    br.style.setProperty('--b', b.toFixed(3)); if (w.textContent !== word) w.textContent = word;
-  }
+  const top = $('topBar');
   const bot = $('botBar');
   for (const k of ['breath', 'deep']) { const dp = bot.querySelector(`[data-act=${k}]`); if (dp) dp.classList.toggle('on', !!S.sigh && (S.sigh.steps === DEEP) === (k === 'deep')); }   // green while it runs
   const g = top.querySelector('[data-cell=goal]'), G = S.goal, live = !!G && G.phase === 'play';
   if (g) { g.classList.toggle('on', live); g.style.setProperty('--left', live ? clamp(goalLeft() * 1000 / Math.max(1, G.end - G.start), 0, 1).toFixed(3) : '0'); }
-  // One rule on the top bar: a switch is green when it is on (Breathe, and the timer while it counts); the doors (Home, Mode, Scene) stay plain.
-  top.querySelector('[data-cell=breathe]').classList.toggle('on', PREFS.breathing || S.mode === 'settle');
-  const cv = $('scoreRow').querySelector('canvas');
-  if (cv && cv._w && !PREFS.hideRow) {
-    const c = cv.getContext('2d'), d = cv.width / cv._w, gl = scoreGlow(), W = cv._w, H = cv._h, wd = $('scoreRow').querySelector('.sr-word'), word = PREFS.clock ? `${Math.floor((performance.now() - S.born) / 60000)} min` : 'Score';
-    if (wd && wd.textContent !== word) wd.textContent = word;   // with the session clock on, the minutes take the word's place
-    c.setTransform(d, 0, 0, d, 0, 0); c.clearRect(0, 0, W, H);
-    if (!PREFS.hideNumbers) odometer(c, W, H, gl);   // six drums, joined to the Stats tile
+  const sr = $('scoreRow'), pill = sr.querySelector('.sr-score');
+  if (pill && !PREFS.hideRow) {   // the score in the standard type; a glow round it for a moment when points come in
+    const wd = pill.querySelector('.sr-word'), num = pill.querySelector('.sr-num'), gl = scoreGlow(), word = PREFS.clock ? `${Math.floor((performance.now() - S.born) / 60000)} min` : 'Score', n = fmt(S.score);
+    if (wd.textContent !== word) wd.textContent = word;   // with the session clock on, the minutes take the word's place
+    if (num.textContent !== n) num.textContent = n;
+    const g = gl.a > 0.01 && !PREFS.hideNumbers ? `0 0 ${(12 * gl.a).toFixed(1)}px rgba(${gl.gold ? GOLD : LIGHT},${(0.8 * gl.a).toFixed(3)})` : '';
+    if (pill._g !== g) { pill._g = g; pill.style.boxShadow = g; }
   }
   skyCells();
 }
@@ -3699,7 +3649,6 @@ function topTap(el) {
   const k = el.dataset.cell;
   if (k === 'home') openSheet('pause');
   else if (k === 'goal') openSheet('checkin');
-  else if (k === 'breathe') { if (S.mode !== 'settle') setPref('breathing', !PREFS.breathing); }   // a plain tap: in Settle the breath is always on
   else openSheet(k);
 }
 function applySeason() {
