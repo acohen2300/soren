@@ -14,15 +14,14 @@
   --well: rgba(0, 0, 0, 0.28); --chip: rgba(255, 255, 255, 0.07); --chip-line: rgba(255, 255, 255, 0.16);
   --lit: 240,246,255; --on: 74, 222, 128; --off: 96, 165, 250; --gold: 255, 200, 90; --red: 255, 90, 80; --warn: rgb(var(--red));   /* green on, blue in hand or off, gold you did it right, red trouble */ --sheet: #0b1424; --night: #000; --glow: rgba(255, 170, 90, 0.55);
   --f-display: ui-serif, 'New York', 'Iowan Old Style', Georgia, serif;
-  --f-body: -apple-system, BlinkMacSystemFont, system-ui, 'Segoe UI', sans-serif;
-  --f-mono: ui-monospace, 'SF Mono', Menlo, monospace;
+  --t1: 22px; --t2: 19px; --t3: 17px; --t4: 15px; --t5: 13px; --t6: 12px;   /* the six sizes, and no others: brand and big status · numbers that matter · titles · names and labels · instructions · hints */
 }
 * { box-sizing: border-box; }
 [hidden] { display: none !important; }
 html, body { height: 100%; overflow: hidden; overscroll-behavior: none; }
 html { background: var(--bg-bot); } html:has(body.intro), html:has(.go:not([hidden])) { background: #050d1c; }   /* whatever shows past the page, under the notch and the home bar, is the page's own dark */
 body {
-  margin: 0; color: var(--ink); font-family: var(--f-body); font-size: 15px;
+  margin: 0; color: var(--ink); font-family: var(--f-display); font-style: italic; font-size: var(--t4);   /* one font, italic; numbers stand upright */
   background: var(--bg-bot) radial-gradient(circle at 50% 0%, var(--bg-top) 0%, var(--bg-mid) 55%, var(--bg-bot) 100%) fixed;
   padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); padding-block: 8px;
   -webkit-tap-highlight-color: transparent; -webkit-user-select: none; user-select: none; -webkit-touch-callout: none; -webkit-text-size-adjust: 100%;
@@ -37,13 +36,13 @@ button, input { font: inherit; color: inherit; touch-action: manipulation; }
 }
 .btn {
   background: var(--chip); border: 1px solid var(--chip-line); border-radius: 12px; padding: 6px 8px;
-  font-size: 14px; font-weight: 600; line-height: 1.15; cursor: pointer; min-width: 0; min-height: 44px; transition: background .2s, border-color .2s;
+  font-size: var(--t4); font-weight: 600; line-height: 1.15; cursor: pointer; min-width: 0; min-height: 44px; transition: background .2s, border-color .2s;
 }
 .btn:hover:not(:disabled) { background: rgba(255, 255, 255, 0.11); border-color: var(--ink-dim); }
 .btn:disabled { opacity: 0.38; cursor: not-allowed; }
 .primary { background: var(--ink); color: var(--bg-bot); border-color: var(--ink); }
 .primary:hover:not(:disabled) { background: #fff; }
-.mini-label { font-size: 11px; letter-spacing: 0.13em; text-transform: uppercase; color: var(--ink-dim); font-weight: 600; white-space: nowrap; }
+.mini-label { font-size: var(--t6); letter-spacing: 0.13em; text-transform: uppercase; color: var(--ink-dim); font-weight: 600; white-space: nowrap; }
 
 /* The shimmer: a sweep of silver light across a control. It means "this, now". */
 .cell, .glint { position: relative; overflow: hidden; }
@@ -71,37 +70,37 @@ body.lamp { --glint: rgba(255, 236, 196, 0.95); --glint-soft: rgba(255, 205, 130
   opacity: 0; transform: scale(0.96); transition: opacity .45s ease, transform .45s ease;
 }
 .float-banner.show { opacity: 1; transform: scale(1); }
-#bannerTitle { font-family: var(--f-display); font-style: italic; font-weight: 600; font-size: 26px; line-height: 1.05; text-shadow: 0 3px 14px rgba(0, 0, 0, 0.85); text-wrap: balance; }
-#bannerSub { font-size: 12.5px; font-weight: 500; background: rgba(0, 0, 0, 0.55); border: 1px solid rgba(255, 255, 255, 0.2); padding: 3px 11px; border-radius: 999px; max-width: 100%; text-wrap: balance; }
+#bannerTitle { font-family: var(--f-display); font-style: italic; font-weight: 600; font-size: var(--t1); line-height: 1.05; text-shadow: 0 3px 14px rgba(0, 0, 0, 0.85); text-wrap: balance; }
+#bannerSub { font-size: var(--t5); font-weight: 400; background: rgba(0, 0, 0, 0.55); border: 1px solid rgba(255, 255, 255, 0.2); padding: 3px 11px; border-radius: 999px; max-width: 100%; text-wrap: balance; }
 #bannerSub:empty { display: none; }
 .pool-alert {
   position: absolute; top: 10px; left: 10px; right: 10px; display: flex; justify-content: space-between; gap: 8px; align-items: center; pointer-events: none;
-  background: rgba(0, 0, 0, 0.66); border: 1px solid rgba(255, 255, 255, 0.22); border-radius: 12px; padding: 6px 10px; font-size: 13px; font-weight: 500;
+  background: rgba(0, 0, 0, 0.66); border: 1px solid rgba(255, 255, 255, 0.22); border-radius: 12px; padding: 6px 10px; font-size: var(--t5); font-weight: 400;
 }
 .pool-alert.ends { border-color: var(--warn); }
-#alertTime { font-family: var(--f-mono); font-size: 12px; }
+#alertTime { font-family: var(--f-display); font-size: var(--t6); }
 .pool-card { position: absolute; inset: 0; display: grid; place-items: center; padding: 20px; background: rgba(2, 6, 10, 0.6); backdrop-filter: blur(3px); -webkit-backdrop-filter: blur(3px); }
 .pool-card .card { text-align: center; padding: 20px; width: min(300px, 100%); display: flex; flex-direction: column; gap: 8px; align-items: center; }
 @media (max-height: 600px) { .pool-card { padding: 6px; } .pool-card .card { padding: 12px 16px; gap: 6px; } }   /* small phones: the four-answer card still fits the pool */
-#cardTitle { font-family: var(--f-display); font-style: italic; font-size: 29px; font-weight: 600; line-height: 1.05; text-wrap: balance; overflow-wrap: anywhere; }
+#cardTitle { font-family: var(--f-display); font-style: italic; font-size: var(--t1); font-weight: 600; line-height: 1.05; text-wrap: balance; overflow-wrap: anywhere; }
 #cardArt svg { width: 96px; height: 96px; fill: none; stroke: var(--ink); stroke-width: 1.6; stroke-linecap: round; stroke-linejoin: round; }
-#cardBig { font-family: var(--f-display); font-size: 44px; font-weight: 700; line-height: 1; font-variant-numeric: tabular-nums; }
-#cardNote { font-size: 13.5px; color: var(--ink-dim); line-height: 1.45; }
+#cardBig { font-family: var(--f-display); font-size: var(--t1); font-weight: 600; line-height: 1; font-variant-numeric: tabular-nums; font-style: normal; }
+#cardNote { font-size: var(--t5); color: var(--ink-dim); line-height: 1.45; }
 #cardInput { margin-top: 2px; text-align: center; }
-.card-actions .btn.quiet { background: none; border-color: transparent; color: var(--ink-dim); font-size: 13px; font-weight: 600; min-height: 30px; }   /* the way back in: there, but quiet */
+.card-actions .btn.quiet { background: none; border-color: transparent; color: var(--ink-dim); font-size: var(--t5); font-weight: 600; min-height: 30px; }   /* the way back in: there, but quiet */
 /* Go: you leave for the thing you came to do. The screen goes dark, your goal comes up, a gold ✓ draws itself, one chime, and quiet. */
 .go { position: fixed; inset: 0; min-height: 100vh; z-index: 95; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 14px; padding: 24px; background: #03060c; text-align: center; animation: fade .9s ease both; cursor: pointer; }
 #goList { display: flex; flex-direction: column; gap: 18px; align-items: center; max-width: 340px; }
 .go-line { display: flex; align-items: center; gap: 14px; opacity: 0; transform: scale(0.96); transition: opacity 1.4s ease, transform 1.4s ease; }   /* one line a breath: it grows and glows in */
 .go-line.in { opacity: 1; transform: none; }
-.go-line span { font: italic 600 26px/1.15 var(--f-display); color: var(--ink); text-align: left; overflow-wrap: anywhere; }
-.go-line:first-child span { font-size: 32px; }
+.go-line span { font: italic 600 var(--t1)/1.15 var(--f-display); color: var(--ink); text-align: left; overflow-wrap: anywhere; }
+.go-line:first-child span { font-size: var(--t1); }
 .go-tick { flex: none; width: 44px; height: 44px; fill: none; stroke: rgb(var(--gold)); stroke-width: 3.2; stroke-linecap: round; stroke-linejoin: round; filter: drop-shadow(0 0 10px rgba(var(--gold), 0.55)); stroke-dasharray: 44; stroke-dashoffset: 44; }
 .go-line.in .go-tick { animation: draw .9s .3s ease-out both; }
 .go-line.done { opacity: 0.35; } .go-line.done span { text-decoration: line-through; }   /* done: it dims, and goes from the list */
 @keyframes draw { to { stroke-dashoffset: 0; } }
-.go-word { font-size: 15px; font-weight: 600; letter-spacing: 0.14em; color: var(--ink-dim); }
-.go-hint { position: absolute; bottom: calc(24px + env(safe-area-inset-bottom, 0px)); margin: 0; font-size: 12px; color: var(--ink-faint); animation: fade 1s 3s both; }
+.go-word { font-size: var(--t4); font-weight: 600; letter-spacing: 0.14em; color: var(--ink-dim); }
+.go-hint { position: absolute; bottom: calc(24px + env(safe-area-inset-bottom, 0px)); margin: 0; font-size: var(--t6); color: var(--ink-faint); animation: fade 1s 3s both; }
 .card-actions { display: flex; flex-direction: column-reverse; gap: 8px; width: 100%; margin-top: 4px; }   /* stacked, the main answer on top */
 .card-actions .btn { flex: 1; }
 .app:not([data-mode="play"]) .pool-alert { display: none; }
@@ -110,15 +109,15 @@ body.lamp { --glint: rgba(255, 236, 196, 0.95); --glint-soft: rgba(255, 205, 130
 .slot { flex: none; height: 58px; display: flex; align-items: center; }   /* room for a bar to grow without moving the pool */
 .bar { width: 100%; height: 48px; border-radius: 16px; display: grid; align-items: stretch; overflow: hidden;
   background: rgba(0, 0, 0, 0.3); border: 1px solid var(--chip-line); box-shadow: inset 0 2px 6px rgba(0, 0, 0, 0.45);
-  color: var(--ink); font-size: 13px; font-weight: 600; white-space: nowrap; transition: height .25s ease, background .25s ease, box-shadow .25s ease, border-color .25s ease, opacity .5s; }
+  color: var(--ink); font-size: var(--t5); font-weight: 600; white-space: nowrap; transition: height .25s ease, background .25s ease, box-shadow .25s ease, border-color .25s ease, opacity .5s; }
 .cell { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2px; min-width: 0; padding: 0 4px; background: none; border: 0;
   border-left: 1px solid rgba(255, 255, 255, 0.09); color: inherit; font: inherit; cursor: pointer; touch-action: manipulation; }
 .cell:first-child { border-left: 0; }
 .cell:active { background: rgba(255, 255, 255, 0.06); }
 .cell:disabled { opacity: 0.32; cursor: default; }
 .cell svg { flex: none; width: 20px; height: 20px; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
-.cell .sub { position: relative; display: block; font-size: 10px; font-weight: 600; color: var(--ink-dim); max-width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }   /* the word under an icon */
-.cell .sub.tight { font-size: 9px; }   /* on a narrow phone the words draw in before anything is cut */
+.cell .sub { position: relative; display: block; font-size: var(--t6); font-weight: 600; color: var(--ink-dim); max-width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }   /* the word under an icon */
+.cell .sub.tight { font-size: var(--t6); }   /* on a narrow phone the words draw in before anything is cut */
 .cell.on { box-shadow: inset 0 0 0 2px rgba(var(--on), 0.85), inset 0 0 14px rgba(var(--on), 0.22); border-radius: 13px; }
 .cell.armed { animation: armed 1.4s ease-in-out infinite; }   /* armed and waiting for you: the green breathes slowly, well under once a second */
 @keyframes armed { 50% { box-shadow: inset 0 0 0 2px rgba(var(--on), 0.45), inset 0 0 6px rgba(var(--on), 0.1); } }
@@ -126,10 +125,10 @@ body.lamp { --glint: rgba(255, 236, 196, 0.95); --glint-soft: rgba(255, 205, 130
 .cell.held, .cell.open, .cell.on.open { box-shadow: inset 0 0 0 2px rgba(var(--off), 0.7), inset 0 0 12px rgba(var(--off), 0.16); border-radius: 13px; }   /* in hand: a tool held, or a weather tile whose strip is open. Blue wins over green while it is */
 .cell.none { opacity: 0.38; }
 .cell[data-act=pin] svg, .cell[data-act=still] svg { width: 18px; height: 18px; }
-.cell .n { position: absolute; top: 4px; right: 5px; min-width: 15px; height: 14px; padding: 0 4px; border-radius: 7px; background: rgba(242, 248, 252, 0.88); color: #0b1424; font-size: 9.5px; font-weight: 700; line-height: 14px; text-align: center; }
+.cell .n { position: absolute; top: 4px; right: 5px; min-width: 15px; height: 14px; padding: 0 4px; border-radius: 7px; background: rgba(242, 248, 252, 0.88); color: #0b1424; font-size: var(--t6); font-weight: 600; line-height: 14px; text-align: center; }
 .cell canvas { display: block; width: 100%; height: 100%; pointer-events: none; }
 .states { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 1px; min-width: 0; padding: 0 6px; text-align: center; line-height: 1.15; }
-.state { max-width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-size: 13px; font-weight: 600; color: var(--ink); } .state + .state { font-size: 12px; font-weight: 500; font-style: italic; color: var(--ink-dim); } .state.tight { font-size: 11px; }   /* the mode and the place, said, not tiles */
+.state { max-width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-size: var(--t5); font-weight: 600; color: var(--ink); } .state + .state { font-size: var(--t6); font-weight: 400; font-style: italic; color: var(--ink-dim); } .state.tight { font-size: var(--t6); }   /* the mode and the place, said, not tiles */
 .cell .goal-left { position: absolute; left: 8px; right: 8px; bottom: 6px; height: 2.5px; border-radius: 2px; background: rgba(var(--on), 0.85); transform-origin: left; transform: scaleX(var(--left, 0)); }
 .tog svg { width: 20px; height: 20px; vertical-align: middle; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
 [data-muted="true"] .waves, [data-muted="false"] .hush, .tog[aria-checked="true"] .hush, .tog[aria-checked="false"] .waves { display: none; }
@@ -141,24 +140,24 @@ body.lamp { --glint: rgba(255, 236, 196, 0.95); --glint-soft: rgba(255, 205, 130
 .strip { flex-direction: column; justify-content: center; }
 .strip .row { width: 100%; padding: 0; border: 0; } .strip .rctl { margin-top: 0; }
 .row.compact .check, .row.compact .save { height: 34px; }
-.row.compact .rdesc { display: block; margin: 0 0 1px 2px; font-size: 10.5px; line-height: 1.05; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; color: var(--ink-dim); }   /* the weather strip: what it is, then what to do next */
+.row.compact .rdesc { display: block; margin: 0 0 1px 2px; font-size: var(--t6); line-height: 1.05; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; color: var(--ink-dim); }   /* the weather strip: what it is, then what to do next */
 /* The score row: between the top bar and the pool. The score, big; pause and mute; and Hide, which leaves a small arrow to bring it back. */
 .scorerow { transition: opacity .5s; flex: none; height: 30px; display: flex; align-items: center; justify-content: space-between; padding: 0 6px 0 10px; gap: 8px; }
 .sr-score { display: inline-flex; align-items: baseline; gap: 8px; flex: 0 1 auto; min-width: 0; height: 30px; align-items: center; padding: 0 12px; border-radius: 999px; border: 1px solid var(--chip-line); background: rgba(0, 0, 0, 0.22); color: var(--ink); font: inherit; cursor: pointer; position: relative; white-space: nowrap; }   /* the score in the standard type, in an outline */
 .scorerow.nonum .sr-num { display: none; }
-.sr-word { font-size: 11px; font-weight: 600; color: var(--ink-dim); } .sr-num { font-size: 15px; font-weight: 600; font-variant-numeric: tabular-nums; }
-.sr-stats { flex: none; margin-left: 8px; padding: 4px 12px; border-radius: 999px; border: 1px solid var(--chip-line); background: none; color: var(--ink); font: inherit; font-size: 13px; font-style: italic; cursor: pointer; transition: border-color 1.2s ease, box-shadow 1.2s ease; position: relative; }   /* the Weather Settings style: blue while waiting, then plain */
+.sr-word { font-size: var(--t6); font-weight: 600; color: var(--ink-dim); } .sr-num { font-size: var(--t4); font-weight: 600; font-variant-numeric: tabular-nums; font-style: normal; }
+.sr-stats { flex: none; margin-left: 8px; padding: 4px 12px; border-radius: 999px; border: 1px solid var(--chip-line); background: none; color: var(--ink); font: inherit; font-size: var(--t5); font-style: italic; cursor: pointer; transition: border-color 1.2s ease, box-shadow 1.2s ease; position: relative; }   /* the Weather Settings style: blue while waiting, then plain */
 .sr-stats.hint { border-color: rgba(var(--off), 0.9); box-shadow: 0 0 0 1px rgba(var(--off), 0.6), 0 0 12px rgba(var(--off), 0.25); }
 .sr-score::after, .sr-stats::after { content: ''; position: absolute; left: 50%; top: 50%; width: max(100%, 44px); height: max(100%, 44px); transform: translate(-50%, -50%); }
-@media (max-width: 400px) { .scorerow { gap: 4px; padding-left: 6px; } .sr-score { padding: 0 9px; gap: 6px; } .sr-stats { margin-left: 4px; padding: 3px 9px; font-size: 12px; } [data-cell=volume] .sub { display: none; } .sr-btn { padding: 0 6px; min-width: 30px; } .sr-ctl { gap: 3px; } }   /* narrower phones: the row stays on one line (the speaker's words wait in Sound) */
-.sr-btn { display: inline-flex; align-items: center; justify-content: center; gap: 4px; height: 28px; min-width: 34px; padding: 0 8px; border-radius: 14px; border: 1px solid var(--chip-line); background: rgba(0, 0, 0, 0.22); color: var(--ink); font: inherit; font-size: 10.5px; font-weight: 600; cursor: pointer; }
+@media (max-width: 400px) { .scorerow { gap: 4px; padding-left: 6px; } .sr-score { padding: 0 9px; gap: 6px; } .sr-stats { margin-left: 4px; padding: 3px 9px; font-size: var(--t6); } [data-cell=volume] .sub { display: none; } .sr-btn { padding: 0 6px; min-width: 30px; } .sr-ctl { gap: 3px; } }   /* narrower phones: the row stays on one line (the speaker's words wait in Sound) */
+.sr-btn { display: inline-flex; align-items: center; justify-content: center; gap: 4px; height: 28px; min-width: 34px; padding: 0 8px; border-radius: 14px; border: 1px solid var(--chip-line); background: rgba(0, 0, 0, 0.22); color: var(--ink); font: inherit; font-size: var(--t6); font-weight: 600; cursor: pointer; }
 .sr-btn svg { width: 16px; height: 16px; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
 .sr-btn.on { border-color: rgba(var(--on), 0.85); box-shadow: inset 0 0 0 1px rgba(var(--on), 0.6), inset 0 0 10px rgba(var(--on), 0.18); }
 /* Every small control reaches at least 44 × 44 for a finger, however small it looks: an invisible pad around it */
 .sr-btn, .learn, .hide-link, .sr-show, .wx-show, .rhead .sample-pill, .rplus { position: relative; }
 .sr-btn::after, .learn::after, .hide-link::after, .sr-show::after, .wx-show::after, .rhead .sample-pill::after, .rplus::after { content: ''; position: absolute; left: 50%; top: 50%; width: max(100%, 44px); height: max(100%, 44px); transform: translate(-50%, -50%); }
-.hide-link, .sr-show, .wx-show { background: none; border: 0; padding: 4px 6px; color: var(--ink-dim); font: inherit; font-size: 12px; font-weight: 500; cursor: pointer; } .hide-link { text-decoration: underline; text-underline-offset: 2px; }
-.sr-show, .wx-show { font-size: 15px; margin-left: auto; }
+.hide-link, .sr-show, .wx-show { background: none; border: 0; padding: 4px 6px; color: var(--ink-dim); font: inherit; font-size: var(--t6); font-weight: 400; cursor: pointer; } .hide-link { text-decoration: underline; text-underline-offset: 2px; }
+.sr-show, .wx-show { font-size: var(--t4); margin-left: auto; }
 .scorerow.nogame .sr-score, .scorerow.nogame .sr-stats, .scorerow.nogame [data-act=pause] { visibility: hidden; }
 .scorerow.hidden .sr-score, .scorerow.hidden .sr-stats, .scorerow.hidden .sr-ctl { display: none; } .scorerow:not(.hidden) .sr-show { display: none; }
 /* Weather Settings, folded: just the words, no box round them. Blue for five seconds (the next touch), then plain; green as it opens. */
@@ -170,10 +169,10 @@ body.lamp { --glint: rgba(255, 236, 196, 0.95); --glint-soft: rgba(255, 205, 130
 /* The pin, on the left of the ribbon, in a circle: blue while it is there to take, green when pinned */
 .cell[data-act=pin].on { box-shadow: none; } .cell[data-act=pin] svg { box-sizing: content-box; padding: 5px; border-radius: 50%; border: 1.5px solid rgba(var(--off), 0.85); width: 16px; height: 16px; } .cell[data-act=pin].on svg { border-color: rgba(var(--on), 0.95); box-shadow: 0 0 10px rgba(var(--on), 0.3); }
 /* Play sample: small, before Learn more; blue for five seconds after the line is switched on */
-.rhead .sample-pill { flex: none; margin-left: auto; margin-right: 10px; padding: 1px 9px; border-radius: 999px; border: 1px solid transparent; background: none; color: var(--ink-dim); font: inherit; font-size: 11.5px; font-weight: 500; cursor: pointer; transition: border-color 1.2s ease, box-shadow 1.2s ease; }
+.rhead .sample-pill { flex: none; margin-left: auto; margin-right: 10px; padding: 1px 9px; border-radius: 999px; border: 1px solid transparent; background: none; color: var(--ink-dim); font: inherit; font-size: var(--t6); font-weight: 400; cursor: pointer; transition: border-color 1.2s ease, box-shadow 1.2s ease; }
 .rhead .sample-pill.hint { border-color: rgba(var(--off), 0.9); box-shadow: 0 0 0 1px rgba(var(--off), 0.5); }
 .rhead { align-items: center; }
-.wxwords { border-left: 0; align-items: flex-start; padding-left: 14px; } .wxwords .pill { padding: 4px 12px; border-radius: 999px; border: 1px solid var(--chip-line); font-size: 13px; font-style: italic; font-weight: 400; color: var(--ink); }   /* folded: a clean line of words, left, a slim pill round just them */
+.wxwords { border-left: 0; align-items: flex-start; padding-left: 14px; } .wxwords .pill { padding: 4px 12px; border-radius: 999px; border: 1px solid var(--chip-line); font-size: var(--t5); font-style: italic; font-weight: 400; color: var(--ink); }   /* folded: a clean line of words, left, a slim pill round just them */
 .wxwords .pill.on { border-color: rgba(var(--on), 0.85); box-shadow: inset 0 0 0 1px rgba(var(--on), 0.6), inset 0 0 12px rgba(var(--on), 0.18); }   /* green while any weather is on */
 
 /* The card: every menu is this one frame, at one size. ‹ and ✕ top left (back a level, and away: both put everything back),
@@ -188,13 +187,13 @@ body.lamp { --glint: rgba(255, 236, 196, 0.95); --glint-soft: rgba(255, 205, 130
 }
 @keyframes pop { from { transform: translate(-50%, -48%) scale(0.97); opacity: 0; } to { transform: translate(-50%, -50%); opacity: 1; } }
 @keyframes fade { from { opacity: 0; } to { opacity: 1; } }
-.nav { flex: none; width: 38px; height: 38px; border-radius: 50%; border: 1px solid var(--chip-line); background: var(--chip); color: var(--ink); cursor: pointer; font-size: 18px; line-height: 1; display: grid; place-items: center; }
-.nav.help { font-weight: 600; font-size: 17px; }
-#sheetBack { font-size: 24px; padding-bottom: 3px; }
-.sheet-note { margin: 0 16px 6px; text-align: center; font-size: 12.5px; line-height: 1.35; color: var(--ink-dim); font-style: italic; }   /* instructions and descriptions are italic, never bold; one line where it fits, wrapped rather than cut */
+.nav { flex: none; width: 38px; height: 38px; border-radius: 50%; border: 1px solid var(--chip-line); background: var(--chip); color: var(--ink); cursor: pointer; font-size: var(--t2); line-height: 1; display: grid; place-items: center; }
+.nav.help { font-weight: 600; font-size: var(--t3); }
+#sheetBack { font-size: var(--t1); padding-bottom: 3px; }
+.sheet-note { margin: 0 16px 6px; text-align: center; font-size: var(--t5); line-height: 1.35; color: var(--ink-dim); font-style: italic; }   /* instructions and descriptions are italic, never bold; one line where it fits, wrapped rather than cut */
 .sheet-note a, .rdesc a { color: inherit; text-decoration: underline; text-underline-offset: 2px; cursor: pointer; }
 .sheet-head { flex: none; display: flex; align-items: center; gap: 8px; padding: 10px 12px 6px; }
-.sheet-title { flex: 1; min-width: 0; min-height: 38px; display: grid; place-items: center; padding: 0 8px; border-radius: 19px; border: 1px solid var(--chip-line); background: var(--chip); text-align: center; font-family: var(--f-display); font-style: italic; font-weight: 600; font-size: clamp(13px, 4.6vw, 19px); line-height: 1.1; }   /* the title sits in a pill like the buttons beside it; on a small phone it draws in, then wraps, never cut */
+.sheet-title { flex: 1; min-width: 0; min-height: 38px; display: grid; place-items: center; padding: 0 8px; border-radius: 19px; border: 1px solid var(--chip-line); background: var(--chip); text-align: center; font-family: var(--f-display); font-style: italic; font-weight: 600; font-size: var(--t3); line-height: 1.1; }   /* the title sits in a pill like the buttons beside it; on a small phone it draws in, then wraps, never cut */
 .sheet-title[hidden] { display: none; }
 .sheet-body { flex: 1; overflow-y: auto; overscroll-behavior: contain; display: flex; flex-direction: column; gap: 8px; padding: 2px 14px 10px; scrollbar-width: thin; scrollbar-color: rgba(242, 248, 252, 0.4) transparent; }
 .sheet-body::-webkit-scrollbar { width: 4px; } .sheet-body::-webkit-scrollbar-thumb { background: rgba(242, 248, 252, 0.4); border-radius: 2px; }
@@ -202,36 +201,36 @@ body.lamp { --glint: rgba(255, 236, 196, 0.95); --glint-soft: rgba(255, 205, 130
 .sheet-body > .item { flex-shrink: 0; }   /* a long card scrolls; its rows never squeeze into each other */
 .sheet-body > .item:last-child { padding-bottom: 20px; }
 .sheet-foot { flex: none; display: flex; flex-direction: column; gap: 6px; padding: 8px 14px calc(10px + env(safe-area-inset-bottom, 0px)); border-top: 1px solid var(--chip-line); }
-.sheet-foot .btn { width: 100%; min-height: 44px; font-size: 15px; }
-.btn.quiet { background: none; border-color: transparent; color: var(--ink-dim); font-size: 13px; font-weight: 600; min-height: 32px; }
+.sheet-foot .btn { width: 100%; min-height: 44px; font-size: var(--t4); }
+.btn.quiet { background: none; border-color: transparent; color: var(--ink-dim); font-size: var(--t5); font-weight: 600; min-height: 32px; }
 /* Learn more: the row's words in a small pop-up over the card */
 .more-pop { position: fixed; z-index: 70; left: 50%; top: 50%; transform: translate(-50%, -50%); width: min(340px, calc(100% - 40px)); padding: 16px 16px 12px; border-radius: 16px; background: var(--sheet); border: 1px solid var(--line); box-shadow: 0 20px 50px rgba(0, 0, 0, 0.6); animation: pop .15s ease; }
-.more-pop b { display: block; font-family: var(--f-display); font-style: italic; font-weight: 600; font-size: 18px; margin-bottom: 6px; }
-.more-pop p { margin: 0 0 10px; font-size: 13.5px; line-height: 1.5; color: var(--ink-dim); font-style: italic; }
+.more-pop b { display: block; font-family: var(--f-display); font-style: italic; font-weight: 600; font-size: var(--t2); margin-bottom: 6px; }
+.more-pop p { margin: 0 0 10px; font-size: var(--t5); line-height: 1.5; color: var(--ink-dim); font-style: italic; }
 .more-pop .tog { min-height: 36px; }
 .item { min-width: 0; }
 /* A row, the same everywhere: its name and Learn more; one italic line on what it does; then Off | On, its control and ✓ on
    one line, against the right edge. Changed: a blue ring. Ready: the ✓ gold, and one sweep of gold light. */
 .row { display: flex; flex-direction: column; gap: 4px; padding: 8px 10px 10px; border-radius: 14px; border: 1px solid transparent; transition: border-color .25s, box-shadow .25s; }
 .rhead { display: flex; justify-content: space-between; align-items: baseline; gap: 10px; }
-.rname { font-size: 14px; font-weight: 600; line-height: 1.2; min-width: 0; }
+.rname { font-size: var(--t4); font-weight: 600; line-height: 1.2; min-width: 0; }
 .rhead { flex-wrap: wrap; row-gap: 2px; }
-.rhead .rset, .rhead .rplus { display: none; }
-.rhead .rfold { flex: none; background: none; border: 0; padding: 0; color: var(--ink-dim); font: inherit; font-size: 12px; font-weight: 500; text-decoration: underline; text-underline-offset: 2px; cursor: pointer; position: relative; }
+.rhead .rset, .rhead .rplus, .rhead .rredo { display: none; }
+.rhead .rfold { flex: none; background: none; border: 0; padding: 0; color: var(--ink-dim); font: inherit; font-size: var(--t6); font-weight: 400; text-decoration: underline; text-underline-offset: 2px; cursor: pointer; position: relative; }
 .rhead .rfold::after { content: ''; position: absolute; left: 50%; top: 50%; width: max(100%, 44px); height: max(100%, 44px); transform: translate(-50%, -50%); }
-@media (max-width: 360px) { .item.row:not(.folded) .rhead { gap: 6px; } .rhead .sample-pill { margin-right: 2px; padding: 1px 4px; font-size: 11px; } .rhead .learn, .rhead .rfold { font-size: 11px; } }   /* small phones: name, sample, Learn more and Hide still share a line */
+@media (max-width: 360px) { .item.row:not(.folded) .rhead { gap: 6px; flex-wrap: nowrap; align-items: center; } .rhead .rname { flex: 1 1 auto; min-width: 0; }   /* a long name wraps in its own space; the marks stay together at the right */ .rhead .sample-pill { margin-right: 2px; padding: 1px 4px; font-size: var(--t6); } .rhead .learn, .rhead .rfold { font-size: var(--t6); } }   /* small phones: name, sample, Learn more and Hide still share a line */
 .item.row.folded > :not(.rhead) { display: none; }   /* folded: the name, and a + (the card keeps its size) */
 .item.row.folded .rhead { flex-wrap: nowrap; } .item.row.folded .rhead .learn, .item.row.folded .rhead .sample-pill, .item.row.folded .rhead .rfold { display: none; }
 .item.row.folded .rhead .rname { margin-right: auto; }
-.item.row.folded .rhead .rplus { display: inline-flex; align-items: center; justify-content: center; flex: none; width: 34px; height: 28px; padding: 0; border-radius: 14px; border: 1px solid var(--chip-line); background: rgba(0, 0, 0, 0.22); color: var(--ink); font: inherit; font-size: 18px; line-height: 1; cursor: pointer; }
-.item.row.isset .rhead .rset { display: inline-flex; flex: none; padding: 1px 12px; border-radius: 999px; background: rgb(var(--gold)); color: #1a1405; font-size: 11.5px; font-weight: 700; }   /* Set: gold fill, the same on every row */
-.item.row.folded:not(.isset) .rname { padding: 3px 14px; border-radius: 999px; border: 1px solid rgba(var(--off), 0.9); box-shadow: 0 0 0 1px rgba(var(--off), 0.5); }   /* blue: ready, not set yet */
-.learn { flex: none; background: none; border: 0; padding: 0; color: var(--ink-dim); font: inherit; font-size: 12px; font-weight: 500; text-decoration: underline; text-underline-offset: 2px; cursor: pointer; }   /* Learn more: plain, underlined */
-.rdesc { display: block; font-style: italic; font-size: 12.5px; line-height: 1.3; color: var(--ink-dim); }   /* one line where it fits; on a small phone it wraps rather than lose words */
+.item.row.folded .rhead .rname { flex: 0 1 auto; }   /* folded: the name's pill fits the name */
+.item.row.folded .rhead .rplus { display: inline-flex; align-items: center; justify-content: center; flex: none; width: 34px; height: 28px; padding: 0; border-radius: 14px; border: 1px solid var(--chip-line); background: rgba(0, 0, 0, 0.22); color: var(--ink); font: inherit; font-size: var(--t2); line-height: 1; cursor: pointer; }
+.item.row.isset .rhead .rset { display: inline-flex; flex: none; padding: 1px 12px; border-radius: 999px; background: rgb(var(--gold)); color: #1a1405; font-size: var(--t6); font-weight: 600; }   /* Set: gold fill, the same on every row */
+.learn { flex: none; background: none; border: 0; padding: 0; color: var(--ink-dim); font: inherit; font-size: var(--t6); font-weight: 400; text-decoration: underline; text-underline-offset: 2px; cursor: pointer; }   /* Learn more: plain, underlined */
+.rdesc { display: block; font-style: italic; font-size: var(--t5); line-height: 1.3; color: var(--ink-dim); }   /* one line where it fits; on a small phone it wraps rather than lose words */
 /* Fixed columns, in every row, every card and the strip: what turns it on (a switch) · how much · ✓ · ▶. A switch is always in the
    same place; a row with none leaves its column empty. A choice or a wheel picks which, so it takes the first two columns. */
 .rctl { display: grid; grid-template-columns: 52px minmax(0, 1fr) 50px 38px 38px; align-items: center; gap: 6px; min-width: 0; margin-top: 4px; }
-.rctl > .sw { grid-column: 1; } .rctl > .range { grid-column: 2; min-width: 0; } .rctl > .item:not(.sw):not(.range), .rctl > .choice { grid-column: 1 / 4; min-width: 0; } .rctl > .rval { grid-column: 3; font-size: 11.5px; letter-spacing: -0.01em; font-weight: 600; font-variant-numeric: tabular-nums; text-align: right; justify-self: stretch; white-space: nowrap; color: var(--ink-dim); } .rctl > .check { grid-column: 4; } .rctl > .save { grid-column: 5; }
+.rctl > .sw { grid-column: 1; } .rctl > .range { grid-column: 2; min-width: 0; } .rctl > .item:not(.sw):not(.range), .rctl > .choice { grid-column: 1 / 4; min-width: 0; } .rctl > .rval { grid-column: 3; font-size: var(--t6); letter-spacing: -0.01em; font-weight: 600; font-variant-numeric: tabular-nums; font-style: normal; text-align: right; justify-self: stretch; white-space: nowrap; color: var(--ink-dim); } .rctl > .check { grid-column: 4; } .rctl > .save { grid-column: 5; }
 .rctl > .item:not(.sw):not(.range) + .rval { display: none; }   /* a choice or a wheel has no amount to read */
 .link .rctl, .row:has(.act) .rctl { display: flex; justify-content: flex-end; }
 .rctl .tog { white-space: normal; line-height: 1.1; }
@@ -242,34 +241,34 @@ body.lamp { --glint: rgba(255, 236, 196, 0.95); --glint-soft: rgba(255, 205, 130
 .range.c-blue, .range.c-green, .choice.c-blue, .choice.c-green, .item.c-blue, .item.c-green, .picker.c-blue, .picker.c-green { border-radius: 12px; padding: 0 4px; border: 1px solid transparent; }
 .choice.c-green { border-color: transparent !important; box-shadow: none !important; }   /* a choice shows one green: the button chosen, not a ring round both */
 .check.c-green { color: rgb(var(--gold)); text-shadow: 0 0 8px rgba(var(--gold), 0.6); }   /* the tick itself, gold */
-.save.c-green { background: rgba(var(--on), 0.2); } .save.gobtn { font-size: 12px; font-weight: 700; letter-spacing: 0; padding: 0; }
+.save.c-green { background: rgba(var(--on), 0.2); } .save.gobtn { font-size: var(--t6); font-weight: 600; letter-spacing: 0; padding: 0; }
 .link .rctl, .act { margin-top: 0; } .link .rhead, .link .rdesc, .row:has(.act) .rhead, .row:has(.act) .rdesc { margin-right: 54px; } .link .rctl, .row:has(.act) .rctl { margin-top: -36px; }   /* › sits beside the name and its line */
 #sheetHelp { margin-left: auto; }   /* with no title, ? and ✕ keep to the right */
-.cnt { display: block; text-align: center; font-style: normal; font-size: 11px; color: var(--ink-faint); min-height: 1.2em; }
+.cnt { display: block; text-align: center; font-style: normal; font-size: var(--t6); color: var(--ink-faint); min-height: 1.2em; }
 .tog.sel { border-color: rgba(var(--on), 0.85); box-shadow: inset 0 0 0 1px rgba(var(--on), 0.6), inset 0 0 12px rgba(var(--on), 0.18); }   /* chosen: green */
-.choice { display: flex; gap: 6px; } .choice > .tog { flex: 1 1 0; min-width: 0; height: auto; white-space: normal; line-height: 1.15; padding: 4px 6px; font-size: clamp(12px, 3.7vw, 13.5px); }   /* two to four, all in view */
-.leave .choice > .tog { padding: 0 3px; font-size: 13px; white-space: nowrap; } .leave .picker { margin-top: 6px; }
-.tog.step { width: 44px; min-height: 40px; font-size: 24px; padding: 0; line-height: 1; }
+.choice { display: flex; gap: 6px; } .choice > .tog { flex: 1 1 0; min-width: 0; height: auto; white-space: normal; line-height: 1.15; padding: 4px 6px; font-size: var(--t5); }   /* two to four, all in view */
+.leave .choice > .tog { padding: 0 3px; font-size: var(--t5); white-space: nowrap; } .leave .picker { margin-top: 6px; }
+.tog.step { width: 44px; min-height: 40px; font-size: var(--t1); padding: 0; line-height: 1; }
 /* The switch, as phones have it: right and green is on, left and plain is off. The knob moves with the breath's easing. */
 .switch { flex: none; position: relative; width: 52px; height: 32px; padding: 0; border-radius: 16px; border: 1px solid var(--chip-line); background: rgba(255, 255, 255, 0.14); cursor: pointer; transition: background .35s cubic-bezier(.45, 0, .25, 1), border-color .35s; }
 .switch i { position: absolute; top: 3px; left: 3px; width: 24px; height: 24px; border-radius: 50%; background: var(--ink); box-shadow: 0 1px 3px rgba(0, 0, 0, 0.4); transition: transform .35s cubic-bezier(.45, 0, .25, 1); }
 .switch[aria-checked="true"] { background: rgb(var(--on)); border-color: rgb(var(--on)); } .switch[aria-checked="true"] i { transform: translateX(20px); }
 .switch:disabled { opacity: 0.35; cursor: default; }
 /* The to-do: Off | On · the words · due · ✓, one line each; blue with nothing on it, green while it waits for ✓, gold when done */
-.todo { display: flex; flex-direction: column; gap: 8px; }
+.todo, .dues { display: flex; flex-direction: column; gap: 8px; }
 .trow { display: grid; grid-template-columns: 52px minmax(0, 1fr) 64px; gap: 4px; align-items: center; padding: 3px; border-radius: 14px; border: 1px solid transparent; transition: border-color .25s, box-shadow .25s; }
 .trow.goal { grid-template-columns: minmax(0, 1fr) 64px; } .trow > .tog { min-height: 40px; padding: 0 2px; }
 .trow .text-input { min-height: 40px; padding: 6px 10px; }
 .trow.dim .text-input, .trow.dim .chip { opacity: 0.4; }
-.chip { font-size: 11.5px; padding: 0 4px; white-space: normal; line-height: 1.1; } .chip.open { border-style: dashed; }
-.due-pick { display: flex; flex-direction: column; align-items: center; gap: 6px; padding: 2px 0 6px; } .due-pick .notime { width: auto; min-height: 34px; padding: 0 14px; font-size: 12.5px; }
+.chip { font-size: var(--t6); padding: 0 4px; white-space: normal; line-height: 1.1; } .chip.open { border-style: dashed; }
+.due-pick { display: flex; flex-direction: column; align-items: center; gap: 6px; padding: 2px 0 6px; } .due-pick .notime { width: auto; min-height: 34px; padding: 0 14px; font-size: var(--t5); }
 .tog.add { border-style: dashed; color: var(--ink-dim); }
 .picker { display: flex; justify-content: center; gap: 6px; margin: 2px 0 4px; }   /* the phone's timer and alarm pickers, in our wells */
 .picker > .item { position: relative; flex: 0 0 86px; } .picker > .item:last-child:nth-child(3) { flex-basis: 64px; } .picker > .item:has([data-key="leave.h"]), .picker > .item:has([data-key="leave.m"]) { flex-basis: 116px; }
-.picker .cnt { display: none; } .picker .wi { font-size: 20px; font-variant-numeric: tabular-nums; text-align: center; padding-right: 6px; }
+.picker .cnt { display: none; } .picker .wi { font-size: var(--t2); font-variant-numeric: tabular-nums; font-style: normal; text-align: center; padding-right: 6px; }
 .picker [data-key="leave.h"] .wi, .picker [data-key="leave.m"] .wi { padding-right: 52px; }   /* room for the unit beside the number */
 .picker .wheel { --ih: 34px; } .picker .wbox::after { top: 34px; height: 34px; }
-.picker .unit { position: absolute; right: 12px; top: 50%; transform: translateY(-50%); font-size: 13px; font-weight: 600; color: var(--ink); pointer-events: none; }
+.picker .unit { position: absolute; right: 12px; top: 50%; transform: translateY(-50%); font-size: var(--t5); font-weight: 600; color: var(--ink); pointer-events: none; }
 .plan { text-align: center; min-height: 1.4em; }
 .item.off { opacity: 0.4; } .item.off .wbox { pointer-events: none; }
 /* The wheel: three rows showing, the middle one chosen, under a soft band */
@@ -278,11 +277,11 @@ body.lamp { --glint: rgba(255, 236, 196, 0.95); --glint-soft: rgba(255, 205, 130
 .wheel { --ih: 26px; height: calc(var(--ih) * 3); padding-block: var(--ih); overflow-y: auto; scroll-snap-type: y mandatory; overscroll-behavior: contain; scrollbar-width: none; touch-action: pan-y;
   -webkit-mask-image: linear-gradient(transparent, #000 32%, #000 68%, transparent); mask-image: linear-gradient(transparent, #000 32%, #000 68%, transparent); }
 .wheel::-webkit-scrollbar { display: none; }
-.wi { display: block; width: 100%; height: var(--ih); line-height: var(--ih); padding: 0 6px; scroll-snap-align: center; background: none; border: 0; color: var(--ink-faint); font: inherit; font-size: 14px; font-weight: 600; text-align: center; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; cursor: pointer; }
+.wi { display: block; width: 100%; height: var(--ih); line-height: var(--ih); padding: 0 6px; scroll-snap-align: center; background: none; border: 0; color: var(--ink-faint); font: inherit; font-size: var(--t4); font-weight: 600; text-align: center; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; cursor: pointer; }
 .wi.cur { color: rgb(var(--on)); }   /* chosen: green */
-[data-key="outdoor"] .wi { font-size: 13px; padding: 0 3px; }
+[data-key="outdoor"] .wi { font-size: var(--t5); padding: 0 3px; }
 /* A tap: green when it's chosen. One size everywhere: 40px high. */
-.tog { width: 100%; min-height: 40px; padding: 0 10px; border-radius: 12px; border: 1px solid var(--chip-line); background: var(--chip); color: inherit; font: inherit; font-size: 13.5px; font-weight: 600; cursor: pointer; white-space: nowrap; }
+.tog { width: 100%; min-height: 40px; padding: 0 10px; border-radius: 12px; border: 1px solid var(--chip-line); background: var(--chip); color: inherit; font: inherit; font-size: var(--t5); font-weight: 600; cursor: pointer; white-space: nowrap; }
 .tog[aria-checked="true"] { border-color: rgba(var(--on), 0.85); box-shadow: inset 0 0 0 1px rgba(var(--on), 0.6), inset 0 0 12px rgba(var(--on), 0.18); }   /* a chip that's on: What's there */
 .tog[aria-checked="false"] { border-color: rgba(var(--off), 0.45); }
 /* A slider: only ever how much; its words sit beside it, in the row's value column */
@@ -294,32 +293,32 @@ body.lamp { --glint: rgba(255, 236, 196, 0.95); --glint-soft: rgba(255, 205, 130
 .slider input::-moz-range-thumb { width: 26px; height: 26px; border-radius: 50%; border: 0; background: var(--ink); box-shadow: 0 0 0 5px rgba(242, 248, 252, 0.16); }
 .save svg { width: 14px; height: 14px; fill: currentColor; stroke: none; vertical-align: middle; }
 .save:disabled { opacity: 0.3; cursor: default; }
-.check, .save { flex: none; width: 38px; height: 40px; border-radius: 12px; border: 1.5px solid var(--chip-line); background: var(--well); color: var(--ink); font-size: 20px; font-weight: 700; cursor: pointer; transition: background .25s, border-color .25s, box-shadow .25s; }
+.check, .save { flex: none; width: 38px; height: 40px; border-radius: 12px; border: 1.5px solid var(--chip-line); background: var(--well); color: var(--ink); font-size: var(--t2); font-weight: 600; cursor: pointer; transition: background .25s, border-color .25s, box-shadow .25s; }
 .faq { display: flex; flex-direction: column; }
 .faq details { border-bottom: 1px solid var(--chip-line); padding: 11px 0; }
-.faq summary { font-weight: 600; font-size: 14.5px; cursor: pointer; list-style: none; display: flex; justify-content: space-between; gap: 12px; }
+.faq summary { font-weight: 600; font-size: var(--t4); cursor: pointer; list-style: none; display: flex; justify-content: space-between; gap: 12px; }
 .faq summary::-webkit-details-marker { display: none; }
-.faq summary::after { content: "+"; color: var(--ink-dim); font-weight: 500; }
+.faq summary::after { content: "+"; color: var(--ink-dim); font-weight: 400; }
 .faq details[open] summary::after { content: "–"; }
-.faq p { margin: 8px 0 0; color: var(--ink-dim); font-size: 13.5px; line-height: 1.5; max-width: 65ch; }
-.faq.sub details { padding: 8px 0; } .faq.sub summary { font-size: 13.5px; } .faq.sub p i { color: var(--ink); }
+.faq p { margin: 8px 0 0; color: var(--ink-dim); font-size: var(--t5); line-height: 1.5; max-width: 65ch; }
+.faq.sub details { padding: 8px 0; } .faq.sub summary { font-size: var(--t5); } .faq.sub p i { color: var(--ink); }
 .text-input {
   width: 100%; min-height: 46px; padding: 10px 12px; border-radius: 12px; background: var(--well); border: 1px solid var(--chip-line);
-  font-size: 16px; -webkit-user-select: text; user-select: text;   /* 16px: smaller makes an iPhone zoom in */
+  font-size: var(--t3); -webkit-user-select: text; user-select: text;   /* 16px: smaller makes an iPhone zoom in */
 }
 .text-input:focus { outline: none; border-color: var(--ink-dim); }
-.howto { display: flex; flex-direction: column; gap: 10px; font-size: 14px; line-height: 1.5; }
+.howto { display: flex; flex-direction: column; gap: 10px; font-size: var(--t4); line-height: 1.5; }
 .howto p { margin: 0; max-width: 65ch; }
-.ladder { display: grid; grid-template-columns: repeat(10, minmax(0, 1fr)); gap: 4px; text-align: center; font-family: var(--f-mono); font-size: 9.5px; color: var(--ink-dim); }
+.ladder { display: grid; grid-template-columns: repeat(10, minmax(0, 1fr)); gap: 4px; text-align: center; font-family: var(--f-display); font-size: var(--t6); color: var(--ink-dim); }
 .ladder canvas { display: block; width: 100%; aspect-ratio: 1; margin-bottom: 3px; }
 .grid3 { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 5px; }
-.grid3 .tog { min-height: 34px; padding: 0 3px; font-size: 12px; overflow: hidden; text-overflow: ellipsis; }
+.grid3 .tog { min-height: 34px; padding: 0 3px; font-size: var(--t6); overflow: hidden; text-overflow: ellipsis; }
 .tog:disabled { opacity: 0.35; }
 .nav.mute svg { width: 20px; height: 20px; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
 .stats { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; }
 .stat { background: var(--well); border: 1px solid rgba(255, 255, 255, 0.08); border-radius: 12px; padding: 9px 8px; }
-.stat-num { font-family: var(--f-display); font-size: 22px; font-weight: 700; line-height: 1; font-variant-numeric: tabular-nums; }
-.stat-label { font-size: 11.5px; color: var(--ink-dim); margin-top: 3px; }
+.stat-num { font-family: var(--f-display); font-size: var(--t1); font-weight: 600; line-height: 1; font-variant-numeric: tabular-nums; font-style: normal; }
+.stat-label { font-size: var(--t6); color: var(--ink-dim); margin-top: 3px; }
 
 /* Sleep: a warm glow breathes, slows and fades to black while the sound plays on */
 .sleep {
@@ -332,11 +331,11 @@ body.lamp { --glint: rgba(255, 236, 196, 0.95); --glint-soft: rgba(255, 205, 130
   background: radial-gradient(circle, var(--glow) 0%, rgba(255, 120, 60, 0.16) 38%, rgba(0, 0, 0, 0) 68%);
 }
 .sleep-top, .sleep-bottom { position: relative; width: 100%; max-width: 420px; display: flex; flex-direction: column; align-items: center; gap: 10px; transition: opacity .8s; }
-.sleep-left { font-family: var(--f-display); font-style: italic; font-size: 22px; color: rgba(255, 255, 255, 0.55); text-align: center; }
+.sleep-left { font-family: var(--f-display); font-style: italic; font-size: var(--t1); color: rgba(255, 255, 255, 0.55); text-align: center; }
 .sleep-panel { width: 100%; max-height: 52vh; overflow-y: auto; display: flex; flex-direction: column; gap: 10px; }
-.sleep-bottom > .btn { width: 100%; font-size: 15px; } .sleep-x { position: absolute; left: 0; top: -4px; }
-.tagline { font-family: var(--f-display); font-size: 18px; line-height: 1.4; margin: 0 0 4px; }
-.sleep-hint { font-size: 12px; color: rgba(255, 255, 255, 0.32); margin: 0; }
+.sleep-bottom > .btn { width: 100%; font-size: var(--t4); } .sleep-x { position: absolute; left: 0; top: -4px; }
+.tagline { font-family: var(--f-display); font-size: var(--t2); line-height: 1.4; margin: 0 0 4px; }
+.sleep-hint { font-size: var(--t6); color: rgba(255, 255, 255, 0.32); margin: 0; }
 .sleep.idle .sleep-bottom { opacity: 0; pointer-events: none; }
 .sleep.idle .sleep-top { opacity: 0.4; }
 
@@ -358,16 +357,122 @@ body.intro { background: #050d1c; } body.intro .pool { box-shadow: none; backgro
 .warm { position: fixed; inset: 0; z-index: 100; pointer-events: none; background: rgb(255, 150, 60); mix-blend-mode: multiply; opacity: 0; transition: opacity 6s; }
 body.rm *, body.rm *::before, body.rm *::after { transition: none !important; animation: none !important; } body.rm .go-line.in .go-tick { stroke-dashoffset: 0; }   /* Reduce motion (Some or Most): nothing slides or sweeps; the gold tick is simply there */
 /* v60: one small round mark for each of the row's little controls: ? more, ⏯ sample, − fold (and the same − on the score row and the ribbon) */
-.rhead .learn, .rhead .rfold, .rhead .sample-pill, .sr-ctl .hide-link, .bar .hide-link { display: inline-flex; align-items: center; justify-content: center; flex: none; width: 26px; height: 26px; padding: 0; margin: 0 0 0 8px; border-radius: 50%; border: 1px solid var(--chip-line); background: none; color: var(--ink-dim); font: inherit; font-size: 15px; font-weight: 600; line-height: 1; text-decoration: none; }
+.rhead .learn, .rhead .rfold, .rhead .sample-pill, .sr-ctl .hide-link, .bar .hide-link { display: inline-flex; align-items: center; justify-content: center; flex: none; width: 26px; height: 26px; padding: 0; margin: 0 0 0 8px; border-radius: 50%; border: 1px solid var(--chip-line); background: none; color: var(--ink-dim); font: inherit; font-size: var(--t4); font-weight: 600; line-height: 1; text-decoration: none; }
 .rhead .rname { margin-right: auto; }
 .rhead .sample-pill svg { width: 14px; height: 14px; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
 .rhead .sample-pill.hint { border-color: rgba(var(--off), 0.9); box-shadow: 0 0 0 1px rgba(var(--off), 0.5); }
 .cell.two { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 3px; padding: 0 4px; }
-.cell.two .ln { display: block; max-width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; background: none; border: 0; padding: 2px 0; color: var(--ink); font: inherit; font-size: 13px; font-weight: 600; line-height: 1.15; cursor: pointer; touch-action: manipulation; }
-.cell.two .ln.l2 { font-size: 12px; font-weight: 500; font-style: italic; color: var(--ink-dim); }
-.cell.two .ln.tight { font-size: 11px; }
+.cell.two .ln { display: block; max-width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; background: none; border: 0; padding: 2px 0; color: var(--ink); font: inherit; font-size: var(--t5); font-weight: 600; line-height: 1.15; cursor: pointer; touch-action: manipulation; }
+.cell.two .ln.l2 { font-size: var(--t6); font-weight: 400; font-style: italic; color: var(--ink-dim); }
+.cell.two .ln.tight { font-size: var(--t6); }
 .cell.two .goal-left { bottom: 4px; }
-.save:not(.gobtn) { font-size: 24px; font-weight: 400; line-height: 1; padding: 0 0 2px; }   /* v60: the › that opens a card, after ✓ */
+.save:not(.gobtn) { font-size: var(--t1); font-weight: 400; line-height: 1; padding: 0 0 2px; }   /* v60: the › that opens a card, after ✓ */
+/* v61 (p1): the opening's three ways in; Session Setup's ✓ and ›; the blue ring; one round mark; the dark veil */
+.intro-quick { position: fixed; z-index: 45; left: max(16px, env(safe-area-inset-left, 0px)); bottom: calc(12px + env(safe-area-inset-bottom, 0px)); display: flex; align-items: center; gap: 8px; opacity: 0; pointer-events: none; transition: opacity .6s ease; }   /* small, in one row, under the breathing outline */
+body.intro .intro-quick { opacity: 1; }
+.intro-quick button { position: relative; min-height: 24px; padding: 0 9px; border-radius: 12px; border: 1px solid rgba(255, 255, 255, 0.08); background: none; color: var(--ink-faint); font: inherit; font-size: var(--t6); cursor: pointer; }
+.intro-quick button::after { content: ''; position: absolute; left: 0; right: 0; top: 50%; height: 44px; transform: translateY(-50%); }
+body.intro .intro-quick button { pointer-events: auto; }
+body.intro:not(.intro-anim) #introSkip { visibility: hidden; pointer-events: none; }
+.trow.nochip { grid-template-columns: 52px minmax(0, 1fr); } .trow.nochip.goal { grid-template-columns: minmax(0, 1fr); }
+.trow .tname { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; padding: 0 6px; color: var(--ink-dim); }
+.reset-link { align-self: center; min-height: 32px; padding: 0 12px; background: none; border: 0; color: var(--ink-faint); font: inherit; font-size: var(--t6); text-decoration: underline; text-underline-offset: 2px; cursor: pointer; }
+.rings { position: fixed; inset: 0; z-index: 80; pointer-events: none; }
+.ring { position: absolute; border: 1.5px solid rgba(var(--off), 0.95); box-shadow: 0 0 10px rgba(var(--off), 0.45); animation: ring 3s linear both;
+  -webkit-mask-image: linear-gradient(100deg, transparent 40%, #000 60%); mask-image: linear-gradient(100deg, transparent 40%, #000 60%); -webkit-mask-size: 300% 100%; mask-size: 300% 100%; -webkit-mask-position: 100% 0; mask-position: 100% 0; }
+@keyframes ring { 0% { opacity: 0; } 10% { opacity: 1; -webkit-mask-position: 100% 0; mask-position: 100% 0; } 70% { -webkit-mask-position: 100% 0; mask-position: 100% 0; } 100% { opacity: 1; -webkit-mask-position: 0% 0; mask-position: 0% 0; } }   /* in, held, then a shadow passes across it, left to right, and it is gone */
+.veil { position: fixed; inset: 0; z-index: 1000; background: #050d1c; opacity: 0; pointer-events: none; transition: opacity .5s ease; } .veil.on { opacity: 1; transition: none; }
+#alertTime, .ladder { font-style: normal; font-variant-numeric: tabular-nums; }   /* numbers stand upright */
+/* One round mark, 32 across, everywhere: ‹, the speaker, ?, ✕ in a card's head, and ?, ⏯, − on a row. 12 apart, so their 44-wide touch areas never overlap. */
+.nav { position: relative; width: 32px; height: 32px; } .nav::after { content: ''; position: absolute; left: 50%; top: 50%; width: 44px; height: 44px; transform: translate(-50%, -50%); }
+.nav:disabled { opacity: 0.3; cursor: default; }
+.sheet-head { gap: 12px; }
+.rhead .learn, .rhead .rfold, .rhead .sample-pill, .sr-ctl .hide-link, .bar .hide-link { width: 32px; height: 32px; margin-left: 12px; }
+.rhead .sample-pill svg { width: 16px; height: 16px; }
+.sheet-title { flex: 1; height: 40px; min-height: 40px; display: grid; place-items: center; padding: 0 8px; line-height: 1.05; white-space: normal; overflow: hidden; text-wrap: balance; }   /* on a small phone a long title takes two lines, at the same size, in the same pill */
+@media (max-width: 360px) { #botBar .cell { padding: 0 1px; } #botBar .cell .sub { letter-spacing: -0.02em; } }   /* every card's title: one pill, one shape */
+/* p2: the intro hides the card's own pop-in (that was the flash); ✓ and › on the name line, everywhere; descriptions left; the Start rows; Advanced settings at the foot */
+body.intro .sheet, body.intro .scrim { animation: none; }
+.choice.c-blue { border-color: transparent !important; box-shadow: none !important; }   /* never a line round more than one pill */
+.sheet-note, .plan, .item.row .rdesc { text-align: left; }
+.sheet-note { margin-inline: 22px; }
+.rhead { gap: 6px; flex-wrap: nowrap; align-items: center; } .rhead .rname { flex: 1 1 auto; min-width: 0; }   /* a long name wraps in its own space; the marks stay together at the right */
+.rhead .learn, .rhead .rfold, .rhead .sample-pill, .rhead .check, .rhead .save { margin-left: 0; }
+.rhead .learn::after, .rhead .rfold::after, .rhead .sample-pill::after, .rhead .check::after, .rhead .save::after, .gorow .check::after, .gorow .save::after { content: ''; position: absolute; left: 50%; top: 50%; width: 38px; height: 44px; transform: translate(-50%, -50%); }   /* 6 apart: each one's touch reaches halfway to the next */
+.item.row.folded .rhead .check, .item.row.folded .rhead .save { display: none; }
+.rctl:empty { display: none; }
+.sr-ctl .hide-link { width: 28px; height: 28px; margin-left: 4px; }   /* the score row's −: the height of the pills beside it */
+.adv-pill { align-self: flex-start; min-height: 28px; padding: 0 12px; border-radius: 14px; border: 1px solid var(--chip-line); background: none; color: var(--ink-dim); font: inherit; font-size: var(--t6); cursor: pointer; position: relative; } .adv-pill::after { content: ''; position: absolute; left: 0; right: 0; top: 50%; height: 44px; transform: translateY(-50%); }
+.mnote { margin-top: 6px; }
+.item.row.isset .rhead .rredo { display: inline-flex; align-items: center; justify-content: center; flex: none; position: relative; width: 32px; height: 32px; padding: 0; border-radius: 50%; border: 1px solid var(--chip-line); background: none; color: var(--ink-dim); font: inherit; font-style: normal; font-size: var(--t3); line-height: 1; cursor: pointer; }   /* ↻: open again, at the default */
+.rhead .rredo::after { content: ''; position: absolute; left: 50%; top: 50%; width: 38px; height: 44px; transform: translate(-50%, -50%); }
+.before { margin-top: 8px; } .before .rdesc { display: block; margin-bottom: 6px; }
+.learn, .nav, .rfold, .rplus, .hide-link, .check, .save, .sr-btn, .sr-show { font-style: normal; }   /* the marks stand upright, always: ? ✕ ‹ − + ✓ › */
+/* p3: one flow everywhere. A row is three lines: its name with ? and the mark; its work (switch, control, ✓, ›); what it does.
+   The blue steps along the work; what's behind it is green, dimming; ✓ stays green with a gold tick; › fills green, then the row
+   folds to a gold Done. One mark hides and shows everything: ✕ (open, not finished), + (closed), − (open, finished). */
+.rctl { grid-template-columns: 52px minmax(0, 1fr) 50px 32px 32px; margin-top: 6px; }
+.check, .save { position: relative; width: 32px; height: 32px; padding: 0; border-radius: 10px; font-size: var(--t4); font-style: normal; line-height: 1; }
+.save { font-size: var(--t1); padding-bottom: 2px; }
+.check::after, .save::after { content: ''; position: absolute; left: 50%; top: 50%; width: 38px; height: 44px; transform: translate(-50%, -50%); }
+.item.row > .rdesc { display: block; margin-top: 6px; }
+.c-done { border-color: rgba(var(--on), 0.4) !important; box-shadow: none !important; animation: greendim 1s ease-out; }
+@keyframes greendim { from { border-color: rgba(var(--on), 0.95); box-shadow: 0 0 0 1px rgba(var(--on), 0.6), 0 0 12px rgba(var(--on), 0.25); } }
+.switch.c-done { box-shadow: 0 0 0 2px rgba(var(--on), 0.3) !important; }
+.c-fill { border-color: rgba(var(--on), 0.95) !important; background: rgba(var(--on), 0.32) !important; box-shadow: 0 0 0 1px rgba(var(--on), 0.6), 0 0 14px rgba(var(--on), 0.3) !important; }
+.check.c-green { border-color: rgba(var(--on), 0.9) !important; }
+.pm { position: relative; flex: none; width: 32px; height: 32px; padding: 0; border-radius: 50%; border: 1px solid var(--chip-line); background: none; color: var(--ink-dim); cursor: pointer; }
+.pm::after { content: ''; position: absolute; left: 50%; top: 50%; width: 38px; height: 44px; transform: translate(-50%, -50%); }
+.pm i { position: absolute; left: 50%; top: 50%; width: 13px; height: 1.6px; margin: -0.8px 0 0 -6.5px; border-radius: 1px; background: currentColor; transition: transform .25s ease; }
+.pm.x i:first-child { transform: rotate(45deg); } .pm.x i:last-child { transform: rotate(135deg); }   /* ✕ */
+.pm.plus i:first-child { transform: rotate(0deg); } .pm.plus i:last-child { transform: rotate(90deg); }   /* + : ✕ turned a quarter */
+.pm.minus i:first-child { transform: rotate(0deg); } .pm.minus i:last-child { transform: rotate(180deg); }   /* − : the upright bar laid flat */
+.item.row.folded .rhead .pm { display: inline-block; }
+.rhead .rset, .rhead .rredo { order: 0; }
+.sheet-body { padding-inline: 12px; } .sheet-note { margin-inline: 12px; } .sheet-head { gap: 6px; padding-inline: 12px; }
+.nav::after { width: 38px; }
+/* Session Setup's task lines: Private, the words, ✓, ›; kept, a line rests, dim, until a tap opens it */
+.trow.line { grid-template-columns: auto 52px minmax(0, 1fr) 32px 32px; gap: 6px; padding: 0; }
+.trow.line .privw { font-size: var(--t6); color: var(--ink-dim); }
+.trow.line.locked { opacity: 0.5; } .trow.line.locked .text-input { pointer-events: none; }
+.pnote { display: block; font-size: var(--t6); margin: 2px 0 0; }
+.addtask { align-self: flex-start; display: inline-flex; align-items: center; gap: 8px; min-height: 32px; padding: 0; background: none; border: 0; color: var(--ink-dim); font: inherit; font-size: var(--t5); cursor: pointer; position: relative; }
+.addtask .addmark { display: inline-grid; place-items: center; width: 32px; height: 32px; border-radius: 50%; border: 1px solid var(--chip-line); font-size: var(--t2); font-style: normal; line-height: 1; color: var(--ink); }
+.item.row.plan > .todo, .item.row.plan > .dues, .item.row.plan > .picker, .item.row.plan > .before { margin-top: 8px; }
+/* The top: two pills. Mode and Scene (Game & Mode Settings); Timer and Tasks. Then Score (Statistics), pause and sound, and the mark */
+#topBar { background: none; border: 0; box-shadow: none; overflow: visible; gap: 8px; }
+#topBar .cell { border: 1px solid var(--chip-line); border-radius: 24px; background: rgba(0, 0, 0, 0.28); }
+.scorerow { padding: 0 2px; } .scorerow .marks { margin-left: auto; }
+.marks { display: inline-flex; align-items: center; gap: 6px; flex: none; }   /* ?, ⏯ and the mark: each its own circle */
+.marks > .learn { width: 32px; height: 32px; margin: 0; display: inline-flex; align-items: center; justify-content: center; padding: 0; border-radius: 50%; border: 1px solid var(--chip-line); background: none; color: var(--ink-dim); font: inherit; font-size: var(--t4); font-weight: 600; font-style: normal; text-decoration: none; cursor: pointer; }
+#topBar .marks { align-self: center; }
+#topBar .gear { width: 40px; height: 40px; align-self: center; padding: 0; border-radius: 50% !important; } #topBar .gear svg { width: 20px; height: 20px; }
+#topBar .tpill { flex-direction: row; gap: 6px; padding: 0 12px; } #topBar .tpill b { font-weight: 600; } #topBar .tpill .ln { font-weight: 400; color: var(--ink-dim); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; min-width: 0; }   /* Mode, bold; the mode, not */
+#scoreRow .tpill { flex: none; flex-direction: row; height: 30px; margin-left: 8px; padding: 0 12px; border: 1px solid var(--chip-line); border-radius: 15px; background: rgba(0, 0, 0, 0.22); font-size: var(--t5); font-weight: 600; position: relative; } #scoreRow .tpill.on { box-shadow: inset 0 0 0 2px rgba(var(--on), 0.85); }
+#scoreRow .tpill .goal-left { bottom: 3px; left: 10px; right: 10px; height: 2px; }
+.scorerow.hidden .tpill { display: none; } .marks .learn { text-decoration: none; }
+@media (max-width: 360px) { #topBar .tpill b { display: none; } #topBar .tpill { padding: 0 6px; } #topBar .gear { width: 34px; height: 34px; } #topBar { grid-template-columns: 34px minmax(0, 1fr) minmax(0, 1fr) auto auto !important; } }   /* a small phone: the mode and the place, the words that change */
+@media (max-width: 360px) { #topBar { gap: 4px; } #topBar .marks { gap: 3px; } #topBar .marks .learn, #topBar .marks .pm { width: 28px; height: 28px; } #topBar .tctl { padding: 0 2px; } #topBar .tctl .sr-btn { min-width: 30px; padding: 0 3px; } } #topBar.hidden .cell { display: none; } #topBar.hidden { grid-template-columns: 1fr auto !important; } #topBar.hidden .marks { grid-column: 2; }
+.bar.plain .marks { align-self: center; justify-self: end; }
+#topBar .tctl { flex-direction: row; flex-wrap: nowrap; min-width: max-content; gap: 2px; padding: 0 5px; } #topBar .tctl .sr-btn { border-color: transparent; background: none; height: 38px; min-width: 36px; padding: 0 6px; border-radius: 19px; } #topBar .tctl .sr-btn.on { border-color: rgba(var(--on), 0.85); }   /* pause and sound: one pill in the top row */
+.scorerow.hidden .sr-score { display: none; }
+/* Every tile is a pill */
+#botBar:not(.plain), #tools { background: none; border: 0; box-shadow: none; overflow: visible; gap: 6px; }
+#botBar .cell:not(.wxwords), #tools .cell { border: 1px solid var(--chip-line); border-radius: 24px; background: rgba(0, 0, 0, 0.28); }
+#botBar .cell.on, #tools .cell.on, #botBar .cell.held, #tools .cell.held, #botBar .cell.open { border-radius: 24px; }
+@media (max-width: 360px) { #botBar:not(.plain) { gap: 3px; grid-template-columns: 32px repeat(4, minmax(0, 1fr)) 32px !important; } #botBar .cell:not(.wxwords) { padding: 0 1px; } #tools { gap: 3px; } }
+/* The heave, for what is live right now (a running timer, a tool in hand to use): glow and grow, slim and dim, with your breath */
+.live { transform: scale(calc(1 + 0.03 * var(--b, 0))); box-shadow: inset 0 0 0 2px rgba(var(--on), calc(0.45 + 0.45 * var(--b, 0))), 0 0 calc(2px + 12px * var(--b, 0)) rgba(var(--on), calc(0.1 + 0.35 * var(--b, 0))) !important; animation: none !important; }
+body.rm .live { transform: none; }
+/* The opening: SoRen above, the circle closed onto Start Session, ✓ and › under it */
+.intro-pill { position: absolute; left: 50%; top: 50%; width: calc(236 / 380 * 100%); aspect-ratio: 1; transform: translate(-50%, -50%); z-index: 3; border-radius: 50%; border: 1.5px solid rgba(186, 230, 253, 0.55); pointer-events: none !important; }   /* everything ends in a circle: round SoRen, Session Setup, ✓ and › */
+.intro-work { position: absolute; left: 50%; top: calc(50% + 24 / 490 * 100%); transform: translate(-50%, -50%); z-index: 4; display: flex; align-items: center; gap: 6px; } .intro-work .ilabel { min-height: 32px; padding: 0 14px; border-radius: 16px; border: 1px solid var(--chip-line); background: var(--chip); color: var(--ink); font: inherit; font-size: var(--t4); font-weight: 600; white-space: nowrap; cursor: pointer; margin-right: 4px; }   /* Start Session: its own pill, blue until tapped */
+.intro-pill, .intro-work { opacity: 0; pointer-events: none; transition: opacity .5s ease; }
+body.intro.intro-in .intro-pill, body.intro.intro-in .intro-work { opacity: 1; pointer-events: auto; }
+body:not(.intro) .intro-pill, body:not(.intro) .intro-work { transition: opacity .3s; }
+/* The weather's row over the tools: the same three lines, rising over the board */
+.strip { inset: auto 0 calc(100% + 62px) 0; padding: 10px 12px; z-index: 5; } .tools.covered { visibility: visible; }   /* the weather's row rises above the ribbon, over the foot of the board; the tiles stay in reach */
+.sheet-body > .row, #sleepPanel > .row { padding-inline: 0; }   /* everything lines up with ‹ on the left and ✕ on the right */
 </style>
 <script>document.body.classList.add('intro')</script>   <!-- dark from the first frame: nothing shows before the opening -->
 
@@ -376,8 +481,9 @@ body.rm *, body.rm *::before, body.rm *::after { transition: none !important; an
   <div class="scorerow" id="scoreRow" aria-label="Score, pause and mute"></div>
   <div class="pool-wrap">
     <div class="pool" id="pool">
-      <canvas id="game" tabindex="0" aria-label="Sphere pool. Touch anywhere and slide to move the waiting sphere, let go to drop it, or use the arrow keys and Space. In Settle, breathe with the guide at your pace."></canvas>
+      <canvas id="game" tabindex="0" aria-label="Sphere pool. Touch anywhere and slide to move the waiting sphere, let go to drop it, or use the arrow keys and Space. In Relax, breathe with the guide at your pace."></canvas>
       <div class="float-banner" id="banner" aria-live="polite"><div id="bannerTitle"></div><div id="bannerSub"></div></div>
+      <div class="intro-pill" id="introFrame" aria-hidden="true"></div><div class="gorow intro-work" id="introGoRow"><button class="ilabel" id="introPick">Session Setup</button><button class="check" id="introOk" aria-label="Tick">✓</button><button class="save" id="introNext" aria-label="Go" disabled>›</button></div>
       <div class="pool-alert" id="alert" hidden><span id="alertText"></span><span id="alertTime"></span></div>
       <div class="pool-card" id="poolCard" hidden>
         <div class="card">
@@ -402,7 +508,7 @@ body.rm *, body.rm *::before, body.rm *::after { transition: none !important; an
   <div class="sheet-head" id="sheetHead"><button class="nav" id="sheetBack" aria-label="Back">‹</button><button class="nav mute" id="sheetMute" data-mute aria-label="Mute"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4.5 9.5h3.2L12 6v12l-4.3-3.5H4.5z"/><path class="waves" d="M15 9.5a3.5 3.5 0 0 1 0 5M17.5 7a7 7 0 0 1 0 10"/><path class="hush" d="M15.5 9.5l5 5M20.5 9.5l-5 5"/></svg></button><span class="sheet-title" id="sheetTitle"></span><button class="nav help" id="sheetHelp" aria-label="How to play">?</button><button class="nav" id="sheetClose" aria-label="Close">✕</button></div>
   <p class="sheet-note" id="sheetNote" hidden></p>
   <div class="sheet-body" id="sheetBody"></div>
-  <div class="sheet-foot" id="sheetFoot"><button class="btn primary" id="sheetDone" hidden>Start</button></div>
+  <div class="sheet-foot" id="sheetFoot"><button class="reset-link" id="sheetReset" hidden>Reset</button><button class="adv-pill" id="sheetAdv" hidden>Advanced settings</button></div>
 </div>
 <div class="more-pop" id="morePop" hidden role="dialog"><b id="moreTitle"></b><p id="moreText"></p><button class="tog" data-act="moreok">Close</button></div>
 
@@ -416,6 +522,9 @@ body.rm *, body.rm *::before, body.rm *::after { transition: none !important; an
 </div>
 <div class="go" id="goView" hidden><div id="goList"></div><div class="go-word">Go.</div><p class="go-hint">Tap a line when it’s done · tap anywhere else when you’re back</p></div>
 <div class="warm" id="warm"></div>
+<div class="intro-quick" aria-label="Or go straight in"><button id="introPlay">Play Now</button><button id="introSettle">Relax Now</button><button id="introSkip">Skip Intro</button></div>
+<div class="rings" id="rings" aria-hidden="true"></div>
+<div class="veil" id="veil" aria-hidden="true"></div>
 
 <script>
 'use strict';
@@ -669,9 +778,9 @@ const DEFAULTS = {
   breathing: true, breathStrength: 0.5, bpm: 6, afterMerge: { on: false, tier: 9 }, breathKind: 'breath', aim: true, next: false,   // one guided breath after a merge this big or bigger (tier 9 = a Full Bloom only), of this kind
   todo: [{ on: false, text: '', at: -1 }],   // the goal, then up to three tasks: on or off, the words, a due time (minutes after midnight, -1 none)
   motion: 'ask',   // the phone on your chest in Settle: ask, yes or no
-  leave: { how: 'decide', mins: 20, at: -1 },   // when you leave: a timer (mins), a time of day (at: minutes after midnight), or I'll decide
+  leave: { how: 'decide', mins: 20, at: -1, before: 5 },   // due: until the soonest due time, stopping this many minutes before it   // when you leave: a timer (mins), a time of day (at: minutes after midnight), or I'll decide
   sound: true, vol: { master: 0.85, notes: 0.7, drone: 0.7, breath: 0.7, weather: 0.6, wildlife: 0.6, ambient: 0.5 }, on: { notes: true, drone: true, breath: true, weather: true, wildlife: true }, thunder: 0.7, thunderOn: true, soundscape: 'off', lastSound: 'rain', sleepTimer: 60,
-  calm: false, hideNumbers: false, clock: false, patterns: true, haptics: true, lightning: 1, flashOn: true, seenChain: false, wxPin: false, boardWx: true, hideRow: false, hideWx: false,
+  calm: false, hideNumbers: false, clock: false, patterns: true, haptics: true, lightning: 1, flashOn: true, seenChain: false, wxPin: false, boardWx: true, hideRow: false, hideWx: false, hideTop: false,
   lessMotion: 0, pacerPath: 'eight', tiles: { pacer: true, tracer: true, sky: true }   // Reduce motion: 0 Off, 1 Some, 2 Most; the Settle pacer's path (eight | line); Settle's three tiles
 };
 const SOUNDSCAPES = ['off', 'rain', 'wind', 'night', 'fire'];
@@ -711,13 +820,14 @@ const PREFS = (() => {
   for (const k in DEFAULTS.vol) p.vol[k] = clamp(Number(p.vol[k]) || 0, 0, 1);
   // The to-do: the goal first, then up to three tasks. An old single goal becomes the goal line.
   const T = Array.isArray(s.todo) ? s.todo : s.goalText ? [{ on: true, text: s.goalText, at: -1 }] : [];
-  p.todo = T.slice(0, 4).map(l => ({ on: !!(l && l.on), text: String((l && l.text) || '').slice(0, 60), at: l && Number.isFinite(+l.at) ? clamp(Math.round(+l.at), -1, 1439) : -1 }));
+  p.todo = T.slice(0, 4).map(l => ({ on: !!(l && l.on), priv: !!(l && l.priv), text: String((l && l.text) || '').slice(0, 60), at: l && Number.isFinite(+l.at) ? clamp(Math.round(+l.at), -1, 1439) : -1 }));
   if (!p.todo.length) p.todo = [{ on: false, text: '', at: -1 }];
   if (p.lightning < 0.03) { p.lightning = 1; p.flashOn = false; } if (p.thunder < 0.03) { p.thunder = 0.7; p.thunderOn = false; }   // from the old sliders whose foot was Off
   return p;
 })();
 // A change waiting for ✓ ▶ on an open card isn't saved yet: those settings are saved as they were. Everything else is saved as it is.
-function savePrefs() { if (!PEND.snap) { saveJSON(PKEY, PREFS); return; } const out = clone(PREFS); for (const k of PEND.keys) if (!virtual(k)) setPath(out, k, clone(pathGet(PEND.snap, k))); saveJSON(PKEY, out); }
+const scrub = (p) => (p.todo.some(l => l.priv) ? { ...p, todo: p.todo.map(l => (l.priv ? { ...l, text: '' } : l)) } : p);   // a private task's words are never written to the phone
+function savePrefs() { if (!PEND.snap) { saveJSON(PKEY, scrub(PREFS)); return; } const out = clone(PREFS); for (const k of PEND.keys) if (!virtual(k)) setPath(out, k, clone(pathGet(PEND.snap, k))); saveJSON(PKEY, scrub(out)); }
 const getPref = (k) => k.split('.').reduce((o, p) => o[p], PREFS);
 function setPrefRaw(k, v) { const ps = k.split('.'), last = ps.pop(); ps.reduce((o, p) => o[p], PREFS)[last] = v; }
 // The real season, from the calendar. Time zones whose clocks go forward in January are south of the equator: seasons flip.
@@ -753,7 +863,7 @@ const S = {
   breath: 0.5, sigh: null, sighIn: 0, space: null, ballFade: 0, rescueAt: 0, life: 0.5, rainMem: 0,
   held: false, wxState: -1, wxLen: 1, pulses: [], rumbles: [], lit: 0, growl: 0, cellA: 0, flash: 0,
   lastInput: -1e9, born: performance.now(),
-  sleep: null, wakeLock: null, goal: null, ending: false, thaw: false, roundDone: false, merges: 0, pauseBtn: false, plan: { task: null, how: null, goal: null }, prev: null, gone: null, due: -1
+  sleep: null, wakeLock: null, goal: null, ending: false, thaw: false, roundDone: false, merges: 0, pauseBtn: false, plan: { task: null, due: null, how: null, step: 0, ok: [false, false, false], fold: [false, false, false], going: null }, lpos: {}, lock: new Set(), prev: null, gone: null, due: -1
 };
 // The spheres move only when their layer is on and nothing is asking for you: no card, no deep breath, no choice to make,
 // and not held (Play waits for a tap whenever you come back to it).
@@ -1363,6 +1473,7 @@ const INK = '242,248,252', LIGHT = '240,246,255', GOLD = '255,200,90', RED = '25
 // Line icons on a 24-unit grid, drawn as SVG in the bars.
 const CLOUD = 'M7.5 14.5h9.5a3.5 3.5 0 0 0 .4-7 5 5 0 0 0-9.6 1.2A3 3 0 0 0 7.5 14.5z', DOT = (x, y, r) => `M${x - r} ${y}a${r} ${r} 0 1 0 ${2 * r} 0a${r} ${r} 0 1 0 ${-2 * r} 0`;
 const ICON = {
+  gear: 'M12 9.2a2.8 2.8 0 1 0 0 5.6 2.8 2.8 0 0 0 0-5.6zM19.3 13.4a7.4 7.4 0 0 0 0-2.8l1.9-1.5-1.9-3.3-2.3.9a7.4 7.4 0 0 0-2.4-1.4L14.2 3h-3.8l-.4 2.3a7.4 7.4 0 0 0-2.4 1.4l-2.3-.9-1.9 3.3 1.9 1.5a7.4 7.4 0 0 0 0 2.8l-1.9 1.5 1.9 3.3 2.3-.9a7.4 7.4 0 0 0 2.4 1.4l.4 2.3h3.8l.4-2.3a7.4 7.4 0 0 0 2.4-1.4l2.3.9 1.9-3.3z',
   home: 'M3.5 11.2 12 4l8.5 7.2M6 9.6V20h12V9.6M10 20v-5.2h4V20', play: 'M8 5.5v13l10.5-6.5z', still: 'M9 6v12M15 6v12', pp: 'M3.5 6.5v11l8-5.5zM16 6.5v11M20.5 6.5v11', pin: 'M9 3.5h6l-1 5.5 3 3H7l3-3zM12 12v8.5',
   goal: 'M7 20.5V4M7 4.5h10l-2.2 3.6L17 11.7H7', speaker: 'M4.5 9.5h3.2L12 6v12l-4.3-3.5H4.5z', waves: 'M15 9.5a3.5 3.5 0 0 1 0 5M17.5 7a7 7 0 0 1 0 10', hush: 'M15.5 9.5l5 5M20.5 9.5l-5 5',
   bolt: 'M13 2.5 5.5 13.5h5.5L10 21.5l8-11.5h-5.5z', wind: 'M3.5 9h10a2.5 2.5 0 1 0-2.4-3.2M3.5 13h15a2.8 2.8 0 1 1-2.6 3.8M3.5 17h6',
@@ -1419,6 +1530,34 @@ function updateEffects(k) {
   for (let i = ripples.length - 1; i >= 0; i--) { const r = ripples[i]; r.r += (r.max - r.r) * (1 - Math.pow(0.82, k)); r.alpha -= 0.032 * k; if (r.alpha <= 0) ripples.splice(i, 1); }
   for (let i = floaters.length - 1; i >= 0; i--) { const f = floaters[i]; f.y -= (f.praise ? 0.45 : 0.6) * k; f.alpha -= (f.praise ? 0.012 : 0.017) * k; if (f.alpha <= 0) floaters.splice(i, 1); }
   S.flash *= Math.pow(0.86, k);
+}
+
+// The blue ring: anything you can choose (never a door) is ringed in blue, one after another, clockwise round the screen. Each
+// ring stays three seconds and leaves the way a shimmer passes, like a shadow going across it; the next comes just before it goes.
+const RING = { t: [] }, RING_LIFE = 3, RING_STEP = 2.4;
+const RING_OF = '.choice > .tog, .switch, .wbox, .slider, .trow .text-input, #topBar .cell:not(.tctl), .sr-score, #scoreRow .tpill, #topBar .sr-btn, #botBar .cell, #botBar .wxwords .pill, #tools .cell:not(.none), .link .tog.step, #sheetAdv, .addtask .addmark';   // every pill and every control you can use; not the small round marks
+function ringClear() { RING.t.forEach(clearTimeout); RING.t = []; const L = $('rings'); if (L) L.innerHTML = ''; }
+function ringSeq(root) {
+  ringClear();
+  if (!root || lessMo() || PREFS.calm || document.body.classList.contains('intro')) return;
+  const inSheet = root.closest('#sheet'), vis = (inSheet ? $('sheetBody') : document.documentElement).getBoundingClientRect(), box = (inSheet ? $('sheet') : root).getBoundingClientRect();
+  const cx = box.left + box.width / 2, cy = box.top + box.height / 2, mid = (r) => [r.left + r.width / 2, r.top + r.height / 2];
+  const els = [...root.querySelectorAll(RING_OF)].filter(e => {
+    if (e.disabled || e.closest('[hidden], .folded, .off, .dim, .locked') || (e.matches('#botBar .wxwords') )) return false;
+    const r = e.getBoundingClientRect(); return r.width > 0 && r.height > 0 && r.top >= vis.top - 2 && r.bottom <= vis.bottom + 2;
+  }).map(e => { const [x, y] = mid(e.getBoundingClientRect()); return [e, Math.atan2(y - cy, x - cx) + Math.PI]; }).sort((a, b) => a[1] - b[1]).map(a => a[0]);   // clockwise from the left: along the top left to right, down the right, back along the bottom
+  els.forEach((e, i) => RING.t.push(setTimeout(() => {
+    const L = $('rings'); if (!L || !e.isConnected) return;
+    const r = e.getBoundingClientRect(), br = getComputedStyle(e).borderRadius, d = document.createElement('i'); if (!r.width) return;
+    d.className = 'ring'; Object.assign(d.style, { left: `${r.left - 3}px`, top: `${r.top - 3}px`, width: `${r.width + 6}px`, height: `${r.height + 6}px`, borderRadius: br.endsWith('%') ? br : `${(parseFloat(br) || 11) + 3}px` });
+    L.appendChild(d); setTimeout(() => d.remove(), RING_LIFE * 1000 + 50);
+  }, (0.45 + i * RING_STEP) * 1000)));   // the first once the card has settled where it stays
+}
+// The game screen, after the opening or Session Setup: one shimmer down it, top to bottom, then the rings on what you can choose.
+function arrive() {
+  if (lessMo() || PREFS.calm || S.sheet || S.intro) return;
+  for (const id of ['topBar', 'scoreRow', 'botBar']) { const e = $(id); if (e && e.offsetParent && e.firstElementChild) shimmer(e); }
+  RING.t.push(setTimeout(() => { if (!S.sheet) ringSeq($('app')); }, 700));
 }
 /* ---------- Scenery ---------- */
 // The land is three painted layers: far, middle and near. The background paints the far layer; the ground paints the middle
@@ -1686,7 +1825,7 @@ function drawConstellations(c, open) {
     c.fillStyle = v[3] || '#f1f5ff'; c.beginPath(); c.arc(p[0], p[1], r, 0, TAU); c.fill();
     if (v[2] < 1.2) { c.globalAlpha *= 0.22; c.beginPath(); c.arc(p[0], p[1], r * 3.2, 0, TAU); c.fill(); }
   }
-  c.font = `italic 500 10px ${FONT.serif}`; c.textAlign = 'center'; c.fillStyle = '#c8d4ff';
+  c.font = `italic 400 12px ${FONT.serif}`; c.textAlign = 'center'; c.fillStyle = '#c8d4ff';
   for (const k of CONSTELLATIONS) {
     const pts = k.members.map(n => P.star[n]).filter(p => on(p) && p[1] > 8 && p[1] < HORIZON - 4 && p[0] > 24 && p[0] < LW - 24);
     if (pts.length < 2) continue;
@@ -2376,10 +2515,10 @@ function drawBreathe(c, f) {
   }
   c.globalAlpha = f * w.a;
   c.textAlign = 'center'; c.textBaseline = 'middle'; c.shadowColor = 'rgba(0,0,0,0.55)'; c.shadowBlur = 8;
-  if (w.word) { c.fillStyle = 'rgba(255,255,255,0.95)'; c.font = `italic 600 ${w.word.length > 14 ? 27 : 32}px ${FONT.serif}`; c.fillText(w.word, CX, CY); }
-  if (w.cue) { c.fillStyle = 'rgba(253,230,200,0.85)'; c.font = `italic 600 17px ${FONT.serif}`; c.fillText(w.cue, CX, CY + 32); }
+  if (w.word) { c.fillStyle = 'rgba(255,255,255,0.95)'; c.font = `italic 400 22px ${FONT.serif}`; c.fillText(w.word, CX, CY); }
+  if (w.cue) { c.fillStyle = 'rgba(253,230,200,0.85)'; c.font = `italic 400 15px ${FONT.serif}`; c.fillText(w.cue, CX, CY + 32); }
   if (w.status) {
-    c.shadowBlur = 0; c.font = `500 12px ${FONT.sans}`;
+    c.shadowBlur = 0; c.font = `italic 400 12px ${FONT.serif}`;
     const sw = Math.min(LW - 24, c.measureText(w.status).width + 24);
     c.fillStyle = 'rgba(0,0,0,0.5)'; c.beginPath(); rrect(c, CX - sw / 2, 16, sw, 26, 13); c.fill();
     c.fillStyle = 'rgba(255,255,255,0.85)'; c.fillText(w.status, CX, 29.5);
@@ -2388,7 +2527,7 @@ function drawBreathe(c, f) {
 }
 /* ---------- Modes: the same board, different layers ---------- */
 // Changing mode pauses Play: nothing is lost, the pool waits just as it is.
-const MODE_NAMES = { play: 'Play', rain: 'SkyPlay', settle: 'Settle', rest: 'Rest' };
+const MODE_NAMES = { play: 'Play', rain: 'Fidget', settle: 'Relax', rest: 'Rest' };
 function setMode(m) {
   PREFS.mode = m; savePrefs();
   if (m === S.mode) { syncControls(); return; }
@@ -2735,6 +2874,7 @@ const MIN = 60000;
 function leaveAt() {
   const L = PREFS.leave;
   if (L.how === 'timer') return Date.now() + L.mins * MIN;
+  if (L.how === 'due') { const m = soonestDue(); return m ? Date.now() + Math.max(1, m - (L.before || 5)) * MIN : null; }   // until the soonest due time, a little before it
   if (L.how !== 'clock') return null;
   const d = new Date(), t = new Date(d.getFullYear(), d.getMonth(), d.getDate(), Math.floor(L.at / 60), L.at % 60).getTime();
   return t > Date.now() ? t : t + 24 * 60 * MIN;   // the next time it comes round
@@ -2748,6 +2888,7 @@ const span = (m) => [Math.floor(m / 60) && `${Math.floor(m / 60)} hour${m >= 120
 const leaveWords = () => {
   const live = S.goal && S.goal.phase === 'play' && (!PEND.snap || rowState('leave') === '');   // a timer running, and nothing changed: read what's left
   if (live) return PREFS.leave.how === 'clock' ? `You leave at ${clockOf(S.goal.end)}.` : `${Math.ceil(goalLeft() / 60)} minutes left.`;
+  if (PREFS.leave.how === 'due') { const t = leaveAt(); return t ? `You stop at ${clockOf(t)}, ${PREFS.leave.before || 5} minutes before it’s due.` : 'Nothing is due later today.'; }
   return { decide: 'No timer. You decide when you’re done.', timer: `Counting down from ${span(PREFS.leave.mins)}.`, clock: `You leave at ${clockOf(leaveAt())}.` }[PREFS.leave.how];
 };
 // The send-offs, each with its animal drawn in the icons' own line, on a 48-unit grid.
@@ -2779,15 +2920,57 @@ function startPlan(noTimer) {   // ✓ on your time: it plays at once. A timer a
     S.goal = end && { start: Date.now(), end, warned: false, phase: 'play', how: PREFS.leave.how, leave: JSON.stringify(PREFS.leave) };
   }
   setMode('play'); S.held = false;
-  if (!same && S.goal) { say(todoLines()[0] || 'Your time', leaveWords(), 3200); shimmer($('topBar').querySelector('[data-cell=goal]')); }   // this, now
+  if (!same && S.goal) { say(todoLines()[0] || 'Your time', leaveWords(), 3200); shimmer($('scoreRow').querySelector('[data-cell=goal]')); }   // this, now
 }
 function stopPlan() { if (S.goal) goalBack(); }
-const planLeft = () => S.plan.task === null || (S.plan.task && !S.plan.how);   // the question above the goal is still open
-const planReady = () => !planLeft() && S.plan.goal !== null;
-function answer(id, yes) {   // a yes or no on Your time: the next question comes up under it
-  if (id === 'task') { if (S.plan.task === yes) return; S.plan.task = yes; S.plan.how = null; if (!yes) PREFS.leave.how = 'decide'; else if (PREFS.leave.how === 'decide') PREFS.leave.how = 'timer'; }
-  else { if (S.plan.goal === yes) return; S.plan.goal = yes; if (yes) PREFS.todo[0].on = true; else PREFS.todo.forEach(l => { l.on = false; }); }   // No goal: no tasks this session either
+// Session Setup: one question at a time, each with the same steps as every row: a switch (on is yes) or a choice, ✓, ›.
+// 0: a task to do? (and what)  1: a time it's due? (only with a task)  2: how long to play. The last › starts the session.
+const freshPlan = () => ({ task: null, due: null, how: null, step: 0, ok: [false, false, false], fold: [false, false, false], going: null });
+const planAnswered = (q) => q < 2 || S.plan.how !== null;   // a switch untouched is a no
+const planNext = (q) => (q === 0 ? (S.plan.task ? 1 : 2) : q + 1);
+const hasDue = () => PREFS.todo.some(l => l.on && l.at >= 0);
+function planBack(q) { if (S.plan.step > q || S.plan.ok[q]) { S.plan.step = q; for (let i = q; i < 3; i++) S.plan.ok[i] = false; } }   // a changed answer: this question is open again, and the ones after it wait
+function answer(id, yes) {   // the switch on a question
+  if (id === 'task') { if (S.plan.task === yes) return; S.plan.task = yes; S.plan.due = null; planBack(0); PREFS.todo.forEach(l => { l.on = yes; if (!yes) l.at = -1; }); }
+  else { if (S.plan.due === yes) return; S.plan.due = yes; planBack(1); if (!yes) { PREFS.todo.forEach(l => { l.at = -1; }); S.due = -1; } else if (dueOf(0) < 0) openDue(0); }   // yes: the first line's time opens
   sound.tick(0); refill();
+}
+function planTick(q) {   // ✓: green, the tick gold, and › lights; again, not after all
+  if (S.plan.step !== q || S.plan.going != null || !planAnswered(q)) return;
+  if (q === 0 && !S.plan.task) { S.plan.task = false; PREFS.todo.forEach(l => { l.on = false; l.at = -1; }); } if (q === 1 && S.plan.due === null) S.plan.due = false;   // ✓ with the switch untouched: no
+  S.plan.ok[q] = !S.plan.ok[q]; sound.tick(0); syncPlan();
+}
+const GO_MS = 1000;   // › stays green a moment before what it does
+function planGo(q) {   // ›: green a moment, then this question folds up with Done and the next opens; the last one starts the session
+  if (!S.plan.ok[q] || S.plan.step !== q || S.plan.going != null) return;
+  S.plan.going = q; sound.chime(0, here().synth); haptic(15); syncPlan();
+  setTimeout(() => {
+    if (S.sheet !== 'checkin' || S.plan.going !== q) return;
+    S.plan.going = null; S.plan.step = planNext(q); S.plan.fold[q] = true;
+    if (S.plan.step >= 3) { startSheet(); return; }
+    if (S.plan.step === 2 && S.plan.how == null && hasDue()) { S.plan.how = 'due'; PREFS.leave.how = 'due'; }   // something is due: until then, by default
+    refill();
+    const nx = document.querySelector(`[data-q="${S.plan.step}"]`); if (nx) { nx.scrollIntoView({ block: 'nearest', behavior: lessMo() ? 'auto' : 'smooth' }); setTimeout(() => ringSeq(nx), 350); }
+  }, GO_MS);
+}
+// A task line: Private, the words, ✓, ›. › keeps it, and it rests (dim); a tap on it opens it again. Kept empty, an added line goes.
+function linePriv(i) { const l = PREFS.todo[i]; if (!l || S.lock.has(i)) return; l.priv = !l.priv; S.lpos[i] = l.priv ? 2 : 1; sound.tick(0); savePrefs(); redraw('.todo', 'todo'); syncControls(); }
+function lineTyped(i) { const l = PREFS.todo[i]; if (!l || (S.lpos[i] || 0) >= 3) return; S.lpos[i] = l.text.trim() || l.priv ? 2 : 1; syncPlan(); }
+function lineTick(i) { const l = PREFS.todo[i]; if (!l || !(l.text.trim() || l.priv) || (S.lpos[i] || 0) >= 4) return; S.lpos[i] = S.lpos[i] === 3 ? 2 : 3; sound.tick(0); syncPlan(); }
+function lineGo(i) {
+  if (S.lpos[i] !== 3) return; S.lpos[i] = 4; sound.chime(0, here().synth); haptic(15); syncPlan();
+  setTimeout(() => {
+    const l = PREFS.todo[i]; if (!l) return;
+    if (i && !l.text.trim() && !l.priv) { PREFS.todo.splice(i, 1); S.lock = new Set([...S.lock].filter(k => k < i)); for (const k in S.lpos) if (+k >= i) delete S.lpos[k]; }
+    else { S.lock.add(i); S.lpos[i] = 0; }
+    savePrefs(); redraw('.todo', 'todo'); redraw('.dues', 'dues'); syncControls();
+  }, GO_MS);
+}
+function lineOpen(i) { if (!S.lock.has(i)) return; S.lock.delete(i); S.lpos[i] = 1; redraw('.todo', 'todo'); syncControls(); const inp = document.querySelector(`.trow.line[data-line="${i}"] input`); if (inp) inp.focus(); }
+function planReset() { S.plan = freshPlan(); S.lpos = {}; S.lock = new Set(); PREFS.todo = [{ on: false, text: '', at: -1 }]; S.due = -1; savePrefs(); sound.tick(0); refill(); }
+function applyTimer() {   // Settings' Timer, kept: it runs from now (No timer: off)
+  stopPlan(); const end = PREFS.leave.how === 'decide' ? 0 : leaveAt();
+  S.goal = end ? { start: Date.now(), end, warned: false, phase: 'play', how: PREFS.leave.how, leave: JSON.stringify(PREFS.leave) } : null; syncBars();
 }
 const goalLeft = () => (S.goal ? Math.max(0, (S.goal.end - Date.now()) / 1000) : 0);
 function updateGoal() {
@@ -2804,7 +2987,7 @@ const bigTier = () => 3 + Math.floor(Math.random() * 3);
 function fiveCard() {
   const g = S.goal;
   showCard({ eyebrow: 'Five minutes', title: 'Five minutes to go', note: todoLines().join(' · '),
-    a: ['Settle now', () => { setMode('settle'); startSigh(); }], b: ['5 more minutes', () => { g.end += 5 * MIN; say('5 more minutes', PREFS.leave.how === 'clock' ? `Until ${clockOf(g.end)}` : 'Added to the countdown'); }],
+    a: ['Relax now', () => { setMode('settle'); startSigh(); }], b: ['5 more minutes', () => { g.end += 5 * MIN; say('5 more minutes', PREFS.leave.how === 'clock' ? `Until ${clockOf(g.end)}` : 'Added to the countdown'); }],
     c: ['I’ll decide', () => { stopPlan(); say('You decide', 'No timer'); }] });
 }
 // The pool parks: greyed, saved, and a card with your goal, or a send-off. Back to the pool, or Settle first.
@@ -2816,7 +2999,7 @@ function park(eyebrow) {
   S.goal = { ...(S.goal || { start: Date.now(), end: Date.now() }), phase: 'done' }; savePool();
   sound.bell(1);
   $('pool').classList.add('grey');
-  const [words, animal] = phrase(), lines = todoLines(), settle = ['Settle first', () => { setMode('settle'); startSigh(); }], back = ['Back to the game', goalBack];
+  const [words, animal] = phrase(), lines = todoLines(), settle = ['Relax first', () => { setMode('settle'); startSigh(); }], back = ['Back to the game', goalBack];
   if (lines.length) showCard({ eyebrow, title: lines[0], note: [...lines.slice(1), words].join(' · '), art: animal, a: ['Go', () => goNow(lines)], b: settle, c: back, quiet: true });   // your list, and the way out of the door
   else showCard({ eyebrow, title: 'What’s next..', note: words, art: animal, ask: true, a: ['Go', () => goNow([$('cardInput').value.trim() || words])], b: settle, c: back, quiet: true });
 }
@@ -2844,7 +3027,7 @@ function welcomeBack() {
   if (up) goalBack();
   setMode('play');
   showCard({ eyebrow: up ? 'Your time is up.' : 'Welcome back', title: 'Where do you want to start?',
-    a: ['Continue game', () => { S.held = false; }], b: ['New game', () => { startPool(); S.held = false; }], c: ['Settle', () => setMode('settle')], d: ['Rest again', () => setMode('rest')] });
+    a: ['Continue game', () => { S.held = false; }], b: ['New game', () => { startPool(); S.held = false; }], c: ['Relax', () => setMode('settle')], d: ['Rest again', () => setMode('rest')] });
 }
 function goalBack() {
   S.goal = null; S.ending = false; $('pool').classList.remove('grey'); hideCard();
@@ -2922,7 +3105,7 @@ function render() {
     ctx.globalAlpha = fade;
     g.addColorStop(0, rgba(col, 0)); g.addColorStop(0.12, rgba(col, la)); g.addColorStop(0.88, rgba(col, la)); g.addColorStop(1, rgba(col, 0));
     ctx.strokeStyle = g; ctx.lineWidth = end ? 1.5 : 1; ctx.beginPath(); ctx.moveTo(12, DANGER_Y); ctx.lineTo(LW - 12, DANGER_Y); ctx.stroke();
-    if (end) { ctx.fillStyle = rgba(col, 0.65); ctx.font = `italic 600 11px ${FONT.serif}`; ctx.textAlign = 'right'; ctx.textBaseline = 'alphabetic'; ctx.fillText('overflow', LW - 16, DANGER_Y - 6); }
+    if (end) { ctx.fillStyle = rgba(col, 0.65); ctx.font = `italic 400 12px ${FONT.serif}`; ctx.textAlign = 'right'; ctx.textBaseline = 'alphabetic'; ctx.fillText('overflow', LW - 16, DANGER_Y - 6); }
   }
   ctx.globalAlpha = edge;
   if (edge > 0.02) drawFrame(ctx, breathe ? b : focus ? 0.3 : 0.45, breathe, red * beat);   // the pool's breathing edge, in every mode but Settle
@@ -2931,7 +3114,7 @@ function render() {
     if (awake() && S.canDrop) {   // the waiting sphere sways with the wind; the aim line shows where it will really land
       const pr = S.currentWild ? WILD_R : RADII[S.current], hx = aimX(pr);
       if (S.aimCancelled) {
-        ctx.fillStyle = 'rgba(255,255,255,0.85)'; ctx.font = `500 12px ${FONT.sans}`;
+        ctx.fillStyle = 'rgba(255,255,255,0.85)'; ctx.font = `italic 400 12px ${FONT.serif}`;
         ctx.textAlign = 'center'; ctx.fillText('Let go outside the board to cancel', LW / 2, DROP_Y);
       } else {
         if (PREFS.aim) {
@@ -2969,7 +3152,7 @@ function render() {
   ctx.textAlign = 'center';
   for (const f of floaters) {
     ctx.globalAlpha = clamp(f.alpha, 0, 1) * fade * (f.praise ? 1 : f.gold ? 0.8 : 0.6); ctx.fillStyle = f.color;   // merge words are quiet: 60% (the gold count 80%)
-    ctx.font = f.praise ? `italic 600 26px ${FONT.serif}` : `italic 500 16px ${FONT.serif}`;
+    ctx.font = f.praise ? `italic 600 22px ${FONT.serif}` : `italic 400 15px ${FONT.serif}`;
     const half = ctx.measureText(f.text).width / 2, x = clamp(f.x, half + 8, LW - half - 8);   // always wholly inside the board
     if (f.gold) { const g = ctx.createLinearGradient(x - 40, 0, x + 40, 0), k = ((animTime * 1.4) % 1 + 1) % 1;   // the chain's count shimmers gold
       g.addColorStop(0, `rgb(${GOLD})`); g.addColorStop(clamp(k, 0.01, 0.99), '#fff7d6'); g.addColorStop(1, `rgb(${GOLD})`); ctx.fillStyle = g; }
@@ -2985,33 +3168,33 @@ function render() {
     ctx.fillStyle = 'rgba(255,255,255,0.16)'; ctx.strokeStyle = 'rgba(255,255,255,0.85)'; ctx.lineWidth = 1.8; ctx.beginPath(); ctx.arc(CX, py, 36, 0, TAU); ctx.fill(); ctx.stroke();
     ctx.fillStyle = '#fff'; ctx.beginPath(); ctx.moveTo(CX - 10, py - 15); ctx.lineTo(CX - 10, py + 15); ctx.lineTo(CX + 15, py); ctx.fill();
     ctx.shadowColor = 'rgba(0,0,0,0.85)'; ctx.shadowBlur = 8;
-    ctx.textAlign = 'center'; ctx.textBaseline = 'middle'; ctx.font = `italic 600 26px ${FONT.serif}`; ctx.fillText('Tap to play', CX, py + 62);
-    ctx.font = `600 13px ${FONT.sans}`; ctx.fillStyle = 'rgba(242,248,252,0.92)'; ctx.fillText('Paused', CX, py + 90); ctx.shadowBlur = 0;
+    ctx.textAlign = 'center'; ctx.textBaseline = 'middle'; ctx.font = `italic 600 22px ${FONT.serif}`; ctx.fillText('Tap to play', CX, py + 62);
+    ctx.font = `italic 400 13px ${FONT.serif}`; ctx.fillStyle = 'rgba(242,248,252,0.92)'; ctx.fillText('Paused', CX, py + 90); ctx.shadowBlur = 0;
   }
   if (focus) drawBreathe(ctx, S.mode === 'settle' ? 1 : S.sigh.fade);
   if (S.intro) drawIntro(ctx, S.intro);
   ctx.restore();
 }
 // The opening, SoRen's own movement: on dark blue the lines heave into being from nothing and flash bright at the crest; the neon
-// and glow fade after it, and the shape falls from the pool's rectangle to a small circle. SoRen shimmers in the circle, the
-// tagline comes under it, and Your time follows by itself (a tap, any time, brings it sooner).
+// and glow fade after it, and the shape falls from the pool's rectangle to a small circle. SoRen shimmers in the circle, and
+// Start Session comes under it.
 function drawIntro(c, o) {
   const CREST = 0.4, ease = (u) => u * u * (3 - 2 * u), ph = Math.min(1, o.t / o.len), lv = ph < CREST ? 0.93 + 0.07 * ease(ph / CREST) : 1 - 0.5 * ease((ph - CREST) / (1 - CREST)), shape = breathShape(lv), rest = Math.max(0, o.t - o.len);   // blue, then the pool's border heaves out of nothing, crests bright, and shrinks to the circle that holds the name
   const glow = ph < CREST ? (ph / CREST) ** 2 : Math.max(0, 1 - (ph - CREST) / 0.3) ** 2, fl = Math.max(0, 1 - Math.abs(ph - CREST) / 0.06), line = clamp((ph - 0.03) / 0.3, 0, 1);   // one flash, at the crest, on the line alone
   c.save(); c.globalAlpha = o.go == null ? 1 : clamp(1 - (o.t - o.go) / 1.2, 0, 1);
   const v = c.createRadialGradient(CX, CY, 20, CX, CY, LW / 2); v.addColorStop(0, '#0c1c35'); v.addColorStop(1, '#050d1c');   // lit in the middle, falling into shadow toward the edges, where it meets the page
   c.fillStyle = v; c.fillRect(0, 0, LW, LH);
-  c.fillStyle = `rgba(242,248,252,${(Math.max(0, 0.05 + 0.1 * (lv - 0.5) * 2) * line).toFixed(3)})`; c.beginPath(); shapePath(c, shape); c.fill();
+  let shp = shape, fade = 1;   // resting, the circle closes onto the Start Session pill, then gives way to it
+  if (rest > 0 && o.pw) { const m = ease(clamp(rest / 0.5, 0, 1)), tg = [CX, CY + PILL_DY, o.pw / 2, o.ph / 2, o.ph / 2]; shp = shape.map((v, i) => v + (tg[i] - v) * m); fade = clamp(1 - (rest - 0.5) / 0.3, 0, 1); }
+  c.fillStyle = `rgba(242,248,252,${(Math.max(0, 0.05 + 0.1 * (lv - 0.5) * 2) * line * fade).toFixed(3)})`; c.beginPath(); shapePath(c, shp); c.fill();
   c.shadowColor = `rgba(186,230,253,${(0.9 * glow).toFixed(3)})`; c.shadowBlur = 3 + 30 * glow + 12 * fl;
-  c.strokeStyle = `rgba(${Math.round(186 + 69 * fl)},${Math.round(230 + 25 * fl)},253,${(0.85 * line + 0.15 * fl).toFixed(3)})`; c.lineWidth = 1.8 + 1.4 * glow + 1.2 * fl; c.stroke(); c.shadowBlur = 0;
+  c.strokeStyle = `rgba(${Math.round(186 + 69 * fl)},${Math.round(230 + 25 * fl)},253,${(0.85 * line + 0.15 * fl).toFixed(3)})`; c.lineWidth = 1.8 + 1.4 * glow + 1.2 * fl; { const ga = c.globalAlpha; c.globalAlpha = ga * fade; c.stroke(); c.globalAlpha = ga; } c.shadowBlur = 0;
   if (ph >= 1) {
     c.textAlign = 'center'; c.textBaseline = 'middle';
-    const k = clamp(rest / 0.5, 0, 1), sweep = rest < 0.6 ? -1 : (((rest - 0.6) % 4) / 1.2) * 1.6 - 0.3, g = c.createLinearGradient(CX - 80, 0, CX + 80, 0);   // a silver sweep across the name, once the name is in, then every four seconds
+    const k = clamp((rest - 0.3) / 0.5, 0, 1), sweep = rest < 0.6 || lessMo() ? -1 : (((rest - 0.6) % 4) / 1.2) * 1.6 - 0.3, g = c.createLinearGradient(CX - 80, 0, CX + 80, 0);   // a silver sweep across the name, once the name is in, then every four seconds
     const [lo, mid, hi] = here().indoor ? ['#b08a52', '#d6b47a', '#fff1d2'] : ['#9fb0c4', '#b8c6d8', '#ffffff'];   // silver, or lamplight on glass
     g.addColorStop(0, lo); g.addColorStop(clamp(sweep - 0.12, 0.001, 0.998), mid); g.addColorStop(clamp(sweep, 0.002, 0.999), hi); g.addColorStop(clamp(sweep + 0.12, 0.003, 1), mid); g.addColorStop(1, lo);
-    c.globalAlpha *= k; c.fillStyle = g; c.font = `400 38px ${FONT.serif}`; c.fillText('SoRen', CX, CY - 14);
-    c.globalAlpha = clamp((rest - 0.5) / 0.6, 0, 1); c.fillStyle = 'rgba(242,248,252,0.8)';
-    c.font = `italic 500 16px ${FONT.serif}`; c.fillText('Settle. Touch. Return.', CX, CY + CORE_R + 34);
+    c.globalAlpha *= k; c.fillStyle = g; c.font = `italic 400 22px ${FONT.serif}`; c.fillText('SoRen', CX, CY + NAME_DY);   // in the middle of the circle, in the type of Rest's Settling in
   }
   c.restore();
 }
@@ -3060,7 +3243,7 @@ function update(k, dt) {
   stepDt = wdt;
   if (!hold) animTime += dt;
   if (S.intro && (S.intro.t += dt) && S.intro.go != null && S.intro.t - S.intro.go > 1.2) S.intro = null;
-  if (S.intro && S.intro.go == null && S.intro.t > S.intro.len + 2.4) introGo();   // the opening flows into Your time by itself
+  if (S.intro && S.intro.go == null) { const cl = document.body.classList, inn = S.intro.t >= S.intro.len + INTRO_IN; if (cl.contains('intro-in') !== inn) { cl.toggle('intro-in', inn); cl.toggle('intro-anim', !inn); } }   // the opening waits at rest for Start Session
   updateGoal();
   updateScene(wdt); updateWind(wdt); updateLife(wdt);
   updateBreath(dt);
@@ -3099,6 +3282,7 @@ function frame(now) {
   lastFrame = now;
   update(ms / (1000 / 60), ms / 1000);
   render(); tickBars(ms / 1000);
+  { const b = clamp(S.breath, 0, 1).toFixed(2); if (b !== frame.b) { frame.b = b; document.documentElement.style.setProperty('--b', b); } }   // the heave, for what is live: glow and grow, slim and dim
   tickBanner(now);
   if (dark) setTimeout(() => requestAnimationFrame(frame), 100); else requestAnimationFrame(frame);
 }
@@ -3129,12 +3313,12 @@ const paletteOpts = () => Object.keys(PALETTE_NAMES).map(k => `${k}:${PALETTE_NA
 const soundOff = () => !PREFS.sound;
 const tierName = (t) => (t >= 9 ? 'Bloom' : `Ball ${Math.round(t) + 2}+`);   // the sphere a merge makes, by its place in the line: Ball 2+ … Ball 10+, then a Bloom
 const ITEMS = {
-  mode: choice('Mode', 'play:Play|rain:SkyPlay|settle:Settle|rest:Rest'),
+  mode: choice('Mode', 'play:Play|rain:Fidget|settle:Relax|rest:Rest'), timerctl: { type: 'timerctl', keys: ['leave'] },
   place: choice('Scene', 'heritage:Heritage|nature:Nature'),
   outdoor: wheel('Place', () => `outside:Live|${placeOpts()}|custom:Custom`, { off: () => PREFS.place === 'heritage' }),
   game: choice('Game', 'resume:Resume|restart:Restart', { get: () => S.gameChoice, set: (v) => { S.gameChoice = v; } }),   // Paused: the game only restarts once you confirm
   rules: choice('Rules', 'end:Classic|zen:Zen', { keys: ['overflow'] }), atline: choice('At the line', 'choose:I choose|dissolve:Dissolve', { keys: ['overflow'], off: () => PREFS.overflow === 'end' }),
-  task: { type: 'task' }, goalq: { type: 'task' }, resume: { type: 'resume' }, todo: { type: 'todo' }, leave: { type: 'leave' },
+  task: { type: 'task' }, dueq: { type: 'task' }, dues: { type: 'dues' }, resume: { type: 'resume' }, todo: { type: 'todo' }, leave: { type: 'leave' },
   'leave.h': wheel('Hours', [0, 1, 2, 3].map(n => `${n}:${n}`).join('|')), 'leave.m': wheel('Minutes', [...Array(60).keys()].map(n => `${n}:${n}`).join('|')),   // a timer, as a phone sets one
   'leave.ch': wheel('Hour', [...Array(12).keys()].map(n => `${n + 1}:${n + 1}`).join('|')), 'leave.cm': wheel('Minute', [...Array(60).keys()].map(n => `${n}:${String(n).padStart(2, '0')}`).join('|')), 'leave.ap': wheel('', 'am:am|pm:pm'),   // a time, as a phone sets an alarm
   weather: wheel('Clouds', 'changing:Changing|clear:Clear|clouds:Some|rain:Overcast|storm:Dark|clearing:Clearing', { off: indoor, keys: ['weatherFlow', 'wx'] }),   // the sky's look; the weather itself is the Weather card
@@ -3167,14 +3351,14 @@ const ITEMS = {
 };
 for (const k of ['ch', 'cm', 'ap']) ITEMS['due.' + k] = ITEMS['leave.' + k];   // a due time's pickers are the time's
 // The cards: a title, one italic line, and rows. A row's line can read differently as it is set.
-const MODE_NOTES = { play: 'The spheres, the weather and the world.', rain: 'Only the world and its weather.', settle: 'No weather, nothing to win. Hold to breathe in, let go to breathe out; trace, tap, or just watch.', rest: 'The screen fades to dark; the sound goes on.' };
+const MODE_NOTES = { play: 'Play a soothing merge game. You can set up rules & weather.', rain: 'Interact with the screen in calming ways.', settle: 'Watch & interact in deep breathing & grounding exercises to help regulate.', rest: 'Set up ambient sound to help you concentrate, get tasks done, or sleep.' };
 const MOTION_NOTES = ['Everything moves as it was made to.', 'What moves on its own is stilled; the breath only glows.', 'Only the game moves.'];
 const RULE_NOTES = { end: 'The game ends at the line, and counts toward your best.', zen: 'Nothing ends. You decide what goes.' };
 const volumeDesc = () => (PREFS.sound ? 'How loud SoRen is, under anything else you play.' : canVibrate && PREFS.haptics ? 'Vibrate only.' : 'Silent.');
 const SOUND_ROWS = [
   row('Volume', ['sound', 'vol.master'], volumeDesc, 'Volume is SoRen alone: your phone’s buttons move everything together, so this is how to keep SoRen under your music. Off is silent, and the rows below wait until it is on. The speaker in the top bar is the same switch.'),
   row('Notes', ['on.notes', 'vol.notes'], 'The note each merge plays.', 'Every merge plays a note from one calm scale; bigger spheres play lower. A chain adds a bell.'),
-  row('Breath tone', ['on.breath', 'vol.breath'], 'Rises and falls with your breath.', 'A low tone that swells as you breathe in and settles as you breathe out, in Settle and during a guided breath.'),
+  row('Breath tone', ['on.breath', 'vol.breath'], 'Rises and falls with your breath.', 'A low tone that swells as you breathe in and settles as you breathe out, in Relax and during a guided breath.'),
   row('Drone', ['on.drone', 'vol.drone'], 'A low hum that holds it together.', 'A soft chord under everything, a little richer as the game goes on.'),
   row('Weather', ['on.weather', 'vol.weather'], 'The rain and wind you see.', 'The sound of the weather over the game: rain, wind, the storm’s growl, the sea where there is one.'),
   row('Thunder', ['thunderOn', 'thunder'], 'The roll after lightning.', 'How loud the thunder is after each strike. Low stimulation softens it.'),
@@ -3183,15 +3367,18 @@ const SOUND_ROWS = [
   row('Ambient kind', 'soundscape', 'Which bed of sound.', 'Rain, wind, a night of crickets, or a fire. One at a time.')
 ];
 const VIBRATION = row('Vibration', 'haptics', 'A tap you feel on each merge.', 'A short buzz on merges, Full Blooms and close thunder. iPhones can’t vibrate from a web page, so the row only shows where it works.');
-const SHEETS = {
-  checkin: { title: '', items: () => ['task', ...(S.plan.task ? ['leave'] : []), ...(planLeft() ? [] : ['goalq', ...(S.plan.goal ? ['todo'] : [])]), ...(S.prev ? ['resume'] : [])], onDone: startPlan },   // the second screen, every launch: a task? how long? a goal? Start. Each question waits for the one above it
-  mode: { title: 'Mode', note: 'It is always the same game. Choose what is on it.', items: [row('Mode', 'mode', () => MODE_NOTES[PREFS.mode], 'Play: the spheres, the weather and the world. SkyPlay: only the world and its weather, nothing to drop. Settle: no weather, nothing to win; hold to breathe in, let go to breathe out; slide a finger to trace, tap for a note, or just watch the ring. A bead slides across on every breath out. Rest: the screen fades to dark while the sound goes on.')] },
-  scene: { title: 'Scene', note: 'Where the game is.', items: () => [row('Scene', 'place', 'A wooden tray in lamplight, or the outdoors.', 'Heritage is a wooden tray in lamplight, with ten antique marbles. Nature is the outdoors: one place, or Live, the season where you are.'),
+const MODE_ROW = row('Mode', 'mode', 'Decide if you want to play, fidget, relax, or rest.', 'Play: a soothing merge game; you can set up rules and weather. Fidget: the sky and its weather, nothing to drop; touch the screen in calming ways. Relax: deep breathing and grounding; hold to breathe in, let go to breathe out, trace, tap, or just watch. Rest: the screen fades to dark while ambient sound plays on, to concentrate, get things done, or sleep.');
+const TIMER_ROW = row('Timer', 'timerctl', () => leaveWords(), 'A countdown runs from the hours and minutes you set. Until a time stops at a time of day. No timer: you decide when you are done. ✓ and › start it from now.');
+const sceneRows = () => [row('Scene', 'place', 'A wooden tray in lamplight, or the outdoors.', 'Heritage is a wooden tray in lamplight, with ten antique marbles. Nature is the outdoors: one place, or Live, the season where you are.'),
     row('Place', 'outdoor', 'Live is the season where you are; or pick one.', 'Live follows the calendar where you are: spring, summer, autumn or winter. Or hold one place. Custom builds a place from parts.'),
     ...(PREFS.place === 'nature' && PREFS.outdoor === 'custom' ? [row('Start from', 'custom.base', 'A place to build on.', 'Custom starts as a copy of one place; the rows below change it.'), row('Palette', 'custom.palette', 'The colours of the spheres.', 'The ten spheres, in the colours of one place.'),
-      row('Background', 'custom.bg', 'What stands behind.', 'Hills, mountains or the sea behind the game.'), row('Ground', 'custom.ground', 'What you stand on.', 'Meadow, field, forest, snow or sand under the game.'), row('What’s there', 'elements', 'What lives in the place.', 'Tap what should be there. A dim one clashes with the ground or the background you chose.')] : [])] },   // Custom brings its recipe with it
+      row('Background', 'custom.bg', 'What stands behind.', 'Hills, mountains or the sea behind the game.'), row('Ground', 'custom.ground', 'What you stand on.', 'Meadow, field, forest, snow or sand under the game.'), row('What’s there', 'elements', 'What lives in the place.', 'Tap what should be there. A dim one clashes with the ground or the background you chose.')] : [])];
+const SHEETS = {
+  checkin: { title: 'Session Setup', note: 'Make selections to tailor your session.', items: () => ['task', ...(S.plan.task && S.plan.step >= 1 ? ['dueq'] : []), ...(S.plan.step >= 2 ? ['leave'] : []), ...(S.prev ? ['resume'] : [])], onDone: startPlan },   // after the opening: one question at a time, each with ✓ and ›, then Start
+  mode: { title: 'Mode', note: 'It is always the same game. Choose what is on it.', items: () => [MODE_ROW] },
+  scene: { title: 'Scene', note: 'Where the game is.', items: () => sceneRows() },
   score: { title: 'Score', note: 'Nothing is for sale; nothing counts against you.', items: ['stats'] },
-  setup: { title: 'Settings', note: 'Each row opens its own card.', items: [link('Sky settings', 'sky', 'Clouds, and what the wind touches.'), link('Game rules', 'play', 'How a game ends, and what it shows.'),
+  setup: { title: 'Advanced settings', note: 'Each row opens its own card.', items: [link('Sky settings', 'sky', 'Clouds, and what the wind touches.'), link('Game rules', 'play', 'How a game ends, and what it shows.'),
     link('Breathe settings', 'breath', 'The breath in the game, and guided breaths.'), link('Sound settings', 'sound', 'Volume, each sound, and a sample.'), link('Accessibility', 'comfort', 'Less light, nothing sudden.')] },
 };
 // The weather's rows: the ribbon's tiles open them, one at a time, over the tools.
@@ -3206,7 +3393,7 @@ Object.assign(SHEETS, {
     row('Sway', 'windAim', 'The wind sways the waiting sphere.', 'With Sway on, the sphere waiting at the top drifts with the wind, so a drop needs a little allowance. Off, it hangs still.'),
     row('Carry', 'windFall', 'The wind carries falling spheres.', 'With Carry on, a falling sphere is pushed sideways by the wind, more when it is small. Off, it falls straight.'),
     row('Nudge', 'windStack', 'A strong gust nudges the pile.', 'With Nudge on, a strong gust can shift the spheres already resting. Off, the pile stays put.'),
-    row('Weather on the board', 'boardWx', 'Rain pools, snow settles, fog rolls in, leaves blow.', 'The sky’s weather reaches the board: rain splashes on the spheres and pools along the floor; snow caps the spheres and drifts into the corners, then melts; fog rolls in low after rain and drifts off; in autumn, leaves blow across and catch for a moment. In SkyPlay it lands on the floor. Nothing moves the spheres. Off with Low stimulation, and never indoors.')] },
+    row('Weather on the board', 'boardWx', 'Rain pools, snow settles, fog rolls in, leaves blow.', 'The sky’s weather reaches the board: rain splashes on the spheres and pools along the floor; snow caps the spheres and drifts into the corners, then melts; fog rolls in low after rain and drifts off; in autumn, leaves blow across and catch for a moment. In Fidget it lands on the floor. Nothing moves the spheres. Off with Low stimulation, and never indoors.')] },
   play: { title: 'Game rules', note: 'How a game ends, and what the game shows.', items: [
     row('Rules', 'rules', () => RULE_NOTES[PREFS.overflow === 'end' ? 'end' : 'zen'], 'Classic: when spheres rest over the line for four seconds, the game is over, and a game played start to finish counts toward your best. Zen: nothing ends; at the line you choose a sphere to go, or the top dissolves. Changing the rules mid-game means that game no longer counts.'),
     row('At the line', 'atline', 'In Zen, what happens over the line.', 'I choose: the sphere over the line glows red, and you tap the one to let go, or wait and it goes by itself. Dissolve: everything over the line dissolves with a breath out.'),
@@ -3216,8 +3403,8 @@ Object.assign(SHEETS, {
     row('Session clock', 'clock', 'How long you have been here, in place of the word Score.', 'The minutes you have been in this session show in place of the word Score above the game.')] },
   breath: { title: 'Breathe settings', note: 'In for four, out for six, at your pace.', items: [
     row('Breathing', ['breathing', 'breathStrength'], 'The edge and the spheres breathe with you.', 'With Breathing on, a band of light grows in from the edge as you breathe in and lets go as you breathe out, and the spheres swell a little with it. The slider sets how far they move.'),
-    row('Pace', 'bpm', 'Breaths a minute, in and out.', 'Six a minute is in for four seconds, out for six. Slower is calmer; the breath tone and Settle follow the same pace.'),
-    row('Settle pacer', 'pacerPath', 'The light you follow in Settle.', 'Infinity: the light goes round a figure of eight, a lap every two breaths. Line: it goes across on the breath in and back on the breath out. Either way it grows and glows as you breathe in, and slims and dims as you breathe out.'),
+    row('Pace', 'bpm', 'Breaths a minute, in and out.', 'Six a minute is in for four seconds, out for six. Slower is calmer; the breath tone and Relax follow the same pace.'),
+    row('Relax pacer', 'pacerPath', 'The light you follow in Relax.', 'Infinity: the light goes round a figure of eight, a lap every two breaths. Line: it goes across on the breath in and back on the breath out. Either way it grows and glows as you breathe in, and slims and dims as you breathe out.'),
     row('Breathe after a merge', ['afterMerge.on', 'afterMerge.tier'], 'One guided breath after a merge this big or bigger.', 'After a merge of the size you choose, the game pauses for one guided breath of the kind set below, then goes on. At the top of the slider only a Full Bloom brings one.'),
     row('Kind', 'breathKind', 'Which breath the game guides.', 'Take a breath: one breath at your pace. Take a deep breath: two breaths in through the nose, a soft hold, and a long slow breath out through the mouth.'),
     row('Take me there now', 'breatheNow', 'One guided breath, right now.', 'The card closes and the breath begins over the game, of the kind you chose. Tap to skip it.', { noCheck: true })] },
@@ -3226,10 +3413,9 @@ Object.assign(SHEETS, {
     row('Low stimulation', 'calm', 'Dims the flashes, softens the thunder.', 'Lightning flashes go dim, thunder goes soft, and the gold is calmer. For a quiet night or sensitive eyes.'),
     row('Patterns', 'patterns', 'A mark on each sphere, not just a colour.', 'Each size of sphere carries its own pattern as well as its colour, so they can be told apart without colour.'),
     row('Flash', ['flashOn', 'lightning'], 'How bright lightning flashes.', 'The white flash with each strike, never more than three a second. Off, lightning strikes without the flash. Low stimulation dims it.'),
-    row('Reduce motion', 'lessMotion', () => MOTION_NOTES[PREFS.lessMotion], 'Some stills what moves on its own: the aurora, shooting stars, wind streaks, the grass and the land, birds in flight; rain and snow fall slower and sparser; the breath glows and dims instead of growing, and lightning is a soft glow with no bolt. Most stills everything but the game itself: no falling rain or snow, no drifting clouds or leaves, no bursts; dropping and merging still move, and so do Settle’s ring, beads and tracer. It starts at Some when your phone’s own Reduce Motion is on.')] },
-  pause: { title: 'Settings', note: 'The game waits just as it is.', items: () => [row('Game', 'game', 'Resume plays on at once; Restart asks first.', 'Resume closes this card and the game goes on. Restart clears the board and the tools; your best stays. It only restarts once you confirm with ✓ and ›.'),
-    link('Mode', 'mode', MODE_NAMES[S.mode]), link('Scene', 'scene', placeName()),
-    link('More settings', 'setup', 'Sky, rules, breathe, sound, accessibility.'), link('Timer', 'checkin', S.goal && S.goal.phase === 'play' ? `${Math.ceil(goalLeft() / 60)} min left` : 'Off')] },
+    row('Reduce motion', 'lessMotion', () => MOTION_NOTES[PREFS.lessMotion], 'Some stills what moves on its own: the aurora, shooting stars, wind streaks, the grass and the land, birds in flight; rain and snow fall slower and sparser; the breath glows and dims instead of growing, and lightning is a soft glow with no bolt. Most stills everything but the game itself: no falling rain or snow, no drifting clouds or leaves, no bursts; dropping and merging still move, and so do Relax’s ring, beads and tracer. It starts at Some when your phone’s own Reduce Motion is on.')] },
+  pause: { title: 'Game & Mode Settings', note: 'The game waits just as it is.', foot: 'setup', items: () => [row('Game', 'game', 'Resume plays on at once; Restart asks first.', 'Resume closes this card and the game goes on. Restart clears the board and the tools; your best stays. It only restarts once you confirm with ✓ and ›.'),
+    TIMER_ROW, MODE_ROW, ...sceneRows()] },   // every setting here, no cards under it but Advanced settings
   help: { title: 'How to play', items: ['help'] }
 });
 const REST_ROWS = [SOUND_ROWS[7], SOUND_ROWS[8], row('Fades after', 'sleepTimer', 'The sound fades out after this long.', 'Rest keeps the screen on and dark while the sound plays. After this long the sound fades to nothing. Never keeps it going.'), SOUND_ROWS[0], SOUND_ROWS[4], SOUND_ROWS[6]];
@@ -3237,11 +3423,11 @@ const REST_ROWS = [SOUND_ROWS[7], SOUND_ROWS[8], row('Fades after', 'sleepTimer'
 const FAQ = [
   ['How do I play?', 'Touch anywhere on the board and slide to move the waiting sphere; let go to drop it. A quick tap drops it where it is. Two spheres of the same kind merge into the next one up, and the two largest make a Full Bloom. Every merge plays a note from the same calm scale. Whenever you come back to Play, the game waits for a tap.'],
   ['What do the colours mean?', 'Green is on, and green is chosen. Blue is off, or a tool in hand, or a row you changed and haven’t ticked yet. Gold only ever means you did something right: a chain of merges, a row made ready, a task done. Red is trouble: a sphere that goes unless you act. Plain is nothing chosen; dim means there is none, or it can’t change right now. A silver shimmer means this, now.'],
-  ['How do I change things?', 'Every card is the same: ‹ and the speaker on the left, ? and ✕ on the right; ‹ goes back to the card you came from, and from the first card it closes. Every row is the same: its name, a ? for more, a − that folds it (a + opens it again), one line on what it does, then a switch if it can be off, its control, ✓ and ›. A change rings the row blue; ✓ turns gold and lights ›; › saves it. Leave a card with ‹ or ✕ and anything not saved goes back. Settings pauses the game; the speaker mutes, from anywhere.'],
+  ['How do I change things?', 'Every card is the same: ‹ and the speaker on the left, ? and ✕ on the right; ‹ goes back to the card you came from; on a first card it rests, dim. Every row is the same: its name, a ? for more, a − that folds it (a + opens it again), one line on what it does, then a switch if it can be off, its control, ✓ and ›. A change rings the row blue; ✓ turns gold and lights ›; › saves it. Leave a card with ‹ or ✕ and anything not saved goes back. Settings pauses the game; the speaker mutes, from anywhere.'],
   ['How does the weather work?', 'Lightning, Wind, Rain (Snow where it snows) and Time are the only source of the rain, the wind and the storm. They fold away under the words Weather Settings, which glow green while any weather is on. Tap the words and the ribbon opens: tap a tile and its row comes up over the tools, with its switch, how much, ✓ and ›. ⏯ stills it all (green while it does); tap it again to bring it back. Pin the ribbon to keep it open; unpinned, it folds away after you save or touch the board.'],
   ['What are the tools?', () => `They sit in their own row under the weather. ${TOOLS.map(t => `${t.name}: ${t.desc.toLowerCase()}.`).join(' ')} You start with none: a Full Bloom or a chain of three earns one, up to three of each, for this game. Blue is one in hand. Tap it to arm it (green), then touch the board to use it; tap it again to put it away. Nothing is for sale.`],
-  ['What is the screen before I play?', 'Three questions, each waiting for the one above it. Do you have a task to do? Yes asks how long you want to play: a countdown, or until a time of day (if a task has a due time, it starts just before it). No means no timer. Then, a goal for this session? Yes brings up your goal and up to three tasks, each with a due time if you like. Start lights when you have answered. Five minutes before, SoRen asks. In the last two minutes the line turns red and the last spheres come frosted: the game ends itself. At your time the game parks with your list on it; Go sends you out with it, one line a breath. Tap a line there and it is done.'],
-  ['What are the modes?', () => Object.keys(MODE_NAMES).map(m => `${MODE_NAMES[m]}: ${MODE_NOTES[m]}`).join(' ') + ' Lay the phone flat on your chest in Settle, hands off, and after a few breaths it follows yours.'],
+  ['What is the screen before I play?', 'The opening: SoRen, with Start Session under it. Skip Intro finishes the opening at once. Play Now goes straight into a game: Zen, with the weather still. Relax Now goes straight into Relax. Start Session opens Session Setup: one question at a time, each with ✓ and ›. Do you have something to do? Write it, or keep it private; + adds more. Is there a time it’s due? How long do you want to play for: a countdown, until a time, or no timer. Then Start; Reset clears your answers. Five minutes before your time, SoRen asks. In the last two minutes the line turns red and the last spheres come frosted: the game ends itself. At your time the game parks with your list on it; Go sends you out with it, one line a breath. Tap a line there and it is done.'],
+  ['What are the modes?', () => Object.keys(MODE_NAMES).map(m => `${MODE_NAMES[m]}: ${MODE_NOTES[m]}`).join(' ') + ' Lay the phone flat on your chest in Relax, hands off, and after a few breaths it follows yours.'],
   ['Does SoRen collect anything about me?', 'No. Everything stays on this device: no accounts, no ads, no tracking, no notifications, nothing to buy. The motion sensor, if you allow it, is read on the phone and never leaves it. SoRen follows your phone’s silent switch.'],
   ['Why does the sound stop when my screen locks?', 'Phones stop web audio when they lock. Rest keeps the screen on; plug in for long sessions.'],
   ['Is this a medical tool?', 'No. It is somewhere to settle. If you are struggling, talk to someone you trust or a professional.']
@@ -3268,19 +3454,38 @@ const WX_WORDS = ['clear', 'clouds', 'rain', 'storm', 'clearing'];
 const rowId = (it) => it.main.join('+');
 // A row opens by default. − folds it to its name and a +; ✓ then ▶ folds it too, with a gold Set. The card keeps its size.
 const FOLD = {};   // row id → 'set' (finished) or 'hid' (folded unfinished); gone when the row is open
-function foldRow(id) { if (FOLD[id]) delete FOLD[id]; else FOLD[id] = 'hid'; syncRows(); }
+const rowsOf = (def) => itemsOf(def).filter(x => x.type === 'row').map(rowId);
+function foldRow(id) {   // − folds; + opens, and the one open beside it folds: one open at a time, everywhere
+  ringClear();   // the card moves: rings drawn where things were would be wrong
+  const shut = (k) => { FOLD[k] = DONE[k] ? 'set' : 'hid'; };   // finished, it folds to Done; not, to its name
+  if (!FOLD[id]) shut(id);
+  else { delete FOLD[id]; const me = document.querySelector(`[data-row="${id}"]`); if (me && me.parentElement) for (const r of me.parentElement.querySelectorAll(':scope > [data-row]')) { const k = r.dataset.row; if (k !== id && !FOLD[k]) shut(k); } }
+  syncRows();
+}
+function openNext(id) { const me = document.querySelector(`[data-row="${id}"]`); let n = me && me.nextElementSibling; while (n && !(n.dataset.row && FOLD[n.dataset.row] !== 'set')) n = n.nextElementSibling; if (n) delete FOLD[n.dataset.row]; }   // a row kept folds up; the next one opens
+function resetRow(id) {   // ↻: the row opens again at its default, and waits for ✓ and › like any change
+  for (const k of rowKeys(id)) { if (virtual(k)) { if (k === 'game') S.gameChoice = 'resume'; continue; } const d = pathGet(DEFAULTS, k); if (d !== undefined) setPath(PREFS, k, clone(d)); }
+  delete DONE[id]; apply(); sound.init(); FOLD[id] = 'hid'; foldRow(id); setStep(id, rowState(id) === 'changed' ? 'amt' : '');
+}
+function resetQ(q) {   // ↻ on a Session Setup question: its answer cleared, open again; the ones after it wait
+  if (q === 0) { S.plan.task = null; S.plan.due = null; PREFS.todo = clone(DEFAULTS.todo); }
+  else if (q === 1) { S.plan.due = null; PREFS.todo.forEach(l => { l.at = -1; }); S.due = -1; }
+  else { S.plan.how = null; PREFS.leave = clone(DEFAULTS.leave); }
+  S.plan.step = q; S.plan.start = 0; for (let i = q; i < 3; i++) { S.plan.ok[i] = false; S.plan.fold[i] = false; }
+  sound.tick(0); refill();
+}
 function itemEl(key) {
   const it = ITEMS[key] || key, el = document.createElement('div');
   el.className = 'item';
   if (it.off) el.dataset.off = key;
   switch (it.type) {
-    case 'row': {   // name and Learn more; one line on what it does; then Off | On, its control, and ✓, on one line
+    case 'row': {   // three lines, the same everywhere: the name with ? and ±; the work (switch, control, ✓, ›); what it does, in italics
       const id = rowId(it), val = it.main.find(k => ITEMS[k] && ITEMS[k].type === 'range');
-      el.className = 'item row'; el.dataset.row = id; el.dataset.name = it.name;
-      if (it.compact) { el.classList.add('compact'); el.dataset.say = text(it.desc); el.innerHTML = '<i class="rdesc"></i><div class="rctl"></div>'; }   // over the tools: a line that says what it is, then the controls; the open tile says which
-      else el.innerHTML = `<div class="rhead"><span class="rname">${it.name}</span>${SAMPLE_OF[id] ? `<button class="sample-pill" data-act="sample" aria-label="Play sample">${svg(ICON.pp)}</button>` : ''}${it.more ? `<button class="learn" data-more="${id}" aria-label="Learn more">?</button>` : ''}<button class="hide-link rfold" data-act="fold" data-fold="${id}" aria-label="Hide">−</button><span class="rset">Set</span><button class="rplus" data-act="fold" data-fold="${id}" aria-label="Open ${it.name}">+</button></div><i class="rdesc" data-desc="${id}">${text(it.desc)}</i><div class="rctl"></div>`;
-      const c = el.lastElementChild; fillItems(c, it.main);
-      if (!it.noCheck) c.insertAdjacentHTML('beforeend', `<span class="rval"${val ? ` data-val="${val}"` : ''}></span>` + checkGo(id));   // the value's column, then ✓ and ▶
+      el.className = 'item row' + (it.compact ? ' compact' : ''); el.dataset.row = id; el.dataset.name = it.name;
+      el.innerHTML = `<div class="rhead"><span class="rname">${it.name}</span><span class="rset">Done</span><button class="rredo" data-act="redo" data-fold="${id}" aria-label="Reset ${it.name}">↻</button><span class="marks">${SAMPLE_OF[id] ? `<button class="sample-pill" data-act="sample" aria-label="Play sample">${svg(ICON.pp)}</button>` : ''}${it.more ? `<button class="learn" data-more="${id}" aria-label="Learn more">?</button>` : ''}${pmHTML(`data-act="fold" data-fold="${id}"`, it.name)}</span></div><div class="rctl"></div><i class="rdesc" data-desc="${id}">${text(it.desc)}</i>`;
+      const c = el.querySelector('.rctl'); fillItems(c, it.main);
+      if (!it.noCheck) c.insertAdjacentHTML('beforeend', `<span class="rval"${val ? ` data-val="${val}"` : ''}></span>` + checkGo(id));
+      if (id === 'mode') el.insertAdjacentHTML('beforeend', '<i class="rdesc mnote"></i>');   // the mode chosen, in a line
       break; }
     case 'link': el.className = 'item row link'; el.dataset.name = it.name; el.innerHTML = `<div class="rhead"><span class="rname">${it.name}</span></div><i class="rdesc">${text(it.desc)}</i><div class="rctl"><button class="tog step" data-sheet="${it.sheet}"${it.root ? ' data-root' : ''} aria-label="Open ${it.name}">›</button></div>`; break;
     case 'wheel': { const o = optsOf(it);
@@ -3290,22 +3495,35 @@ function itemEl(key) {
     case 'range': el.classList.add('range'); el.innerHTML = `<label class="slider"><input type="range" min="${it.min}" max="${it.max}" step="${it.step || 'any'}" data-key="${key}" data-type="range" aria-label="${it.label}"></label>`; break;   // its words sit in the row's value column
     case 'onoff': el.className = 'item sw'; el.innerHTML = switchHTML(key); break;   // a switch: right and green is on, left and plain is off
     case 'act': el.className = 'item act'; el.innerHTML = `<button class="tog step" data-act="${it.act}" aria-label="Now">›</button>`; break;
-    case 'task': {   // a yes/no question on Your time: both answers blue while it waits, the chosen one green
-      const goal = key === 'goalq', v = goal ? S.plan.goal : S.plan.task, id = goal ? 'goal' : 'task';
-      el.className = 'item row plan'; el.dataset.name = goal ? 'A goal' : 'A task';
-      el.innerHTML = `<div class="rhead"><span class="rname">${goal ? 'Set a goal for this session?' : 'Do you have a task to do?'}</span><button class="learn" data-more="${id}" aria-label="Learn more">?</button></div><i class="rdesc">${goal ? 'A line to come back to.' : 'A task sets how long you play.'}</i><div class="rctl"><div class="choice">${[[1, 'Yes'], [0, 'No']].map(([n, l]) => `<button class="tog${v === !!n ? ' sel' : v === null ? ' c-blue' : ''}" data-ans="${id}" data-v="${n}">${l}</button>`).join('')}</div></div>`;
+    case 'task': {   // a question in Session Setup: its name with ? and ±; a switch (on is yes), ✓, ›; what it opens; then what it does
+      const due = key === 'dueq', q = due ? 1 : 0, v = due ? S.plan.due : S.plan.task, id = due ? 'due' : 'task', name = due ? 'Is there a time it’s due?' : 'Do you have a task to do?';
+      el.className = planCls(q); el.dataset.q = q; el.dataset.name = due ? 'A time' : 'A task';
+      el.innerHTML = `<div class="rhead"><span class="rname">${name}</span>${planHead(q, id)}</div><div class="rctl"><div class="item sw"><button class="switch" role="switch" data-qsw="${id}" aria-label="${name}" aria-checked="${!!v}"><i></i></button></div><span class="rval"></span>${planWork(q)}</div>`;
+      if (v) fillItems(el, [due ? 'dues' : 'todo']);
+      el.insertAdjacentHTML('beforeend', `<i class="rdesc">${due ? 'Your time can end just before it.' : 'Write it down, or keep it private.'}</i>`);
       break; }
     case 'resume': el.className = 'item'; el.innerHTML = '<button class="tog add" data-act="continue">Continue last game</button>'; break;
-    case 'todo': {   // the goal, then up to three tasks: Off | On, the words, a due time, ✓. Then + Add task.
-      el.className = 'item todo'; el.innerHTML = PREFS.todo.map((l, i) => todoRow(l, i)).join('') + (PREFS.todo.length < 4 ? '<button class="tog add" data-act="addtask">+ Add task</button>' : '');
-      const box = el.querySelector('.due-pick'); if (box) { box.appendChild(pickerEl([['due.ch', ''], ['due.cm', ''], ['due.ap', '']])); box.insertAdjacentHTML('beforeend', '<button class="tog notime" data-act="notime">No time</button>'); }   // the open due time's wheels come with the list, however it is drawn
+    case 'todo': {   // what there is to do: each line its own row of work (Private, the words, ✓, ›); › keeps it and it rests; + adds one
+      el.className = 'item todo'; el.innerHTML = PREFS.todo.map((l, i) => todoRow(l, i)).join('') + (PREFS.todo.length < 4 ? `<button class="addtask" data-act="addtask" aria-label="Add a task"><span class="addmark">+</span>Add task</button>` : '');
       break; }
-    case 'leave': {   // how long: a countdown (hours, min) or until a time (hour, minute, AM/PM); both blue until one is chosen
+    case 'dues': {   // a due time for each line: blue none, green set; a tap opens the pickers under it, with No time
+      el.className = 'item dues'; el.innerHTML = PREFS.todo.map((l, i) => (l.on ? dueRow(l, i) : '')).join('');
+      const box = el.querySelector('.due-pick'); if (box) { box.appendChild(pickerEl([['due.ch', ''], ['due.cm', ''], ['due.ap', '']])); box.insertAdjacentHTML('beforeend', '<button class="tog notime" data-act="notime">No time</button>'); }
+      break; }
+    case 'leave': {   // how long: until it's due, a countdown, until a time, or no timer; then ✓ and ›
       const h = S.plan.how;
-      el.className = 'item row leave'; el.dataset.name = 'How long';
-      el.innerHTML = `<div class="rhead"><span class="rname">How long do you want to play?</span><button class="learn" data-more="leave" aria-label="Learn more">?</button></div><i class="rdesc" id="leaveWords"></i><div class="rctl"><div class="choice">${[['timer', 'Countdown'], ['clock', 'Until a time']].map(([k, l]) => `<button class="tog${h === k ? ' sel' : !h ? ' c-blue' : ''}" data-how="${k}">${l}</button>`).join('')}</div></div>`;
+      el.className = planCls(2) + ' leave'; el.dataset.q = 2; el.dataset.name = 'How long';
+      el.innerHTML = `<div class="rhead"><span class="rname">How long do you want to play for?</span>${planHead(2, 'leave')}</div><div class="rctl">${howHTML(h)}${planWork(2)}</div>`;
       const picks = { timer: [['leave.h', 'hours'], ['leave.m', 'min']], clock: [['leave.ch', ''], ['leave.cm', ''], ['leave.ap', '']] }[h];
       if (picks) el.appendChild(pickerEl(picks));
+      if (h === 'due') el.insertAdjacentHTML('beforeend', beforeHTML());
+      el.insertAdjacentHTML('beforeend', '<i class="rdesc" id="leaveWords"></i>');
+      break; }
+    case 'timerctl': {   // Settings' Timer: the same three answers and pickers, kept with ✓ and ›
+      const h = PREFS.leave.how; el.className = 'item timerctl'; el.innerHTML = howHTML(h, true);
+      const picks = { timer: [['leave.h', 'hours'], ['leave.m', 'min']], clock: [['leave.ch', ''], ['leave.cm', ''], ['leave.ap', '']] }[h];
+      if (picks) el.appendChild(pickerEl(picks));
+      if (h === 'due') el.insertAdjacentHTML('beforeend', beforeHTML());
       break; }
     case 'elements': el.className = 'item'; el.innerHTML = `<div class="grid3">${ELEMENTS.map(k => `<button class="tog" role="switch" data-el="${k}">${EL_NAMES[k]}</button>`).join('')}</div>`; break;
     case 'stats': el.innerHTML = statsHTML(); break;
@@ -3313,16 +3531,61 @@ function itemEl(key) {
   }
   return el;
 }
-const MORE = { leave: ['How long', 'A countdown runs from the hours and minutes you set. Until a time stops at a time of day; if a task has a due time, it starts just before it. Five minutes before, SoRen asks; in the last two minutes the game ends itself, and at your time it parks with your list on it.'],
-  task: ['A task', 'Yes means there is something you have to get to, so you choose how long you play: a countdown, or until a time. No means no timer; you decide when you are done.'],
-  goal: ['A goal', 'A line for this session, like “I want to relax”. It comes back with your tasks when your time is up. You can add up to three tasks, each with a due time if you like.'] };
+const MORE = { leave: ['How long', 'Until due time (when something has a due time) stops before the soonest one, by as long as you choose. A countdown runs from the hours and minutes you set. Until a time stops at a time of day. No timer: you decide when you are done. Five minutes before, SoRen asks; in the last two minutes the game ends itself, and at your time it parks with your list on it.'],
+  task: ['Something to do', 'Yes opens a line to write it on, or leave it empty to keep it private. + Add task adds more, up to four. Your list comes back when your time is up.'],
+  top: ['The top row', 'Mode and Scene opens Game & Mode Settings. Timer and Tasks opens Session Setup. ⏯ pauses the game; the speaker mutes it. − hides the row; + brings it back.'],
+  score: ['Score', 'Your score this game; tap it for Statistics. − hides the row; + brings it back.'],
+  wx: ['Weather Settings', 'Opens the weather: lightning, wind, rain or snow, and the time of day. − hides it; + brings it back.'],
+  due: ['A time it’s due', 'Yes opens a time for each line. Until a time, below, then starts just before the soonest one.'] };
 function learnMore(id) {   // Learn more: the row's words, in a small pop-up over the card
   const it = findRow(id), [name, more] = it ? [it.name, it.more] : MORE[id] || ['', ''];
   $('moreTitle').textContent = name; $('moreText').textContent = more; $('morePop').hidden = false;
 }
 const findRow = (id) => { for (const n in SHEETS) { const r = itemsOf(SHEETS[n]).find(x => x.type === 'row' && rowId(x) === id); if (r) return r; } return [...REST_ROWS, ...WX_ROWS()].find(x => rowId(x) === id); };
 const switchHTML = (key) => `<button class="switch" role="switch" data-onoff="${key}" aria-label="On or off"><i></i></button>`;
-const checkGo = (id) => `<button class="check" data-ready="${id}" aria-label="Tick">✓</button><button class="save${id === 'mode' ? ' gobtn' : ''}" data-save="${id}" aria-label="${id === 'mode' ? 'Go' : 'Save'}" disabled>${id === 'mode' ? 'Go' : '›'}</button>`;   // ✓ then ›: half a tile each, the same › that opens a card, like ❙❙ and the pin
+const BEFORE = [5, 10, 15, 30];
+const beforeHTML = () => `<div class="before"><i class="rdesc">Stop playing how long before it’s due?</i><div class="choice">${BEFORE.map(m => `<button class="tog${(PREFS.leave.before || 5) === m ? ' sel' : ''}" data-before="${m}">${m} min</button>`).join('')}</div></div>`;
+const howHTML = (h, set) => `<div class="choice">${[...(hasDue() || h === 'due' ? [['due', 'Until due time']] : []), ['timer', 'Countdown'], ['clock', 'Until a time'], ['decide', 'No timer']].map(([k, l]) => `<button class="tog${h === k ? ' sel' : !h && !set ? ' c-blue' : ''}" data-how="${k}">${l}</button>`).join('')}</div>`;
+// Session Setup's questions keep every row's rules: ✓ (blue) then › (blue); › green a moment, then the question folds up, − becomes +
+const planCls = (q) => `item row plan${S.plan.fold[q] ? ' folded' : ''}${S.plan.step > q ? ' isset' : ''}`;
+const planHead = (q, id) => `<span class="rset">Done</span><button class="rredo" data-act="qredo" data-qf="${q}" aria-label="Reset">↻</button><span class="marks"><button class="learn" data-more="${id}" aria-label="Learn more">?</button>${pmHTML(`data-act="qfold" data-qf="${q}"`, 'this question', S.plan.fold[q] ? 'plus' : S.plan.step > q ? 'minus' : 'x')}</span>`;
+const planWork = (q) => `<button class="check" data-pok="${q}" aria-label="Tick">✓</button><button class="save" data-pnext="${q}" aria-label="Next" disabled>›</button>`;
+// One mark for everything that hides and shows, two bars that roll: ✕ closes something open and not finished; closed, it is +
+// (✕ turned a quarter); + opens it again, and turns back to ✕, or flattens to − when it is finished (a gold Done); − folds it to Done.
+const pmHTML = (attrs, name, st = 'x') => `<button class="pm ${st}" ${attrs} aria-label="Close or open ${name}"><i></i><i></i></button>`;
+function setPM(pm, st) { if (pm && !pm.classList.contains(st)) { pm.classList.remove('x', 'plus', 'minus'); pm.classList.add(st); } }
+const DONE = {};   // rows finished on this card (a gold Done), open again or not
+// One way to paint a step, everywhere: blue (yours next), done (green, dimming), green (✓, the tick gold), fill (› as it goes)
+const STEP_CLS = ['c-blue', 'c-done', 'c-green', 'c-fill'];
+function paintStep(n, k) {
+  if (!n) return;
+  if (n.classList.contains('choice') || (n.classList.contains('item') && n.querySelector(':scope > .choice'))) {   // a choice: each pill on its own, never a line round them all
+    n.querySelectorAll('.tog').forEach(t => paintStep(t, k === 'done' ? (t.classList.contains('sel') ? 'done' : '') : k));
+    return;
+  }
+  for (const c of STEP_CLS) { const on = c === 'c-' + k; if (n.classList.contains(c) !== on) n.classList.toggle(c, on); }
+}
+function paintSeq(items, pos) { items.forEach((n, i) => paintStep(n, i < pos ? 'done' : i === pos ? 'blue' : '')); }   // before the blue: done; the blue; after: plain
+function syncPlan() {   // Session Setup: the same steps as every row
+  document.querySelectorAll('[data-q]').forEach(b => {
+    const q = +b.dataset.q, ck = b.querySelector('[data-pok]'), sv = b.querySelector('[data-pnext]'), past = S.plan.step > q, ok = S.plan.ok[q], going = S.plan.going === q;
+    const sel = q < 2 ? b.querySelector('.rctl .switch') : b.querySelector('.rctl .choice'), v = q === 0 ? S.plan.task : q === 1 ? S.plan.due : S.plan.how;
+    if (sel && sel.matches('.switch')) sel.setAttribute('aria-checked', String(!!v));
+    paintStep(sel, past || v != null ? 'done' : 'blue');
+    paintStep(ck, past || ok ? 'green' : v != null ? 'blue' : ''); ck.disabled = past || going || (q === 2 && v == null);
+    paintStep(sv, going || past ? 'fill' : ok ? 'blue' : ''); sv.disabled = past || !ok || going;
+    setPM(b.querySelector('.pm'), S.plan.fold[q] ? 'plus' : past ? 'minus' : 'x');
+  });
+  document.querySelectorAll('.trow.line').forEach(r => {   // each task line: Private, the words, ✓, ›
+    const i = +r.dataset.line, l = PREFS.todo[i]; if (!l) return; const pos = S.lpos[i] || 0, lk = S.lock.has(i);
+    const sw = r.querySelector('[data-priv]'), inp = r.querySelector('.text-input'), ck = r.querySelector('[data-lok]'), sv = r.querySelector('[data-lgo]');
+    sw.setAttribute('aria-checked', String(!!l.priv)); r.classList.toggle('locked', lk); inp.readOnly = lk; const pn = document.querySelector(`[data-pnote="${i}"]`); if (pn) pn.hidden = !(l.priv && l.text.trim());
+    if (lk) { [sw, inp, ck, sv].forEach(n => paintStep(n, '')); ck.disabled = sv.disabled = true; return; }
+    paintSeq([sw, inp, ck], Math.min(pos, 3)); if (pos >= 3) paintStep(ck, 'green'); paintStep(sv, pos === 4 ? 'fill' : pos === 3 ? 'blue' : '');
+    ck.disabled = !(l.text.trim() || l.priv) || pos >= 4; sv.disabled = pos !== 3;
+  });
+}
+const checkGo = (id) => `<button class="check" data-ready="${id}" aria-label="Tick">✓</button><button class="save" data-save="${id}" aria-label="Save" disabled>›</button>`;   // ✓ then ›: the end of every row's work   // ✓ then ›: half a tile each, the same › that opens a card, like ❙❙ and the pin
 function pickerEl(picks) {   // the phone's own pickers, in our wells
   const p = document.createElement('div'); p.className = 'picker';
   for (const [k, unit] of picks) { const w = itemEl(k); if (unit) w.insertAdjacentHTML('beforeend', `<span class="unit">${unit}</span>`); p.appendChild(w); }
@@ -3332,17 +3595,23 @@ function pickerEl(picks) {   // the phone's own pickers, in our wells
 // under the line, with No time to clear it. The goal is the first line; the tasks follow. Each line is a row of its own.
 const dueOf = (i) => (PREFS.todo[i] ? PREFS.todo[i].at : -1);
 const dueWords = (at) => (at < 0 ? 'No time' : clockOf(new Date().setHours(Math.floor(at / 60), at % 60, 0, 0)));
-function todoRow(l, i) {   // the goal is the line the question above opened; the tasks beneath each have a switch
+const esc = (t) => String(t).replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' })[c]);
+function todoRow(l, i) {   // one task: Private (a switch), the words, ✓, ›. Private words are never written to the phone, and go when the session does
+  return `<div class="trow line${S.lock.has(i) ? ' locked' : ''}" data-line="${i}"><span class="privw">Private</span><div class="item sw"><button class="switch" role="switch" data-priv="${i}" aria-label="Private" aria-checked="${!!l.priv}"><i></i></button></div>`
+    + `<input class="text-input" type="text" maxlength="60" enterkeyhint="done" autocomplete="off" placeholder="${l.priv ? 'Private task' : i ? 'Another task' : 'What is it?'}" data-key="todo.${i}.text" data-type="text"${S.lock.has(i) ? ' readonly' : ''}>`
+    + `<button class="check" data-lok="${i}" aria-label="Tick">✓</button><button class="save" data-lgo="${i}" aria-label="Keep" disabled>›</button></div>`
+    + `<i class="rdesc pnote" data-pnote="${i}"${l.priv && l.text.trim() ? '' : ' hidden'}>Only for this session. Not saved, and no one else sees it.</i>`;
+}
+function dueRow(l, i) {   // the line's words (or Private), and its due time
   const open = S.due === i;
-  return `<div class="trow${i ? '' : ' goal'}${l.on ? '' : ' dim'}" data-line="${i}">${i ? switchHTML(`todo.${i}.on`) : ''}`
-    + `<input class="text-input" type="text" maxlength="60" enterkeyhint="done" autocomplete="off" placeholder="${i ? 'Set task to do here' : 'I want to relax..'}" data-key="todo.${i}.text" data-type="text"${l.on ? '' : ' disabled'}>`
-    + `<button class="tog chip${l.at >= 0 ? ' sel' : ' off'}${open ? ' open' : ''}" data-due="${i}"${l.on ? '' : ' disabled'}>${dueWords(l.at)}</button></div>`
+  return `<div class="trow goal due" data-line="${i}"><span class="tname">${l.text.trim() ? esc(l.text.trim()) : 'Private'}</span>`
+    + `<button class="tog chip${l.at >= 0 ? ' sel' : ' off'}${open ? ' open' : ''}" data-due="${i}">${dueWords(l.at)}</button></div>`
     + (open ? `<div class="due-pick" data-line="${i}"></div>` : '');
 }
 function openDue(i) {   // the due time's pickers, under their line
   S.due = S.due === i ? -1 : i;
   if (S.due >= 0 && dueOf(i) < 0) { const d = new Date(), now = d.getHours() * 60 + d.getMinutes(); PREFS.todo[i].at = (Math.ceil((now + 30) / 5) * 5) % 1440; }   // opened: a time half an hour on, to the five
-  redraw('.todo', 'todo'); syncControls();
+  redraw('.dues', 'dues'); syncControls();
 }
 function soonestDue() {   // the nearest due time still ahead, on a line that's on
   const d = new Date(), now = d.getHours() * 60 + d.getMinutes();
@@ -3357,7 +3626,7 @@ function choose(k, v) {
   if (k === 'leave.how') {
     PREFS.leave.how = v;
     if (v === 'clock') { const soon = soonestDue(), d = new Date(), now = d.getHours() * 60 + d.getMinutes(); if (soon) PREFS.leave.at = (now + Math.max(1, soon - 5)) % 1440; else freshClock(); }   // a time: just before the soonest task
-    redraw('.leave', 'leave'); savePrefs(); syncControls(); return;
+    redraw('.leave', 'leave'); redraw('.timerctl', 'timerctl'); savePrefs(); syncControls(); return;
   }
   if (k.startsWith('leave.') || k.startsWith('due.')) {   // one wheel of the timer, the time, or a due time
     const due = k.startsWith('due.'), L = PREFS.leave, a = Math.max(0, due ? dueOf(S.due) : L.at), part = k.slice(due ? 4 : 6), h24 = Math.floor(a / 60);
@@ -3391,7 +3660,7 @@ function onPref(k, v) {
   else if (k === 'atmo.time.lv') timeTo(true, v);
   else if (k === 'atmo.time.on') timeTo(v, PREFS.tod / 4);
   else if (k.startsWith('atmo.') && k.endsWith('.on')) atmoOn(k.split('.')[1], v);
-  else if (k.startsWith('todo.')) redraw('.todo', 'todo');   // a line turned on or off is drawn again
+  else if (k.startsWith('todo.')) { redraw('.todo', 'todo'); redraw('.dues', 'dues'); }   // a line turned on or off is drawn again
   else if (k.startsWith('custom.')) newWorld(true, true);
 }
 const motionClass = () => document.body.classList.toggle('rm', lessMo());   // the page's own sweeps and fades follow Reduce motion
@@ -3406,14 +3675,15 @@ function syncControls() {
   document.querySelectorAll('[data-desc]').forEach(n => { const r = findRow(n.dataset.desc), t = r ? text(r.desc) : ''; if (n.textContent !== t) n.textContent = t; });   // a line that reads as it is set
   document.querySelectorAll('[data-type="text"]').forEach(t => { if (document.activeElement !== t) t.value = getPref(t.dataset.key); });
   document.querySelectorAll('.trow').forEach(r => { const i = +r.dataset.line, l = PREFS.todo[i]; if (!l) return; r.classList.toggle('dim', !l.on);
-    const ch = r.querySelector('[data-due]'); ch.textContent = dueWords(l.at); ch.classList.toggle('sel', l.at >= 0); ch.classList.toggle('off', l.at < 0); });
+    const ch = r.querySelector('[data-due]'); if (!ch) return; ch.textContent = dueWords(l.at); ch.classList.toggle('sel', l.at >= 0); ch.classList.toggle('off', l.at < 0); });
   document.querySelectorAll('[data-el]').forEach(b => { const k = b.dataset.el, x = clashes(k); b.setAttribute('aria-checked', String(!!PREFS.custom.el[k] && !x)); b.disabled = x; });   // a clash dims it; it comes back when the clash goes
   const lw = $('leaveWords'); if (lw) { const t = leaveWords(); if (lw.textContent !== t) lw.textContent = t; }
   const sb = $('sheetBody'); if (sb) sb.classList.toggle('more', sb.scrollHeight > sb.clientHeight + 2);   // a long menu says so: a bar at its side and a fade at its foot
   for (const m of document.querySelectorAll('[data-mute]')) m.dataset.muted = String(!PREFS.sound);
   motionClass();
   document.querySelectorAll('[data-off]').forEach(e => { const off = !!ITEMS[e.dataset.off].off(); e.classList.toggle('off', off); e.querySelectorAll('button, input').forEach(b => { b.disabled = off; }); });
-  const sd = $('sheetDone'); if (sd && S.sheet && !sd.dataset.go) { const ok = S.sheet !== 'checkin' || planReady(); sd.disabled = !ok; sd.classList.toggle('c-blue', S.sheet === 'checkin' && ok); }   // Start lights when Your time is answered
+  document.querySelectorAll('.mnote').forEach(n => { const t = MODE_NOTES[PREFS.mode]; if (n.textContent !== t) n.textContent = t; });
+  if (S.sheet === 'checkin') syncPlan();   // Start's ✓ lights when every question is answered
   syncRows(); syncBars();
 }
 
@@ -3432,7 +3702,7 @@ const rowNow = (id) => JSON.stringify(rowKeys(id).map(k => (ITEMS[k] && ITEMS[k]
 const rowThen = (id) => JSON.stringify(rowKeys(id).map(k => (ITEMS[k] && ITEMS[k].get ? PEND.virt[k] : pathGet(PEND.snap, k))));
 const rowState = (id) => (!PEND.snap ? '' : PEND.ready[id] === rowNow(id) ? 'ready' : rowNow(id) !== rowThen(id) ? 'changed' : '');
 // The settings a card (or a weather row, or Rest) can change: only these go back when you leave without saving.
-const keysOf = (items) => items.flatMap(x => (typeof x === 'string' ? (['task', 'leave', 'goalq', 'todo'].includes(x) ? ['leave', 'todo'] : []) : x.type === 'row' ? rowKeys(rowId(x)) : []));
+const keysOf = (items) => items.flatMap(x => (typeof x === 'string' ? (['task', 'leave', 'dueq', 'todo', 'dues'].includes(x) ? ['leave', 'todo'] : []) : x.type === 'row' ? rowKeys(rowId(x)) : []));
 function remember(keys) {   // the first card takes the snapshot; a card opened from it adds what it can change
   if (!PEND.snap) { PEND.snap = clone(PREFS); PEND.keys.clear(); PEND.ready = {}; PEND.step = { game: 'amt' }; PEND.fair = S.fair; PEND.virt = { game: '' }; S.gameChoice = 'resume'; }   // Paused: Resume is chosen and waits for ✓ then ▶, like every row
   for (const k of keys) PEND.keys.add(k);
@@ -3459,29 +3729,30 @@ function saveRow(id) {   // ▶: this row is kept, there and then, with one swee
   const restart = id === 'game' && S.gameChoice === 'restart', resume = id === 'game' && !restart;
   for (const k of rowKeys(id)) { if (virtual(k)) PEND.virt[k] = ITEMS[k].get(); else setPath(PEND.snap, k, clone(pathGet(PREFS, k))); if (k === 'overflow') PEND.fair = S.fair; }
   if (id.startsWith('todo.')) PREFS.todo.forEach((l, i) => { if (!PEND.snap.todo[i]) PEND.snap.todo[i] = clone(l); });   // a task kept keeps the lines above it: the list is one thing
-  delete PEND.ready[id]; savePrefs(); sound.chime(0, here().synth); haptic(15); setStep(id, 'save');
+  delete PEND.ready[id]; DONE[id] = true; savePrefs(); sound.chime(0, here().synth); haptic(15); setStep(id, 'save');
   const strip = S.strip;
-  setTimeout(() => { if (PEND.step[id] === 'save') { delete PEND.step[id]; if (!resume && !restart && document.querySelector(`[data-row="${id}"] .rhead .rplus`)) FOLD[id] = 'set'; syncRows(); } if (strip && S.strip === strip && id.startsWith('atmo.')) { closeStrip(false); foldWx(); } }, 250);   // ▶ green for a moment, then the row rests; the strip it came from goes, and only that one
+  setTimeout(() => { if (PEND.step[id] === 'save') { delete PEND.step[id]; if (!resume && !restart && document.querySelector(`[data-row="${id}"] .rhead .pm`)) { FOLD[id] = 'set'; openNext(id); } syncRows(); } if (strip && S.strip === strip && id.startsWith('atmo.')) { closeStrip(false); foldWx(); } }, GO_MS);   // ▶ green for a moment, then the row rests; the strip it came from goes, and only that one
   if (restart) { doRestart(); return; }
   if (resume) setTimeout(() => { if (S.sheet === 'pause') { closeSheet(); S.held = S.pauseBtn = false; } }, 250);   // ▶: the game goes on
-  if (id === 'mode') { if (PREFS.mode !== S.mode) setMode(PREFS.mode); setTimeout(() => { if (S.sheet === 'mode') closeSheet(); }, 250); }   // Go: into the mode
+  if (id === 'mode') { if (PREFS.mode !== S.mode) setMode(PREFS.mode); setTimeout(() => { if (S.sheet === 'mode') closeSheet(); }, GO_MS); }   // ›: into the mode
+  if (id === 'timerctl') applyTimer();   // Timer: from now
 }
-const FLOW = { sw: 'Now slide for how much.', amt: 'Now tap ✓.', tick: 'Now › keeps it.', save: 'Kept.' };
-function syncRows() {   // paint each control of each row by where the row is: plain at rest, blue for the next touch, green once done
+function syncRows() {   // every row, the same steps: the blue moves along the work line (switch, control, ✓, ›); what's behind it is done
   document.querySelectorAll('[data-row]').forEach(el => {
-    const id = el.dataset.row; el.classList.toggle('folded', !!FOLD[id]); el.classList.toggle('isset', FOLD[id] === 'set');
-    const step = stepOf(id), done = ['sw', 'amt', 'tick', 'save'].indexOf(step);
-    const sw = el.querySelector('.switch'), amt = [...el.querySelectorAll('.rctl > .item:not(.sw), .text-input, .chip, .picker')], ck = el.querySelector('.check'), sv = el.querySelector('.save');
-    const paint = (n, k) => { if (n) { n.classList.remove('c-blue', 'c-green'); if (k) n.classList.add('c-' + k); } };
-    if (el.classList.contains('compact')) { const d = el.querySelector('.rdesc'), t = FLOW[step] || el.dataset.say; if (d && d.textContent !== t) d.textContent = t; }   // the weather strip says what to do next
-    paint(sw, done >= 0 ? 'green' : '');
-    for (const a of amt) paint(a, step === 'sw' ? 'blue' : done >= 1 && !(sw && !isOn(sw.dataset.onoff)) ? 'green' : '');   // a switch off: the amount stays dim
-    paint(ck, step === 'amt' ? 'blue' : done >= 2 ? 'green' : ''); paint(sv, step === 'tick' ? 'blue' : step === 'save' ? 'green' : '');
+    const id = el.dataset.row, f = FOLD[id]; el.classList.toggle('folded', !!f); el.classList.toggle('isset', f === 'set');
+    setPM(el.querySelector(':scope > .rhead .marks > .pm'), f ? 'plus' : DONE[id] ? 'minus' : 'x');
+    const step = stepOf(id), c = el.querySelector(':scope > .rctl'); if (!c) return;
+    const sw = c.querySelector(':scope > .sw .switch'), on = !sw || isOn(sw.dataset.onoff), amt = c.querySelector(':scope > .item:not(.sw), :scope > .choice'), pk = el.querySelector(':scope > .picker');
+    const ck = c.querySelector(':scope > .check'), sv = c.querySelector(':scope > .save'), work = [sw, on ? amt : null, on ? pk : null].filter(Boolean);
+    const at = { '': 0, sw: sw ? 1 : 0, amt: work.length, tick: work.length + 1, save: work.length + 2 }[step] ?? 0;   // where the blue is
+    paintSeq(work, Math.min(at, work.length)); if (!on && amt) { paintStep(amt, ''); if (pk) paintStep(pk, ''); }
+    paintStep(ck, at > work.length ? 'green' : at === work.length && step ? 'blue' : '');
+    paintStep(sv, step === 'save' ? 'fill' : step === 'tick' ? 'blue' : '');
     if (sv) sv.disabled = !(step === 'tick' || step === 'save');
   });
 }
 const rowOf = (t) => { const r = t.closest && t.closest('[data-row]'); return r ? r.dataset.row : null; };
-const hasAmount = (id) => { const r = document.querySelector(`[data-row="${id}"]`); return !!r && !!r.querySelector('.rctl > .item:not(.sw), .text-input'); };
+const hasAmount = (id) => { const r = document.querySelector(`[data-row="${id}"]`); return !!r && !!r.querySelector('.rctl > .item:not(.sw), .rctl > .choice, .text-input'); };
 function undoAll() { if (!PEND.snap) return; undoKeys(PEND.keys); forget(); apply(); }   // every open card's unsaved rows go back; nothing else is touched
 function apply() {   // the settings as they now stand take effect everywhere
   timeTo(PREFS.atmo.time.on, PREFS.atmo.time.lv);
@@ -3557,10 +3828,9 @@ const SKY_LOOK = { bolt: ['Lightning', () => ICON.bolt], wind: ['Wind', () => IC
 const skyName = (k) => { const n = SKY_LOOK[k][0]; return typeof n === 'function' ? n() : n; };
 const cellHTML = (attrs, icon, sub, extra = '', cls = '') => `<button class="cell${cls}" ${attrs}>${icon.startsWith('<svg') ? icon : svg(icon)}<span class="sub">${sub}</span>${extra}</button>`;
 function barHTML(which) {
-  if (which === 'top') return [`<button class="cell two" data-cell="home" aria-label="Settings and pause"><span class="ln">Settings</span></button><div class="cell two"><button class="ln" data-cell="mode" data-state="mode" aria-label="Mode"></button><button class="ln l2" data-cell="scene" data-state="scene" aria-label="Scene"></button></div><button class="cell two" data-cell="goal" aria-label="Timer and goals"><span class="ln" data-state="timer"></span><span class="ln l2" data-state="goals"></span><i class="goal-left"></i></button>`, 'minmax(0, 1fr) minmax(0, 1.3fr) minmax(0, 1.3fr)'];   // three tiles, words only: Settings; Mode and Scene; Timer and Goals
+  if (which === 'top') return [`<button class="cell gear" data-cell="home" aria-label="Game and mode settings">${svg(ICON.gear)}</button><button class="cell tpill" data-cell="mode" aria-label="Mode"><b>Mode</b> <span class="ln" data-state="mode"></span></button><button class="cell tpill" data-cell="scene" aria-label="Scene"><span class="ln" data-state="scene"></span></button><div class="cell tctl"><button class="sr-btn" data-act="pause" aria-label="Pause"></button><button class="sr-btn" data-cell="volume" data-mute aria-label="Mute">${VOL}<span class="sub"></span></button></div><span class="marks">${pmHTML('data-act="toggletop"', 'the top row', 'minus')}</span>`, '40px minmax(0, 1.15fr) minmax(0, 1fr) auto auto'];   // settings (a gear); Mode, bold, and the mode; the scene; pause and sound; the mark
   if (S.mode === 'settle') return [cellHTML('data-act="breath" aria-label="Take a breath"', ICON.breathe, 'Take a breath') + cellHTML('data-act="deep" aria-label="Take a deep breath"', ICON.deep, 'Take a deep breath') + cellHTML('data-act="go" aria-label="Go: to your list"', ICON.goal, 'Go'), 'repeat(3, minmax(0, 1fr))'];   // Settle: a breath, a deep breath, or out of the door
-  if (!S.wxOpen) return PREFS.hideWx ? ['<button class="wx-show" data-act="showwx" aria-label="Show weather settings">▴</button>', '1fr']
-    : ['<button class="cell wxwords" data-act="wxopen" aria-label="Weather settings"><span class="pill">Weather Settings</span></button><button class="hide-link" data-act="hidewx" aria-label="Hide">−</button>', '1fr auto'];   // folded: just the words, and Hide
+  if (!S.wxOpen) return [`<button class="cell wxwords" data-act="wxopen" aria-label="Weather settings"${PREFS.hideWx ? ' hidden' : ''}><span class="pill">Weather Settings</span></button><span class="marks">${pmHTML('data-act="togglewx" data-roll="1"', 'Weather Settings', PREFS.hideWx ? 'minus' : 'plus')}</span>`, '1fr auto'];   // folded: the words, and the mark (it rolls as it is drawn)
   return [`<button class="cell" data-act="pin" aria-label="Keep the weather open">${svg(ICON.pin)}</button>` + ATMO.map(k => cellHTML(`data-sky="${k}" aria-label="${skyName(k)}"`, SKY_LOOK[k][1](), skyName(k))).join('')
     + `<button class="cell" data-act="still" aria-label="Still all the weather, or bring it back">${svg(ICON.pp)}</button>`, '38px repeat(4, minmax(0, 1fr)) 38px'];   // the pin on the left, ❙❙ on the right
 }
@@ -3575,19 +3845,20 @@ function syncBars() {   // build a bar when what it holds has changed, then brin
     if (BAR.key[which] === key) continue;
     const [html, cols] = barHTML(which);
     el.innerHTML = html; el.style.gridTemplateColumns = cols; BAR.key[which] = key;
-    if (which === 'bot') { el.classList.toggle('plain', S.mode !== 'settle' && !S.wxOpen); const pill = el.querySelector('.pill'); clearTimeout(BAR.hintT); if (pill) { pill.classList.add('hint'); BAR.hintT = setTimeout(() => pill.classList.remove('hint'), 5000); } }   // folded: no box, and the words wait, blue, for five seconds
+    const roll = el.querySelector('.pm[data-roll]'); if (roll) { const to = PREFS.hideWx ? 'plus' : 'minus'; requestAnimationFrame(() => requestAnimationFrame(() => setPM(roll, to))); }
+    if (which === 'bot') el.classList.toggle('plain', S.mode !== 'settle' && !S.wxOpen);   // folded: no box
     const cv = el.querySelector('canvas'); if (cv) sizeCanvas(cv);
     if (which === 'bot') el.querySelectorAll('[data-sky]:not([data-sky=time]) .sub').forEach(n => fit(n, n.textContent));   // a weather word draws in on a small phone before it is cut
   }
   $('botBar').parentElement.hidden = S.mode !== 'settle' && !has('weather');   // indoors there is no weather bar
   $('toolwrap').hidden = S.mode !== 'settle' && (!has('weather') && !has('spheres'));   // the tools' row, and the strip's place: kept in SkyPlay so the board stays one size
   const top = $('topBar'), tools = $('tools'), st = (k) => top.querySelector(`[data-state=${k}]`);
-  fit(st('mode'), 'Mode: ' + MODE_NAMES[S.mode]); fit(st('scene'), 'Scene: ' + placeName(), 'Scene: ' + (SHORT[placeName()] || placeName()));
+  fit(st('mode'), MODE_NAMES[S.mode]); fit(st('scene'), placeName(), SHORT[placeName()] || placeName());
   syncRow();
   toolRow(); tools.hidden = S.mode !== 'settle' && !has('spheres');
   tools.querySelectorAll('[data-tool]').forEach(b => {
     const id = b.dataset.tool, n = S.items[id] || 0, armed = S.armed === id || (id === 'mystery' && S.currentWild);   // green and breathing: armed; blue: in hand; plain: none
-    b.querySelector('.n').textContent = n; b.classList.toggle('on', armed); b.classList.toggle('held', !!n && !armed); b.classList.toggle('none', !n && !armed); b.classList.toggle('armed', armed);
+    b.querySelector('.n').textContent = n; b.classList.toggle('on', armed); b.classList.toggle('held', !!n && !armed); b.classList.toggle('none', !n && !armed); b.classList.toggle('armed', armed); b.classList.toggle('live', armed);
   });
   skyCells();
 }
@@ -3631,21 +3902,22 @@ function sizeCanvas(cv) { const dpr = Math.min(3, window.devicePixelRatio || 1),
 // The score row: built once; its words and states follow the game.
 function syncRow() {
   const r = $('scoreRow'); if (!r) return;
-  if (!r.firstElementChild) r.innerHTML = `<button class="sr-score" data-cell="score" aria-label="Score"><span class="sr-word">Score</span><b class="sr-num">0</b></button><button class="sr-stats hint" data-cell="score" aria-label="Stats">Stats</button><div class="sr-ctl"><button class="sr-btn" data-act="pause" aria-label="Pause"></button><button class="sr-btn" data-cell="volume" data-mute aria-label="Mute">${VOL}<span class="sub"></span></button><button class="hide-link" data-act="hidesr" aria-label="Hide">−</button></div><button class="sr-show" data-act="showsr" aria-label="Show score, pause and mute">▾</button>`;
-  if (!r._hint) { r._hint = setTimeout(() => { const sp = r.querySelector('.sr-stats'); if (sp) sp.classList.remove('hint'); }, 5000); }   // Stats waits, blue, for five seconds, then goes plain
+  if (!r.firstElementChild) r.innerHTML = `<button class="sr-score" data-cell="score" aria-label="Score and statistics"><span class="sr-word">Score</span><b class="sr-num">0</b></button><button class="cell tpill" data-cell="goal" aria-label="Timer and tasks">Timer &amp; Tasks<i class="goal-left"></i></button><span class="marks">${pmHTML('data-act="togglesr"', 'the score', 'minus')}</span>`;   // the score (it opens Statistics), and the mark
+  setPM(r.querySelector('.pm'), PREFS.hideRow ? 'plus' : 'minus');
+  const T0 = $('topBar'); T0.classList.toggle('hidden', !!PREFS.hideTop); setPM(T0.querySelector('.pm'), PREFS.hideTop ? 'plus' : 'minus');
   r.classList.toggle('hidden', !!PREFS.hideRow); r.classList.toggle('nogame', !has('spheres'));
-  const vt = PREFS.sound ? `${Math.round(PREFS.vol.master * 100)}%` : canVibrate && PREFS.haptics ? 'Vibrate' : 'Silent', sub = r.querySelector('.sub'); if (sub.textContent !== vt) sub.textContent = vt;
-  const pb = r.querySelector('[data-act=pause]'), paused = !!S.held && !!S.pauseBtn; pb.classList.toggle('on', paused); const want = 'pp'; if (pb.dataset.k !== want) { pb.dataset.k = want; pb.innerHTML = svg(ICON.pp); pb.setAttribute('aria-label', paused ? 'Resume' : 'Pause'); }
-  r.querySelector('[data-cell=volume]').classList.toggle('on', PREFS.sound);
+  const T = $('topBar'); if (!T.querySelector('[data-act=pause]')) return;
+  const vt = PREFS.sound ? `${Math.round(PREFS.vol.master * 100)}%` : canVibrate && PREFS.haptics ? 'Vibrate' : 'Silent', sub = T.querySelector('[data-cell=volume] .sub'); if (sub.textContent !== vt) sub.textContent = vt;
+  const pb = T.querySelector('[data-act=pause]'), paused = !!S.held && !!S.pauseBtn; pb.classList.toggle('on', paused); const want = 'pp'; if (pb.dataset.k !== want) { pb.dataset.k = want; pb.innerHTML = svg(ICON.pp); pb.setAttribute('aria-label', paused ? 'Resume' : 'Pause'); }
+  T.querySelector('[data-cell=volume]').classList.toggle('on', PREFS.sound); T.querySelector('[data-act=pause]').style.visibility = has('spheres') ? '' : 'hidden';
   r.classList.toggle('nonum', !!PREFS.hideNumbers);
 }
 function tickBars() {
   const top = $('topBar');
   const bot = $('botBar');
   for (const k of ['breath', 'deep']) { const dp = bot.querySelector(`[data-act=${k}]`); if (dp) dp.classList.toggle('on', !!S.sigh && (S.sigh.steps === DEEP) === (k === 'deep')); }   // green while it runs
-  const g = top.querySelector('[data-cell=goal]'), G = S.goal, live = !!G && G.phase === 'play';
-  { const t1 = top.querySelector('[data-state=timer]'), t2 = top.querySelector('[data-state=goals]'); if (t1) { const w1 = 'Timer: ' + (live ? Math.ceil(goalLeft() / 60) + ' min' : 'Off'), w2 = 'Goals: ' + (live && PREFS.todo[0].on ? 'On' : 'Off'); if (t1.dataset.t !== w1) fit(t1, w1); if (t2.dataset.t !== w2) fit(t2, w2); } }
-  if (g) { g.classList.toggle('on', live); g.style.setProperty('--left', live ? clamp(goalLeft() * 1000 / Math.max(1, G.end - G.start), 0, 1).toFixed(3) : '0'); }
+  const g = $('scoreRow').querySelector('[data-cell=goal]'), G = S.goal, live = !!G && G.phase === 'play';
+  if (g) { g.classList.toggle('on', live); g.classList.toggle('live', live); g.style.setProperty('--left', live ? clamp(goalLeft() * 1000 / Math.max(1, G.end - G.start), 0, 1).toFixed(3) : '0'); }
   const sr = $('scoreRow'), pill = sr.querySelector('.sr-score');
   if (pill && !PREFS.hideRow) {   // the score in the standard type; a glow round it for a moment when points come in
     const wd = pill.querySelector('.sr-word'), num = pill.querySelector('.sr-num'), gl = scoreGlow(), word = PREFS.clock ? `${Math.floor((performance.now() - S.born) / 60000)} min` : 'Score', n = fmt(S.score);
@@ -3676,7 +3948,7 @@ function applySeason() {
 // back and goes back; ✕, or a touch outside the card, puts every row back and closes. The speaker in its head mutes.
 const NAV = { stack: [] };
 const itemsOf = (def) => (typeof def.items === 'function' ? def.items() : def.items);
-function refill() { const body = $('sheetBody'); body.innerHTML = ''; if (S.sheet && PEND.snap && SHEETS[S.sheet]) remember(keysOf(itemsOf(SHEETS[S.sheet]))); fillItems(body, itemsOf(SHEETS[S.sheet])); syncControls(); }
+function refill() { ringClear(); const body = $('sheetBody'); body.innerHTML = ''; if (S.sheet && PEND.snap && SHEETS[S.sheet]) remember(keysOf(itemsOf(SHEETS[S.sheet]))); fillItems(body, itemsOf(SHEETS[S.sheet])); if (S.sheet !== 'checkin') rowsOf(SHEETS[S.sheet]).filter(r => !FOLD[r]).slice(1).forEach(r => { FOLD[r] = DONE[r] ? 'set' : 'hid'; }); syncControls(); }   // rows that come in (Custom's recipe) arrive folded: one open at a time
 function openSheet(name, push = false, back = false) {
   const def = SHEETS[name];
   if (!def) return;
@@ -3684,30 +3956,35 @@ function openSheet(name, push = false, back = false) {
   else if (!S.sheet) NAV.stack = [];
   if (name === 'pause') S.held = true;   // the game waits for a tap when you come back to it
   if (name === 'checkin' && PREFS.leave.how === 'clock' && !(S.goal && S.goal.phase === 'play')) freshClock();
-  if (name === 'checkin' && !back) { const live = S.goal && S.goal.phase === 'play'; S.plan = live ? { task: true, how: PREFS.leave.how, goal: !!PREFS.todo[0].on } : { task: null, how: null, goal: null }; $('sheetDone').classList.remove('c-green'); delete $('sheetDone').dataset.go; }   // coming back from Help keeps your answers; a timer already running shows its answers; a fresh one asks again
-  if (!back) for (const k in FOLD) delete FOLD[k];   // a card opens with every row open
+  if (name === 'checkin' && !back) { const live = S.goal && S.goal.phase === 'play', on = PREFS.todo.filter(l => l.on); S.plan = live ? { task: on.length > 0, due: on.some(l => l.at >= 0), how: PREFS.leave.how, step: 2, ok: [true, true, false], fold: [true, true, false], going: null } : freshPlan(); S.lpos = {}; S.lock = new Set(PREFS.todo.map((l, i) => (l.on && l.text.trim() ? i : -1)).filter(i => i >= 0)); }   // coming back from Help keeps your answers; a timer already running shows its answers; a fresh one asks again
+  if (!back) { for (const k in FOLD) delete FOLD[k]; for (const k in DONE) delete DONE[k]; }   // a card opens fresh
+  if (!back) rowsOf(def).slice(1).forEach(r => { FOLD[r] = 'hid'; });   // …the first one only: one open at a time, on every card
+  if (name === 'pause' && !back && !(S.goal && S.goal.phase === 'play')) PREFS.leave.how = 'decide';   // no timer running: Timer reads No timer
   closeStrip(true); S.sheet = name; S.aiming = false; S.due = -1; remember(keysOf(itemsOf(def)));
   $('sheetTitle').textContent = def.title; $('sheetTitle').hidden = !def.title; const note = typeof def.note === 'function' ? def.note() : def.note; $('sheetNote').innerHTML = note || ''; $('sheetNote').hidden = !note;
-  $('sheetHelp').hidden = name === 'help'; $('sheetDone').hidden = !def.onDone; $('sheetFoot').hidden = !def.onDone; $('morePop').hidden = true;   // the foot only when a card has something to start or play
+  $('sheetHelp').hidden = name === 'help'; $('sheetFoot').hidden = name !== 'checkin' && !def.foot; $('sheetReset').hidden = name !== 'checkin'; $('sheetAdv').hidden = !def.foot; $('morePop').hidden = true;   // the foot only when a card has something to start or play
   document.body.classList.toggle('see', name === 'checkin');   // the world shows through behind your time
   $('sheet').dataset.name = name;
   $('scrim').hidden = false; $('sheet').hidden = false;
+  $('sheetBack').disabled = !NAV.stack.length && name === 'checkin';   // ‹ goes back where you came from; Session Setup, after the opening, has nowhere to go: dim
   refill(); $('sheetBody').scrollTop = 0;
   if (name === 'help') renderLadder();
+  ringSeq($('sheet'));
 }
 function closeSheet() {
   const was = NAV.stack[0] || S.sheet, was2 = S.sheet;   // the card you started from, and the one you are on
   if (!S.sheet) return;
   undoAll();   // however a card closes, a row not saved goes back
   S.sheet = null; NAV.stack = []; S.due = -1;
-  $('sheet').hidden = true; $('scrim').hidden = true; $('sheetBody').innerHTML = ''; $('morePop').hidden = true; document.body.classList.remove('see'); $('sheetDone').classList.remove('c-green', 'c-blue'); delete $('sheetDone').dataset.go;
+  $('sheet').hidden = true; $('scrim').hidden = true; $('sheetBody').innerHTML = ''; $('morePop').hidden = true; document.body.classList.remove('see');
   try { canvas.focus({ preventScroll: true }); } catch (e) {}
-  if (was === 'checkin' || was2 === 'checkin') { PREFS.mode = S.mode; sound.init(); S.prev = null; }   // the last game is let go once you are past Your time
+  ringClear();
+  if (was === 'checkin' || was2 === 'checkin') { PREFS.mode = S.mode; sound.init(); S.prev = null; setTimeout(arrive, 450); }   // the last game is let go once you are past Session Setup; the game screen shimmers in
   syncControls();
 }
 function startSheet() { const def = SHEETS[S.sheet]; forget(); savePrefs(); if (def && def.onDone) def.onDone(); closeSheet(); }   // Your time's Start: every row as it stands is kept, and play
-function backSheet() {   // ‹: this card's unsaved rows go back, then back to the card you came from (or away, from a first card: the same as ✕)
-  if (!NAV.stack.length) { closeSheet(); return; }
+function backSheet() {   // ‹: this card's unsaved rows go back, then back to the card you came from, or to the game
+  if (!NAV.stack.length) { if (S.sheet !== 'checkin') closeSheet(); return; }
   const mine = keysOf(itemsOf(SHEETS[S.sheet])); undoKeys(mine); mine.forEach(k => PEND.keys.delete(k)); apply();
   openSheet(NAV.stack.pop(), false, true);
 }
@@ -3775,20 +4052,27 @@ function bind() {
   const ACTS = { still: () => setStill(!S.still),
     wxopen: (el) => { const p = el.querySelector('.pill'); if (p) { p.classList.remove('hint'); p.classList.add('pgo'); } setTimeout(() => { S.wxOpen = true; syncBars(); }, 160); },   // green at once, then the ribbon
     pin: () => { PREFS.wxPin = !PREFS.wxPin; savePrefs(); if (!PREFS.wxPin) { if (S.strip) closeStrip(true); foldWx(); } syncBars(); },   // unpinned: back to the words
-    fold: (el) => foldRow(el.dataset.fold),
+    fold: (el) => { if (el.closest('#strip')) closeStrip(true); else foldRow(el.dataset.fold); }, qfold: (el) => { const q = +el.dataset.qf; S.plan.fold[q] = !S.plan.fold[q]; refill(); },   // the weather's row: its ✕ closes it, and what wasn't kept goes back
+    redo: (el) => resetRow(el.dataset.fold), qredo: (el) => resetQ(+el.dataset.qf),
     pause: () => { if (!has('spheres')) return; if (S.held) { S.held = false; S.pauseBtn = false; } else { S.held = true; S.pauseBtn = true; } syncRow(); },   // ❙❙: the one paused screen; the same tap, or a touch on the board, goes on
-    hidesr: () => { PREFS.hideRow = true; savePrefs(); syncRow(); }, showsr: () => { PREFS.hideRow = false; savePrefs(); syncRow(); },
-    hidewx: () => { PREFS.hideWx = true; savePrefs(); syncBars(); }, showwx: () => { PREFS.hideWx = false; savePrefs(); syncBars(); },
+    togglesr: () => { PREFS.hideRow = !PREFS.hideRow; savePrefs(); syncRow(); },   // − hides, + shows: the same mark turns
+    togglewx: () => { PREFS.hideWx = !PREFS.hideWx; savePrefs(); syncBars(); },
+    toggletop: () => { PREFS.hideTop = !PREFS.hideTop; savePrefs(); syncRow(); },
     wxribbon: () => { closeSheet(); S.wxOpen = true; syncBars(); shimmer($('botBar')); }, breath: () => { closeSheet(); startSigh('breath'); }, deep: () => { closeSheet(); startSigh('deep'); }, breathnow: () => { closeSheet(); startSigh(); }, go: () => park('Go'),
-    addtask: () => { if (PREFS.todo.length < 4) { PREFS.todo.push({ on: true, text: '', at: -1 }); redraw('.todo', 'todo'); syncControls(); const r = document.querySelector('.trow:last-of-type'); shimmer(r); const inp = r && r.querySelector('input'); if (inp) inp.focus(); } },
-    continue: () => { loadPool(S.prev); say('Your last game', placeName()); forget(); savePrefs(); closeSheet(); startPlan(S.plan.task === null); },   // straight back into play, with Your time as it stands
-    notime: () => { PREFS.todo[S.due].at = -1; S.due = -1; redraw('.todo', 'todo'); syncControls(); },
+    addtask: () => { if (PREFS.todo.length < 4) { PREFS.todo.push({ on: true, priv: false, text: '', at: -1 }); S.lpos[PREFS.todo.length - 1] = 0; redraw('.todo', 'todo'); redraw('.dues', 'dues'); syncControls(); const r = document.querySelector('.todo .trow.line:last-of-type'); shimmer(r); } },
+    continue: () => { loadPool(S.prev); say('Your last game', placeName()); forget(); savePrefs(); closeSheet(); startPlan(S.plan.step < 3); },   // straight back into play, with Your time as it stands
+    notime: () => { PREFS.todo[S.due].at = -1; S.due = -1; redraw('.dues', 'dues'); syncControls(); },
     moreok: () => { $('morePop').hidden = true; }, sample: (el) => playSample(el),
     leaverest: () => { undoAll(); welcomeBack(); } };   // Rest's ✕: put back, and leave
   document.addEventListener('click', (e) => {
     const t = e.target;
     if (S.aiming && t.closest('.bar')) return;   // the board always wins
     const act = t.closest('[data-act]'); if (act) { ACTS[act.dataset.act](act); return; }
+    const qs = t.closest('[data-qsw]'); if (qs) { const id = qs.dataset.qsw; answer(id, !(id === 'task' ? S.plan.task : S.plan.due)); return; }   // Session Setup's switches
+    const pv = t.closest('[data-priv]'); if (pv) { linePriv(+pv.dataset.priv); return; }
+    const lk = t.closest('[data-lok]'); if (lk) { lineTick(+lk.dataset.lok); return; }
+    const lg = t.closest('[data-lgo]'); if (lg) { lineGo(+lg.dataset.lgo); return; }
+    const lr = t.closest('.trow.line.locked'); if (lr) { lineOpen(+lr.dataset.line); return; }   // a kept task: a tap opens it again
     const sv = t.closest('[data-save]'); if (sv) { saveRow(sv.dataset.save); return; }
     const rd = t.closest('[data-ready]'); if (rd) { readyRow(rd.dataset.ready); return; }
     const mo = t.closest('[data-more]'); if (mo) { learnMore(mo.dataset.more); return; }
@@ -3797,19 +4081,22 @@ function bind() {
     const ch = t.closest('[data-choice]'); if (ch) { const id = rowOf(ch); choose(ch.dataset.choice, parseOpt(ch.dataset.v)); if (id) setStep(id, 'amt'); return; }
     const wi = t.closest('.wi'); if (wi) { wheelTap(wi); return; }
     const el = t.closest('[data-el]'); if (el) { toggleEl(el.dataset.el); setStep('elements', 'amt'); return; }
-    const hw = t.closest('[data-how]'); if (hw) { S.plan.how = hw.dataset.how; choose('leave.how', hw.dataset.how); refill(); return; }
+    const hw = t.closest('[data-how]'); if (hw) { const id = rowOf(hw); if (!id) { if (S.plan.how !== hw.dataset.how) planBack(2); S.plan.how = hw.dataset.how; } choose('leave.how', hw.dataset.how); refill(); if (id) setStep(id, 'amt'); return; }
+    const bf = t.closest('[data-before]'); if (bf) { const id = rowOf(bf); if (!id) planBack(2); PREFS.leave.before = +bf.dataset.before; savePrefs(); sound.tick(0); refill(); if (id) setStep(id, 'amt'); return; }
+    const pk = t.closest('[data-pok]'); if (pk) { planTick(+pk.dataset.pok); return; }
+    const pn = t.closest('[data-pnext]'); if (pn) { planGo(+pn.dataset.pnext); return; }
     const oo = t.closest('[data-onoff]'); if (oo) { const k = oo.dataset.onoff, on = !isOn(k), id = rowOf(oo); if (k === 'soundscape.on') choose(k, on); else setPref(k, ITEMS[k] && ITEMS[k].inv ? !on : on); if (id) setStep(id, on && hasAmount(id) ? 'sw' : 'amt'); if (on && id && SAMPLE_OF[id]) hintPill(oo.closest('[data-row]')); return; }
     const sh = t.closest('[data-sheet]'); if (sh) { e.preventDefault(); if (sh.hasAttribute('data-root')) { closeSheet(); openSheet(sh.dataset.sheet); } else openSheet(sh.dataset.sheet, true); return; }
-    if (t.closest('#sheetMute, #scoreRow [data-cell=volume]')) { setPref('sound', !PREFS.sound); keep('sound'); return; }   // the speaker is a plain tap: it stays
+    if (t.closest('#sheetMute, #topBar [data-cell=volume]')) { setPref('sound', !PREFS.sound); keep('sound'); return; }   // the speaker is a plain tap: it stays
     const sc = t.closest('#scoreRow [data-cell=score]'); if (sc) { openSheet('score'); return; }
-    const cell = t.closest('#topBar [data-cell]'); if (cell) { topTap(cell); return; }
+    const cell = t.closest('#topBar [data-cell]:not([data-cell=volume]), #scoreRow [data-cell=goal]'); if (cell) { topTap(cell); return; }
     const sky = t.closest('#botBar [data-sky]'); if (sky) { cellTap(sky.dataset.sky); return; }
     const tile = t.closest('[data-tile]'); if (tile) { const k = tile.dataset.tile; PREFS.tiles[k] = !PREFS.tiles[k]; if (k === 'tracer' && S.space) S.space.ball = null; savePrefs(); sound.tick(0); syncBars(); return; }   // remembered
     const tool = t.closest('[data-tool]'); if (tool) { useTool(tool.dataset.tool); syncBars(); return; }
   });
   document.addEventListener('input', (e) => {
     const r = e.target.closest('[data-type="range"]'); if (r) { fillRange(r); setPref(r.dataset.key, +r.value); const id = rowOf(r); if (id && stepOf(id) !== 'sw') setStep(id, 'sw'); return; }   // sliding: the slider is blue
-    const tx = e.target.closest('[data-type="text"]'); if (tx) { setPrefRaw(tx.dataset.key, tx.value.slice(0, 60)); syncControls(); const id = rowOf(tx); if (id) setStep(id, 'sw'); }   // writing: the words are blue
+    const tx = e.target.closest('[data-type="text"]'); if (tx) { setPrefRaw(tx.dataset.key, tx.value.slice(0, 60)); const ln = tx.closest('.trow.line'); if (ln) lineTyped(+ln.dataset.line); syncControls(); const id = rowOf(tx); if (id) setStep(id, 'sw'); }   // writing: the words are blue
   });
   document.addEventListener('change', (e) => { const r = e.target.closest('[data-type="range"]'); const id = r && rowOf(r); if (id) setStep(id, 'amt'); });   // let go: set, green; ✓ is next
   document.addEventListener('focusout', (e) => { const tx = e.target.closest && e.target.closest('[data-type="text"]'); const id = tx && rowOf(tx); if (id && rowState(id) === 'changed') setStep(id, 'amt'); });   // leaving the words: the row waits for ✓ (a row already ticked is left alone, so ▶ can take the tap)
@@ -3817,7 +4104,10 @@ function bind() {
     if (e.key === 'Escape') { if (!$('morePop').hidden) $('morePop').hidden = true; else if (S.sheet) closeSheet(); }
     else if (e.key === 'Enter' && e.target.matches && e.target.matches('.text-input')) e.target.blur();
   });
-  $('sheetDone').addEventListener('click', () => { const b = $('sheetDone'); if (b.disabled || b.dataset.go) return; b.dataset.go = '1'; b.classList.remove('c-blue'); b.classList.add('c-green'); setTimeout(() => { if (S.sheet === 'checkin') startSheet(); }, 160); });   // green at once, then you are playing
+  $('sheetReset').addEventListener('click', planReset);
+  $('sheetAdv').addEventListener('click', () => openSheet('setup', true));
+  $('introPick').addEventListener('click', introPick); $('introOk').addEventListener('click', introTick); $('introNext').addEventListener('click', introNext); $('introSkip').addEventListener('click', introSkip); $('introPlay').addEventListener('click', introPlay); $('introSettle').addEventListener('click', introSettle);
+  $('sheetBody').addEventListener('scroll', ringClear, { passive: true });
   $('goView').addEventListener('click', goReturn);
   $('cardInput').addEventListener('keydown', (e) => { if (e.key === 'Enter') $('cardA').click(); });
   $('sheetBack').addEventListener('click', backSheet); $('sheetClose').addEventListener('click', closeSheet);
@@ -3827,7 +4117,9 @@ function bind() {
   $('sleepView').addEventListener('pointerdown', () => { if (S.sleep) { S.sleep.idle = 0; $('sleepView').classList.remove('idle'); } }, true);
   const flush = () => { savePrefs(); saveJournal(); savePool(); };
   document.addEventListener('visibilitychange', () => {
-    if (document.visibilityState === 'hidden') { S.held = true; S.aiming = false; flush(); return; }   // the game waits for a tap when you come back
+    const veil = $('veil');
+    if (document.visibilityState === 'hidden') { veil.classList.add('on'); S.held = true; S.aiming = false; flush(); return; }   // the game waits for a tap when you come back; the phone's snapshot of the app is dark, so nothing flashes on the way back
+    requestAnimationFrame(() => requestAnimationFrame(() => veil.classList.remove('on')));
     updateWarmth();
     if (S.mode === 'rest') requestWake(true);
     if (S.mode !== 'rest' && S.goal && (S.goal.phase === 'done' || Date.now() >= S.goal.end)) goalBack();   // back after your time: the timer is off, the game as you left it
@@ -3841,14 +4133,38 @@ function setupDPI() {
   BAR.key = {}; const rc = $('scoreRow') && $('scoreRow').querySelector('canvas'); if (rc) rc._w = 0;   // the bars rebuild at the new size
   makeSprites(); if ($('topBar')) syncBars();
 }
-// The opening: on dark blue, Settle's breath shape takes one breath, circle to the board's edge and back, then rests as a circle:
-// SoRen shimmers in it, the tagline comes under it, and Your time fades in by itself. A tap (any time) brings it sooner.
+// The opening: on dark blue, Settle's breath shape takes one breath at twice Settle's pace, circle to the board's edge and back,
+// then rests as a circle with SoRen in it and Start Session under it. It waits there for you. Skip Intro finishes it at once;
+// Play Now and Settle Now go straight in. With Reduce motion it is simply there, at rest.
 function opening() {
-  if (lessMo()) { document.body.classList.remove('intro'); return; }
-  S.intro = { t: 0, len: breathLen(), go: null }; document.body.classList.add('intro');
-  for (const ev of ['pointerdown', 'keydown']) document.addEventListener(ev, introGo, { capture: true, once: true });
+  const len = breathLen() / 2;
+  S.intro = { t: lessMo() ? len + 1 : 0, len, go: null, pos: 0 }; const cl = document.body.classList, inn = S.intro.t >= len + INTRO_IN; cl.add('intro'); cl.toggle('intro-in', inn); cl.toggle('intro-anim', !inn);
+  const p = $('introFrame'), k = canvas.clientWidth ? LW / canvas.clientWidth : 1; S.intro.pw = p.offsetWidth * k; S.intro.ph = p.offsetHeight * k;   // the circle closes onto the pill, exactly
+  introPaint();
 }
-function introGo() { for (const ev of ['pointerdown', 'keydown']) document.removeEventListener(ev, introGo, true); if (S.intro && S.intro.go == null) { S.intro.go = S.intro.t; document.body.classList.remove('intro'); } }
+function introGo() { if (S.intro && S.intro.go == null) { S.intro.go = S.intro.t; document.body.classList.remove('intro', 'intro-in', 'intro-anim'); } }
+const INTRO_IN = 0.8, PILL_DY = 0, NAME_DY = -26;   // the circle has closed onto Start Session; SoRen above it, the pair centred
+function introSkip() { if (S.intro && S.intro.go == null && S.intro.t < S.intro.len + INTRO_IN) S.intro.t = S.intro.len + INTRO_IN; }
+// Start Session, the same steps as everything: the pill blue; tapped, green and dimming, and ✓ blue; ✓ green with a gold tick, and › blue; › fills, and on.
+function introPaint() {
+  const pos = S.intro ? S.intro.pos : 0, p = $('introPick'), k = $('introOk'), n = $('introNext');
+  paintStep(p, pos > 0 ? 'done' : 'blue');
+  paintStep(k, pos >= 2 ? 'green' : pos === 1 ? 'blue' : ''); k.disabled = pos < 1 || pos >= 3;
+  paintStep(n, pos === 3 ? 'fill' : pos === 2 ? 'blue' : ''); n.disabled = pos !== 2;
+}
+const introLive = () => S.intro && S.intro.go == null && S.intro.pos < 3;
+function introPick() { if (!introLive()) return; S.intro.pos = S.intro.pos ? 0 : 1; sound.tick(0); introPaint(); }
+function introTick() { if (!introLive() || !S.intro.pos) return; S.intro.pos = S.intro.pos === 2 ? 1 : 2; sound.tick(0); introPaint(); }
+function introNext() {
+  if (!introLive() || S.intro.pos !== 2) return; S.intro.pos = 3; introPaint(); sound.chime(0, here().synth); haptic(15);
+  setTimeout(() => { introGo(); if (S.sheet !== 'checkin') openSheet('checkin'); setTimeout(() => { if (S.sheet === 'checkin') ringSeq($('sheet')); }, 700); }, GO_MS);
+}
+function introPlay() {   // Play Now: the base game. Play, Zen (At the line as you left it), the weather still; nothing else changes
+  introGo(); closeSheet(); stopPlan();
+  if (PREFS.overflow === 'end') PREFS.overflow = 'choose';
+  S.fair = false; S.still = true; LT.tail = 0; setMode('play'); S.held = false; savePrefs(); syncControls();
+}
+function introSettle() { introGo(); closeSheet(); stopPlan(); setMode('settle'); }   // Relax Now: Relax as you left it
 function start() {
   canvas = $('game'); ctx = canvas.getContext('2d'); S.lastInput = performance.now();
   feel(); bind(); newWorld(true); setupDPI();
