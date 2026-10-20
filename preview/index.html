@@ -1,4 +1,4 @@
-<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="robots" content="noindex"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><meta name="theme-color" content="#081428"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"><meta name="apple-mobile-web-app-title" content="SoRen"><link rel="manifest" href="../manifest.webmanifest"><link rel="apple-touch-icon" href="../apple-touch-icon.png"><link rel="icon" href="../icon-192.png"><style>html{height:100vh}body{padding-top:calc(8px + env(safe-area-inset-top,0px))!important;padding-bottom:calc(8px + env(safe-area-inset-bottom,0px))!important;overscroll-behavior:none}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body><title>SoRen preview p8</title>
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="robots" content="noindex"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><meta name="theme-color" content="#081428"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"><meta name="apple-mobile-web-app-title" content="SoRen"><link rel="manifest" href="../manifest.webmanifest"><link rel="apple-touch-icon" href="../apple-touch-icon.png"><link rel="icon" href="../icon-192.png"><style>html{height:100vh}body{padding-top:calc(8px + env(safe-area-inset-top,0px))!important;padding-bottom:calc(8px + env(safe-area-inset-bottom,0px))!important;overscroll-behavior:none}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body><title>SoRen preview p9</title>
 <meta name="claude:viewport-fit-sides" content="cover">
 <style>
 /* One screen, never scrolls: a ribbon above the pool reads how things are, a ribbon below it is for playing, and the pool fills
@@ -14,8 +14,10 @@
   --serif: ui-serif, 'New York', 'Iowan Old Style', Georgia, serif;
   /* Three glasses, from Heritage: obsidian for every ribbon and card, clambroth for the way forward, sulphide for what is set
      inside (icons and words inlaid in silver; gold in Heritage). Blue edge: you can touch it. Green: it's on. White: go. */
-  --obsidian: radial-gradient(130% 90% at 25% 0%, rgba(110, 190, 175, 0.1), transparent 60%), linear-gradient(180deg, #171c1f 0%, #0b0e10 50%, #040506 100%);
-  --bevel: inset 0 1px 0 rgba(255, 255, 255, 0.16), inset 0 -2px 6px rgba(0, 0, 0, 0.6);
+  --grain: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 .05 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");   /* the stone's own grain, barely there */
+  --obsidian: var(--grain), radial-gradient(130% 90% at 25% 0%, rgba(110, 190, 175, 0.1), transparent 60%), linear-gradient(180deg, #171c1f 0%, #0b0e10 50%, #040506 100%);
+  --bevel: inset 0 1px 0 rgba(255, 255, 255, 0.18), inset 0 -3px 8px rgba(0, 0, 0, 0.65), inset 0 0 0 1px rgba(255, 255, 255, 0.03);
+  --warn: 250, 204, 21;
   --clambroth: radial-gradient(120% 140% at 30% 15%, #fff 0%, #f1f1ec 45%, #d8dad3 100%);
   --inlay: #dde4e8; --edge: rgba(96, 165, 250, 0.3); --cut: 0 -1px 0 rgba(0, 0, 0, 0.85), 0 1px 0 rgba(255, 255, 255, 0.1);
   --t1: 22px; --t2: 19px; --t3: 17px; --t4: 15px; --t5: 13px; --t6: 12px;
@@ -37,9 +39,9 @@ button { cursor: pointer; }
 
 /* The ribbons: one slab of obsidian each, its keys cut into it. Each key an icon over a word, inlaid. */
 .bar { flex: none; display: flex; gap: 3px; height: 52px; padding: 3px; border-radius: 14px; overflow: hidden; background: var(--obsidian); border: 1px solid rgba(255, 255, 255, 0.09);
-  box-shadow: var(--bevel), 0 8px 18px rgba(0, 0, 0, 0.45); font-size: var(--t6); white-space: nowrap; transition: opacity .5s; }
+  box-shadow: var(--bevel), 0 2px 0 #020304, 0 10px 22px rgba(0, 0, 0, 0.55); font-size: var(--t6); white-space: nowrap; transition: opacity .5s; }   /* a slab: a lip below, a shadow under */
 .cell { position: relative; flex: 1 1 0; min-width: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 3px; padding: 0 4px;
-  background: none; border: 0; border-radius: 10px; box-shadow: inset 0 0 0 1px var(--edge); color: var(--inlay); overflow: hidden; transition: box-shadow .2s; }
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.035), rgba(0, 0, 0, 0.14)); border: 0; border-radius: 10px; box-shadow: inset 0 0 0 1px var(--edge); color: var(--inlay); overflow: hidden; transition: box-shadow .2s; }
 .cell:active { box-shadow: inset 0 0 0 1px rgba(var(--off), 0.85), inset 0 0 12px rgba(var(--off), 0.28); }
 .cell svg { flex: none; width: 20px; height: 20px; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; filter: drop-shadow(0 -1px 0 rgba(0, 0, 0, 0.85)) drop-shadow(0 1px 0 rgba(255, 255, 255, 0.1)); }
 .cell .sub { max-width: 100%; overflow: hidden; text-overflow: ellipsis; opacity: 0.8; font-weight: 600; text-shadow: var(--cut); }
@@ -52,7 +54,9 @@ button { cursor: pointer; }
 .cell .val { display: block; max-width: 100%; overflow: hidden; text-overflow: ellipsis; height: 20px; font: italic 600 var(--t4)/20px var(--serif); text-shadow: var(--cut); }
 .cell .val:empty::before { content: '·'; }
 #scoreVal { font-style: normal; font-variant-numeric: tabular-nums; }
-body.lamp { --inlay: #ecd09a; }   /* Heritage: inlaid in gold, like the flecks in a Lutz marble */
+body.lamp { --inlay: #ecd09a; }
+.bar.severe .cell[data-sky], .bar.severe [data-act=severe] { --edge: rgba(var(--warn), 0.6); color: rgb(var(--warn)); }   /* severe: yellow, like a warning on the TV */
+.bar.severe .cell[data-sky].on, .bar.severe [data-act=severe].on { box-shadow: inset 0 0 0 1.5px rgba(var(--warn), 0.95), inset 0 0 16px rgba(var(--warn), 0.3); } .bar.severe .cell[data-sky].on svg, .bar.severe [data-act=severe].on svg { color: rgb(var(--warn)); filter: drop-shadow(0 0 5px rgba(var(--warn), 0.7)); }   /* Heritage: inlaid in gold, like the flecks in a Lutz marble */
 .cell:disabled { opacity: 0.3; }
 [data-muted="true"] { color: var(--ink-faint); } [data-muted="true"] .waves, [data-muted="false"] .hush { display: none; }
 .live { box-shadow: inset 0 0 0 2px rgba(var(--on), calc(0.45 + 0.45 * var(--b, 0))), 0 0 calc(2px + 12px * var(--b, 0)) rgba(var(--on), calc(0.1 + 0.35 * var(--b, 0))) !important; }   /* what is live breathes: glow and grow, slim and dim */
@@ -67,7 +71,7 @@ body.lamp { --glint: rgba(255, 236, 196, 0.95); --glint-soft: rgba(255, 205, 130
 
 /* The pool: as large as the space allows, always at its own shape. Its border is drawn on the canvas: it breathes. */
 .pool-wrap { flex: none; display: grid; place-items: center; }
-.pool { position: relative; aspect-ratio: 380 / 490; border-radius: 18px; overflow: hidden; background: var(--bg-mid); box-shadow: 0 16px 34px -10px var(--accent-soft), 0 20px 46px rgba(0, 0, 0, 0.7);
+.pool { position: relative; aspect-ratio: 380 / 490; border-radius: 18px; overflow: hidden; background: var(--bg-mid); box-shadow: 0 0 0 3px #090b0d, 0 0 0 4px rgba(255, 255, 255, 0.1), 0 16px 34px -10px var(--accent-soft), 0 20px 46px rgba(0, 0, 0, 0.7);   /* set in an obsidian bezel */
   width: min(100%, calc((100vh - 130px - env(safe-area-inset-top, 0px) - env(safe-area-inset-bottom, 0px)) * 0.7755));
   width: min(100%, calc((100dvh - 130px - env(safe-area-inset-top, 0px) - env(safe-area-inset-bottom, 0px)) * 0.7755)); }   /* as large as the screen allows, at the board's own shape */
 #game { display: block; width: 100%; height: 100%; touch-action: none; transition: filter 1.2s ease; }
@@ -331,7 +335,7 @@ const FONT = { sans: '-apple-system, BlinkMacSystemFont, system-ui, sans-serif',
 
 /* ---------- Worlds: a palette, a background, a ground and what lives there ---------- */
 // Every outdoor place is one recipe: its colours, what stands behind (hills, mountains or sea), what you stand on, and what
-// lives there. Heritage is the one place indoors: a wooden tray in lamplight, no sky and no weather.
+// lives there. Heritage is indoors, a wooden tray in lamplight; Celestial is in orbit. Neither has weather.
 // Each palette's ten spheres: a name and one colour; the light, dark and rim of each are worked out from it.
 // land: far hills, snow caps, middle ground, near ground, trees, trunks.
 const PALETTES = {
@@ -353,6 +357,8 @@ const PALETTES = {
     tiers: 'Sea Glass:67e8f9|Sand Dollar:e7c98b|Periwinkle:818cf8|Starfish:fb923c|Coral:fb7185|Lagoon:14b8a6|Conch:f9a8d4|Tidepool:0284c7|Pearl:e2e8f0|Sun on Water:fbbf24' },
   stars: { bg: '#070b1c', accent: '#a5b4fc', synth: 'crystal', land: '141a33 1b2242 0e1226 0a0d1c 0b0f20 1a2040', wings: 'ffffff',
     tiers: 'Stardust:cbd5e1|Polaris:93c5fd|Vega:7dd3fc|Capella:fde047|Betelgeuse:fb923c|Rigel:a5b4fc|Nebula:e879f9|Pleiades:22d3ee|Andromeda:a78bfa|Milky Way:c7d2fe' },
+  celestial: { bg: '#03040c', accent: '#c4b5fd', synth: 'crystal', land: '000000 000000 000000 000000 000000 000000', wings: '', edge: '#a5b4fc',
+    tiers: 'Moon Dust:cbd5e1|Mercury:a8a29e|Venus:fde68a|Earth:38bdf8|Mars:f87171|Jupiter:fdba74|Saturn:fcd34d|Uranus:67e8f9|Neptune:6366f1|The Sun:fbbf24' },
   heritage: { bg: '#2a1c12', accent: '#f0c27a', synth: 'glass', land: '000000 000000 000000 000000 000000 000000', wings: '', edge: '#d9a65a', glow: '250,232,205',
     tiers: 'Clay:b5693f|Clambroth:e9dfcf|Peppermint:f1e9e4|Candy Swirl:e9b53d|Onionskin:e0563a|Mica:2f5f9e|Lutz:2e7d58|End of Day:a3456f|Sulphide:b9c9d4|Heirloom:d99a2b' }
 };
@@ -390,7 +396,8 @@ const ARCS = {
 };
 // A world is compiled once, when you arrive: everything else reads it, never "which place is this?".
 function compile(key) {
-  if (key === 'heritage') return { ...PALETTES.heritage, key, label: 'Heritage', indoor: true, glass: true, el: {}, live: [], amb: {}, sig: key, start: 0 };
+  if (key === 'heritage') return { ...PALETTES.heritage, key, label: 'Heritage', indoor: true, dry: true, glass: true, el: {}, live: [], amb: {}, sig: key, start: 0 };
+  if (key === 'celestial') return { ...PALETTES.celestial, key, label: 'Celestial', space: true, dry: true, night: true, el: {}, live: [], amb: {}, sig: key, start: 0 };   // in orbit: no weather
   const r = PLACES[key], P = PALETTES[r.palette], el = r.el, arc = r.ground === 'snow' ? 'settle' : P.arc;
   return { ...P, key, label: r.label, bg: r.bg, ground: r.ground, el, night: !!r.night, snow: r.ground === 'snow', grass: r.ground === 'meadow' || r.ground === 'field',
     mist: el.mist || 0, arc, start: ARCS[arc] ? ARCS[arc][0] : 0.5, sig: key,
@@ -425,9 +432,10 @@ const obj = (v) => (v && typeof v === 'object' && !Array.isArray(v) ? v : {});
 // Every setting, and the one list of words each choice can take. The app opens calm: no weather, and the sound low.
 const ATMO = ['bolt', 'wind', 'rain'];
 const CHOICES = {
-  mode: ['play', 'settle', 'fidget', 'rest'], overflow: ['end', 'zen'], where: ['live', ...Object.keys(PLACES), 'heritage'], kind: ['break', 'task'], breakMins: [5, 10, 15, 20],
+  mode: ['play', 'settle', 'fidget', 'rest'], overflow: ['end', 'zen'], where: ['live', ...Object.keys(PLACES), 'celestial', 'heritage'], kind: ['break', 'task'], breakMins: [5, 10, 15, 20],
   clouds: ['clear', 'some', 'overcast', 'dark', 'changing'], hour: ['live', 'dawn', 'day', 'dusk', 'night'],
-  ambient: ['off', 'rain', 'wind', 'night', 'fire'], sleepTimer: [15, 30, 60, 120, 0], mins: [10, 20, 30, 60, 0]
+  ambient: ['off', 'rain', 'wind', 'night', 'fire'], sleepTimer: [15, 30, 60, 120, 0], mins: [10, 20, 30, 60, 0],
+  'pacer.track': ['eight', 'circle', 'oval', 'box', 'zigzag'], 'pacer.glass': ['moonstone', 'ember', 'aurora', 'rose', 'lutz', 'amethyst']
 };
 const DEFAULTS = {
   mode: 'play', overflow: 'end', where: 'live', clouds: 'clear', hour: 'live',
@@ -435,12 +443,15 @@ const DEFAULTS = {
   breathing: true, bpm: 6, aim: true, next: false, numbers: true,
   sound: true, vol: 0.85, ambient: 'off', sleepTimer: 60, calm: false, still: reduceMotion,
   kind: 'task', breakMins: 10, mins: 20, tasks: [],
+  pacer: { on: true, drops: false, track: 'eight', glass: 'moonstone', glow: 0.6, bright: 0.85, speed: 7 },   // Fidget's light: its track, its glass, how it shines, laps a minute
   beta: { lookup: false, chest: false, heavy: false }   // the experiments: each off until you switch it on   // your list: up to three lines, each { text, due: minutes after midnight or -1 }
 };
 const PREFS = (() => {
   const s = loadJSON(PKEY), p = JSON.parse(JSON.stringify(DEFAULTS));
   for (const k in DEFAULTS) if (typeof s[k] === typeof DEFAULTS[k] && k !== 'atmo') p[k] = s[k];   // only what still means something
-  for (const k in CHOICES) if (!CHOICES[k].includes(p[k])) p[k] = DEFAULTS[k];
+  for (const k in CHOICES) if (!k.includes('.') && !CHOICES[k].includes(p[k])) p[k] = DEFAULTS[k];
+  const pc = obj(s.pacer), pd = DEFAULTS.pacer; p.pacer = { on: pc.on !== false, drops: pc.drops === true, track: CHOICES['pacer.track'].includes(pc.track) ? pc.track : pd.track, glass: CHOICES['pacer.glass'].includes(pc.glass) ? pc.glass : pd.glass,
+    glow: clamp(Number(pc.glow ?? pd.glow) || 0, 0, 1), bright: clamp(Number(pc.bright ?? pd.bright) || 0.2, 0.2, 1), speed: clamp(Number(pc.speed) || pd.speed, 4, 15) };
   for (const k of ATMO) { const a = obj(obj(s.atmo)[k]); p.atmo[k] = { on: !!a.on, lv: clamp(Number(a.lv) || DEFAULTS.atmo[k].lv, 0.05, 1) }; }
   p.beta = Object.fromEntries(Object.keys(DEFAULTS.beta).map(k => [k, obj(s.beta)[k] === true]));
   p.bpm = clamp(+p.bpm || 6, 4, 8); p.vol = clamp(+p.vol, 0, 1);
@@ -470,13 +481,13 @@ function saveJournal() { saveJSON(JKEY, J); journalDirty = false; }
 // the scene and the breath. Fidget: the scene, the weather and your hands. Rest: the pool goes dark; the world goes on in sound.
 const LAYERS = { play: ['scene', 'weather', 'spheres'], settle: ['scene', 'settle'], fidget: ['scene', 'weather', 'fidget'], rest: ['scene', 'weather'] };
 const MODE_NAMES = { play: 'Play', settle: 'Relax', fidget: 'Fidget', rest: 'Rest' };
-const has = (l) => LAYERS[S.mode].includes(l) && !(l === 'weather' && here().indoor);
+const has = (l) => LAYERS[S.mode].includes(l) && !(l === 'weather' && here().dry);   // Heritage is indoors; Celestial is in space
 const S = {
   mode: 'play', world: createWorld(), score: 0, blooms: 0, merges: 0, highestTier: 2, current: 0, next: 1, fair: true,
   dropX: LW / 2, targetX: LW / 2, sway: 0, aiming: false, aimCancelled: false, canDrop: true, cooldown: 0,
   overT: 0, offender: 0, gameOver: false, card: false, sheet: null, combo: 0, comboT: 0, tools: { strike: 0, mystery: 0, storm: 0 }, armed: false, zap: null,
   wild: false, zen: false, storm: null, stormQ: [], fx: { rain: 0, wind: 0 }, fid: null, outro: null, gone: false, roundDone: false, pauseT: 0,
-  breath: 0.5, sigh: null, space: null, ballFade: 0, rescueAt: 0, life: 0.5, rainMem: 0, wx: 0, cloud: 0, tod: 0,
+  breath: 0.5, sigh: null, space: null, ballFade: 0, rescueAt: 0, life: 0.5, rainMem: 0, wx: 0, wxOpen: false, severe: false, doom: null, cloud: 0, tod: 0,
   pulses: [], rumbles: [], lit: 0, growl: 0, cellA: 0, flash: 0, lastInput: -1e9, born: performance.now(),
   sleep: null, wakeLock: null, goal: null, parked: false, paused: false, intro: null, prev: null
 };
@@ -506,7 +517,7 @@ function updateScene(dt) {
   const byTime = (v) => v[i] + (v[(i + 1) % 4] - v[i]) * f, el = w.el;   // night, dawn, day, dusk
   S.cellA += (stormYouMake() - S.cellA) * Math.min(1, dt * (stormYouMake() > S.cellA ? 1.8 : 0.35));   // in fast, away slowly
   ENV.cover = Math.max(S.cloud * 0.93, S.cellA, RN.level * 0.85);
-  ENV.gloom = Math.max(ENV.cover * ENV.cover * 0.66, S.cellA * 0.75, RN.level * 0.35);
+  ENV.gloom = Math.max(ENV.cover * ENV.cover * 0.66, S.cellA * 0.75, RN.level * (S.severe ? 0.7 : 0.35));   // severe: the sky goes dark under it
   ENV.precip = RN.level; ENV.rain = w.snow ? 0 : ENV.precip; ENV.snow = w.snow ? ENV.precip : 0;
   ENV.light = SKY.light * (1 - ENV.gloom * 0.6); ENV.dark = 1 - SKY.light;
   const calm = 1 - clamp(ENV.precip * 1.5 + ENV.gloom, 0, 1), still = 1 - clamp(Math.abs(ENV.blow) * 0.5, 0, 0.8), insects = el.insects || 0;
@@ -633,6 +644,7 @@ class SoundBath {
     return g;
   }
   knock(pan, soft) {   // Heritage: a marble set down on wood, a short knock with a click of glass on top
+    if (!this.live) return;
     const c = this.ctx, t = c.currentTime, out = this.out('notes', pan), o = c.createOscillator(), g = c.createGain();
     o.frequency.setValueAtTime(soft ? 150 : 180, t); o.frequency.exponentialRampToValueAtTime(95, t + 0.08);
     g.gain.setValueAtTime(0.0008, t); g.gain.linearRampToValueAtTime(soft ? 0.07 : 0.12, t + 0.006); g.gain.exponentialRampToValueAtTime(0.0005, t + 0.12);
@@ -640,6 +652,7 @@ class SoundBath {
     this.tone(out, 2900 + Math.random() * 500, 'sine', soft ? 0.008 : 0.016, 0.002, 0.05, t);
   }
   clink(freq, pan, peak = 0.06, echo = false) {   // glass meeting glass: the uneven overtones of a real marble
+    if (!this.live) return;
     const t = this.ctx.currentTime, out = this.out('notes', pan);
     [[1, 1, 0.9], [2.76, 0.4, 0.5], [5.4, 0.18, 0.28]].forEach(([m, a, d]) => {
       if (freq * m > 5000) return;   // above this, a phone speaker turns a ring into a hiss
@@ -710,6 +723,13 @@ class SoundBath {
     this.noise1({ type: 'lowpass', f0: 2600, f1: 120, peak, attack: 0.015, dur: 3.2, pan });
     this.noise1({ type: 'lowpass', f0: 320, f1: 60, peak: peak * 0.8, attack: 0.08, dur: 3.8, pan });
   }
+  plink(size, pan) {   // a drop into still water: the air it traps rings, sliding up in pitch; a smaller drop rings higher
+    if (!this.live) return;
+    const t = this.ctx.currentTime, o = this.ctx.createOscillator(), g = this.ctx.createGain(), f = clamp(1500 / size, 700, 2200);
+    o.frequency.setValueAtTime(f, t); o.frequency.exponentialRampToValueAtTime(f * 1.5, t + 0.07);
+    g.gain.setValueAtTime(0.0001, t); g.gain.exponentialRampToValueAtTime(0.06, t + 0.004); g.gain.exponentialRampToValueAtTime(0.0001, t + 0.14);
+    o.connect(g); g.connect(this.out('notes', pan)); o.start(t); o.stop(t + 0.16); o.onended = () => g.disconnect();
+  }
   roll(peak) { this.noise1({ type: 'lowpass', f0: 800, f1: 160, peak, attack: 0.5, dur: 5, pan: (Math.random() - 0.5) * 0.8 }); }
   rubbing(v) {   // a finger tracing, in pool-units a second: rough and quick, or slow enough, a silky high tone; silent when it stops
     if (!this.ctx) return;
@@ -722,6 +742,7 @@ class SoundBath {
       : { bus: 'breath', type: 'bandpass', f0: 1100, f1: 320, q: 0.8, peak: 0.08, attack: 0.25, dur });
   }
   chirp(level) {
+    if (!this.live) return;
     const t0 = this.ctx.currentTime, out = this.out('wildlife', Math.random() * 1.4 - 0.7), base = BIRD_HZ[Math.floor(Math.random() * BIRD_HZ.length)];
     for (let i = 0, n = 2 + Math.floor(Math.random() * 4); i < n; i++) {
       const t = t0 + i * (0.09 + Math.random() * 0.07), f = base * (Math.random() < 0.3 ? 1.122 : 1), o = this.ctx.createOscillator(), g = this.ctx.createGain();
@@ -731,10 +752,12 @@ class SoundBath {
     }
   }
   trill(level, bus) {   // a cricket, each a little different
+    if (!this.live) return;
     const t0 = this.ctx.currentTime, out = this.out(bus, Math.random() * 1.2 - 0.6), f = 4186 * (0.96 + Math.random() * 0.08), gap = 0.04 + Math.random() * 0.025;
     for (let i = 0, n = 2 + (Math.random() * 4 | 0); i < n; i++) this.tone(out, f, 'sine', 0.007 * level, 0.008, 0.035, t0 + i * gap);
   }
   hoot() {   // an owl: a soft low call, then two more
+    if (!this.live) return;
     const c = this.ctx, t0 = c.currentTime, out = this.out('wildlife', -0.35);
     [[0, 0.42, 1], [0.8, 0.22, 0.8], [1.1, 0.55, 0.9]].forEach(([d, len, k]) => {
       const o = c.createOscillator(), g = c.createGain(), t = t0 + d; o.type = 'sine'; o.frequency.setValueAtTime(400, t); o.frequency.linearRampToValueAtTime(372, t + len);
@@ -743,6 +766,7 @@ class SoundBath {
     });
   }
   gull() {   // two or three falling cries
+    if (!this.live) return;
     const c = this.ctx, out = this.out('wildlife', Math.random() * 1.2 - 0.6);
     for (let i = 0, n = 2 + (Math.random() * 2 | 0); i < n; i++) {
       const t = c.currentTime + i * 0.42, o = c.createOscillator(), g = c.createGain(), v = c.createOscillator(), vd = c.createGain();
@@ -752,6 +776,7 @@ class SoundBath {
     }
   }
   whistle() {   // a rainforest bird: a bright two-note whistle, up or down
+    if (!this.live) return;
     const c = this.ctx, out = this.out('wildlife', Math.random() * 1.4 - 0.7), up = Math.random() < 0.5, f = 1600 + Math.random() * 900;
     for (let i = 0; i < 2; i++) {
       const t = c.currentTime + i * 0.22, o = c.createOscillator(), g = c.createGain(); o.frequency.setValueAtTime(f * (up ? 1 : 1.3), t); o.frequency.exponentialRampToValueAtTime(f * (up ? 1.3 : 1), t + 0.16);
@@ -870,7 +895,8 @@ const ICON = {
   speaker: 'M4.5 9.5h3.2L12 6v12l-4.3-3.5H4.5z', waves: 'M15 9.5a3.5 3.5 0 0 1 0 5M17.5 7a7 7 0 0 1 0 10', hush: 'M15.5 9.5l5 5M20.5 9.5l-5 5',
   bolt: 'M13 2.5 5.5 13.5h5.5L10 21.5l8-11.5h-5.5z', wind: 'M3.5 9h10a2.5 2.5 0 1 0-2.4-3.2M3.5 13h15a2.8 2.8 0 1 1-2.6 3.8M3.5 17h6',
   rain: CLOUD + 'M9 17l-1 2.5M13 17l-1 2.5M17 17l-1 2.5', snow: CLOUD + 'M9 18.5h.01M13 20h.01M17 18.5h.01M11 21.5h.01M15 21.5h.01',
-  strike: 'M12 2.5a9.5 9.5 0 1 0 0 19 9.5 9.5 0 0 0 0-19zM13 6l-4 7h3.2l-1 5 4.3-7.2h-3.3z', breathe: DOT(12, 12, 7), touch: DOT(12, 12, 2) + 'M8 8a5.7 5.7 0 0 0 0 8M16 8a5.7 5.7 0 0 1 0 8M5.2 5.2a9.6 9.6 0 0 0 0 13.6M18.8 5.2a9.6 9.6 0 0 1 0 13.6' + DOT(12, 12, 2),
+  strike: 'M12 2.5a9.5 9.5 0 1 0 0 19 9.5 9.5 0 0 0 0-19zM13 6l-4 7h3.2l-1 5 4.3-7.2h-3.3z', breathe: DOT(12, 12, 7), turn: 'M20 12a8 8 0 0 1-14 5.3M4 12a8 8 0 0 1 14-5.3M18 3v3.7h-3.7M6 21v-3.7h3.7', orb: DOT(12, 12, 3) + 'M2.5 12c0-2.5 4.3-4.5 9.5-4.5s9.5 2 9.5 4.5-4.3 4.5-9.5 4.5S2.5 14.5 2.5 12z',
+  drop: 'M12 3.5c3 4 5.5 7 5.5 10a5.5 5.5 0 0 1-11 0c0-3 2.5-6 5.5-10z', tune: 'M4 7h10M18 7h2M4 17h4M12 17h8M16 5v4M10 15v4', touch: DOT(12, 12, 2) + 'M8 8a5.7 5.7 0 0 0 0 8M16 8a5.7 5.7 0 0 1 0 8M5.2 5.2a9.6 9.6 0 0 0 0 13.6M18.8 5.2a9.6 9.6 0 0 1 0 13.6' + DOT(12, 12, 2),
   mystery: 'M12 3a9 9 0 1 0 0 18 9 9 0 0 0 0-18zM14.5 7a5.5 5.5 0 1 0 2.6 9.5A4.6 4.6 0 0 1 14.5 7z', storm: CLOUD + 'M8 18.5l1.5 1.5M12 17.5l1.5 1.5M16 18.5l1.5 1.5M10 21h.01M14 21h.01'
 };
 const svg = (d) => `<svg viewBox="0 0 24 24" aria-hidden="true"><path d="${d}"/></svg>`;
@@ -892,10 +918,6 @@ function spawnParticles(x, y, color, count = 16, speed = 4.5) {
   }
 }
 const addRipple = (x, y, r0, r1, color) => { if (!lessMo()) ripples.push({ x, y, r: r0, max: r1, alpha: 0.9, color }); };
-function smokePuff(x, y, k = 1) {   // where lightning lands: a little grey puff that rises, spreads and drifts with the wind
-  for (let i = 0, n = Math.round(5 + 6 * k); i < n; i++) particles.push({ x: x + (Math.random() - 0.5) * 12, y: y - Math.random() * 6, vx: (Math.random() - 0.5) * 0.5, vy: -0.3 - Math.random() * 0.5,
-    r: 2.5 + Math.random() * 3, grow: 0.1 + Math.random() * 0.12, color: '#c9ccd2', alpha: 0.8, decay: 0.008 + Math.random() * 0.006, g: -0.002, drift: true });
-}
 function updateEffects(k) {
   for (let i = particles.length - 1; i >= 0; i--) {
     const p = particles[i];
@@ -1460,9 +1482,39 @@ function drawTray(c) {
   lamp.addColorStop(0, `rgba(${col},${clamp(0.22 + flick, 0.04, 1).toFixed(3)})`); lamp.addColorStop(1, `rgba(${col},0)`);
   c.fillStyle = lamp; c.fillRect(0, 0, LW, LH); c.restore();
 }
+// Celestial: in orbit. The Earth's edge below with its thin blue line of air, the Sun rising past it, the Moon lit from the Sun's
+// side, Jupiter, Saturn and Mars drifting, shooting stars now and then. The in-breath brightens the air over the Earth.
+const SPACE = (() => { const r = seeded(7); return { stars: Array.from({ length: 240 }, () => [r() * LW, r() * LH * 0.8, r() * 1.3 + 0.3, r() * TAU]), shoot: null, next: 4 }; })();
+function drawSpace(c, b) {
+  const t = lt(), ex = CX, ey = LH + 560, er = 680;
+  const bg = c.createLinearGradient(0, 0, 0, LH); bg.addColorStop(0, '#02030a'); bg.addColorStop(0.6, '#070a1e'); bg.addColorStop(1, '#0b1030'); c.fillStyle = bg; c.fillRect(0, 0, LW, LH);
+  for (const [x, y, rgb, rr] of [[90, 140, '120,80,200', 160], [300, 250, '40,120,200', 190]]) { const g = c.createRadialGradient(x, y, 0, x, y, rr); g.addColorStop(0, `rgba(${rgb},0.12)`); g.addColorStop(1, `rgba(${rgb},0)`); c.fillStyle = g; c.fillRect(x - rr, y - rr, rr * 2, rr * 2); }   // a nebula, faint
+  c.fillStyle = '#fff'; for (const [x, y, s, ph] of SPACE.stars) { c.globalAlpha = 0.35 + 0.45 * (0.5 + 0.5 * Math.sin(t * 1.3 + ph)); c.fillRect(x, y, s, s); } c.globalAlpha = 1;
+  const drift = (x0, v) => ((x0 + t * v) % (LW + 80) + LW + 80) % (LW + 80) - 40;   // the planets cross over minutes
+  let px = drift(250, 1.2); c.fillStyle = '#e2b58a'; c.beginPath(); c.arc(px, 70, 9, 0, TAU); c.fill(); c.strokeStyle = 'rgba(150,95,60,0.7)'; c.lineWidth = 1.2; for (const dy of [-3, 1, 4]) { c.beginPath(); c.moveTo(px - 8.4, 70 + dy); c.lineTo(px + 8.4, 70 + dy); c.stroke(); }
+  px = drift(120, 0.8); c.strokeStyle = 'rgba(240,215,150,0.8)'; c.lineWidth = 1.4; c.beginPath(); c.ellipse(px, 40, 13, 3.5, -0.3, 0, TAU); c.stroke(); c.fillStyle = '#ead09a'; c.beginPath(); c.arc(px, 40, 5.5, 0, TAU); c.fill();
+  px = drift(330, 1.6); c.fillStyle = '#d4664a'; c.beginPath(); c.arc(px, 120, 3.5, 0, TAU); c.fill();
+  const mx = 300, my = 175, mr = 22; c.fillStyle = '#d9dde3'; c.beginPath(); c.arc(mx, my, mr, 0, TAU); c.fill();   // the Moon
+  c.fillStyle = 'rgba(150,158,170,0.6)'; for (const [dx, dy, r] of [[-6, -5, 5], [7, 4, 4], [-2, 9, 3], [9, -8, 2.5]]) { c.beginPath(); c.arc(mx + dx, my + dy, r, 0, TAU); c.fill(); }
+  const sh = c.createLinearGradient(mx - mr, my, mx + mr, my); sh.addColorStop(0.35, 'rgba(5,8,20,0)'); sh.addColorStop(1, 'rgba(5,8,20,0.85)'); c.fillStyle = sh; c.beginPath(); c.arc(mx, my, mr, 0, TAU); c.fill();
+  const sx = 64, sy = 352, sun = c.createRadialGradient(sx, sy, 0, sx, sy, 150);   // the Sun, rising past the Earth's edge
+  sun.addColorStop(0, 'rgba(255,250,235,1)'); sun.addColorStop(0.08, 'rgba(255,236,190,0.9)'); sun.addColorStop(0.3, 'rgba(255,190,110,0.25)'); sun.addColorStop(1, 'rgba(255,170,90,0)');
+  c.globalCompositeOperation = 'lighter'; c.fillStyle = sun; c.fillRect(sx - 150, sy - 150, 300, 300);
+  c.strokeStyle = 'rgba(255,230,180,0.16)'; c.lineWidth = 1.2; for (let i = 0; i < 12; i++) { const a = i * TAU / 12 + t * 0.03, l = 60 + 30 * (i % 2); c.beginPath(); c.moveTo(sx + Math.cos(a) * 16, sy + Math.sin(a) * 16); c.lineTo(sx + Math.cos(a) * l, sy + Math.sin(a) * l); c.stroke(); }
+  c.globalCompositeOperation = 'source-over';
+  const earth = c.createRadialGradient(ex - 200, ey - er, 40, ex, ey, er); earth.addColorStop(0, '#3b8fd6'); earth.addColorStop(0.5, '#1a4f8f'); earth.addColorStop(1, '#0a1f44');   // the Earth
+  c.fillStyle = earth; c.beginPath(); c.arc(ex, ey, er, 0, TAU); c.fill();
+  c.save(); c.clip(); c.fillStyle = 'rgba(255,255,255,0.18)'; for (let i = 0; i < 7; i++) { const x = ((i * 90 + t * 4) % (LW + 160)) - 80, y = LH - 112 + (i % 3) * 22; c.beginPath(); c.ellipse(x, y, 50 + (i % 2) * 30, 6, 0.08, 0, TAU); c.fill(); } c.restore();   // its clouds, turning
+  c.globalCompositeOperation = 'lighter'; c.strokeStyle = `rgba(120,190,255,${(0.45 + 0.35 * b).toFixed(3)})`; c.lineWidth = 3 + 3 * b; c.shadowColor = 'rgba(120,190,255,0.9)'; c.shadowBlur = 18;
+  c.beginPath(); c.arc(ex, ey, er + 2, 0, TAU); c.stroke(); c.shadowBlur = 0; c.globalCompositeOperation = 'source-over';
+  if (lessMo()) return;
+  if ((SPACE.next -= stepDt) <= 0 && !SPACE.shoot) { SPACE.shoot = { x: 60 + Math.random() * 260, y: 20 + Math.random() * 120, t: 0, dir: Math.random() < 0.5 ? -1 : 1 }; SPACE.next = 5 + Math.random() * 10; }   // a shooting star
+  const s = SPACE.shoot; if (s) { s.t += stepDt; const a = Math.max(0, 1 - s.t / 0.8), x = s.x + s.dir * s.t * 220, y = s.y + s.t * 120; c.strokeStyle = `rgba(255,255,255,${(0.8 * a).toFixed(3)})`; c.lineWidth = 1.5; c.beginPath(); c.moveTo(x, y); c.lineTo(x - s.dir * 40, y - 22); c.stroke(); if (s.t > 0.8) SPACE.shoot = null; }
+}
 function drawScene(c, b, k) {
   const w = here();
   if (w.indoor) { drawTray(c); return; }
+  if (w.space) { drawSpace(c, b); return; }
   ensureLand();
   drawSky(c, b, k);
   c.save(); c.globalCompositeOperation = 'lighter';     // the breath brightens the horizon…
@@ -1498,13 +1550,13 @@ function drawScene(c, b, k) {
 // One fixed pool per kind; the scene's level for that kind (0–1) sets how many are active. Creatures and leaves are kept a
 // little sparse (FEEL.life). Reduce motion: rain and snow come half as thick and half as fast.
 const LEAF_COLORS = ['234,88,12', '245,158,11', '220,38,38', '217,119,6'];
-const POOL_MAX = { rain: 120, snow: 110, leaves: 30, fireflies: 28, butterflies: 6 };
+const POOL_MAX = { rain: 200, snow: 180, leaves: 30, fireflies: 28, butterflies: 6 };
 const WX = Object.fromEntries(Object.entries(POOL_MAX).map(([kind, n]) => [kind, Array.from({ length: n }, (_, i) => ({
   x: Math.random() * LW, y: kind === 'butterflies' ? 210 + Math.random() * 110 : Math.random() * LH, d: 0.4 + Math.random() * 0.6, ph: Math.random() * TAU,
   rot: Math.random() * TAU, vr: (Math.random() - 0.5) * 0.08, hue: LEAF_COLORS[i % 4], wing: i
 }))]));
 const falls = (kind) => kind === 'rain' || kind === 'snow';
-const active = (kind) => Math.round(clamp(ENV[kind] * (falls(kind) ? (lessMo() ? 0.5 : 1) : FEEL.life), 0, 1) * POOL_MAX[kind]);
+const active = (kind) => Math.round(clamp(ENV[kind] * (falls(kind) ? (lessMo() ? 0.5 : 1) * (S.severe ? 1 : 0.6) : FEEL.life), 0, 1) * POOL_MAX[kind]);   // severe: the full pool
 function updateWeather(k, dt) {
   const t = animTime, w = ENV.blow, kw = k * (lessMo() ? 0.5 : 1);
   const wrap = (m, kind) => {   // a drop or a flake ends on the floor, or on what has already gathered there
@@ -1593,7 +1645,7 @@ function flash(close) {   // the sky lights from inside, once; refused if it wou
   S.pulses.push({ t0: animTime, amp, soft }); flashBusy = animTime;
   return true;
 }
-function strikeSky(close, dark = false) {   // the flash, a bolt if it's close and smoke where it lands, then its sound
+function strikeSky(close, dark = false) {   // the flash, a bolt if it's close, then its sound
   const lit = !dark && flash(close);
   if (!lit && lightning() > 0 && !dark) return false;   // too soon after the last flash: this one waits
   const x = 50 + Math.random() * (LW - 100);
@@ -1602,7 +1654,6 @@ function strikeSky(close, dark = false) {   // the flash, a bolt if it's close a
   if (lit && !lessMo() && close > 0.3) {
     scene.bolt = makeBolt(x); scene.boltUntil = animTime + 0.25 + 0.45 * close;
     const end = scene.bolt[0][scene.bolt[0].length - 1]; scene.sheetX = end[0];
-    if (close > 0.45) smokePuff(end[0], end[1] + 6, close);
   }
   S.rumbles.push({ at: animTime + 0.12 + (1 - close) * 1.8, close, vol: 0.7 });
   return true;
@@ -1620,7 +1671,10 @@ function updateStorms(dt) {   // the light and the sound of every strike, played
   S.growl = LT.level * 0.13 * thunder();   // the storm's low growl, under the strikes
 }
 // What each is doing right now, 0 to 1: its switch, or a swipe in Fidget. Nothing without weather; no lightning while you rest.
-const made = (k) => { const a = PREFS.atmo[k]; return has('weather') && !(k === 'bolt' && S.mode === 'rest') ? Math.max(a.on ? a.lv : 0, S.fx[k] || 0) : 0; };
+// Severe: whatever is on runs at full strength, and a hurricane or a blizzard brings its own gale. The physics sees no more
+// wind than the strongest normal setting: severe is louder, darker and thicker, never a different game.
+const made = (k) => { const a = PREFS.atmo[k], gale = k === 'wind' && S.severe && PREFS.atmo.rain.on; return has('weather') && !(k === 'bolt' && S.mode === 'rest') ? Math.max(a.on ? (S.severe ? 1 : a.lv) : 0, gale ? 1 : 0, S.fx[k] || 0) : 0; };
+const SEVERE = { bolt: 'Supercell', wind: 'Gale', rain: 'Hurricane' };
 const LT = { next: 0, tail: 0, level: 0, was: false }, RN = { level: 0 };
 const QUIET_START = 30;   // seconds after launch with no strike, whatever the weather
 const stormYouMake = () => { const L = made('bolt'); return L ? 0.5 + 0.5 * L : LT.tail > 0 ? 0.6 : 0; };
@@ -1633,7 +1687,7 @@ function updateActions(dt, k) {
   if (L && !LT.was) LT.next = Math.max(LT.next, animTime + 0.7);   // however a storm begins, its growl comes first
   if (!L && LT.was && !PREFS.atmo.bolt.on) { LT.tail = 4; LT.next = animTime + 0.8; }   // a storm you stop rolls away
   LT.was = !!L;
-  if (L) { if (animTime >= Math.max(LT.next, QUIET_START) && strikeSky(clamp(0.1 + L * (0.15 + 0.75 * Math.random()), 0, 1))) LT.next = animTime + 0.4 + (0.8 + 3.6 * (1 - L)) * Math.random(); }
+  if (L) { if (animTime >= Math.max(LT.next, QUIET_START) && strikeSky(clamp(0.1 + L * (0.15 + 0.75 * Math.random()) + (S.severe ? 0.2 : 0), 0, 1))) LT.next = animTime + (S.severe ? 0.35 + 1.2 * Math.random() : 0.4 + (0.8 + 3.6 * (1 - L)) * Math.random()); }
   else if (LT.tail > 0) { LT.tail -= dt; if (animTime >= LT.next && LT.tail > 1 && strikeSky(0.1 + 0.2 * Math.random(), true)) LT.next = animTime + 1.2 + Math.random(); }
   const held = S.fid && S.fid.charge ? 0.3 + 0.6 * S.fid.charge : 0;   // Fidget: a held finger gathers the growl
   LT.level += (Math.max(held, L ? 0.4 + 0.45 * L + 0.15 * Math.sin(animTime * 1.3) : LT.tail > 0 ? 0.6 * LT.tail / 4 : 0) - LT.level) * Math.min(1, dt * 3);
@@ -1708,7 +1762,7 @@ function drawBoard(c) {   // over the spheres: what has gathered on the floor, a
 // them merge. The weather fades in over a second, never a flash. Heritage is indoors: the lamp gutters and comes back.
 const STORMS = { winter: ['Winter whiteout', 'snow', '244,248,255'], spring: ['Spring shower', 'petals', '252,224,236'], summer: ['Summer squall', 'rain', '200,214,226'],
   autumn: ['Fall flurry', 'leaves', '214,170,120'], rainforest: ['Rainforest rush', 'rain', '196,226,212'], camp: ['Campfire cinders', 'embers', '60,30,20'],
-  woods: ['Woodland wind', 'leaves', '120,110,150'], beach: ['Sandstorm', 'sand', '231,211,166'], stars: ['Starfall', 'stars', '20,26,60'], heritage: ['The lamp gutters', 'dark', '8,4,0'] };
+  woods: ['Woodland wind', 'leaves', '120,110,150'], beach: ['Sandstorm', 'sand', '231,211,166'], stars: ['Starfall', 'stars', '20,26,60'], celestial: ['Meteor shower', 'stars', '6,8,24'], heritage: ['The lamp gutters', 'dark', '8,4,0'] };
 function drawStorm(c) {
   const st = S.storm; if (!st || st.a < 0.01) return;
   const [, kind, rgb] = STORMS[here().key], a = st.a, t = animTime, dir = windSide();
@@ -1811,7 +1865,7 @@ function updateBreath(dt) {
 function breatheWords() {
   if (S.sigh) { const st = DEEP[S.sigh.i]; return { word: st.word, cue: st.cue || '', status: S.space ? '' : 'Tap to skip' }; }
   const H = S.space.hold;
-  return { word: breathIn() ? 'In through the nose' : 'Out through the mouth', cue: '', status: S.space.chest ? 'Following your breath' : H.state === 'in' || H.state === 'out' ? 'Following you' : S.space.breaths < 3 ? HINT : '' };
+  return { word: breathIn() ? 'In through the nose' : 'Out through the mouth', cue: '', status: S.space.chest ? 'Following your breath' : H.state === 'in' || H.state === 'out' ? 'Following you · meet the dashes to keep the pace' : S.space.breaths < 3 ? HINT : '' };
 }
 // The breath has one shape. Full, it is the pool's own border; breathing out, it draws in, rounds into a circle and shrinks to a
 // point; breathing in, it grows back out to the border. The opening uses the same shape.
@@ -1836,7 +1890,9 @@ function drawBreathe(c, f) {
   c.lineCap = 'round'; c.lineJoin = 'round';
   c.strokeStyle = tint(0.16); c.lineWidth = 1; c.setLineDash([3, 6]); c.beginPath(); shapePath(c, breathShape(1)); c.stroke(); c.setLineDash([]);
   c.fillStyle = `rgba(242,248,252,${(0.06 + 0.1 * b).toFixed(3)})`; c.beginPath(); shapePath(c, breathShape(lessMo() ? 0.5 : b)); c.fill();   // Reduce motion: the shape holds as a circle, only glowing
-  c.shadowColor = here().accent; c.shadowBlur = 14; c.strokeStyle = tint(0.55 + 0.4 * b); c.lineWidth = 2.5; c.stroke(); c.shadowBlur = 0;
+  const lead = sp && !S.sigh && !sp.chest && (sp.hold.state === 'in' || sp.hold.state === 'out'), inStep = lead && Math.abs(b - pacerLevel()) < 0.07;   // you're leading: are you with the pace?
+  c.shadowColor = inStep ? `rgb(${GOLD})` : here().accent; c.shadowBlur = 14; c.strokeStyle = inStep ? `rgba(${GOLD},0.9)` : tint(0.55 + 0.4 * b); c.lineWidth = 2.5; c.stroke(); c.shadowBlur = 0;
+  if (lead && !lessMo()) { c.strokeStyle = 'rgba(242,248,252,0.55)'; c.lineWidth = 1.5; c.setLineDash([6, 7]); c.beginPath(); shapePath(c, breathShape(pacerLevel())); c.stroke(); c.setLineDash([]); }   // the pace, in dashes: meet it and the line turns gold
   if (sp && !S.sigh) {
     c.strokeStyle = tint(0.1); c.lineWidth = 3; c.beginPath(); for (let i = 0; i <= 96; i++) { const [x, y] = eightAt(i / 96); i ? c.lineTo(x, y) : c.moveTo(x, y); } c.stroke();
     const [rx, ry] = ringAt(), r = lessMo() ? 10 : 6 + 9 * b, a = 0.35 + 0.65 * b, g = c.createRadialGradient(rx, ry, 0, rx, ry, r * 2.6);   // the light on it: grow, glow, slim, dim
@@ -1862,26 +1918,37 @@ function drawBreathe(c, f) {
   c.restore();
 }
 /* ---------- Fidget: your hands on the world ---------- */
-// One surface, for grounding: every gesture answers with a texture and a sound. Tap: a drop, a ripple, a note. Trace: your
-// finger leaves a trail in the place's own surface, with a brush under it. Swipe down: rain pours; across: a gust. Hold:
-// the surface gives and thunder gathers; let go and it breaks. Hold and pull: a thread stretches and springs back.
-// Tap, trace, tug. Nothing is counted or kept.
-const HOLD = 0.45;   // a finger still this long is a hold
+// One surface, for grounding. The Pacer: a light runs its track side to side at a steady pace, for your eyes to follow, with a
+// soft note at each turn, left ear then right. Trace, and the same light follows your finger, then glides home. Drops: tap, and
+// a drop falls from the dropper into still water: a crown, rings spreading, a jet that throws one small drop back up, and the
+// plink of the air it traps. Hold: thunder gathers. Swipe down: rain; across: a gust. Hold and pull: a thread springs back.
+// Nothing is counted or kept.
+const HOLD = 0.45, WATER_Y = 300;   // a finger still this long is a hold; Drops: the still water starts here
 const SURFACE = { snow: '244,248,255', sand: '255,240,205', meadow: '220,240,215', field: '240,232,190', forest: '214,196,160' };
-function openFidget() { S.fid = { press: null, last: null, mode: null, trail: [], charge: 0, snap: null, used: 0 }; }
+const GLASS = { moonstone: ['236,242,255', '150,180,255'], ember: ['255,200,140', '255,100,40'], aurora: ['170,255,220', '80,160,255'],
+  rose: ['255,214,226', '236,120,165'], lutz: ['255,228,160', '205,145,40'], amethyst: ['222,200,255', '145,85,235'] };   // [light, deep]
+const TRACKS = {   // once round as u goes 0 to 1; every track crosses the board side to side
+  eight: (u) => { const t = u * TAU, d = 1 + Math.sin(t) ** 2; return [CX + 150 * Math.cos(t) / d, CY + 150 * Math.sin(t) * Math.cos(t) / d]; },
+  circle: (u) => [CX + 125 * Math.cos(u * TAU), CY + 125 * Math.sin(u * TAU)],
+  oval: (u) => [CX + 160 * Math.cos(u * TAU), CY + 92 * Math.sin(u * TAU)],
+  box: (u) => { const c = Math.cos(u * TAU), n = Math.sin(u * TAU); return [CX + 155 * Math.sign(c) * Math.abs(c) ** 0.35, CY + 120 * Math.sign(n) * Math.abs(n) ** 0.35]; },   // a rounded rectangle
+  zigzag: (u) => { const s = u < 0.5 ? u * 2 : 2 - u * 2; return [32 + s * (LW - 64), CY + 95 * (2 * Math.abs((s * 4) % 2 - 1) - 1)]; }   // across and back, four teeth
+};
+const pacerAt = (u) => TRACKS[PREFS.pacer.track](((u % 1) + 1) % 1);
+function openFidget() { const [x, y] = pacerAt(0); S.fid = { press: null, last: null, mode: null, trail: [], charge: 0, snap: null, used: 0, u: 0, orb: { x, y, home: 1 }, tail: [], dir: 0, drops: [], rings: [], aim: CX }; }
 function fidgetTouch(p, phase) {
   const F = S.fid;
-  if (phase === 'down') { F.press = { ...p, t: animTime }; F.last = { ...p, t: animTime, vx: 0, vy: 0 }; F.mode = null; F.charge = 0; return; }
+  if (phase === 'down') { F.press = { ...p, t: animTime }; F.last = { ...p, t: animTime, vx: 0, vy: 0 }; F.mode = null; F.charge = 0; F.aim = p.x; return; }
   if (!F.press) return;
   if (phase === 'move') {
     const dt = Math.max(0.008, animTime - F.last.t), vx = (p.x - F.last.x) / dt, vy = (p.y - F.last.y) / dt, far = Math.hypot(p.x - F.press.x, p.y - F.press.y) > SLIP;
     F.last = { ...p, t: animTime, vx: F.last.vx * 0.5 + vx * 0.5, vy: F.last.vy * 0.5 + vy * 0.5 };
     if (!F.mode && far) F.mode = 'trace'; else if (F.mode === 'hold' && far) F.mode = 'tug';
-    if (F.mode === 'trace') { F.trail.push({ x: p.x, y: p.y, t: animTime }); sound.rubbing(Math.hypot(F.last.vx, F.last.vy)); }
+    if (F.mode === 'trace') { if (PREFS.pacer.on) F.orb.home = 0; else F.trail.push({ x: p.x, y: p.y, t: animTime }); sound.rubbing(Math.hypot(F.last.vx, F.last.vy)); }   // the light leaves its track for your finger
     return;
   }
   const { x, y } = F.press; F.used++; sound.rubbing(0);   // up
-  if (!F.mode) { tapNote(x); addRipple(x, y, 4, 46, here().accent); creature(x, y); }
+  if (!F.mode) { if (PREFS.pacer.drops) dropAt(x, y); else { tapNote(x); addRipple(x, y, 4, 46, here().accent); creature(x, y); } }
   else if (F.mode === 'trace') {
     const { vx, vy } = F.last, sp = Math.hypot(vx, vy);
     if (sp > 500 && has('weather')) {
@@ -1894,15 +1961,83 @@ function fidgetTouch(p, phase) {
   } else { F.snap = { ax: x, ay: y, x: F.last.x, y: F.last.y, t: 0 }; sound.note(SCALE_HZ[clamp(12 - Math.round(Math.hypot(F.last.x - x, F.last.y - y) / 30), 5, 12)], panFor(x)); }   // the longer the pull, the lower the note
   F.press = null; F.mode = null; F.charge = 0;
 }
+function dropAt(x, y) {   // the dropper lets one go: it falls to the water where you touched, or the near edge of it
+  const F = S.fid, size = 0.6 + Math.random() * 0.8;
+  F.drops.push({ x, y: DROP_Y, vy: 0, to: Math.max(WATER_Y + 12, y), size, jet: 0 });
+}
 function updateFidget(dt) {
-  const F = S.fid;
+  const F = S.fid, k = dt * 60, P = PREFS.pacer;
   if (F.press && !F.mode && animTime - F.press.t > HOLD) F.mode = 'hold';
   if (F.mode === 'hold' || F.mode === 'tug') F.charge = Math.min(1, F.charge + dt / 3);
   if (F.snap && (F.snap.t += dt) > 0.6) F.snap = null;
   F.trail = F.trail.filter(p => animTime - p.t < 3);
+  if (P.on) {   // the Pacer: along its track at your speed; under your finger while you trace; then it glides home
+    if (!lessMo()) F.u += dt * P.speed / 60;
+    const [tx, ty] = pacerAt(F.u), O = F.orb, x0 = O.x, follow = F.mode === 'trace' && F.last;
+    if (!follow && F.mode !== 'trace') O.home = Math.min(1, O.home + dt / 0.8);
+    const gx = follow ? F.last.x : tx + (O.x - tx) * (1 - O.home), gy = follow ? F.last.y : ty + (O.y - ty) * (1 - O.home);
+    O.x += (gx - O.x) * Math.min(1, dt * (follow ? 18 : 6 + 30 * O.home)); O.y += (gy - O.y) * Math.min(1, dt * (follow ? 18 : 6 + 30 * O.home));
+    const dir = Math.sign(O.x - x0);
+    if (dir && F.dir && dir !== F.dir && Math.abs(O.x - CX) > 60 && !follow && animTime - (F.turnT || 0) > 0.4 && (F.turnT = animTime)) sound.note(SCALE_HZ[O.x < CX ? 7 : 9], clamp((O.x - CX) / CX, -0.9, 0.9), 0.018);   // each turn, a soft note on its own side
+    if (dir) F.dir = dir;
+    F.tail.unshift([O.x, O.y]); if (F.tail.length > 28) F.tail.pop();
+    if (!lessMo() && Math.random() < 0.18 * k * P.glow) particles.push({ x: O.x + (Math.random() - 0.5) * 8, y: O.y + (Math.random() - 0.5) * 8, vx: (Math.random() - 0.5) * 0.3, vy: -0.15 - Math.random() * 0.3, r: 0.9 + Math.random(), color: `rgb(${GLASS[P.glass][0]})`, alpha: 0.8 * P.bright, decay: 0.02, g: 0 });   // sparks it sheds
+  }
+  for (const d of F.drops) {   // a drop falls, meets the water, throws up a jet, and the jet throws one small drop back
+    if (d.jet) { d.jet += dt; continue; }
+    d.vy += 0.32 * k; d.y += d.vy * k;
+    if (d.y >= d.to) { d.y = d.to; d.jet = 0.001; splash(d); }
+  }
+  F.drops = F.drops.filter(d => !d.jet || d.jet < 0.9);
+  for (const r of F.rings) r.t += dt;
+  F.rings = F.rings.filter(r => r.t < 2.6);
+}
+function splash(d) {   // the crown, three rings, and the plink: a small drop rings higher than a big one
+  const F = S.fid, pan = panFor(d.x), depth = 0.6 + 0.4 * (d.to - WATER_Y) / (LH - WATER_Y);
+  for (let i = 0; i < 3; i++) F.rings.push({ x: d.x, y: d.to, t: -i * 0.22, s: d.size * depth });
+  if (!lessMo()) for (let i = 0; i < 9; i++) { const a = Math.PI + (i / 8) * Math.PI; particles.push({ x: d.x, y: d.to, vx: Math.cos(a) * (1 + Math.random()) * d.size * 1.4, vy: Math.sin(a) * (1.4 + Math.random()) * d.size - 0.6, r: 1.1 + d.size, color: 'rgba(225,240,255,0.9)', alpha: 0.9, decay: 0.03, g: 0.16 }); }
+  sound.plink(d.size, pan); haptic(6);
+  setTimeout(() => { if (S.fid && !lessMo()) { S.fid.rings.push({ x: d.x, y: d.to, t: 0, s: d.size * depth * 0.45 }); sound.plink(d.size * 0.5, pan); } }, 520);   // the jet's drop comes back down
+}
+function drawWater(c) {   // still water, under the sky: its colour, a long glint, and what has touched it
+  const F = S.fid, g = c.createLinearGradient(0, WATER_Y, 0, LH);
+  g.addColorStop(0, 'rgba(120,160,200,0.22)'); g.addColorStop(0.12, 'rgba(30,60,95,0.5)'); g.addColorStop(1, 'rgba(6,16,30,0.78)');
+  c.fillStyle = g; c.fillRect(0, WATER_Y, LW, LH - WATER_Y);
+  c.strokeStyle = 'rgba(220,235,255,0.35)'; c.lineWidth = 1; c.beginPath(); c.moveTo(0, WATER_Y); c.lineTo(LW, WATER_Y); c.stroke();
+  for (let i = 0; i < 6; i++) { const x = ((animTime * (6 + i * 3) + i * 70) % (LW + 80)) - 40, y = WATER_Y + 20 + i * 28; c.strokeStyle = `rgba(220,235,255,${(0.06 + 0.02 * i).toFixed(3)})`; c.beginPath(); c.moveTo(x, y); c.lineTo(x + 26 + i * 6, y); c.stroke(); }   // glints drifting
+  for (const r of F.rings) { if (r.t < 0) continue; const rx = 8 + r.t * 70 * r.s, a = 0.55 * (1 - r.t / 2.6) * Math.min(1, r.s + 0.3); c.strokeStyle = `rgba(230,242,255,${a.toFixed(3)})`; c.lineWidth = 1.4; c.beginPath(); c.ellipse(r.x, r.y, rx, rx * 0.28, 0, 0, TAU); c.stroke(); c.strokeStyle = `rgba(0,10,25,${(a * 0.5).toFixed(3)})`; c.beginPath(); c.ellipse(r.x, r.y + 2, rx * 0.92, rx * 0.25, 0, 0, TAU); c.stroke(); }
+  const s = 0.8 + 0.2 * Math.sin(animTime * 3), x = F.aim;   // the dropper, above where you last touched, a drop swelling at its tip
+  c.fillStyle = 'rgba(220,232,245,0.55)'; c.beginPath(); rrect(c, x - 4, 0, 8, DROP_Y - 14, 3); c.fill();
+  c.fillStyle = 'rgba(210,235,255,0.85)'; c.beginPath(); c.ellipse(x, DROP_Y - 8 + 2 * s, 3.4 * s, 4.4 * s, 0, 0, TAU); c.fill();
+  for (const d of F.drops) {
+    if (!d.jet) { c.fillStyle = 'rgba(215,236,255,0.92)'; c.beginPath(); c.ellipse(d.x, d.y, 2.6 * d.size + 1, 3.6 * d.size + 1.4, 0, 0, TAU); c.fill(); continue; }
+    const h = Math.sin(Math.min(1, d.jet / 0.5) * Math.PI) * 26 * d.size;   // the jet rises and falls back
+    if (h > 0.5) { c.strokeStyle = 'rgba(225,240,255,0.75)'; c.lineWidth = 2.4 * d.size; c.beginPath(); c.moveTo(d.x, d.to); c.lineTo(d.x, d.to - h); c.stroke(); c.fillStyle = 'rgba(235,245,255,0.9)'; c.beginPath(); c.arc(d.x, d.to - h - 3, 1.8 * d.size, 0, TAU); c.fill(); }
+  }
+}
+function drawPacer(c) {   // the track cut into the dark like a groove, the comet tail, and the light: glass, a swirl inside, its glow
+  const F = S.fid, P = PREFS.pacer, [lt, dp] = GLASS[P.glass], O = F.orb, b = clamp(S.breath, 0, 1), br = P.bright;
+  c.save(); c.lineCap = 'round'; c.lineJoin = 'round';
+  c.beginPath(); for (let i = 0; i <= 160; i++) { const [x, y] = pacerAt(i / 160); i ? c.lineTo(x, y) : c.moveTo(x, y); }
+  c.strokeStyle = 'rgba(0,0,0,0.32)'; c.lineWidth = 7; c.stroke(); c.strokeStyle = `rgba(${lt},${(0.16 * br).toFixed(3)})`; c.lineWidth = 1.4; c.stroke();
+  c.globalCompositeOperation = 'lighter';
+  for (let i = 1; i < F.tail.length; i++) { const [x, y] = F.tail[i], [px, py] = F.tail[i - 1], k = 1 - i / F.tail.length; c.strokeStyle = `rgba(${dp},${(0.5 * k * br).toFixed(3)})`; c.lineWidth = 12 * k + 1; c.beginPath(); c.moveTo(px, py); c.lineTo(x, y); c.stroke(); }
+  const R = 12 + 2 * b, gr = R * (2 + 5 * P.glow), halo = c.createRadialGradient(O.x, O.y, R * 0.5, O.x, O.y, gr);
+  halo.addColorStop(0, `rgba(${dp},${(0.55 * P.glow * br).toFixed(3)})`); halo.addColorStop(1, `rgba(${dp},0)`); c.fillStyle = halo; c.beginPath(); c.arc(O.x, O.y, gr, 0, TAU); c.fill();
+  c.globalCompositeOperation = 'source-over';
+  const body = c.createRadialGradient(O.x - R * 0.35, O.y - R * 0.4, R * 0.1, O.x, O.y, R);   // the glass
+  body.addColorStop(0, `rgba(255,255,255,${br.toFixed(3)})`); body.addColorStop(0.35, `rgba(${lt},${br.toFixed(3)})`); body.addColorStop(0.85, `rgba(${dp},${br.toFixed(3)})`); body.addColorStop(1, `rgba(${dp},${(0.6 * br).toFixed(3)})`);
+  c.fillStyle = body; c.beginPath(); c.arc(O.x, O.y, R, 0, TAU); c.fill();
+  c.save(); c.clip(); c.translate(O.x, O.y); c.rotate(lessMo() ? 0.6 : animTime * 1.3);   // a ribbon of colour turning inside, like a swirl marble
+  c.strokeStyle = `rgba(255,255,255,${(0.35 * br).toFixed(3)})`; c.lineWidth = 2.2; c.beginPath(); c.moveTo(-R, -R * 0.2); c.bezierCurveTo(-R * 0.3, R * 0.6, R * 0.3, -R * 0.6, R, R * 0.2); c.stroke();
+  if (P.glass === 'lutz') for (let i = 0; i < 7; i++) { const a = i * 2.4, r = R * (0.2 + (i % 3) * 0.25); c.fillStyle = `rgba(255,236,170,${(0.5 + 0.5 * Math.sin(animTime * 4 + i)) * br})`; c.fillRect(Math.cos(a) * r, Math.sin(a) * r, 1.3, 1.3); }   // goldstone's copper flecks
+  c.restore();
+  c.fillStyle = `rgba(255,255,255,${(0.85 * br).toFixed(3)})`; c.beginPath(); c.ellipse(O.x - R * 0.38, O.y - R * 0.45, R * 0.28, R * 0.16, -0.6, 0, TAU); c.fill();   // its highlight
+  c.restore();
 }
 function drawFidget(c) {
   const F = S.fid, w = here(), col = w.indoor ? '255,226,180' : SURFACE[w.ground] || '230,240,255';
+  if (PREFS.pacer.drops) drawWater(c);
   c.save(); c.lineCap = 'round'; c.lineJoin = 'round';
   for (let i = 1; i < F.trail.length; i++) {   // the trail in the place's own surface: frost, sand, grass, wood
     const p = F.trail[i], q = F.trail[i - 1]; if (p.t - q.t > 0.15) continue;
@@ -1917,7 +2052,8 @@ function drawFidget(c) {
   if (F.press && F.mode === 'tug') thread(F.press.x, F.press.y, F.last.x, F.last.y, 0.8);
   if (F.snap) { const k = Math.exp(-F.snap.t * 7) * Math.cos(F.snap.t * 30); thread(F.snap.ax, F.snap.ay, F.snap.ax + (F.snap.x - F.snap.ax) * k, F.snap.ay + (F.snap.y - F.snap.ay) * k, 0.8 * (1 - F.snap.t / 0.6)); }   // it springs back
   c.restore();
-  if (F.used < 3) hint(c, 'Tap · trace · hold · swipe down or across');
+  if (PREFS.pacer.on) drawPacer(c);
+  if (F.used < 3) hint(c, PREFS.pacer.drops ? 'Tap to let a drop fall · trace · hold · swipe' : PREFS.pacer.on ? 'Follow the light · trace it · tap · hold · swipe' : 'Tap · trace · hold · swipe down or across');
 }
 function hint(c, words) {   // one line of help, at the top of the pool, in a dark pill
   c.save(); c.font = `italic 400 12px ${FONT.serif}`; c.textAlign = 'center'; c.textBaseline = 'middle';
@@ -1928,35 +2064,59 @@ function hint(c, words) {   // one line of help, at the top of the pool, in a da
 
 /* ---------- Creatures, by their traces ---------- */
 // Never a cartoon: an animal is a glimpse, as it is outdoors. A silhouette, eyeshine, footprints, rings on water, a sound.
-// Each place has one, and a tap in Fidget calls it up (not more than once every few seconds).
-const CREATURE = { spring: 'birds', summer: 'birds', rainforest: 'birds', autumn: 'deer', winter: 'tracks', camp: 'fireflies', woods: 'owl', beach: 'fish', stars: 'meteor' };
-let CR = [], crT = -9;
-function creature(x, y) {
-  const kind = CREATURE[here().key]; if (!kind || animTime - crT < 4 || lessMo()) return;
-  crT = animTime;
-  if (kind === 'birds') { Object.assign(flock, { on: true, dir: x < LW / 2 ? 1 : -1, x, y: Math.min(y, 150) }); here().key === 'rainforest' ? sound.whistle() : sound.chirp(1); }
-  else if (kind === 'owl') { if (OWL.away <= 0) { OWL.away = 22; OWL.fly = 0; sound.hoot(); } }
-  else if (kind === 'meteor') { if (!METEOR) meteor(); }
-  else if (kind === 'fireflies') for (let i = 0; i < 9; i++) particles.push({ x: x + (Math.random() - 0.5) * 30, y: y + (Math.random() - 0.5) * 20, vx: (Math.random() - 0.5) * 0.4, vy: -0.2 - Math.random() * 0.3, r: 1.6, color: '#fde68a', alpha: 1, decay: 0.004, g: 0, fly: true });
-  else CR.push({ kind, x: kind === 'deer' ? clamp(x, 40, LW - 40) : x, y: kind === 'fish' ? clamp(y, HORIZON + 8, SHORE - 4) : y, t: 0, dir: x < LW / 2 ? 1 : -1 });
-  if (kind === 'fish') sound.noise1({ bus: 'wildlife', type: 'bandpass', f0: 900, f1: 300, q: 1.5, peak: 0.05, attack: 0.01, dur: 0.35 });
+// Every place has one that passes now and then, in the middle distance; a tap in Fidget calls one up (not more than once every
+// few seconds). Spring and Winter: a hare. Summer: a hawk circling. Rainforest: a toucan. Beach: dolphins. Autumn and the
+// campsite: a deer at the treeline. The woods: the owl. Under the stars: a meteor; in orbit: a satellite.
+const CREATURE = { spring: 'hare', summer: 'hawk', rainforest: 'toucan', autumn: 'deer', winter: 'hare', camp: 'deer', woods: 'owl', beach: 'dolphins', stars: 'meteor', celestial: 'satellite' };
+const LIFE = { deer: 5, tracks: 9, fish: 2, hare: 6, hawk: 12, toucan: 5, dolphins: 4, satellite: 14 };
+let CR = [], crT = -9, crNext = 25;
+function creature(x, y, kind = CREATURE[here().key], tap = true) {
+  if (!kind || lessMo() || (tap && animTime - crT < 4)) return;
+  if (tap) crT = animTime;
+  if (kind === 'owl') { if (OWL.away <= 0) { OWL.away = 22; OWL.fly = 0; sound.hoot(); } return; }
+  if (kind === 'meteor') { if (!METEOR) meteor(); return; }
+  if (tap && (kind === 'hare' || kind === 'hawk')) { Object.assign(flock, { on: true, dir: x < LW / 2 ? 1 : -1, x, y: Math.min(y, 150) }); sound.chirp(1); }   // a tap also lifts the birds
+  if (kind === 'toucan') sound.whistle();
+  if (kind === 'hare' && here().snow) CR.push({ kind: 'tracks', x, t: 0, dir: x < LW / 2 ? 1 : -1 });
+  CR.push({ kind, x: clamp(x, 40, LW - 40), y: kind === 'dolphins' ? clamp(y, HORIZON + 10, SHORE - 6) : y, t: 0, dir: x < LW / 2 ? 1 : -1 });
+}
+function updateCreatures(dt) {   // now and then, something passes, whether or not you're watching for it
+  if (S.mode === 'rest' || S.intro || (crNext -= dt) > 0) return;
+  crNext = 35 + Math.random() * 45; creature(Math.random() < 0.5 ? 30 : LW - 30, 140, CREATURE[here().key], false);
 }
 function drawCreatures(c, dt) {
-  CR = CR.filter(o => (o.t += dt) < { deer: 5, tracks: 9, fish: 2 }[o.kind]);
+  CR = CR.filter(o => (o.t += dt) < LIFE[o.kind] && o.kind in LIFE && (!['deer', 'hare', 'tracks'].includes(o.kind) || GROUNDS[here().ground]));   // nothing that walks, where there's no ground
   for (const o of CR) {
-    c.save();
+    const f = clamp(Math.min(o.t / 0.6, (LIFE[o.kind] - o.t) / 1), 0, 1);
+    c.save(); c.fillStyle = c.strokeStyle = '#1a120c'; c.lineWidth = 1.4; c.lineCap = 'round';
     if (o.kind === 'deer') {   // a doe at the treeline at dusk: still, then gone in two bounds
       const run = Math.max(0, o.t - 2.5), x = o.x + o.dir * run * 90, y = GROUNDS[here().ground].mid(o.x) + 2 - Math.abs(Math.sin(run * 6)) * 6 * (run > 0);
-      c.globalAlpha = clamp(Math.min(o.t / 0.6, (5 - o.t) / 1), 0, 0.85); c.fillStyle = '#1a120c'; c.strokeStyle = '#1a120c'; c.lineWidth = 1.4;
+      c.globalAlpha = 0.85 * f;
       c.beginPath(); c.ellipse(x, y - 9, 7, 3.6, 0, 0, TAU); c.fill(); c.beginPath(); c.moveTo(x + o.dir * 5, y - 10); c.lineTo(x + o.dir * 8, y - 17); c.stroke();
       c.beginPath(); c.ellipse(x + o.dir * 9, y - 18, 2.6, 1.6, o.dir * 0.4, 0, TAU); c.fill();
       for (const lx of [-5, -3, 3, 5]) { c.beginPath(); c.moveTo(x + lx, y - 7); c.lineTo(x + lx + (run > 0 ? o.dir * 2 : 0), y); c.stroke(); }
-    } else if (o.kind === 'tracks') {   // a hare crossed: prints appear one hop at a time, then fade
+    } else if (o.kind === 'hare') {   // a hare crosses the field in long low hops
+      const x = (o.dir > 0 ? -20 : LW + 20) + o.dir * o.t * 75, ph = (o.t * 2.2) % 1, y = GROUNDS[here().ground].mid(x) + 6 - Math.sin(ph * Math.PI) * 9, col = here().snow ? '#e9eef5' : '#2a2016';
+      c.globalAlpha = 0.85 * f; c.fillStyle = c.strokeStyle = col;
+      c.beginPath(); c.ellipse(x, y - 5, 6, 3.4, -o.dir * 0.2 * Math.sin(ph * TAU), 0, TAU); c.fill(); c.beginPath(); c.arc(x + o.dir * 6, y - 8, 2.4, 0, TAU); c.fill();
+      c.beginPath(); c.moveTo(x + o.dir * 6, y - 10); c.lineTo(x + o.dir * 4, y - 16); c.moveTo(x + o.dir * 7, y - 10); c.lineTo(x + o.dir * 7, y - 16); c.stroke();
+    } else if (o.kind === 'hawk') {   // a hawk rides a thermal, high: wide slow circles, wings barely moving
+      const a = o.t * 0.7 * o.dir, x = o.x * 0.3 + LW * 0.35 + Math.cos(a) * 60, y = 64 + Math.sin(a) * 18, fl = Math.sin(o.t * 3) * 1.2;
+      c.globalAlpha = 0.75 * f; c.lineWidth = 1.8; c.beginPath(); c.moveTo(x - 11, y - 2 + fl); c.quadraticCurveTo(x - 5, y - 4 - fl, x, y); c.quadraticCurveTo(x + 5, y - 4 - fl, x + 11, y - 2 + fl); c.stroke();
+    } else if (o.kind === 'toucan') {   // a toucan crosses the canopy: a dark body, the bright bill, wings beating
+      const x = (o.dir > 0 ? -20 : LW + 20) + o.dir * o.t * 95, y = 120 + Math.sin(o.t * 2) * 8, w = Math.sin(o.t * 16) * 5;
+      c.globalAlpha = 0.9 * f; c.beginPath(); c.ellipse(x, y, 7, 3.2, 0, 0, TAU); c.fill(); c.beginPath(); c.moveTo(x - 2, y); c.lineTo(x - 6, y - w); c.lineTo(x + 3, y); c.fill();
+      c.fillStyle = '#f59e0b'; c.beginPath(); c.ellipse(x + o.dir * 9, y - 1, 4.5, 1.8, 0, 0, TAU); c.fill();
+    } else if (o.kind === 'dolphins') {   // two dolphins arc out of the sea, one after the other
+      for (let i = 0; i < 2; i++) { const k = (o.t - i * 0.7) / 1.4; if (k < 0 || k > 1) continue; const x = o.x + o.dir * (i * 26 + k * 60), y = o.y - Math.sin(k * Math.PI) * 12;
+        c.globalAlpha = 0.8 * f; c.fillStyle = '#1b3443'; c.beginPath(); c.ellipse(x, y, 9, 2.6, o.dir * (k - 0.5) * 1.6, 0, TAU); c.fill(); c.beginPath(); c.moveTo(x, y - 2); c.lineTo(x - o.dir * 3, y - 7); c.lineTo(x + o.dir * 3, y - 2); c.fill(); }
+    } else if (o.kind === 'satellite') {   // a satellite crossing, catching the sun: a small light with its panels, blinking
+      const x = (o.dir > 0 ? -10 : LW + 10) + o.dir * o.t * (LW + 20) / LIFE.satellite, y = 90 + o.t * 6;
+      c.globalAlpha = f; c.fillStyle = '#cbd5e1'; c.fillRect(x - 9, y - 1.5, 6, 3); c.fillRect(x + 3, y - 1.5, 6, 3); c.fillStyle = '#fff'; c.beginPath(); c.arc(x, y, 1.8, 0, TAU); c.fill();
+      if (Math.sin(o.t * 6) > 0.6) { c.fillStyle = 'rgba(255,90,80,0.9)'; c.beginPath(); c.arc(x + 1, y + 2, 1, 0, TAU); c.fill(); }
+    } else if (o.kind === 'tracks') {   // and in snow, its prints appear one hop at a time, then fade
       const y0 = GROUNDS.snow.near(o.x) + 30;
       for (let i = 0; i < Math.min(12, Math.floor(o.t / 0.22)); i++) { const x = o.x + o.dir * i * 20, a = clamp((9 - o.t) / 3, 0, 0.5); c.fillStyle = `rgba(150,170,195,${a.toFixed(3)})`; for (const [dx, dy, r] of [[0, 0, 2.2], [-2, 6, 1.6], [3, 6, 1.6], [o.dir * 8, 2, 2.4]]) { c.beginPath(); c.ellipse(x + dx, y0 + dy + (i % 2) * 4, r, r * 1.4, 0, 0, TAU); c.fill(); } }
-    } else {   // a fish rose: rings spread on the water, and a quick dark arc
-      for (let i = 0; i < 3; i++) { const r = 6 + (o.t - i * 0.3) * 26; if (r > 6) { c.strokeStyle = `rgba(255,255,255,${(0.4 * (1 - o.t / 2)).toFixed(3)})`; c.lineWidth = 1; c.beginPath(); c.ellipse(o.x, o.y, r, r * 0.3, 0, 0, TAU); c.stroke(); } }
-      if (o.t < 0.7) { const k = o.t / 0.7; c.fillStyle = 'rgba(20,40,50,0.8)'; c.beginPath(); c.ellipse(o.x - 14 + 28 * k, o.y - Math.sin(k * Math.PI) * 16, 6, 2.2, (k - 0.5) * 2, 0, TAU); c.fill(); }
     }
     c.restore();
   }
@@ -2104,7 +2264,7 @@ function pickNextTier() {
 }
 // A game counts toward your best only if it was played start to finish under Classic.
 function newPool() {
-  particles = []; ripples = []; floaters = []; S.zap = null; bwClear();
+  particles = []; ripples = []; floaters = []; S.zap = null; S.doom = null; bwClear();
   Object.assign(S, { world: createWorld(), score: 0, blooms: 0, merges: 0, highestTier: 2, current: 0, next: 1, fair: PREFS.overflow === 'end', zen: false, wild: false,
     canDrop: true, cooldown: 0, overT: 0, offender: 0, gameOver: false, combo: 0, comboT: 0, tools: { strike: 0, mystery: 0, storm: 0 }, armed: false, storm: null, stormQ: [], roundDone: false });
   $('alert').hidden = true; if (S.parked) unpark(); else hideCard();
@@ -2114,7 +2274,7 @@ function keepGoing() { Object.assign(S, { gameOver: false, overT: 0, fair: false
 // Where you are can change any time: the same pool, repainted.
 function newWorld(quiet) {
   const key = worldOf(); if (WORLD && key === WORLD.key) return;
-  WORLD = compile(key); S.life = WORLD.start; S.rainMem = 0;
+  WORLD = compile(key); CR = []; S.life = WORLD.start; S.rainMem = 0;
   applySeason();
   if (!quiet) say(WORLD.label, PREFS.where === 'live' ? 'The live season' : '');
 }
@@ -2202,6 +2362,7 @@ function earnTool() {
 function useTool(k) {
   if (!has('spheres') || S.gameOver || S.parked) return;
   setPaused(false);
+  if (k === 'strike' && S.doom) return;   // one Strike at a time: the last one is still landing
   if (k === 'strike' && S.armed) { S.armed = false; syncBars(); return; }   // a second tap puts it away
   if (!(S.tools[k] > 0)) { say(TOOL_NAMES[k], 'Earned by a Full Bloom or a chain of three'); sound.tick(); return; }
   if (k === 'strike') { S.armed = true; say('Strike', 'Touch the sphere to take'); }
@@ -2209,11 +2370,23 @@ function useTool(k) {
   else if (!S.stormQ.length) { S.tools.storm--; stirPile(); }
   syncBars();
 }
+// Strike: the sphere you touch turns red (watch out), and a breath later the place's own strike takes it. Lightning, mostly;
+// frost in Winter, a wave at the Beach, a meteor under the stars; in Heritage the lamp flares.
+const STRIKES = { winter: ['Frost', '200,230,255'], beach: ['A wave', '170,225,245'], stars: ['A meteor', '255,214,150'], celestial: ['A meteor', '255,214,150'], heritage: ['The lamp', '255,220,160'] };
 function strikeSphere(b) {
-  S.armed = false; if (!b) { syncBars(); return; }
-  S.tools.strike--;
-  if (here().indoor) whiteFlash(0.12); else { if (flash(0.9) && !lessMo()) S.zap = { path: makeBolt(b.x, b.y - b.radius * 0.3), until: animTime + 0.45 }; S.rumbles.push({ at: animTime + 0.1, close: 1, vol: 0.6 }); }
-  haptic(30); mist([b], 'Strike', 'Space opened'); syncBars();
+  S.armed = false; if (!b || S.doom) { syncBars(); return; }
+  S.tools.strike--; S.doom = { id: b.id, t: 0 }; sound.tick(); haptic(12); syncBars();
+}
+function updateDoom(dt) {
+  const d = S.doom; if (!d || (d.t += dt) < 0.6) return;
+  S.doom = null; const b = S.world.balls.find(x => x.id === d.id);
+  if (!b) { S.tools.strike++; syncBars(); return; }   // it merged first: the Strike comes back
+  const key = here().key, [name, rgb] = STRIKES[key] || ['Lightning', '210,228,255'], kind = key === 'winter' ? 'ice' : key === 'beach' ? 'wave' : STRIKES[key] && key !== 'heritage' ? 'meteor' : 'bolt';
+  if (key === 'heritage') whiteFlash(0.14);
+  else if (kind === 'bolt') { if (flash(1) && !lessMo()) S.zap = { kind, path: makeBolt(b.x, b.y - b.radius * 0.3), until: animTime + 0.6 }; S.rumbles.push({ at: animTime + 0.08, close: 1, vol: 0.8 }); }
+  else { S.zap = { kind, x: b.x, y: b.y, r: b.radius, rgb, until: animTime + 0.6 }; kind === 'ice' ? sound.crackle(6, 'notes') : kind === 'wave' ? sound.whoosh(0.9, panFor(b.x)) : sound.crack(0.18); }
+  if (!lessMo()) spawnParticles(b.x, b.y, `rgb(${rgb})`, 26, 6);
+  haptic([30, 30, 60]); mist([b], name, 'Space opened'); syncBars();
 }
 function stirPile() {   // they lift off behind the weather, shuffled, and come back in from the top one at a time; the physics does the fall
   S.stormQ = [...S.world.balls].sort(() => Math.random() - 0.5).map(b => ({ tier: b.tier, wild: b.wild }));
@@ -2444,12 +2617,18 @@ function render() {
       drawOrb(ctx, ball.x, ball.y, ball.radius, ball.tier, ball.angle, { aura: breathe ? FEEL.glow * 0.5 * b : 0, lift: breathe ? FEEL.glow * 0.06 * b : 0, scale: s, wild: ball.wild,
         halo: ball.id === S.offender ? [RED, red * beat] : g > 0.01 ? [GOLD, g] : null });
       if (ball.hot && ball.age < HOT_AGE && w.glass) hotGlass(ctx, ball);
+      if (S.doom && ball.id === S.doom.id) {   // watch out: red, quickening
+        const k = 0.55 + 0.45 * Math.sin(S.doom.t * (14 + 20 * S.doom.t)), g = ctx.createRadialGradient(ball.x, ball.y, ball.radius * 0.3, ball.x, ball.y, ball.radius * 1.5);
+        g.addColorStop(0, `rgba(${RED},${(0.45 * k).toFixed(3)})`); g.addColorStop(0.7, `rgba(${RED},${(0.3 * k).toFixed(3)})`); g.addColorStop(1, `rgba(${RED},0)`);
+        ctx.fillStyle = g; ctx.beginPath(); ctx.arc(ball.x, ball.y, ball.radius * 1.5, 0, TAU); ctx.fill();
+        ctx.strokeStyle = `rgba(${RED},${(0.6 + 0.4 * k).toFixed(3)})`; ctx.lineWidth = 2.5; ctx.beginPath(); ctx.arc(ball.x, ball.y, ball.radius * s + 3, 0, TAU); ctx.stroke();
+      }
     }
     if (S.armed) { ctx.save(); ctx.strokeStyle = `rgba(${GREEN},${(0.35 + 0.25 * Math.sin(animTime * 4.4)).toFixed(3)})`; ctx.lineWidth = 2; ctx.setLineDash([5, 6]); for (const ball of S.world.balls) { ctx.beginPath(); ctx.arc(ball.x, ball.y, ball.radius * s + 3, 0, TAU); ctx.stroke(); } ctx.restore(); }   // armed: every sphere is a target
   }
   if (!focus) { ctx.globalAlpha = 1; drawBoard(ctx); }
   ctx.globalAlpha = 1;
-  if (S.zap && animTime < S.zap.until) drawBolt(ctx, S.zap.path, clamp((S.zap.until - animTime) / 0.45, 0, 1), 14); else S.zap = null;   // a Strike: the bolt comes all the way down
+  if (S.zap && animTime < S.zap.until) drawZap(ctx, S.zap, clamp((S.zap.until - animTime) / 0.6, 0, 1)); else S.zap = null;   // a Strike, all the way down
   for (const p of particles) {
     if (p.bg) continue;
     if (p.fly) { ctx.globalCompositeOperation = 'lighter'; ctx.globalAlpha = Math.max(0, p.alpha) * (0.5 + 0.5 * Math.sin(animTime * 3 + p.x)); ctx.drawImage(SPR.fly, p.x - 10, p.y - 10, 20, 20); ctx.globalCompositeOperation = 'source-over'; continue; }
@@ -2478,6 +2657,22 @@ function render() {
   if (S.look) drawLook(ctx);
   if (S.intro) drawIntro(ctx, S.intro);
   ctx.restore();
+}
+function drawZap(c, z, a) {
+  if (z.kind === 'bolt') { drawBolt(c, z.path, a, 22); return; }   // intense: wide and bright
+  c.save(); c.globalCompositeOperation = 'lighter'; c.lineCap = 'round';
+  const u = 1 - a, { x, y, r, rgb } = z;
+  if (z.kind === 'ice') for (let i = 0; i < 9; i++) {   // frost: cracks race out from the centre and shatter it
+    const ang = i * 0.7 + 0.3, len = r * (0.6 + 0.9 * Math.min(1, u * 3)); c.strokeStyle = `rgba(${rgb},${a.toFixed(3)})`; c.lineWidth = 1.6;
+    c.beginPath(); c.moveTo(x, y); c.lineTo(x + Math.cos(ang) * len * 0.5, y + Math.sin(ang) * len * 0.5 + 3); c.lineTo(x + Math.cos(ang + 0.15) * len, y + Math.sin(ang + 0.15) * len); c.stroke();
+  } else if (z.kind === 'wave') {   // a wave curls in from the side and takes it
+    const wx = x - r * 2.2 + r * 4.4 * u; c.strokeStyle = `rgba(${rgb},${a.toFixed(3)})`; c.lineWidth = 7;
+    c.beginPath(); c.arc(wx, y, r * 1.2, -Math.PI * 0.9, Math.PI * 0.35); c.stroke(); c.lineWidth = 2.5; c.beginPath(); c.arc(wx - 6, y + 6, r * 0.8, -Math.PI * 0.8, Math.PI * 0.2); c.stroke();
+  } else {   // a meteor, from high on the right, burning in
+    const k = Math.min(1, u * 2.5), hx = x + (1 - k) * 260, hy = y - (1 - k) * 320; c.strokeStyle = `rgba(${rgb},${a.toFixed(3)})`; c.lineWidth = 5;
+    c.beginPath(); c.moveTo(hx + 70, hy - 86); c.lineTo(hx, hy); c.stroke(); c.fillStyle = `rgba(255,250,235,${a.toFixed(3)})`; c.beginPath(); c.arc(hx, hy, 6 + 10 * (k >= 1 ? a : 0), 0, TAU); c.fill();
+  }
+  c.restore();
 }
 const twice = (t) => { const u = (t / (breathLen() / 2)) % 1; return u < IN ? smooth(u / IN) : 1 - smooth((u - IN) / (1 - IN)); };   // a breath at twice Relax's pace
 function words(c, big, small, y) {   // the two lines every moment in the pool uses
@@ -2551,7 +2746,8 @@ function update(k, dt) {
   if (S.intro && S.intro.go == null && S.intro.t >= S.intro.len + 0.8 && !S.intro.rest) { S.intro.rest = true; syncBars(); }   // the opening comes to rest: Start appears
   if (S.outro && (S.outro.t += dt) >= S.outro.len) parkCard();
   updateGoal();
-  updateScene(dt); updateWind(dt); updateLife(dt); updateBreath(dt); updateActions(dt, k); updateStorms(dt); updateStorm(dt); updateBoard(dt);
+  updateScene(dt); updateWind(dt); updateLife(dt); updateBreath(dt); updateActions(dt, k); updateStorms(dt); updateStorm(dt); updateBoard(dt); updateCreatures(dt);
+  if (awake()) updateDoom(dt);   // a Strike waits while the game waits
   if (S.fid) updateFidget(dt);
   updateLook(dt);
   journalTick(dt);
@@ -2599,32 +2795,34 @@ function updateWarmth() {   // evening warmth: from 7 pm the screen leans a litt
 const SHORT = { Rainforest: 'Forest', Campsite: 'Camp' };
 const BAR = { bot: '' };
 const cell = (attrs, top, word, extra = '') => `<button class="cell" ${attrs}>${top.startsWith('<') ? top : svg(top)}<span class="sub">${word}</span>${extra}</button>`;
-const skyName = (k) => ({ bolt: 'Lightning', wind: 'Wind', rain: here().snow ? 'Snow' : 'Rain' })[k];
+const skyName = (k) => (S.severe ? (k === 'rain' && here().snow ? 'Blizzard' : SEVERE[k]) : { bolt: 'Lightning', wind: 'Wind', rain: here().snow ? 'Snow' : 'Rain' }[k]);
 const cycle = (k) => { const L = CHOICES[k] || [4, 5, 6, 7, 8], i = L.indexOf(PREFS[k]); return L[(i + 1) % L.length]; };   // a tap moves to the next
 function botCells() {
   const m = S.mode, w = here(), val = (v) => `<b class="val">${v}</b>`;
   if (S.intro && S.intro.go == null) return S.intro.rest ? [cell('data-act="introplay"', ICON.play, 'Play now'), cell('data-act="introfidget"', ICON.touch, 'Fidget now'), cell('data-act="introrelax"', ICON.breathe, 'Relax now')] : [];
-  const wx = cell(`data-act="weather"${w.indoor ? ' disabled' : ''}`, CLOUD, 'Weather');   // the weather, one tap away in every mode
-  if (m === 'fidget' || S.wx) return [wx, ...ATMO.map(k => cell(`data-sky="${k}"${w.indoor ? ' disabled' : ''}`, k === 'rain' && w.snow ? ICON.snow : ICON[k], skyName(k)))];
+  const wx = cell(`data-act="weather"${w.dry ? ' disabled' : ''}`, CLOUD, 'Weather');   // the weather, one tap away in every mode; open, it takes the ribbon
+  if (S.wxOpen && !w.dry) return [wx, ...ATMO.map(k => cell(`data-sky="${k}"`, k === 'rain' && w.snow ? ICON.snow : ICON[k], skyName(k))), cell('data-act="severe"', ICON.turn, 'Severe')];
   return [wx, ...modeCells(m, val)];
 }
 function modeCells(m, val) {
   if (m === 'play') return TOOLS.map(k => cell(`data-tool="${k}"`, ICON[k], TOOL_NAMES[k], `<b class="n">${S.tools[k]}</b>`));
   if (m === 'settle') return [cell('data-act="deep"', ICON.breathe, 'Deep breath'), cell('data-act="pace"', val(`${PREFS.bpm}`), 'Pace'), cell('data-act="play"', ICON.play, 'Play')];
+  if (m === 'fidget') return [cell('data-act="pacer"', ICON.orb, 'Pacer'), cell('data-act="drops"', ICON.drop, 'Drops'), cell('data-act="style"', ICON.tune, 'Style')];
   return [cell('data-act="ambient"', val(LABELS.ambient[PREFS.ambient]), 'Ambient'), cell('data-act="fades"', val(LABELS.sleepTimer[PREFS.sleepTimer]), 'Fades after'), cell('data-act="play"', ICON.play, 'Wake')];
 }
 function syncBars() {
   const top = $('topBar'), bot = $('botBar');
-  if (!top.firstChild) top.innerHTML = cell('data-act="settings"', ICON.gear, 'Settings') + `<button class="cell wide" data-act="setup"><b class="val" id="sessTop"></b><span class="sub" id="sessSub"></span></button>`
+  if (!top.firstChild) top.innerHTML = cell('data-act="settings"', ICON.gear, 'Settings') + `<button class="cell wide" data-act="where"><b class="val" id="sessTop"></b><span class="sub" id="sessSub"></span></button>`
     + `<button class="cell" data-act="stats"><b class="val" id="scoreVal"></b><span class="sub">Score</span></button>` + cell('data-act="pause"', ICON.pp, 'Pause') + cell('data-act="mute"', VOL, 'Sound');
   const sess = S.goal ? (PREFS.kind === 'break' ? 'Break' : (tasks()[0] || { text: 'Play' }).text) : MODE_NAMES[S.mode];
   if ($('sessTop').textContent !== sess) $('sessTop').textContent = sess;
   if (!S.goal) $('sessSub').textContent = SHORT[here().label] || here().label;
   const pb = top.querySelector('[data-act=pause]'); pb.classList.toggle('on', S.paused); pb.lastChild.textContent = S.paused ? 'Paused' : 'Pause';
   const mb = top.querySelector('[data-act=mute]'); mb.dataset.muted = String(!PREFS.sound); mb.lastChild.textContent = PREFS.sound ? 'Sound' : 'Muted';
-  const key = [S.mode, S.wx, here().key, S.intro && S.intro.rest, JSON.stringify(S.tools), PREFS.bpm, PREFS.ambient, PREFS.sleepTimer].join();
+  const key = [S.mode, S.wxOpen, S.severe, here().key, S.intro && S.intro.rest, JSON.stringify(S.tools), PREFS.bpm, PREFS.ambient, PREFS.sleepTimer].join();
   if (BAR.bot !== key) { BAR.bot = key; bot.innerHTML = botCells().join(''); }
-  const wb = bot.querySelector('[data-act=weather]'); if (wb) wb.classList.toggle('on', S.mode === 'fidget' || !!S.wx);
+  for (const [a, on] of [['weather', S.wxOpen], ['severe', S.severe], ['pacer', PREFS.pacer.on], ['drops', PREFS.pacer.drops]]) { const b = bot.querySelector(`[data-act=${a}]`); if (b) b.classList.toggle('on', !!on); }
+  bot.classList.toggle('severe', S.severe && S.wxOpen);   // severe: yellow, like a warning on the TV
   bot.querySelectorAll('[data-sky]').forEach(b => b.classList.toggle('on', PREFS.atmo[b.dataset.sky].on));
   bot.querySelectorAll('[data-tool]').forEach(b => { const k = b.dataset.tool, armed = (k === 'strike' && S.armed) || (k === 'mystery' && S.wild); b.classList.toggle('on', armed); b.classList.toggle('live', armed); b.classList.toggle('none', !S.tools[k] && !armed); });
   document.body.classList.toggle('intro-in', !!(S.intro && S.intro.rest));
@@ -2648,12 +2846,14 @@ function arrive() { if (!S.sheet && !S.intro && !S.card) ['topBar', 'botBar'].fo
 // foot. A row is its name and control, then one italic line on what it does. A change takes effect at once.
 const LABELS = {
   mode: { play: 'Play', settle: 'Relax', fidget: 'Fidget', rest: 'Rest' }, overflow: { end: 'Classic', zen: 'Zen' }, kind: { break: 'A break', task: 'A task' },
-  where: { live: 'Live', ...Object.fromEntries(Object.entries(PLACES).map(([k, p]) => [k, p.label])), heritage: 'Heritage' },
+  where: { live: 'Live', ...Object.fromEntries(Object.entries(PLACES).map(([k, p]) => [k, p.label])), celestial: 'Celestial', heritage: 'Heritage' },
   clouds: { clear: 'Clear', some: 'Some', overcast: 'Overcast', dark: 'Dark', changing: 'Changing' }, hour: { live: 'Live', dawn: 'Dawn', day: 'Day', dusk: 'Dusk', night: 'Night' },
   ambient: { off: 'Off', rain: 'Rain', wind: 'Wind', night: 'Night', fire: 'Fire' }, sleepTimer: { 15: '15 min', 30: '30 min', 60: '1 hour', 120: '2 hours', 0: 'Never' },
-  mins: { 10: '10 min', 20: '20 min', 30: '30 min', 60: '1 hour', 0: 'No timer' }, breakMins: { 5: '5 min', 10: '10 min', 15: '15 min', 20: '20 min' }
+  mins: { 10: '10 min', 20: '20 min', 30: '30 min', 60: '1 hour', 0: 'No timer' }, breakMins: { 5: '5 min', 10: '10 min', 15: '15 min', 20: '20 min' },
+  'pacer.track': { eight: 'Infinity', circle: 'Circle', oval: 'Oval', box: 'Rounded', zigzag: 'Zigzag' },
+  'pacer.glass': { moonstone: 'Moonstone', ember: 'Ember', aurora: 'Aurora', rose: 'Rose quartz', lutz: 'Goldstone', amethyst: 'Amethyst' }
 };
-const MODE_NOTES = { play: 'A soothing merge game.', settle: 'Breathe with the light: hold, trace, tap, or just watch.', fidget: 'Your hands on the world: tap, trace, hold, swipe. The weather is yours.', rest: 'The pool fades to dark while sound plays on.' };
+const MODE_NOTES = { play: 'A soothing merge game.', settle: 'Breathe with the light: hold, trace, tap, or just watch.', fidget: 'A light to follow, drops on still water, the weather in your hands.', rest: 'The pool fades to dark while sound plays on.' };
 const esc = (t) => String(t).replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' })[c]);
 const text = (t) => (typeof t === 'function' ? t() : t);
 const toggle = (k) => `<button class="switch" role="switch" data-key="${k}" aria-label="On or off"><i></i></button>`;
@@ -2662,7 +2862,8 @@ const slider = (k, min, max, step = 'any') => `<input class="slider" type="range
 const row = (name, desc, ctl, under) => `<div class="row"><div class="rline"><span class="rname">${name}</span>${under ? '' : ctl}</div>${under ? `<div class="rctl">${ctl}</div>` : ''}<i class="rdesc"${typeof desc === 'function' ? ` data-desc="${name}"` : ''}>${text(desc)}</i></div>`;
 const head = (t) => `<h3 class="sect">${t}</h3>`;
 const DESCS = { Mode: () => MODE_NOTES[PREFS.mode], Rules: () => (PREFS.overflow === 'end' ? 'The game ends at the line, and counts toward your best.' : 'Nothing ends: over the line, the top dissolves.'),
-  Pace: () => `${(+PREFS.bpm).toFixed(1)} breaths a minute: in for ${(24 / PREFS.bpm).toFixed(1)} s, out for ${(36 / PREFS.bpm).toFixed(1)} s.` };
+  Pace: () => `${(+PREFS.bpm).toFixed(1)} breaths a minute: in for ${(24 / PREFS.bpm).toFixed(1)} s, out for ${(36 / PREFS.bpm).toFixed(1)} s.`,
+  Speed: () => `${Math.round(PREFS.pacer.speed)} laps a minute. Slow is calming; quicker holds the eye.` };
 const hhmm = (m) => (m < 0 ? '' : `${String(Math.floor(m / 60)).padStart(2, '0')}:${String(m % 60).padStart(2, '0')}`);
 const FIRST = ['Like “Stand up and stretch”', 'Like “Shoes by the door”', 'Like “Open the laptop”'];   // the first move: small and physical, so it's easy to start
 function listRows() {   // your list: up to three lines, each with a time it's due if it has one, and a blank for the next
@@ -2677,29 +2878,37 @@ const SHEETS = {
       : [row('What’s the first move?', stopWords, listRows(), true), ...(soonestDue() == null ? [row('How long?', 'A soft bell at three minutes left, two at one.', choice('mins', true), true)] : [])]),
     ...(S.prev ? ['<button class="btn" data-act="continue">Continue last game</button>'] : [])
   ], foot: ['start', 'Start'] },
-  settings: { title: 'Settings', body: () => [
+  // Where you are and what you're doing: one tap on the ribbon's middle, one tap to change, and it closes. Everything else is Settings.
+  where: { title: 'Mode & place', body: () => [
     row('Mode', DESCS.Mode, choice('mode'), true),
-    row('Place', 'Live is the season where you are. Heritage is a wooden tray in lamplight.', choice('where', true), true),
+    row('Place', 'Live is the season where you are. Celestial is in orbit. Heritage is a wooden tray in lamplight.', choice('where', true), true)
+  ], foot: ['setup', 'Start a session'] },
+  settings: { title: 'Settings', body: () => [
+    row('Sound', 'SoRen follows your silent switch and plays under your music.', `${toggle('sound')}${slider('vol', 0, 1)}`, true),
+    row('Ambient', 'One steady sound under everything, whatever the sky does.', choice('ambient'), true),
+    head('Breath'),
+    row('Breathing', 'The edge and the spheres breathe with your pace.', toggle('breathing')),
+    row('Pace', DESCS.Pace, slider('bpm', 4, 8, 0.5), true),
+    ...(here().dry ? [] : [head('Sky'),
+      row('Clouds', 'How the sky looks. Changing moves on by itself.', choice('clouds'), true),
+      row('Time of day', 'Live follows your clock; or hold an hour.', choice('hour'), true)]),
     head('Game'),
     row('Rules', DESCS.Rules, choice('overflow'), true),
     row('Aim', 'A faint line shows where the sphere will land.', toggle('aim')),
     row('Next', 'Shows the sphere that comes after.', toggle('next')),
     row('Numbers', 'The score and the values on the spheres.', toggle('numbers')),
     '<button class="btn" data-act="newgame">New game</button>',
-    ...(here().indoor ? [] : [head('Sky'),
-      row('Clouds', 'How the sky looks. Changing moves on by itself.', choice('clouds'), true),
-      row('Time of day', 'Live follows your clock; or hold an hour.', choice('hour'), true),
-      '<p class="rdesc">Lightning, wind and rain: Weather, on the ribbon below the pool.</p>']),
-    head('Breath'),
-    row('Breathing', 'The edge and the spheres breathe with your pace.', toggle('breathing')),
-    row('Pace', DESCS.Pace, slider('bpm', 4, 8, 0.5), true),
-    head('Sound'),
-    row('Sound', 'SoRen follows your silent switch and plays under your music.', `${toggle('sound')}${slider('vol', 0, 1)}`, true),
-    row('Ambient', 'One steady sound under everything, whatever the sky does.', choice('ambient'), true),
     head('Comfort'),
     row('Low stimulation', 'No flashes, softer thunder, quieter words.', toggle('calm')),
     row('Reduce motion', 'What moves on its own is stilled; the breath only glows.', toggle('still')),
-    '<div class="links"><button class="btn" data-sheet="setup">Session Setup</button><button class="btn" data-sheet="stats">Statistics</button><button class="btn" data-sheet="help">How to play</button><button class="btn beta" data-sheet="beta">Beta ›</button></div>'
+    '<div class="links"><button class="btn" data-sheet="stats">Statistics</button><button class="btn" data-sheet="help">How to play</button><button class="btn beta" data-sheet="beta">Beta ›</button></div>'
+  ], foot: ['close', 'Done'] },
+  pacer: { title: 'Pacer', body: () => [
+    row('Track', 'The path the light runs, side to side, for your eyes to follow.', choice('pacer.track', true), true),
+    row('Glass', 'What the light is made of.', choice('pacer.glass', true), true),
+    row('Glow', 'How far its light reaches.', slider('pacer.glow', 0, 1), true),
+    row('Brightness', 'How bright the glass itself is.', slider('pacer.bright', 0.2, 1), true),
+    row('Speed', DESCS.Speed, slider('pacer.speed', 4, 15, 1), true)
   ], foot: ['close', 'Done'] },
   beta: { title: 'SoRen · Beta', body: () => ['<p class="tagline"><b>The next generation. V3.0</b><br>To seek out new science and innovation.<br>To boldly go where no app has gone before!</p>',
     row('Look Up', 'Lift the phone toward the sky: the real stars overhead. Hold the light steady on each star to draw the constellation; lower the phone to come back.', toggle('beta.lookup')),
@@ -2714,9 +2923,10 @@ const SHEETS = {
 const FAQ = [
   ['How does a session go?', 'Settle: the circle, then say what you’re here for, a break or a list. Touch: play. Return: three breaths out, your list, and Go. When you’re back, tick what you did.'],
   ['How do I play?', 'Touch the board and slide to move the waiting sphere; let go to drop it. Two of a kind merge into the next size up, and the two largest make a Full Bloom.'],
-  ['What are the tools?', 'Strike: lightning takes one sphere you touch. Mystery: your next sphere becomes whatever it touches first. Storm: the place’s own weather blows in and every sphere lands somewhere new. A chain of three or a Full Bloom earns one, up to three of each, for that game.'],
-  ['What do the colours mean?', 'Green is on. Blue is in hand. Gold means you did something right. Red is trouble: a sphere that goes unless you act. A silver shimmer means this, now.'],
-  ['What are the modes?', 'Play: the merge game. Relax: hold to breathe in, let go to breathe out. Fidget: tap, trace, hold, swipe; the weather is yours. Rest: the pool fades to dark while sound plays on.'],
+  ['What are the tools?', 'Strike: touch a sphere; it turns red, then the place’s own strike takes it (lightning, frost, a wave or a meteor). Mystery: your next sphere becomes whatever it touches first. Storm: the place’s own weather blows in and every sphere lands somewhere new. A chain of three or a Full Bloom earns one, up to three of each, for that game.'],
+  ['What do the colours mean?', 'A blue edge: you can touch it. Green is on. White is the way forward. Gold means you did something right. Red is trouble, or a Strike about to land. Yellow is severe weather. A silver shimmer means this, now.'],
+  ['How do I get around?', 'The middle of the top ribbon is Mode & place: one tap there, one tap to change, and you’re there. Weather leads the bottom ribbon in every mode. Everything else is in Settings.'],
+  ['What are the modes?', 'Play: the merge game. Relax: hold to breathe in, let go to breathe out; dashes keep the pace. Fidget: a light to follow, drops on still water, the weather in your hands. Rest: the pool fades to dark while sound plays on.'],
   ['Does SoRen collect anything?', 'No. Everything stays on this phone: no accounts, no ads, no tracking, no notifications, nothing to buy. Leaving costs you nothing.'],
   ['Why does sound stop when the screen locks?', 'Phones stop web audio when they lock. Rest keeps the screen on; plug in for long sessions.'],
   ['Is this a medical tool?', 'No. It is somewhere to settle. If you are struggling, talk to someone you trust or a professional.']
@@ -2753,9 +2963,9 @@ function syncControls() {   // every control shows its setting as it stands
 }
 const syncUI = () => { syncBars(); if (S.sheet) syncControls(); };
 function setPref(k, v) {   // a change takes effect everywhere, at once, and is kept
-  if (k === 'mode') { if (v === 'rest') closeSheet(); setMode(v); return; }
+  if (k === 'mode') { if (v === 'rest' || S.sheet === 'where') closeSheet(); setMode(v); return; }   // Mode & place: one tap and you're there
   setPrefRaw(k, v); savePrefs(); sound.init();
-  if (k === 'where') { newWorld(); if (S.sheet === 'settings') refreshSheet(); }   // the sky rows come and go with the place
+  if (k === 'where') { newWorld(); if (S.sheet === 'where') closeSheet(); }
   else if (k === 'kind' || k === 'mins') refreshSheet();
   else if (k === 'overflow') S.fair = S.world.balls.length || S.score ? S.fair && v === 'end' : v === 'end';   // changing the rules mid-game: it no longer counts
   else if (k === 'sleepTimer' && S.sleep) S.sleep.left = v * 60;
@@ -2812,14 +3022,16 @@ function bind() {
   });
   // One listener for every control, wherever it was built.
   const ACTS = {
-    settings: () => openSheet('settings'), engage, setup: () => openSheet('setup'), stats: () => openSheet('stats'), close: closeSheet, mute: () => setPref('sound', !PREFS.sound),
+    settings: () => openSheet('settings'), engage, setup: () => openSheet('setup', !!S.sheet), where: () => openSheet('where'), stats: () => openSheet('stats'), close: closeSheet, mute: () => setPref('sound', !PREFS.sound),
     pause: () => { setPaused(!S.paused); syncBars(); }, deep: () => startSigh(), play: () => setMode('play'), newgame: () => { closeSheet(); startPool(); },
     pace: () => setPref('bpm', cycle('bpm')), ambient: () => setPref('ambient', cycle('ambient')), fades: () => setPref('sleepTimer', cycle('sleepTimer')),
     start: () => { closeSheet(); startSession(); }, continue: () => { loadPool(S.prev); S.prev = null; closeSheet(); startSession(); say('Your last game', here().label); },
     introstart: () => { introGo(); openSheet('setup'); },
     introplay: () => { introGo(); S.prev = null; S.goal = null; setMode('play'); setPaused(false); Object.assign(S, { zen: true, fair: false }); syncUI(); },   // Play now: the base game, Zen for this game, no timer
     introrelax: () => { introGo(); S.prev = null; setMode('settle'); }, introfidget: () => { introGo(); S.prev = null; setMode('fidget'); },
-    weather: () => { if (S.mode !== 'fidget') { S.wx = !S.wx; syncBars(); } }
+    weather: () => { S.wxOpen = !S.wxOpen; syncBars(); },
+    severe: () => { S.severe = !S.severe; say(S.severe ? 'Severe weather' : 'Weather', S.severe ? 'Whatever is on runs at full strength' : 'Back to normal'); sound.whoosh(S.severe ? 0.8 : 0.3, 0); syncBars(); },
+    pacer: () => setPref('pacer.on', !PREFS.pacer.on), drops: () => setPref('pacer.drops', !PREFS.pacer.drops), style: () => openSheet('pacer')
   };
   document.addEventListener('click', (e) => {
     const t = e.target, act = t.closest('[data-act]');
