@@ -249,7 +249,7 @@ body.intro-quick.intro-in .soren, body.intro-quick.intro-in .go-in { transition-
 
 /* The opening: the ribbons wait until the circle is at rest. Rest: the ribbons sink. Relax: the page dims. */
 body.intro { background: #000; } body.intro #topBar, body.intro #wxBar, body.intro .line, body.intro:not(.intro-in) #botBar { opacity: 0; pointer-events: none; } body.intro .pool { box-shadow: none; background: transparent; }
-body.intro #botBar { background: none; box-shadow: none; } body.intro .cell::before { display: none; } body.intro-in #botBar { opacity: 0.45; transition: opacity 3s cubic-bezier(0.4, 0, 0.2, 1); } body.intro:not(.intro-ready) #botBar { pointer-events: none; } body.intro-quick #botBar { transition-duration: 0.4s; }
+body.intro #botBar { background: none; box-shadow: none; } body.intro .cell::before { display: none; } body.intro-in #botBar { opacity: 0.8; transition: opacity 3s cubic-bezier(0.4, 0, 0.2, 1); } body.intro:not(.intro-ready) #botBar { pointer-events: none; } body.intro-quick #botBar { transition-duration: 0.4s; }
 .sky { position: fixed; inset: 0; z-index: 0; pointer-events: none; background: radial-gradient(75% 55% at 50% 45%, #0b2757 0%, #071a3a 35%, #030a18 70%, #000 100%); display: none; animation: skyin 2.4s ease-out; }
 body.intro .sky { display: block; } @keyframes skyin { from { opacity: 0; } }
 body.rest { background: #000; } body.rest .rib, body.rest .line, body.rest .zone4 { opacity: 0.22; } body.rest .rib:active, body.rest .rib:focus-within { opacity: 0.8; } body.rest .pool { box-shadow: none; }
@@ -2768,7 +2768,7 @@ function drawIntro(c, o) {
   const CREST = 0.4, ph = clamp(o.t / o.len, 0, 1), rest = smooth(clamp((o.t - o.len) / 1.2, 0, 1)), line = smooth(clamp(o.t / 2.4, 0, 1));
   const a = o.go == null ? 1 : clamp(1 - (o.t - o.go) / TIME.settle, 0, 1), calm = o.eng == null ? 1 : clamp(1 - (o.t - o.eng) / 0.8, 0, 1);
   const lv = ph < CREST ? 0.93 + 0.07 * smooth(ph / CREST) : 1 - 0.5 * smooth((ph - CREST) / (1 - CREST));   // the heave, then the fall to the circle
-  const glow = ph < CREST ? (ph / CREST) ** 2 : Math.max(0, 1 - (ph - CREST) / 0.3) ** 2, fl = Math.max(0, 1 - Math.abs(ph - CREST) / 0.06);
+  const soft = PREFS.calm ? 0.25 : 0.5, glow = soft * (ph < CREST ? (ph / CREST) ** 2 : Math.max(0, 1 - (ph - CREST) / 0.3) ** 2), fl = PREFS.calm ? 0 : 0.5 * Math.max(0, 1 - Math.abs(ph - CREST) / 0.06);   // the flash at half strength, a quarter and no white edge in Low stimulation
   const br = ph >= 1 ? (0.5 - 0.5 * Math.cos((o.t - o.len) * TAU / 6)) * calm : 0;   // a breath every six seconds, until touched
   const R = 175 * LW / canvas.clientWidth * ($('app').clientWidth / 1206), k = lv < 0.5 ? 0 : (lv - 0.5) / 0.5, hw = LW / 2 - EDGE, hh = LH / 2 - EDGE;
   c.save(); c.globalCompositeOperation = 'destination-out'; c.fillStyle = `rgba(0,0,0,${a})`; c.fillRect(0, 0, LW, LH); c.restore();   // the pool is dark and clear: the sky shows through, and the world fades back in as you go
