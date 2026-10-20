@@ -1,4 +1,5 @@
-<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="robots" content="noindex"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><meta name="theme-color" content="#081428"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"><meta name="apple-mobile-web-app-title" content="SoRen"><link rel="manifest" href="../manifest.webmanifest"><link rel="apple-touch-icon" href="../apple-touch-icon.png"><link rel="icon" href="../icon-192.png"><style>html{height:100vh}body{padding-top:calc(8px + env(safe-area-inset-top,0px))!important;padding-bottom:calc(8px + env(safe-area-inset-bottom,0px))!important;overscroll-behavior:none}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body><title>SoRen preview p13</title>
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="robots" content="noindex"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><meta name="theme-color" content="#081428"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"><meta name="apple-mobile-web-app-title" content="SoRen"><link rel="manifest" href="../manifest.webmanifest"><link rel="apple-touch-icon" href="../apple-touch-icon.png"><link rel="icon" href="../icon-192.png"><style>html{height:100vh}body{padding-top:calc(8px + env(safe-area-inset-top,0px))!important;padding-bottom:calc(8px + env(safe-area-inset-bottom,0px))!important;overscroll-behavior:none}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body><meta charset="utf-8">
+<title>SoRen preview p13</title>
 <meta name="claude:viewport-fit-sides" content="cover">
 <style>
 /* One screen that never scrolls, five zones top to bottom: the top ribbon, the sentence line, the pool, the weather line,
@@ -10,7 +11,7 @@
   --u: calc(min(100vw, 460px) / 1206);
   --bg-top: #0d1b33; --bg-mid: #071020; --bg-bot: #03070e; --accent: #bae6fd; --accent-soft: rgba(186, 230, 253, 0.22);
   --ink: #f2f8fc; --ink-2: rgba(242, 248, 252, 0.72); --ink-3: rgba(242, 248, 252, 0.48);
-  --panel: rgba(12, 24, 46, 0.86); --line: rgba(186, 230, 253, 0.24); --sheet: #0b1424;
+  --panel: rgba(12, 24, 46, 0.86); --line: rgba(186, 230, 253, 0.24);
   --chip: rgba(255, 255, 255, 0.07); --chip-2: rgba(255, 255, 255, 0.11); --chip-line: rgba(255, 255, 255, 0.16);
   --shade-1: rgba(0, 0, 0, 0.22); --shade-3: rgba(0, 0, 0, 0.6);
   --on: 67, 194, 112; --pick: 80, 155, 255; --off: 80, 155, 255; --red: 255, 90, 80; --gold: 255, 200, 90; --warn: 250, 204, 21; --white: 240, 244, 247;
@@ -38,7 +39,7 @@ button, input { font: inherit; color: inherit; touch-action: manipulation; }
 button { cursor: pointer; background: none; border: 0; padding: 0; }
 :focus-visible { outline: 2px solid var(--ink); outline-offset: 2px; }
 .num { font-variant-numeric: tabular-nums; }
-#cardTitle, #bannerTitle, .sheet-title, .tagline { font-family: var(--serif); font-style: italic; font-weight: 600; }
+#cardTitle, #bannerTitle { font-family: var(--serif); font-style: italic; font-weight: 600; }
 
 /* The five zones. The weather line always keeps a full ribbon's height, open or folded, so the pool never changes size. */
 .app { position: relative; height: 100%; width: calc(1206 * var(--u)); margin: 0 auto; padding: 0 calc(20 * var(--u)); display: flex; flex-direction: column; justify-content: center; gap: calc(18 * var(--u)); }
@@ -65,7 +66,7 @@ button { cursor: pointer; background: none; border: 0; padding: 0; }
 .on > .ic, .on > .half > .ic, .ic.on { --ring: rgb(var(--on)); }
 .pick > .ic, .ic.pick { --ring: rgb(var(--pick)); }
 .quiet > .ic, .ic.quiet { --ring: rgb(var(--white)); }
-.erase > .ic { --ring: rgb(var(--red)); } .red > .ic { --ring: rgb(var(--red)); --tint: rgba(var(--red), 0.4); }
+.erase > .ic { --ring: rgb(var(--red)); }
 .warn > .ic { --ring: rgb(var(--warn)); } .cell.warn { color: rgb(var(--warn)); }
 .cell.none { opacity: 0.38; } .cell:disabled { opacity: 0.32; }
 .hush { stroke: rgb(var(--red)); } .cell.muted .waves, .cell:not(.muted) .hush { display: none; }
@@ -115,9 +116,17 @@ button { cursor: pointer; background: none; border: 0; padding: 0; }
 .cline.done { border-color: rgba(var(--gold), 0.8); } .cline.done svg { stroke: rgb(var(--gold)); filter: drop-shadow(0 0 6px rgba(var(--gold), 0.6)); }
 .btn { width: 100%; min-height: 44px; padding: 6px 12px; border-radius: var(--r-key); border: 1px solid var(--chip-line); background: var(--chip); font-weight: 600; }
 .btn:active { background: var(--chip-2); }
-.btn.primary, .go-in { background: var(--ink); color: var(--bg-bot); border-color: var(--ink); }
-.go-in { position: absolute; left: 50%; top: 56.5%; transform: translate(-50%, -50%); display: none; min-width: 112px; height: 38px; padding: 0 22px; border-radius: var(--r-key); font-weight: 600; }
-body.intro-in .go-in { display: block; animation: fade .6s; }
+.btn.primary { background: var(--ink); color: var(--bg-bot); border-color: var(--ink); }
+/* The opening's name and check box: they wait, then fade in together once the circle is at rest. */
+.soren, .go-in { position: absolute; left: 50%; opacity: 0; pointer-events: none; }
+.soren { top: calc(50% - 72 * var(--u)); transform: translateX(-50%); font: italic 700 calc(64 * var(--u))/1 var(--sans, inherit); color: #fff; white-space: nowrap; -webkit-text-stroke: calc(1.2 * var(--u)) rgba(150, 200, 255, 0.6);
+  text-shadow: 0 0 calc(10 * var(--u)) rgba(100, 170, 255, 0.95), 0 0 calc(26 * var(--u)) rgba(80, 155, 255, 0.75), 0 0 calc(52 * var(--u)) rgba(80, 155, 255, 0.45); }
+.go-in { top: calc(50% + 36 * var(--u)); width: calc(88 * var(--u)); height: calc(88 * var(--u)); transform: translate(-50%, -50%); background: none; border: 0; color: var(--icon); }
+.go-in .ic { top: 50%; --ring: rgb(var(--white)); } .go-in .ic::after { transition-duration: 1.4s; }
+body.intro-in .soren, body.intro-in .go-in { opacity: 1; transition: opacity 3s cubic-bezier(0.4, 0, 0.2, 1); }
+body.intro-ready .go-in { pointer-events: auto; } body.intro-ready .go-in .ic { --ring: rgb(var(--pick)); }
+.go-in.on > .ic { --ring: rgb(var(--on)); --tint: rgba(var(--on), 0.4); } .go-in.on .ic::after { transition-duration: 0.3s; }
+body.intro-quick.intro-in .soren, body.intro-quick.intro-in .go-in { transition-duration: 0.4s; }
 
 /* The card: every menu is this one frame, at one size, grown from the sentence line. Its pill names it, under the tile
    that opened it. Rows of 132: icon, name, one line on what it does, the control, the ✓ on the row you're on. The rail on
@@ -139,7 +148,6 @@ body.intro-in .go-in { display: block; animation: fade .6s; }
 .ok { position: absolute; left: calc(1069 * var(--u)); top: 50%; width: calc(72 * var(--u)); height: calc(72 * var(--u)); transform: translate(-50%, -50%); display: none; color: rgb(var(--on)); }
 .ok .ic { left: 50%; top: 50%; --ring: rgb(var(--on)); } .go .ic { left: 50%; top: 50%; width: calc(30 * var(--u)); height: calc(30 * var(--u)); }
 .mrow.lit .ok { display: block; } .mrow.off .ok { color: rgb(var(--white)); } .mrow.off .ok .ic { --ring: rgb(var(--white)); }
-.mrow.lit .ok.flash .ic { --tint: rgba(var(--on), 0.4); }
 .mrow .go { position: absolute; left: calc(1030 * var(--u)); top: 50%; width: calc(40 * var(--u)); height: calc(40 * var(--u)); transform: translate(-50%, -50%); }
 /* The controls. A level is a slider; two or three choices are one pill whose highlight slides; four or more, a wheel. */
 .lvl { position: absolute; left: calc(380 * var(--u)); width: calc(520 * var(--u)); top: calc(41 * var(--u)); height: calc(80 * var(--u)); transform: translateY(-50%); margin: 0; background: transparent; -webkit-appearance: none; appearance: none; --p: 0%; }
@@ -199,24 +207,14 @@ body.intro-in .go-in { display: block; animation: fade .6s; }
 @keyframes glint-back { from { transform: translateX(130%); } to { transform: translateX(-130%); } }
 @keyframes fade { from { opacity: 0; } to { opacity: 1; } }
 
-/* Beta keeps its own card for now: the old frame, on the stars. */
-.scrim { position: fixed; inset: 0; z-index: 39; background: rgba(2, 5, 10, 0.86); animation: fade var(--quick); }
-.sheet { position: fixed; z-index: 40; left: 50%; top: 50%; transform: translate(-50%, -50%); width: min(400px, calc(100% - 20px)); height: min(640px, calc(100% - 16px)); display: flex; flex-direction: column; background: var(--sheet); border: 1px solid var(--line); border-radius: 22px; box-shadow: 0 24px 60px rgba(0, 0, 0, 0.65); animation: fade var(--quick); overflow: hidden; }
-.sheet-head { flex: none; display: flex; align-items: center; gap: 8px; padding: 10px 12px 6px; }
-.nav { flex: none; width: 38px; height: 38px; border-radius: 50%; border: 1px solid var(--chip-line); background: var(--chip); font-size: 18px; line-height: 1; }
-.sheet-title { flex: 1; min-width: 0; min-height: 38px; display: grid; place-items: center; padding: 0 8px; border-radius: var(--r-pill); border: 1px solid var(--chip-line); background: var(--chip); font-size: var(--fs-4); }
-.sheet-body { flex: 1 1 auto; min-height: 0; overflow-y: auto; display: flex; flex-direction: column; gap: 4px; padding: 2px 14px 16px; }
-.sheet-foot { flex: none; padding: 10px 14px calc(12px + env(safe-area-inset-bottom, 0px)); border-top: 1px solid var(--chip-line); }
-.sheet .row { padding: 8px 2px 10px; } .rline { display: flex; align-items: center; justify-content: space-between; gap: 10px; } .rname { font-weight: 600; }
-.rdesc { display: block; margin-top: 6px; font-style: italic; font-size: var(--fs-2); line-height: 1.3; color: var(--ink-2); }
-.switch { flex: none; position: relative; width: 52px; height: 32px; border-radius: var(--r-pill); border: 1px solid var(--chip-line); background: var(--chip-line); transition: background .35s; }
-.switch i { position: absolute; top: 3px; left: 3px; width: 24px; height: 24px; border-radius: 50%; background: var(--ink); transition: transform .35s cubic-bezier(.45, 0, .25, 1); }
-.switch[aria-checked="true"] { background: rgb(var(--on)); } .switch[aria-checked="true"] i { transform: translateX(20px); }
-.tagline { margin: 0; font-size: var(--fs-4); font-weight: 400; line-height: 1.4; }
-#warp { position: absolute; inset: 0; width: 100%; height: 100%; display: block; } .sheet > :not(#warp) { position: relative; }
+/* Beta's card opens on stars coming toward you; Done is warp. */
+#warp { position: absolute; inset: 0; width: 100%; height: 100%; border-radius: var(--r); display: none; } .mc.stars #warp { display: block; }
 
 /* The opening: the ribbons wait until the circle is at rest. Rest: the ribbons sink. Relax: the page dims. */
-body.intro { background: #050d1c; } body.intro #topBar, body.intro #wxBar, body.intro .line, body.intro:not(.intro-in) #botBar { opacity: 0; pointer-events: none; } body.intro .pool { box-shadow: none; background: transparent; }
+body.intro { background: #000; } body.intro #topBar, body.intro #wxBar, body.intro .line, body.intro:not(.intro-in) #botBar { opacity: 0; pointer-events: none; } body.intro .pool { box-shadow: none; background: transparent; }
+body.intro #botBar { background: none; box-shadow: none; } body.intro .cell::before { display: none; } body.intro-in #botBar { opacity: 0.45; transition: opacity 3s cubic-bezier(0.4, 0, 0.2, 1); } body.intro:not(.intro-ready) #botBar { pointer-events: none; } body.intro-quick #botBar { transition-duration: 0.4s; }
+.sky { position: fixed; inset: 0; z-index: 0; pointer-events: none; background: radial-gradient(75% 55% at 50% 45%, #0b2757 0%, #071a3a 35%, #030a18 70%, #000 100%); display: none; animation: skyin 2.4s ease-out; }
+body.intro .sky { display: block; } @keyframes skyin { from { opacity: 0; } }
 body.rest { background: #000; } body.rest .rib, body.rest .line, body.rest .zone4 { opacity: 0.22; } body.rest .rib:active, body.rest .rib:focus-within { opacity: 0.8; } body.rest .pool { box-shadow: none; }
 body.rest.carded .rib, body.rest.carded .line { opacity: 1; }
 body::before { content: ""; position: fixed; inset: 0; background: rgba(3, 5, 9, 0.42); opacity: 0; transition: opacity var(--settle); pointer-events: none; }
@@ -226,15 +224,15 @@ body.relax::before { opacity: 1; }
 body.rm *, body.rm *::before, body.rm *::after { transition: none !important; animation: none !important; }
 @media (max-height: 640px) { #cardArt svg { width: 40px; height: 40px; } .card { padding: 12px 14px; gap: 5px; } #cardTitle { font-size: var(--fs-4); } .card-actions .btn { min-height: 38px; } }
 </style>
-<script>document.body.classList.add('intro')</script>
 
+<div class="sky"></div><script>document.body.classList.add('intro')</script>
 <div class="app" id="app">
   <nav class="rib" id="topBar" aria-label="How things are"></nav>
   <div class="line" id="line"></div>
   <div class="pool-wrap">
     <div class="pool" id="pool">
       <canvas id="game" tabindex="0" aria-label="The pool. Touch and slide to move the waiting sphere, let go to drop it; or the arrow keys and Space. In Relax, hold to breathe in and let go to breathe out."></canvas>
-      <button class="go-in" data-act="introstart">Start</button>
+      <div class="soren" aria-hidden="true">Soren</div><button class="go-in" id="introGo" data-act="introstart" aria-label="Session start"><span class="ic"><svg viewBox="0 0 24 24"><path d="M3 12.5l6 6L21 6"/></svg></span></button>
       <div class="banner" id="banner" aria-live="polite"><div id="bannerTitle"></div><div id="bannerSub"></div></div>
       <div class="alert" id="alert" hidden><span id="alertText"></span><span id="alertTime" class="num"></span></div>
       <div class="pool-card" id="poolCard" hidden><div class="card"><div id="cardEyebrow"></div><div id="cardArt"></div><div id="cardTitle"></div><div id="cardNote"></div><div class="clist" id="cardList"></div><div class="card-actions" id="cardActions"></div></div></div>
@@ -242,7 +240,7 @@ body.rm *, body.rm *::before, body.rm *::after { transition: none !important; an
   </div>
   <div class="zone4" id="wxBar"></div>
   <nav class="rib" id="botBar" aria-label="What you can do here"></nav>
-  <section class="mc" id="mc" hidden role="dialog" aria-modal="true" aria-labelledby="mcPill">
+  <section class="mc" id="mc" hidden role="dialog" aria-modal="true" aria-labelledby="mcPill"><canvas id="warp" aria-hidden="true"></canvas>
     <span class="pill" id="mcPill"></span>
     <div class="rows" id="mcRows"></div>
     <div class="rail" id="mcRail" aria-hidden="true"></div>
@@ -251,12 +249,6 @@ body.rm *, body.rm *::before, body.rm *::after { transition: none !important; an
   </section>
 </div>
 
-<div class="scrim" id="scrim" hidden></div>
-<div class="sheet" id="sheet" hidden role="dialog" aria-modal="true" aria-labelledby="sheetTitle"><canvas id="warp" aria-hidden="true"></canvas>
-  <div class="sheet-head"><span class="sheet-title" id="sheetTitle"></span><button class="nav" id="sheetClose" aria-label="Close">✕</button></div>
-  <div class="sheet-body" id="sheetBody"></div>
-  <div class="sheet-foot" id="sheetFoot"></div>
-</div>
 <div class="warm" id="warm"></div>
 <div class="veil" id="veil" aria-hidden="true"></div>
 <script>
@@ -909,6 +901,7 @@ function maybePraise(reason, x, y) {
 const LIGHT = '240,246,255', GOLD = '255,200,90', RED = '255,90,80', GREEN = '67,194,112', BLUE = '80,155,255';
 const CLOUD = 'M7.5 14.5h9.5a3.5 3.5 0 0 0 .4-7 5 5 0 0 0-9.6 1.2A3 3 0 0 0 7.5 14.5z', DOT = (x, y, r) => `M${x - r} ${y}a${r} ${r} 0 1 0 ${2 * r} 0a${r} ${r} 0 1 0 ${-2 * r} 0`;
 const ICON = {
+  skip: 'M9 5.5l7 6.5-7 6.5', fwd: 'M3.5 6l6 6-6 6M12.5 6l6 6-6 6', last: 'M6 6l6 6-6 6M19 5.5v13',
   gear: 'M12 9.2a2.8 2.8 0 1 0 0 5.6 2.8 2.8 0 0 0 0-5.6zM19.3 13.4a7.4 7.4 0 0 0 0-2.8l1.9-1.5-1.9-3.3-2.3.9a7.4 7.4 0 0 0-2.4-1.4L14.2 3h-3.8l-.4 2.3a7.4 7.4 0 0 0-2.4 1.4l-2.3-.9-1.9 3.3 1.9 1.5a7.4 7.4 0 0 0 0 2.8l-1.9 1.5 1.9 3.3 2.3-.9a7.4 7.4 0 0 0 2.4 1.4l.4 2.3h3.8l.4-2.3a7.4 7.4 0 0 0 2.4-1.4l2.3.9 1.9-3.3z',
   pp: 'M3.5 6.5v11l8-5.5zM16 6.5v11M20.5 6.5v11', play: 'M8 5.5v13l10.5-6.5z',
   speaker: 'M4.5 9.5h3.2L12 6v12l-4.3-3.5H4.5z', waves: 'M15 9.5a3.5 3.5 0 0 1 0 5M17.5 7a7 7 0 0 1 0 10', hush: 'M15.5 9.5l5 5M20.5 9.5l-5 5',
@@ -2738,17 +2731,22 @@ function drawRest(c) {
   c.fillStyle = g; c.fillRect(0, 0, LW, LH);
   c.save(); c.globalAlpha = 0.55; words(c, restWords(), '', CY); c.restore();
 }
-// The opening, SoRen's own movement: on dark blue the lines heave in from nothing and flash bright once at the crest; the glow
-// fades after it, and the shape falls to the circle with SoRen in it, which goes on breathing, Start under the name.
+// The opening: on black to deep blue the pool's own outline fades in, heaves to its crest, flashes bright once, then falls to a
+// circle that glows and breathes until you touch it. Soren and the check box fade in (in the page) once it has come to rest.
 function drawIntro(c, o) {
-  const CREST = 0.4, ease = (u) => u * u * (3 - 2 * u), ph = Math.min(1, o.t / o.len), rest = Math.max(0, o.t - o.len), a = o.go == null ? 1 : clamp(1 - (o.t - o.go) / TIME.settle, 0, 1);
-  if (ph >= 1) { drawCircle(c, a, 0.5 - 0.12 * (1 - twice(rest)) * clamp(rest, 0, 1), 'SoRen', ''); return; }   // Start sits in the circle, under the name
-  const lv = ph < CREST ? 0.93 + 0.07 * ease(ph / CREST) : 1 - 0.5 * ease((ph - CREST) / (1 - CREST));
-  const glow = ph < CREST ? (ph / CREST) ** 2 : Math.max(0, 1 - (ph - CREST) / 0.3) ** 2, fl = Math.max(0, 1 - Math.abs(ph - CREST) / 0.06), line = clamp((ph - 0.03) / 0.3, 0, 1);   // one flash, at the crest, on the line alone
-  c.save(); c.globalAlpha = a; nightBlue(c);
-  c.fillStyle = `rgba(242,248,252,${(Math.max(0, 0.05 + 0.1 * (lv - 0.5) * 2) * line).toFixed(3)})`; c.beginPath(); shapePath(c, breathShape(lv)); c.fill();
-  c.shadowColor = `rgba(186,230,253,${(0.9 * glow).toFixed(3)})`; c.shadowBlur = 3 + 30 * glow + 12 * fl;
-  c.strokeStyle = `rgba(${Math.round(186 + 69 * fl)},${Math.round(230 + 25 * fl)},253,${(0.85 * line + 0.15 * fl).toFixed(3)})`; c.lineWidth = 1.8 + 1.4 * glow + 1.2 * fl; c.stroke(); c.shadowBlur = 0;
+  const CREST = 0.4, ph = clamp(o.t / o.len, 0, 1), rest = smooth(clamp((o.t - o.len) / 1.2, 0, 1)), line = smooth(clamp(o.t / 2.4, 0, 1));
+  const a = o.go == null ? 1 : clamp(1 - (o.t - o.go) / TIME.settle, 0, 1), calm = o.eng == null ? 1 : clamp(1 - (o.t - o.eng) / 0.8, 0, 1);
+  const lv = ph < CREST ? 0.93 + 0.07 * smooth(ph / CREST) : 1 - 0.5 * smooth((ph - CREST) / (1 - CREST));   // the heave, then the fall to the circle
+  const glow = ph < CREST ? (ph / CREST) ** 2 : Math.max(0, 1 - (ph - CREST) / 0.3) ** 2, fl = Math.max(0, 1 - Math.abs(ph - CREST) / 0.06);
+  const br = ph >= 1 ? (0.5 - 0.5 * Math.cos((o.t - o.len) * TAU / 6)) * calm : 0, bs = canvas.width / 402;   // a breath every six seconds, until touched
+  const R = 175 * LW / canvas.clientWidth * ($('app').clientWidth / 1206), k = lv < 0.5 ? 0 : (lv - 0.5) / 0.5, hw = LW / 2 - EDGE, hh = LH / 2 - EDGE;
+  c.save(); c.globalCompositeOperation = 'destination-out'; c.fillStyle = `rgba(0,0,0,${a})`; c.fillRect(0, 0, LW, LH); c.restore();   // the pool is dark and clear: the sky shows through, and the world fades back in as you go
+  c.save(); c.globalAlpha = a; c.translate(CX, CY); c.scale(1 + 0.035 * br, 1 + 0.035 * br); c.translate(-CX, -CY);
+  c.beginPath(); shapePath(c, [CX, CY, R + (hw - R) * k, R + (hh - R) * k, R + (CORNER - R) * k]);
+  c.fillStyle = `rgba(242,248,252,${((0.05 + 0.1 * (lv - 0.5) * 2) * line + 0.03 * br).toFixed(3)})`; c.fill();
+  c.shadowColor = `rgba(186,230,253,${(0.9 * glow + (0.35 + 0.3 * br) * rest).toFixed(3)})`; c.shadowBlur = (3 + 70 * glow + 30 * fl) * bs + (16 + 18 * br) * rest * bs;
+  c.strokeStyle = `rgba(${Math.round(186 + 69 * fl)},${Math.round(230 + 25 * fl)},253,${(0.85 * line + 0.15 * fl).toFixed(3)})`; c.lineWidth = 1.8 + 2.2 * glow + 2 * fl; c.stroke();
+  if (glow > 0.05) { c.shadowBlur *= 1.8; c.stroke(); }
   c.restore();
 }
 // Heritage: a new marble comes out of the furnace, white-gold, cooling through amber to its true colours (about a second and a half).
@@ -2781,7 +2779,7 @@ let lastFrame = performance.now(), audioT = 0, uiT = 0, warmT = 0, physAcc = 0, 
 function update(k, dt) {
   stepDt = dt; animTime += dt;
   if (S.intro && (S.intro.t += dt) && S.intro.go != null && S.intro.t - S.intro.go > TIME.settle) S.intro = null;
-  if (S.intro && S.intro.go == null && S.intro.t >= S.intro.len + 0.8 && !S.intro.rest) { S.intro.rest = true; syncBars(); }   // the opening comes to rest: Start appears
+  if (S.intro && S.intro.go == null && ((S.intro.t >= S.intro.len && !S.intro.rest) || (S.intro.t >= S.intro.len + 3 && !S.intro.ready))) { S.intro.rest = true; S.intro.ready = S.intro.t >= S.intro.len + 3; syncBars(); }   // at rest the name, the check box and the ribbon fade in; three seconds on, the box can be touched
   if (S.outro && (S.outro.t += dt) >= S.outro.len) parkCard();
   updateGoal();
   updateScene(dt); updateWind(dt); updateLife(dt); updateBreath(dt); updateActions(dt, k); updateStorms(dt); updateStorm(dt); updateBoard(dt); updateCreatures(dt);
@@ -2851,7 +2849,7 @@ function topCells() {
 }
 function botCells() {
   const m = S.mode;
-  if (S.intro && S.intro.go == null) return S.intro.rest ? [cell('data-act="introplay"', ICON.play, 'Play now'), cell('data-act="introfidget"', ICON.touch, 'Fidget now'), cell('data-act="introrelax"', ICON.breathe, 'Relax now')] : [];
+  if (S.intro && S.intro.go == null) return S.intro.rest ? [['introgo', ICON.skip, 'Skip'], ['introplay', ICON.fwd, 'Play'], ['introrelax', ICON.last, 'Relax']].map(([a, d, w]) => cell(`data-act="${a}"`, d, w).replace('class="cell"', 'class="cell quiet"')) : [];
   if (m === 'play') return TOOLS.map(k => cell(`data-tool="${k}"`, ICON[k], TOOL_NAMES[k], `<b class="n">${S.tools[k]}</b>`));
   if (m === 'relax') return [cell('data-act="deep"', ICON.breathe, 'Deep breath'), cell('data-card="pace"', val((+PREFS.bpm).toFixed(1)), 'Pace'), cell('data-act="play"', ICON.play, 'Play')];
   if (m === 'fidget') return [cell('data-act="pacer"', ICON.orb, 'Pacer'), cell('data-act="drops"', ICON.drop, 'Drops'), cell('data-card="style"', ICON.tune, 'Style')];
@@ -2888,7 +2886,7 @@ function syncBars() {
   const sv = wx.querySelector('[data-act=severe]'); if (sv) { sv.classList.toggle('on', false); sv.classList.toggle('warn', S.severe); }
   bot.querySelectorAll('[data-tool]').forEach(b => { const k = b.dataset.tool, armed = (k === 'strike' && S.armed) || (k === 'mystery' && S.wild); b.classList.toggle('on', armed); b.classList.toggle('live', armed); b.classList.toggle('none', !S.tools[k] && !armed); });
   for (const r of [top, bot, wx]) fitIcons(r);
-  document.body.classList.toggle('intro-in', !!(S.intro && S.intro.rest));
+  document.body.classList.toggle('intro-in', !!(S.intro && S.intro.rest)); document.body.classList.toggle('intro-ready', !!(S.intro && S.intro.ready)); document.body.classList.toggle('intro-quick', !!(S.intro && S.intro.quick));
   document.body.classList.toggle('carded', !!CARD.name);
 }
 function tickBars() {   // every frame: the score and its glow, your time running down (or the clock)
@@ -2960,7 +2958,7 @@ const CARDS = {
     hub(ICON.heart, 'Comfort', 'Low stimulation, reduce motion, breathing.', () => openCard('comfort', true)),
     hub(ICON.bars, 'Statistics', 'What you’ve done. Kept on this phone.', () => openCard('stats', true)),
     hub(ICON.ask, 'How to play', 'Settle. Touch. Return.', () => openCard('help', true)),
-    hub(ICON.flask, 'Beta', 'Rough at the edges. Keep what helps.', openBeta)] },
+    hub(ICON.flask, 'Beta', 'Rough at the edges. Keep what helps.', () => openCard('beta', true))] },
   scene: { title: 'Scene', tile: 1, stage: true, keys: ['mode', 'where'], rows: () => [
     pref('mode', ICON.grid, 'Mode', DESCS.Mode), pref('where', ICON.pin, 'Place', 'Live is the season where you are.')],
     done: () => { const { mode, where } = CARD.pend; closeSheet(); if (where != null && where !== PREFS.where) setPref('where', where); if (mode != null && mode !== S.mode) setPref('mode', mode); } },
@@ -2997,7 +2995,11 @@ const CARDS = {
     ...(PREFS.numbers ? [show(ICON.star, 'Best', 'Your highest score.', () => fmt(j.best))] : []), show(ICON.task, 'Lists finished', 'Tasks you ticked, all of them.', () => fmt(j.lists)),
     show(ICON.bloom, 'Full Blooms', 'The two largest, merged.', () => fmt(j.blooms)), show(ICON.grid, 'Merges this game', '', () => fmt(S.merges)),
     show(ICON.clock, 'Today', '', () => hm(j.today)), show(ICON.clock, 'This week', 'No streaks: nothing to keep up.', () => hm(j.week))]; } },
-  help: { title: 'Help', tile: 0, keys: [], rows: () => FAQ.map(([q, a], i) => hub(ICON.ask, q, a, () => popup({ title: q, line: a, back: 'Back to Help' }))) }
+  help: { title: 'Help', tile: 0, keys: [], rows: () => FAQ.map(([q, a], i) => hub(ICON.ask, q, a, () => popup({ title: q, line: a, back: 'Back to Help' }))) },
+  // Beta: the experiments, on the stars. They read the phone's motion sensor, on the phone; nothing is kept or sent. Done is warp.
+  beta: { title: 'Beta', tile: 0, keys: ['beta'], stars: true, done: () => engage(), rows: () => [
+    pref('beta.lookup', ICON.star, 'Look Up', 'Lift the phone: the real stars overhead, to draw.'), pref('beta.chest', ICON.rings, 'Chest breathing', 'In Relax, the phone on your chest follows you.'),
+    pref('beta.heavy', ICON.mystery, 'Heavy glass', 'Big spheres follow your finger slowly.')] }
 };
 const CARD = { name: null, stack: [], rows: [], i: 0, snap: '', pend: {}, stage: false };
 const U = (n) => `calc(${n} * var(--u))`;
@@ -3065,7 +3067,7 @@ function openCard(name, push) {
   $('mcFoot').querySelector('[data-foot=reset]').classList.toggle('none', !CARDS[name].keys.length);
   $('mcFoot').querySelector('[data-foot=help]').classList.toggle('none', name === 'help');
   $('mcPop').hidden = true;
-  const mc = $('mc'); mc.style.top = `${$('line').offsetTop}px`; mc.hidden = false;
+  const mc = $('mc'); mc.style.top = `${$('line').offsetTop}px`; mc.hidden = false; mc.classList.toggle('stars', !!CARDS[name].stars);   // Beta opens on the stars
   cardRows(); placePill(); syncBars();
 }
 const changed = () => JSON.stringify(PREFS) !== CARD.snap || Object.keys(CARD.pend).some(k => CARD.pend[k] !== getPref(k));
@@ -3081,7 +3083,6 @@ function cardBack() {   // to the card this one came from, or away
 }
 function closeSheet() {   // everything away, as it stands (time's up, or Rest, closes the card too)
   const was = S.sheet; if (!was) return;
-  if (was === 'beta') { closeBeta(); if (!CARD.name) return; }
   CARD.name = null; CARD.stack = []; CARD.pend = {}; S.sheet = null; $('mc').hidden = true; $('mcPop').hidden = true;
   try { canvas.focus({ preventScroll: true }); } catch (e) {}
   syncUI(); if (was === 'session') setTimeout(welcome, TIME.beat * 1000);   // into the session: the breeze, once
@@ -3093,15 +3094,9 @@ function popup({ title, line, back, act, go }) {   // the one pop-up: a question
   POP.go = go; p.hidden = false; fitIcons(p);
 }
 const POP = { go: null };
-// One touch rule: a ring turns green for a second, then the thing happens. The red one fills with its tint instead.
-let BUSY = false;
-function confirmThen(el, cls, fn) {
-  if (BUSY) return; BUSY = true; if (el) el.classList.add(cls);
-  setTimeout(() => { BUSY = false; if (el) el.classList.remove(cls); fn(); }, 1000);
-}
 function footAct(k, el) {
   const def = CARDS[CARD.name];
-  if (k === 'done') confirmThen(el, 'on', () => { if (def.done) def.done(); else cardBack(); });
+  if (k === 'done') { if (def.done) def.done(); else cardBack(); }
   else if (k === 'close') { if (!changed()) { cardBack(); return; } popup({ title: 'Leave without saving?', line: `Your changes to ${def.title} will be undone.`, back: `Back to ${def.title}`, act: 'Cancel & Leave', go: () => { revert(); cardBack(); } }); }
   else if (k === 'help' && CARD.name !== 'help') openCard('help', true);
   else if (k === 'reset' && def.keys.length) popup({ title: `Reset ${def.title}?`, line: 'Every row goes back to how SoRen came.', back: `Back to ${def.title}`, act: 'Reset', go: () => {
@@ -3114,25 +3109,10 @@ function wheelStep(i, d) { const r = CARD.rows[i], k = clamp(+$('mcRows').childr
 function okTouch(i, el) {
   const r = CARD.rows[i];
   if (r.on) { r.on.set(!r.on.get()); syncCard(); return; }
-  confirmThen(el, 'flash', () => engageRow(i + 1 < CARD.rows.length ? i + 1 : i));   // confirmed: on to the next row
+  engageRow(i + 1 < CARD.rows.length ? i + 1 : i);   // confirmed: on to the next row
 }
 
-/* ---------- Beta keeps its own card for now ---------- */
-const BETA = [['beta.lookup', 'Look Up', 'Lift the phone toward the sky: the real stars overhead. Hold the light steady on each star to draw the constellation; lower the phone to come back.'],
-  ['beta.chest', 'Chest breathing', 'In Relax, lay the phone flat on your chest, hands off. After fifteen seconds the pool follows your breath.'],
-  ['beta.heavy', 'Heavy glass', 'Big spheres follow your finger slowly, like real weight. How they fall doesn’t change.']];
-function openBeta() {
-  S.sheet = 'beta'; $('sheetTitle').textContent = 'SoRen · Beta';
-  $('sheetBody').innerHTML = '<p class="tagline"><b>The next generation. V3.0</b><br>To seek out new science and innovation.<br>To boldly go where no app has gone before!</p>'
-    + BETA.map(([k, n, d]) => `<div class="row"><div class="rline"><span class="rname">${n}</span><button class="switch" role="switch" data-key="${k}" aria-label="On or off"><i></i></button></div><i class="rdesc">${d}</i></div>`).join('')
-    + '<p class="rdesc">These read the phone’s motion sensor, on the phone. Nothing is kept or sent. They’re rough at the edges: keep what helps.</p>';
-  $('sheetFoot').innerHTML = '<button class="btn primary" data-act="engage">Engage</button>';
-  $('scrim').hidden = false; $('sheet').hidden = false; syncControls();
-}
-function closeBeta() { $('sheet').hidden = true; $('scrim').hidden = true; $('sheetBody').innerHTML = ''; S.sheet = CARD.name; }
-function syncControls() { document.querySelectorAll('.switch[data-key]').forEach(b => b.setAttribute('aria-checked', String(!!getPref(b.dataset.key)))); document.body.classList.toggle('rm', lessMo()); }
-
-const syncUI = () => { syncBars(); syncCard(); syncControls(); };
+const syncUI = () => { syncBars(); syncCard(); document.body.classList.toggle('rm', lessMo()); };
 function setPref(k, v) {   // a change takes effect everywhere, at once, and is kept
   if (k === 'mode') { setMode(v); return; }
   setPrefRaw(k, v); savePrefs(); sound.init();
@@ -3141,7 +3121,7 @@ function setPref(k, v) {   // a change takes effect everywhere, at once, and is 
   else if (k === 'overflow') S.fair = S.world.balls.length || S.score ? S.fair && v === 'end' : v === 'end';   // changing the rules mid-game: it no longer counts
   else if (k === 'fadeAfter' && S.rest) S.rest.left = v * 60;
   else if (k === 'numbers') renderLadder();
-  else if (k.startsWith('beta.') && v && k !== 'beta.heavy') askSensor(k === 'beta.lookup' ? 'tilt' : 'moving', (ok) => { if (!ok) { setPrefRaw(k, false); savePrefs(); syncControls(); say('Not on this device', 'It needs a phone’s motion sensor'); } });   // iPhones ask once
+  else if (k.startsWith('beta.') && v && k !== 'beta.heavy') askSensor(k === 'beta.lookup' ? 'tilt' : 'moving', (ok) => { if (!ok) { setPrefRaw(k, false); savePrefs(); syncUI(); say('Not on this device', 'It needs a phone’s motion sensor'); } });   // iPhones ask once
   syncUI();
 }
 
@@ -3192,10 +3172,10 @@ function bind() {
     if (e.key === ' ' || e.key === 'Enter') { e.preventDefault(); if (e.repeat) return; if (S.sigh) endSigh(); else if (S.paused) setPaused(false); else if (!S.relax) dropCurrent(); }
     else if (e.key === 'ArrowLeft' || e.key === 'ArrowRight') { e.preventDefault(); S.targetX = clamp(S.targetX + (e.key === 'ArrowLeft' ? -14 : 14), 10, LW - 10); }
   });
-  // A tile that opens a card: its ring turns green for a second, then the card. With a card open, another card asks first.
+  // A tile that opens a card. With a card open and changed, another card asks first.
   const toCard = (name, el) => {
     if (CARD.name === name) return;
-    const go = () => confirmThen(el, 'on', () => { closeSheet(); openCard(name); });
+    const go = () => { closeSheet(); openCard(name); };
     if (CARD.name && changed()) popup({ title: 'Leave without saving?', line: `Your changes to ${CARDS[CARD.name].title} will be undone.`, back: `Back to ${CARDS[CARD.name].title}`, act: 'Cancel & Leave', go: () => { revert(); $('mcPop').hidden = true; go(); } });
     else go();
   };
@@ -3204,8 +3184,8 @@ function bind() {
     pause: () => { setPaused(!S.paused); syncBars(); },
     vol: () => { const on = !PREFS.sound; setPref('sound', on); LINE.sub = on || S.sheet ? null : 'sound'; syncBars(); },   // one tap mutes, and offers the sub menu; the next unmutes
     words: () => { LINE.sub = 'change'; syncBars(); }, subcancel: () => { LINE.sub = null; syncBars(); },
-    change: (el) => confirmThen(el, 'on', () => openCard('scene')), soundcard: (el) => confirmThen(el, 'on', () => openCard('sound')),
-    weather: (el) => confirmThen(el, 'on', () => { S.wxOpen = true; syncBars(); }), fold: () => { S.wxOpen = false; syncBars(); },
+    change: () => openCard('scene'), soundcard: () => openCard('sound'),
+    weather: () => { S.wxOpen = true; syncBars(); }, fold: () => { S.wxOpen = false; syncBars(); },
     allwx: () => { const on = ATMO.filter(k => PREFS.atmo[k].on);
       if (on.length || S.severe) { allWx.was = on; for (const k of ATMO) PREFS.atmo[k].on = false; S.severe = false; }
       else for (const k of (allWx.was && allWx.was.length ? allWx.was : ['rain'])) PREFS.atmo[k].on = true;
@@ -3213,17 +3193,18 @@ function bind() {
     severe: () => { S.severe = !S.severe; say(S.severe ? 'Severe weather' : 'Weather', S.severe ? 'Whatever is on runs at full strength' : 'Back to normal'); sound.whoosh(S.severe ? 0.8 : 0.3, 0); syncBars(); },
     deep: () => startSigh(), play: () => setMode('play'),
     pacer: () => setPref('pacer.on', !PREFS.pacer.on), drops: () => setPref('pacer.drops', !PREFS.pacer.drops),
-    introstart: () => { introGo(); openCard('session'); },
+    introstart: () => { $('introGo').classList.add('on'); S.intro.eng = S.intro.t; introGo(); openCard('session'); },   // the box turns green and the circle stops breathing
+    introgo: () => { introGo(); S.prev = null; S.goal = null; setMode('play'); setPaused(false); syncUI(); setTimeout(welcome, TIME.beat * 1000); },   // Skip: the game as it is
     introplay: () => { introGo(); S.prev = null; S.goal = null; setMode('play'); setPaused(false); Object.assign(S, { zen: true, fair: false }); syncUI(); setTimeout(welcome, TIME.beat * 1000); },   // Play now: the base game, Zen for this game, no timer
-    introrelax: () => { introGo(); S.prev = null; setMode('relax'); setTimeout(welcome, TIME.beat * 1000); }, introfidget: () => { introGo(); S.prev = null; setMode('fidget'); setTimeout(welcome, TIME.beat * 1000); },
+    introrelax: () => { introGo(); S.prev = null; setMode('relax'); setTimeout(welcome, TIME.beat * 1000); },
     engage, close: closeSheet
   };
   document.addEventListener('click', (e) => {
     const t = e.target;
     if (!$('mcPop').hidden && t.closest('#mc')) {   // the pop-up answers first
       const p = t.closest('[data-pop]'); if (!p) return;
-      if (p.dataset.pop === 'back') confirmThen(p, 'on', () => { $('mcPop').hidden = true; });
-      else confirmThen(p, 'red', () => { $('mcPop').hidden = true; const f = POP.go; POP.go = null; if (f) f(); });
+      $('mcPop').hidden = true;
+      if (p.dataset.pop === 'go') { const f = POP.go; POP.go = null; if (f) f(); }
       return;
     }
     const inCard = t.closest('#mc');
@@ -3236,7 +3217,7 @@ function bind() {
       if (r.kind === 'hub' && (wasLit || t.closest('.go'))) r.go();
       return;
     }
-    if (S.sheet && S.sheet !== 'beta' && (t.closest('#botBar') || t.closest('#wxBar') || t.closest('#line'))) return;   // a card is open: the rest waits
+    if (S.sheet && (t.closest('#botBar') || t.closest('#wxBar') || t.closest('#line'))) return;   // a card is open: the rest waits
     const act = t.closest('[data-act]'); if (act) { ACTS[act.dataset.act](act); return; }
     const cd = t.closest('[data-card]'); if (cd && !cd.closest('#poolCard')) { const n = cd.dataset.card; toCard(n, cd.matches('.cell') ? cd : null); return; }
     const tool = t.closest('[data-tool]'); if (tool) { useTool(tool.dataset.tool); return; }
@@ -3276,14 +3257,12 @@ function bind() {
   document.addEventListener('focusin', (e) => { const r = e.target.closest && e.target.closest('[data-row]'); if (r) engageRow(+r.dataset.row); });
   document.addEventListener('keydown', (e) => {
     if (e.key === 'Enter' && e.target.matches && e.target.matches('.tx')) { e.target.blur(); return; }
-    if (S.sheet === 'beta' && e.key === 'Escape') { closeBeta(); syncUI(); return; }
     if (!CARD.name) return;
     if (e.key === 'Escape') footAct('close');
     else if (e.target.matches && e.target.matches('input')) return;
     else if (e.key === 'ArrowDown' || e.key === 'ArrowUp') { e.preventDefault(); engageRow(clamp(CARD.i + (e.key === 'ArrowDown' ? 1 : -1), 0, CARD.rows.length - 1)); }
     else if ((e.key === 'ArrowLeft' || e.key === 'ArrowRight') && CARD.rows[CARD.i].opts) { e.preventDefault(); const r = CARD.rows[CARD.i], k = r.opts.findIndex(([o]) => String(o) === String(r.get())); r.set(r.opts[clamp(k + (e.key === 'ArrowLeft' ? -1 : 1), 0, r.opts.length - 1)][0]); syncCard(); }
   });
-  $('sheetClose').addEventListener('click', () => { closeBeta(); syncUI(); }); $('scrim').addEventListener('click', () => { closeBeta(); syncUI(); });
   const flush = () => { savePrefs(); saveJournal(); savePool(); };
   document.addEventListener('visibilitychange', () => {
     if (document.visibilityState === 'hidden') { $('veil').classList.add('on'); sound.off(); S.awayAt = Date.now(); if (S.mode !== 'rest' && !S.intro) setPaused(true); flush(); return; }   // everything waits for a tap, your time too; the phone's snapshot is dark
@@ -3306,19 +3285,19 @@ function handles() {
 // On dark blue, the breath's own shape heaves in, flashes once, and falls to the circle with SoRen in it, which goes on
 // breathing: three breaths, then Start. A tap anywhere finishes the movement at once. With Reduce motion it is simply there.
 function opening() {
-  const len = breathLen() / 2;
+  const len = 5.2;   // from the outline's first light to the circle at rest
   hideCard(); closeSheet(); setPaused(false); S.outro = null;
-  S.intro = { t: lessMo() ? len + 1 : 0, len, go: null, rest: false };
+  S.intro = { t: lessMo() ? len + 3 : 0, len, go: null, rest: lessMo(), ready: lessMo(), eng: null, quick: false };
   document.body.classList.add('intro'); syncBars();
 }
-function introSkip() { if (S.intro && S.intro.go == null && S.intro.t < S.intro.len + 0.8) S.intro.t = S.intro.len + 0.8; }
-function introGo() { if (S.intro && S.intro.go == null) { S.intro.go = S.intro.t; S.intro.rest = false; document.body.classList.remove('intro'); syncBars(); } }
+function introSkip() { const o = S.intro; if (o && o.go == null && o.t < o.len + 3) { o.t = o.len + 3; o.rest = o.ready = o.quick = true; syncBars(); } }   // a tap anywhere brings it all in at once
+function introGo() { if (S.intro && S.intro.go == null) { S.intro.go = S.intro.t; S.intro.rest = S.intro.ready = false; document.body.classList.remove('intro'); syncBars(); } }
 function start() {
   canvas = $('game'); ctx = canvas.getContext('2d'); S.lastInput = performance.now();
   handles(); bind(); newWorld(true); setupDPI();
   const prev = loadJSON(SKEY); S.prev = Array.isArray(prev.balls) && prev.balls.length && !prev.gameOver ? prev : null;   // every launch is a new game; the last one waits in Menu › Game
   newPool(); PREFS.mode = 'play'; S.tod = PREFS.hour === 'live' ? clockTod() : HOURS[PREFS.hour];
-  updateScene(0); updateWind(0); updateWarmth(); syncBars(); syncControls();
+  updateScene(0); updateWind(0); updateWarmth(); syncUI();
   opening();
   requestAnimationFrame(frame);
 }
