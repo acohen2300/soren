@@ -15,7 +15,7 @@
   --panel: rgba(12, 24, 46, 0.86); --line: rgba(186, 230, 253, 0.24);
   --chip: rgba(255, 255, 255, 0.07); --chip-2: rgba(255, 255, 255, 0.11); --chip-line: rgba(255, 255, 255, 0.16);
   --shade-1: rgba(0, 0, 0, 0.22); --shade-3: rgba(0, 0, 0, 0.6);
-  --on: 67, 194, 112; --pick: 80, 155, 255; --off: 80, 155, 255; --red: 255, 90, 80; --gold: 255, 200, 90; --gold-hi: 255, 214, 120; --ink: 236, 238, 240; --warn: 250, 204, 21; --white: 240, 244, 247;
+  --on: 67, 194, 112; --pick: 80, 155, 255; --off: 80, 155, 255; --red: 255, 90, 80; --gold: 255, 200, 90; --gold-hi: 255, 214, 120; --ink-rgb: 236, 238, 240; --warn: 250, 204, 21; --white: 240, 244, 247;
   --glow-on: inset 0 0 0 2px rgba(var(--on), 0.85), inset 0 0 14px rgba(var(--on), 0.22);
   --black: rgb(9, 5, 4); --rib: rgb(12, 10, 9); --rib-line: rgb(56, 50, 46); --div: rgb(50, 44, 41);
   --icon: rgb(232, 234, 236); --label: rgb(179, 180, 182); --dim: rgb(122, 124, 126); --dim-2: rgb(96, 98, 100);
@@ -194,7 +194,7 @@ body.intro-quick.intro-in .soren, body.intro-quick.intro-in .go-in { transition-
 .mrow .ic { overflow: visible; } .mrow.box > .ic svg { transition: transform .8s cubic-bezier(.3, 1.5, .5, 1), color .5s; cursor: pointer; }
 .mrow.box .nm .pill { height: calc(54 * var(--u)); padding: 0 calc(18 * var(--u)); font-size: calc(32 * var(--u)); font-weight: 700; font-style: italic; margin-left: calc(4 * var(--u)); vertical-align: middle; color: var(--ink); transition: color .6s; }
 .mrow.box .tx { left: calc(462 * var(--u)); width: calc(556 * var(--u)); height: calc(76 * var(--u)); top: 50%; border: calc(3 * var(--u)) solid rgb(150, 152, 154); border-radius: calc(22 * var(--u)); padding: 0 calc(8 * var(--u)); font-size: max(16px, calc(34 * var(--u))); background-color: rgba(255, 255, 255, .04); transition: border-color .4s, box-shadow .6s, opacity .9s; }
-.mrow.box .tx:focus { border-color: rgb(var(--ink)); box-shadow: 0 0 calc(30 * var(--u)) rgba(var(--ink), .28), inset 0 0 calc(14 * var(--u)) rgba(var(--ink), .08); }
+.mrow.box .tx:focus { border-color: rgb(var(--ink-rgb)); box-shadow: 0 0 calc(30 * var(--u)) rgba(var(--ink-rgb), .28), inset 0 0 calc(14 * var(--u)) rgba(var(--ink-rgb), .08); }
 .mrow.box .tx.gone { opacity: 0; pointer-events: none; }
 .mrow.box > :not(.ic) { transition: opacity .8s ease; }
 .mrow.lead > :not(.ic) { opacity: 0; pointer-events: none; } .mrow.lead::before { opacity: 0; }
@@ -207,10 +207,10 @@ body.intro-quick.intro-in .soren, body.intro-quick.intro-in .go-in { transition-
 .mrow.locked.lit::before { box-shadow: inset 0 0 0 calc(3 * var(--u)) rgb(var(--gold)); transition: box-shadow .8s; } .mrow.locked > .ic { --ring: rgb(var(--gold)); }
 .mrow.locked .ok { color: rgb(var(--gold-hi)); } .mrow.locked .ok .ic { --ring: rgb(var(--gold)); }
 .mrow.box .ok { overflow: visible; transition: color 1.8s ease; } .mrow.box .ok .ic::after { transition-duration: 1.8s; }
-.mrow.preok:not(.locked) .ok { color: rgb(var(--ink)); } .mrow.preok:not(.locked) .ok .ic { --ring: rgb(var(--ink)); }
+.mrow.preok:not(.locked) .ok { color: rgb(var(--ink-rgb)); } .mrow.preok:not(.locked) .ok .ic { --ring: rgb(var(--ink-rgb)); }
 .mrow .ds.wave { background: linear-gradient(90deg, rgb(var(--on)) 0%, rgb(var(--on)) 38%, var(--label) 62%, var(--label) 100%); background-size: 260% 100%; background-position: 100% 0; -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent; animation: wash 3.4s cubic-bezier(.45, .05, .55, .95) forwards; }
 .mrow .ds.wave.fin { background: none; -webkit-text-fill-color: rgb(var(--on)); color: rgb(var(--on)); animation: none; }
-.mrow.box .tx.wave { border-color: transparent; background-image: linear-gradient(#111, #111), linear-gradient(90deg, rgb(var(--on)) 0%, rgb(var(--on)) 38%, rgb(var(--ink)) 62%, rgb(var(--ink)) 100%); background-clip: padding-box, border-box; background-origin: padding-box, border-box; background-repeat: no-repeat; background-size: 100% 100%, 260% 100%; background-position: 0 0, 100% 0; animation: wash2 3.4s cubic-bezier(.45, .05, .55, .95) 1s forwards; box-shadow: 0 0 calc(30 * var(--u)) rgba(var(--ink), .28); }
+.mrow.box .tx.wave { border-color: transparent; background-image: linear-gradient(#111, #111), linear-gradient(90deg, rgb(var(--on)) 0%, rgb(var(--on)) 38%, rgb(var(--ink-rgb)) 62%, rgb(var(--ink-rgb)) 100%); background-clip: padding-box, border-box; background-origin: padding-box, border-box; background-repeat: no-repeat; background-size: 100% 100%, 260% 100%; background-position: 0 0, 100% 0; animation: wash2 3.4s cubic-bezier(.45, .05, .55, .95) 1s forwards; box-shadow: 0 0 calc(30 * var(--u)) rgba(var(--ink-rgb), .28); }
 .mrow.box .tx.wave.fin { animation: none; background-image: none; border-color: rgb(var(--on)); box-shadow: 0 0 calc(24 * var(--u)) rgba(var(--on), .3); }
 @keyframes wash { to { background-position: 0% 0; } } @keyframes wash2 { to { background-position: 0 0, 0% 0; } }
 .shine { position: absolute; left: calc(-14 * var(--u)); top: calc(-14 * var(--u)); width: calc(72 * var(--u)); height: calc(72 * var(--u)); border-radius: 50%; pointer-events: none; opacity: 0; background: radial-gradient(circle, rgba(255, 226, 150, .85) 0%, rgba(var(--gold), .45) 38%, rgba(var(--gold), 0) 70%); }
