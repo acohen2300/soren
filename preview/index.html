@@ -1,4 +1,4 @@
-<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="robots" content="noindex"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><meta name="theme-color" content="#081428"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"><meta name="apple-mobile-web-app-title" content="SoRen"><link rel="manifest" href="../manifest.webmanifest"><link rel="apple-touch-icon" href="../apple-touch-icon.png"><link rel="icon" href="../icon-192.png"><style>html{height:100vh}body{padding-top:calc(8px + env(safe-area-inset-top,0px))!important;padding-bottom:calc(8px + env(safe-area-inset-bottom,0px))!important;overscroll-behavior:none}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body><title>SoRen preview p7</title>
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="robots" content="noindex"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><meta name="theme-color" content="#081428"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"><meta name="apple-mobile-web-app-title" content="SoRen"><link rel="manifest" href="../manifest.webmanifest"><link rel="apple-touch-icon" href="../apple-touch-icon.png"><link rel="icon" href="../icon-192.png"><style>html{height:100vh}body{padding-top:calc(8px + env(safe-area-inset-top,0px))!important;padding-bottom:calc(8px + env(safe-area-inset-bottom,0px))!important;overscroll-behavior:none}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body><title>SoRen preview p8</title>
 <meta name="claude:viewport-fit-sides" content="cover">
 <style>
 /* One screen, never scrolls: a ribbon above the pool reads how things are, a ribbon below it is for playing, and the pool fills
@@ -12,6 +12,12 @@
   --well: rgba(0, 0, 0, 0.28); --chip: rgba(255, 255, 255, 0.07); --chip-line: rgba(255, 255, 255, 0.16);
   --on: 74, 222, 128; --off: 96, 165, 250; --gold: 255, 200, 90; --red: 255, 90, 80;
   --serif: ui-serif, 'New York', 'Iowan Old Style', Georgia, serif;
+  /* Three glasses, from Heritage: obsidian for every ribbon and card, clambroth for the way forward, sulphide for what is set
+     inside (icons and words inlaid in silver; gold in Heritage). Blue edge: you can touch it. Green: it's on. White: go. */
+  --obsidian: radial-gradient(130% 90% at 25% 0%, rgba(110, 190, 175, 0.1), transparent 60%), linear-gradient(180deg, #171c1f 0%, #0b0e10 50%, #040506 100%);
+  --bevel: inset 0 1px 0 rgba(255, 255, 255, 0.16), inset 0 -2px 6px rgba(0, 0, 0, 0.6);
+  --clambroth: radial-gradient(120% 140% at 30% 15%, #fff 0%, #f1f1ec 45%, #d8dad3 100%);
+  --inlay: #dde4e8; --edge: rgba(96, 165, 250, 0.3); --cut: 0 -1px 0 rgba(0, 0, 0, 0.85), 0 1px 0 rgba(255, 255, 255, 0.1);
   --t1: 22px; --t2: 19px; --t3: 17px; --t4: 15px; --t5: 13px; --t6: 12px;
 }
 * { box-sizing: border-box; }
@@ -29,23 +35,24 @@ button { cursor: pointer; }
 :focus-visible { outline: 2px solid var(--ink); outline-offset: 2px; }
 .app { position: relative; height: 100%; max-width: 460px; margin: 0 auto; display: flex; flex-direction: column; justify-content: center; gap: 8px; }   /* one object: the ribbons hug the pool */
 
-/* The ribbons: one shape for both. Each cell an icon over a word; green inside when on. */
-.bar { flex: none; display: flex; height: 44px; border-radius: 999px; overflow: hidden; background: rgba(0, 0, 0, 0.3); border: 1px solid var(--chip-line);
-  box-shadow: inset 0 2px 6px rgba(0, 0, 0, 0.45); font-size: var(--t6); white-space: nowrap; transition: opacity .5s; }
-.cell { position: relative; flex: 1 1 0; min-width: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2px; padding: 0 4px;
-  background: none; border: 0; border-left: 1px solid rgba(255, 255, 255, 0.09); color: var(--ink); overflow: hidden; }
-.cell:first-child { border-left: 0; }
-.cell:active { background: rgba(255, 255, 255, 0.06); }
-.cell svg { flex: none; width: 20px; height: 20px; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
-.cell .sub { max-width: 100%; overflow: hidden; text-overflow: ellipsis; color: var(--ink-dim); font-weight: 600; }
-.cell.on { box-shadow: inset 0 0 0 2px rgba(var(--on), 0.85), inset 0 0 14px rgba(var(--on), 0.22); border-radius: 999px; }
+/* The ribbons: one slab of obsidian each, its keys cut into it. Each key an icon over a word, inlaid. */
+.bar { flex: none; display: flex; gap: 3px; height: 52px; padding: 3px; border-radius: 14px; overflow: hidden; background: var(--obsidian); border: 1px solid rgba(255, 255, 255, 0.09);
+  box-shadow: var(--bevel), 0 8px 18px rgba(0, 0, 0, 0.45); font-size: var(--t6); white-space: nowrap; transition: opacity .5s; }
+.cell { position: relative; flex: 1 1 0; min-width: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 3px; padding: 0 4px;
+  background: none; border: 0; border-radius: 10px; box-shadow: inset 0 0 0 1px var(--edge); color: var(--inlay); overflow: hidden; transition: box-shadow .2s; }
+.cell:active { box-shadow: inset 0 0 0 1px rgba(var(--off), 0.85), inset 0 0 12px rgba(var(--off), 0.28); }
+.cell svg { flex: none; width: 20px; height: 20px; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; filter: drop-shadow(0 -1px 0 rgba(0, 0, 0, 0.85)) drop-shadow(0 1px 0 rgba(255, 255, 255, 0.1)); }
+.cell .sub { max-width: 100%; overflow: hidden; text-overflow: ellipsis; opacity: 0.8; font-weight: 600; text-shadow: var(--cut); }
+.cell.on { box-shadow: inset 0 0 0 1.5px rgba(var(--on), 0.85), inset 0 0 14px rgba(var(--on), 0.22); }
+.cell.on svg { color: rgb(var(--on)); filter: drop-shadow(0 0 4px rgba(var(--on), 0.6)); }   /* on: lit from inside the glass */
+.cell.none, .cell:disabled { box-shadow: none; }
 .cell.none { opacity: 0.38; }
 .cell .n { position: absolute; top: 4px; right: 8px; min-width: 15px; height: 14px; padding: 0 4px; border-radius: 7px; background: rgba(242, 248, 252, 0.88); color: #0b1424; font: normal 600 var(--t6)/14px var(--serif); }
 .cell.wide { flex: 2.2 1 0; }
-.cell .val { display: block; max-width: 100%; overflow: hidden; text-overflow: ellipsis; height: 20px; font: italic 600 var(--t4)/20px var(--serif); color: var(--ink); }
+.cell .val { display: block; max-width: 100%; overflow: hidden; text-overflow: ellipsis; height: 20px; font: italic 600 var(--t4)/20px var(--serif); text-shadow: var(--cut); }
 .cell .val:empty::before { content: '·'; }
 #scoreVal { font-style: normal; font-variant-numeric: tabular-nums; }
-.cell.go { flex: 1.4 1 0; margin: 4px; border: 0; border-radius: 999px; background: var(--ink); color: var(--bg-bot); font-size: var(--t4); font-weight: 600; }   /* the way forward: white, at the bottom */
+body.lamp { --inlay: #ecd09a; }   /* Heritage: inlaid in gold, like the flecks in a Lutz marble */
 .cell:disabled { opacity: 0.3; }
 [data-muted="true"] { color: var(--ink-faint); } [data-muted="true"] .waves, [data-muted="false"] .hush { display: none; }
 .live { box-shadow: inset 0 0 0 2px rgba(var(--on), calc(0.45 + 0.45 * var(--b, 0))), 0 0 calc(2px + 12px * var(--b, 0)) rgba(var(--on), calc(0.1 + 0.35 * var(--b, 0))) !important; }   /* what is live breathes: glow and grow, slim and dim */
@@ -61,8 +68,8 @@ body.lamp { --glint: rgba(255, 236, 196, 0.95); --glint-soft: rgba(255, 205, 130
 /* The pool: as large as the space allows, always at its own shape. Its border is drawn on the canvas: it breathes. */
 .pool-wrap { flex: none; display: grid; place-items: center; }
 .pool { position: relative; aspect-ratio: 380 / 490; border-radius: 18px; overflow: hidden; background: var(--bg-mid); box-shadow: 0 16px 34px -10px var(--accent-soft), 0 20px 46px rgba(0, 0, 0, 0.7);
-  width: min(100%, calc((100vh - 114px - env(safe-area-inset-top, 0px) - env(safe-area-inset-bottom, 0px)) * 0.7755));
-  width: min(100%, calc((100dvh - 114px - env(safe-area-inset-top, 0px) - env(safe-area-inset-bottom, 0px)) * 0.7755)); }   /* as large as the screen allows, at the board's own shape */
+  width: min(100%, calc((100vh - 130px - env(safe-area-inset-top, 0px) - env(safe-area-inset-bottom, 0px)) * 0.7755));
+  width: min(100%, calc((100dvh - 130px - env(safe-area-inset-top, 0px) - env(safe-area-inset-bottom, 0px)) * 0.7755)); }   /* as large as the screen allows, at the board's own shape */
 #game { display: block; width: 100%; height: 100%; touch-action: none; transition: filter 1.2s ease; }
 .pool.grey #game { filter: grayscale(1) brightness(0.55); }   /* your time is up */
 .pool.dark #game { filter: grayscale(1) brightness(0.12); }   /* Go: the world goes quiet */
@@ -77,8 +84,8 @@ body.lamp { --glint: rgba(255, 236, 196, 0.95); --glint-soft: rgba(255, 205, 130
 .alert.ends { border-color: rgb(var(--red)); }
 #alertTime { font-style: normal; font-variant-numeric: tabular-nums; }
 .pool-card { position: absolute; inset: 0; display: grid; place-items: center; padding: clamp(8px, 4%, 20px); background: rgba(2, 6, 10, 0.6); backdrop-filter: blur(3px); -webkit-backdrop-filter: blur(3px); animation: fade .3s; }
-.pool-card .card { max-height: 100%; overflow-y: auto; width: min(300px, 100%); display: flex; flex-direction: column; gap: 8px; align-items: center; text-align: center; padding: 20px; border-radius: 16px;
-  background: var(--panel); border: 1px solid var(--line); box-shadow: 0 16px 36px -16px rgba(0, 0, 0, 0.7); }
+.pool-card .card { max-height: 100%; overflow-y: auto; width: min(300px, 100%); display: flex; flex-direction: column; gap: 8px; align-items: center; text-align: center; padding: 20px; border-radius: 14px;
+  background: var(--obsidian); border: 1px solid rgba(255, 255, 255, 0.09); box-shadow: var(--bevel), 0 16px 36px -16px rgba(0, 0, 0, 0.7); }
 #cardEyebrow:empty, #cardNote:empty, #cardArt:empty { display: none; }
 #cardArt svg { width: 84px; height: 84px; fill: none; stroke: var(--ink); stroke-width: 1.6; stroke-linecap: round; stroke-linejoin: round; }
 #cardEyebrow { font-size: var(--t6); letter-spacing: 0.13em; text-transform: uppercase; color: var(--ink-dim); font-weight: 600; font-style: normal; }
@@ -92,15 +99,17 @@ body.lamp { --glint: rgba(255, 236, 196, 0.95); --glint-soft: rgba(255, 205, 130
 .cline.done { border-color: rgba(var(--gold), 0.8); } .cline.done svg { stroke: rgb(var(--gold)); filter: drop-shadow(0 0 6px rgba(var(--gold), 0.6)); }   /* done: gold */
 
 /* Buttons, switches, choices and sliders: one of each, everywhere. */
-.btn { width: 100%; min-height: 44px; padding: 6px 12px; border-radius: 12px; background: var(--chip); border: 1px solid var(--chip-line); font-weight: 600; }
-.btn.primary { background: var(--ink); color: var(--bg-bot); border-color: var(--ink); }
-.switch { flex: none; position: relative; width: 52px; height: 32px; padding: 0; border-radius: 16px; border: 1px solid var(--chip-line); background: rgba(255, 255, 255, 0.14); transition: background .35s, border-color .35s; }
+.btn { width: 100%; min-height: 44px; padding: 6px 12px; border-radius: 10px; background: var(--chip); border: 1px solid var(--edge); font-weight: 600; }
+.btn.primary, .go-in { background: var(--clambroth); color: #0b1424; border: 0; box-shadow: inset 0 1px 0 #fff, inset 0 -2px 4px rgba(0, 0, 0, 0.18), 0 2px 8px rgba(0, 0, 0, 0.4); }   /* the way forward: clambroth, milk-white glass */
+.go-in { position: absolute; left: 50%; top: 56.5%; transform: translate(-50%, -50%); display: none; min-width: 112px; height: 38px; padding: 0 22px; border-radius: 10px; font-size: var(--t4); font-weight: 600; }
+body.intro-in .go-in { display: block; animation: fade .6s; }   /* the opening: Start, in the circle, under the name */
+.switch { flex: none; position: relative; width: 52px; height: 32px; padding: 0; border-radius: 16px; border: 1px solid var(--edge); background: rgba(255, 255, 255, 0.14); transition: background .35s, border-color .35s; }
 .switch i { position: absolute; top: 3px; left: 3px; width: 24px; height: 24px; border-radius: 50%; background: var(--ink); box-shadow: 0 1px 3px rgba(0, 0, 0, 0.4); transition: transform .35s cubic-bezier(.45, 0, .25, 1); }
 .switch[aria-checked="true"] { background: rgb(var(--on)); border-color: rgb(var(--on)); } .switch[aria-checked="true"] i { transform: translateX(20px); }
 .choice { display: flex; flex-wrap: wrap; gap: 6px; }
 .choice .tog { flex: 1 1 0; min-width: 0; }
 .choice.grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); }
-.tog { min-height: 40px; padding: 4px 6px; border-radius: 12px; border: 1px solid var(--chip-line); background: var(--chip); font-size: var(--t5); font-weight: 600; line-height: 1.1; }
+.tog { min-height: 40px; padding: 4px 6px; border-radius: 10px; border: 1px solid var(--edge); background: var(--chip); font-size: var(--t5); font-weight: 600; line-height: 1.1; }
 .tog.sel { border-color: rgba(var(--on), 0.85); box-shadow: inset 0 0 0 1px rgba(var(--on), 0.6), inset 0 0 12px rgba(var(--on), 0.18); }
 .slider { flex: 1; min-width: 0; height: 36px; margin: 0; background: transparent; -webkit-appearance: none; appearance: none; }
 .slider:disabled { opacity: 0.35; }
@@ -108,7 +117,7 @@ body.lamp { --glint: rgba(255, 236, 196, 0.95); --glint-soft: rgba(255, 205, 130
 .slider::-moz-range-track { height: 6px; border-radius: 3px; background: linear-gradient(to right, var(--ink-dim) var(--p, 0%), rgba(255, 255, 255, 0.2) var(--p, 0%)); }
 .slider::-webkit-slider-thumb { -webkit-appearance: none; width: 26px; height: 26px; margin-top: -10px; border-radius: 50%; border: 0; background: var(--ink); box-shadow: 0 0 0 5px rgba(242, 248, 252, 0.16); }
 .slider::-moz-range-thumb { width: 26px; height: 26px; border-radius: 50%; border: 0; background: var(--ink); box-shadow: 0 0 0 5px rgba(242, 248, 252, 0.16); }
-.text-input { width: 100%; min-height: 44px; padding: 10px 12px; border-radius: 12px; background: var(--well); border: 1px solid var(--chip-line); font-size: var(--t3); -webkit-user-select: text; user-select: text; }   /* 16px or more: an iPhone doesn't zoom */
+.text-input { width: 100%; min-height: 44px; padding: 10px 12px; border-radius: 10px; background: var(--well); border: 1px solid var(--edge); font-size: var(--t3); -webkit-user-select: text; user-select: text; }   /* 16px or more: an iPhone doesn't zoom */
 .text-input:focus { outline: none; border-color: var(--ink-dim); }
 .tline { display: flex; gap: 6px; width: 100%; } .tline + .tline { margin-top: 6px; } .rctl:has(.tline) { flex-direction: column; gap: 0; }
 .tline .due { flex: 0 0 104px; padding: 8px; font-style: normal; color-scheme: dark; }
@@ -117,9 +126,9 @@ body.lamp { --glint: rgba(255, 236, 196, 0.95); --glint-soft: rgba(255, 205, 130
 .scrim { position: fixed; inset: 0; z-index: 39; background: rgba(2, 5, 10, 0.86); animation: fade .2s; }
 body.see .scrim { background: rgba(2, 5, 10, 0.4); }   /* Session Setup: the world shows through */
 .sheet { position: fixed; z-index: 40; left: 50%; top: 50%; transform: translate(-50%, -50%); width: min(400px, calc(100% - 20px)); max-height: min(660px, calc(100% - 16px));
-  display: flex; flex-direction: column; background: var(--sheet); border: 1px solid var(--line); border-radius: 22px; box-shadow: 0 24px 60px rgba(0, 0, 0, 0.65); animation: fade .2s; }
+  display: flex; flex-direction: column; background: var(--obsidian); border: 1px solid rgba(255, 255, 255, 0.09); border-radius: 14px; box-shadow: var(--bevel), 0 24px 60px rgba(0, 0, 0, 0.65); animation: fade .2s; }
 .sheet-head { flex: none; display: flex; align-items: center; gap: 8px; padding: 10px 12px 6px; }
-.nav { flex: none; position: relative; width: 36px; height: 36px; border-radius: 50%; border: 1px solid var(--chip-line); background: var(--chip); font: normal var(--t2)/1 var(--serif); }
+.nav { flex: none; position: relative; width: 36px; height: 36px; border-radius: 50%; border: 1px solid var(--edge); background: var(--chip); font: normal var(--t2)/1 var(--serif); }
 .nav::after { content: ''; position: absolute; inset: -4px; }
 .sheet-title { flex: 1; text-align: center; font-size: var(--t3); font-weight: 600; }
 #sheetBack[hidden] + .sheet-title { padding-left: 44px; }
@@ -170,6 +179,7 @@ body.rm *, body.rm *::before, body.rm *::after { transition: none !important; an
   <div class="pool-wrap">
     <div class="pool" id="pool">
       <canvas id="game" tabindex="0" aria-label="The pool. Touch and slide to move the waiting sphere, let go to drop it; or the arrow keys and Space. In Relax, hold to breathe in and let go to breathe out."></canvas>
+      <button class="go-in" data-act="introstart">Start</button>
       <div class="banner" id="banner" aria-live="polite"><div id="bannerTitle"></div><div id="bannerSub"></div></div>
       <div class="alert" id="alert" hidden><span id="alertText"></span><span id="alertTime"></span></div>
       <div class="pool-card" id="poolCard" hidden><div class="card"><div id="cardEyebrow"></div><div id="cardArt"></div><div id="cardTitle"></div><div id="cardNote"></div><div class="clist" id="cardList"></div><div class="card-actions" id="cardActions"></div></div></div>
@@ -401,7 +411,7 @@ const DAY = [2, 6.5, 12, 19, 26];   // the hours where night, dawn, day and dusk
 const SKY = { top: [0, 0, 0], mid: [0, 0, 0], hor: [0, 0, 0], grade: [0, 0, 0, 0], light: 1, stars: 0 };
 // blow is the one wind: the wind you make plus its gusts. It moves the scene, and the falling spheres.
 const ENV = { cover: 0, gloom: 0, precip: 0, rain: 0, snow: 0, wind: 0, blow: 0, light: 1, dark: 0,
-  birds: 0, crickets: 0, fireflies: 0, leaves: 0, aurora: 0, butterflies: 0, cicadas: 0, mist: 0 };
+  birds: 0, crickets: 0, fireflies: 0, leaves: 0, aurora: 0, butterflies: 0, mist: 0 };
 // How alive the world is, and the breath: how far the spheres swell and how much the edge glows.
 const FEEL = { life: 0.45, heave: 0.035, glow: 0.65 };
 
@@ -502,7 +512,6 @@ function updateScene(dt) {
   const calm = 1 - clamp(ENV.precip * 1.5 + ENV.gloom, 0, 1), still = 1 - clamp(Math.abs(ENV.blow) * 0.5, 0, 0.8), insects = el.insects || 0;
   ENV.birds = (el.birds || 0) * byTime([0, 1, 0.45, 0.2]) * calm;              // loudest at dawn
   ENV.crickets = insects * byTime([1, 0.1, 0, 0.7]) * (1 - ENV.precip);
-  ENV.cicadas = (w.warm ? insects : 0) * byTime([0, 0, 1, 0.5]) * calm;
   ENV.fireflies = (el.fireflies || 0) * byTime([0.9, 0, 0, 1]) * calm * still;
   ENV.butterflies = (el.butterflies || 0) * byTime([0, 0.3, 1, 0.3]) * calm * still;
   ENV.leaves = (el.leaves || 0) * clamp(0.3 + 0.6 * S.life + 0.6 * Math.abs(ENV.blow), 0, 1);
@@ -560,7 +569,8 @@ class SoundBath {
   // SoRen follows the phone's silent switch, and mixes politely with music or a podcast instead of stopping it.
   init() {
     try { if (navigator.audioSession) navigator.audioSession.type = 'ambient'; } catch (e) { /* not supported */ }
-    if (this.ctx) { if (this.ctx.state !== 'running' && PREFS.sound) this.ctx.resume().catch(() => {}); return; }   // muted, it stays asleep
+    if (!PREFS.sound) return;   // muted, there is no sound engine at all: the phone's speaker is handed back
+    if (this.ctx) { if (this.ctx.state !== 'running') this.ctx.resume().catch(() => {}); return; }
     const AC = window.AudioContext || window.webkitAudioContext;
     if (!AC) return;
     try { this.ctx = new AC(); } catch (e) { return; }
@@ -578,15 +588,14 @@ class SoundBath {
     for (let i = 0; i < len; i++) d[i] = Math.random() * 2 - 1;
     this.noise = buf;
     // Continuous beds whose levels follow the scene. The growl sits where phone speakers can play it (up to ~650 Hz).
-    this.rain = this.bed('weather', [['highpass', 700], ['lowpass', 5200]]);
+    this.rain = this.bed('weather', [['highpass', 400], ['lowpass', 2400]]);   // nothing steady above ~2,400 Hz: a phone speaker turns it to static
     this.wind = this.bed('weather', [['bandpass', 380, 0.7]]);
     this.growl = this.bed('weather', [['lowpass', 650], ['highpass', 55]]);
     this.fire = this.bed('weather', [['lowpass', 380], ['highpass', 50]]);
     this.ocean = this.bed('weather', [['lowpass', 900], ['highpass', 90]]);            // the sea, in waves
-    this.cicada = this.bed('wildlife', [['bandpass', 5200, 3]], true);
-    this.stream = this.bed('wildlife', [['bandpass', 1100, 0.5], ['lowpass', 3200]]);   // the waterfall and the rainforest stream
+    this.stream = this.bed('wildlife', [['bandpass', 1100, 0.5], ['lowpass', 2400]]);   // the waterfall and the rainforest stream
     this.rolling = this.bed('notes', [['highpass', 70], ['lowpass', 260]]);   // Heritage: marbles rolling on the wood
-    this.amb = { rain: this.bed('ambient', [['highpass', 700], ['lowpass', 5200]]), wind: this.bed('ambient', [['bandpass', 380, 0.7]]), fire: this.bed('ambient', [['lowpass', 380], ['highpass', 50]]) };   // your ambient sound, whatever the sky does
+    this.amb = { rain: this.bed('ambient', [['highpass', 400], ['lowpass', 2400]]), wind: this.bed('ambient', [['bandpass', 380, 0.7]]), fire: this.bed('ambient', [['lowpass', 380], ['highpass', 50]]) };   // your ambient sound, whatever the sky does
     this.toneLp = c.createBiquadFilter(); this.toneLp.type = 'lowpass'; this.toneLp.frequency.value = 300;
     this.toneGain = c.createGain(); this.toneGain.gain.value = 0;
     this.toneOsc = [[130.81, 'sine', 1], [196.0, 'sine', 0.6], [261.63, 'triangle', 0.16]].map(([f, type, lvl]) => {
@@ -596,18 +605,16 @@ class SoundBath {
     this.rub = this.bed('breath', [['bandpass', 1600, 3.5]]);   // Relax: a fingertip on the glass, following its speed
     this.sweep = this.bed('breath', [['bandpass', 600, 1.2]]);   // Relax: a hush of air rising and falling with the breath
   }
-  bed(bus, filters, buzz) {
+  bed(bus, filters) {
     const c = this.ctx, src = c.createBufferSource();
     src.buffer = this.noise; src.loop = true;
     let node = src;
     for (const [type, f, q] of filters) { const b = c.createBiquadFilter(); b.type = type; b.frequency.value = f; if (q) b.Q.value = q; node.connect(b); node = b; }
-    if (buzz) {   // a fast pulse, for cicadas
-      const am = c.createGain(), depth = c.createGain(), lfo = c.createOscillator();
-      am.gain.value = 0.5; depth.gain.value = 0.5; lfo.type = 'square'; lfo.frequency.value = 26;
-      lfo.connect(depth); depth.connect(am.gain); lfo.start(); node.connect(am); node = am;
-    }
     const g = c.createGain(); g.gain.value = 0; node.connect(g); g.connect(this.bus[bus]); src.start(0, Math.random() * 1.9);
     return { g, f: node };
+  }
+  off() {   // the whole engine closed, not paused: an iPhone keeps a paused one's speaker on, and it can hiss. The next sound builds a fresh one.
+    const c = this.ctx; if (!c) return; this.ctx = this.drone = this.pans = null; this.hush = 0; c.close().catch(() => {});
   }
   get live() { return !!this.ctx && PREFS.sound; }
   // Seven fixed positions across the stereo field per bus, made once and reused; every one-off sound disconnects when it ends.
@@ -766,7 +773,7 @@ class SoundBath {
     if (!this.ctx) return;
     const t = this.ctx.currentTime, b = S.breath, blow = Math.abs(ENV.blow), rest = S.mode === 'rest', relax = S.mode === 'settle', z = PREFS.ambient === 'off' ? null : PREFS.ambient;
     this.master.gain.setTargetAtTime(PREFS.sound && !S.paused ? launchLevel(t) * sleepFade() * (S.gone ? 0 : 1) : 0, t, PREFS.sound ? 0.6 : 0.005);   // mute is a cut; sound comes back slowly
-    if (!PREFS.sound || (rest && sleepFade() <= 0)) { if ((this.hush = (this.hush || 0) + dt) > 2 && this.ctx.state === 'running') this.ctx.suspend().catch(() => {}); return; }   // asleep: saves battery
+    if (!PREFS.sound || (rest && sleepFade() <= 0)) { if ((this.hush = (this.hush || 0) + dt) > 2) this.off(); return; }   // muted or asleep: off, after the fade
     this.hush = 0; if (this.ctx.state === 'suspended') this.ctx.resume().catch(() => {});
     this.drift = clamp((this.drift || 1) + (Math.random() - 0.5) * 0.06, 0.82, 1.12);   // rain and wind wander, so the ear never settles on a loop
     const drift = 0.75 + 0.25 * Math.sin(t * 0.11), amb = here().amb || {}, wave = 0.5 - 0.5 * Math.cos(t * TAU / 9);
@@ -774,7 +781,6 @@ class SoundBath {
     this.wind.g.gain.setTargetAtTime(Math.max(Math.min(1.2, blow) * 0.1, (S.storm ? S.storm.a : 0) * 0.14), t, 0.5);
     this.wind.f.frequency.setTargetAtTime((280 + 700 * Math.min(1.2, blow)) * (0.9 + 0.1 * this.drift), t, 0.8);
     this.growl.g.gain.setTargetAtTime(S.growl * (0.8 + Math.random() * 0.4), t, 0.12);
-    this.cicada.g.gain.setTargetAtTime(ENV.cicadas * 0.05, t, 1);
     this.amb.rain.g.gain.setTargetAtTime(z === 'rain' ? 0.22 * this.drift : 0, t, 0.6);
     this.amb.wind.g.gain.setTargetAtTime(z === 'wind' ? 0.12 * drift : z === 'night' ? 0.025 : 0, t, 0.5); this.amb.wind.f.frequency.setTargetAtTime((330 + 220 * drift) * (0.9 + 0.1 * this.drift), t, 0.8);
     this.amb.fire.g.gain.setTargetAtTime(z === 'fire' ? 0.05 : 0, t, 0.4);
@@ -796,8 +802,8 @@ class SoundBath {
       if (this.drone.pan) this.drone.pan.pan.setTargetAtTime(relax ? 0.5 * Math.sin((P.phase - 0.25) * TAU) : 0, t, 0.3);
     }
     const sw = 0.5 + 0.5 * Math.sin(t * TAU * 0.07);   // Relax: the bed drifts slowly, like weather a long way off
-    this.rain.f.frequency.setTargetAtTime(relax ? 2500 + 1700 * sw : 5200, t, 0.8);
-    this.sweep.g.gain.setTargetAtTime(relax ? 0.012 + 0.02 * b : 0, t, 0.3); this.sweep.f.frequency.setTargetAtTime(350 + 1400 * b, t, 0.3);
+    this.rain.f.frequency.setTargetAtTime(relax ? 1400 + 1000 * sw : 2400, t, 0.8);
+    this.sweep.g.gain.setTargetAtTime(relax ? 0.03 * b : 0, t, 0.3);   // silent at the bottom of the breath this.sweep.f.frequency.setTargetAtTime(350 + 1400 * b, t, 0.3);
     if ((z === 'fire' || amb.fire) && (this.popT = (this.popT ?? 1) - dt) <= 0) { this.crackle(1, amb.fire ? 'weather' : 'ambient'); this.popT = 0.3 + Math.random() * 1.6; }   // the fire pops now and then
     if (amb.owl && ENV.dark > 0.35 && OWL.away <= 0 && (this.owlT = (this.owlT ?? 6) - dt) <= 0) { this.hoot(); this.owlT = 10 + Math.random() * 16; }
     if (amb.ocean && SKY.light > 0.4 && (this.gullT = (this.gullT ?? 5) - dt) <= 0) { this.gull(); this.gullT = 12 + Math.random() * 16; }
@@ -864,7 +870,7 @@ const ICON = {
   speaker: 'M4.5 9.5h3.2L12 6v12l-4.3-3.5H4.5z', waves: 'M15 9.5a3.5 3.5 0 0 1 0 5M17.5 7a7 7 0 0 1 0 10', hush: 'M15.5 9.5l5 5M20.5 9.5l-5 5',
   bolt: 'M13 2.5 5.5 13.5h5.5L10 21.5l8-11.5h-5.5z', wind: 'M3.5 9h10a2.5 2.5 0 1 0-2.4-3.2M3.5 13h15a2.8 2.8 0 1 1-2.6 3.8M3.5 17h6',
   rain: CLOUD + 'M9 17l-1 2.5M13 17l-1 2.5M17 17l-1 2.5', snow: CLOUD + 'M9 18.5h.01M13 20h.01M17 18.5h.01M11 21.5h.01M15 21.5h.01',
-  strike: 'M12 2.5a9.5 9.5 0 1 0 0 19 9.5 9.5 0 0 0 0-19zM13 6l-4 7h3.2l-1 5 4.3-7.2h-3.3z', breathe: DOT(12, 12, 7) + DOT(12, 12, 2),
+  strike: 'M12 2.5a9.5 9.5 0 1 0 0 19 9.5 9.5 0 0 0 0-19zM13 6l-4 7h3.2l-1 5 4.3-7.2h-3.3z', breathe: DOT(12, 12, 7), touch: DOT(12, 12, 2) + 'M8 8a5.7 5.7 0 0 0 0 8M16 8a5.7 5.7 0 0 1 0 8M5.2 5.2a9.6 9.6 0 0 0 0 13.6M18.8 5.2a9.6 9.6 0 0 1 0 13.6' + DOT(12, 12, 2),
   mystery: 'M12 3a9 9 0 1 0 0 18 9 9 0 0 0 0-18zM14.5 7a5.5 5.5 0 1 0 2.6 9.5A4.6 4.6 0 0 1 14.5 7z', storm: CLOUD + 'M8 18.5l1.5 1.5M12 17.5l1.5 1.5M16 18.5l1.5 1.5M10 21h.01M14 21h.01'
 };
 const svg = (d) => `<svg viewBox="0 0 24 24" aria-hidden="true"><path d="${d}"/></svg>`;
@@ -2497,10 +2503,10 @@ function drawRest(c) {
   c.save(); c.globalAlpha = 0.55; words(c, sleepWords(), '', CY); c.restore();
 }
 // The opening, SoRen's own movement: on dark blue the lines heave in from nothing and flash bright once at the crest; the glow
-// fades after it, and the shape falls to the circle with SoRen in it, which goes on breathing: three breaths, then Start.
+// fades after it, and the shape falls to the circle with SoRen in it, which goes on breathing, Start under the name.
 function drawIntro(c, o) {
   const CREST = 0.4, ease = (u) => u * u * (3 - 2 * u), ph = Math.min(1, o.t / o.len), rest = Math.max(0, o.t - o.len), a = o.go == null ? 1 : clamp(1 - (o.t - o.go) / 1.2, 0, 1);
-  if (ph >= 1) { drawCircle(c, a, 0.5 - 0.12 * (1 - twice(rest)) * clamp(rest, 0, 1), 'SoRen', 'Three breaths, then Start'); return; }
+  if (ph >= 1) { drawCircle(c, a, 0.5 - 0.12 * (1 - twice(rest)) * clamp(rest, 0, 1), 'SoRen', ''); return; }   // Start sits in the circle, under the name
   const lv = ph < CREST ? 0.93 + 0.07 * ease(ph / CREST) : 1 - 0.5 * ease((ph - CREST) / (1 - CREST));
   const glow = ph < CREST ? (ph / CREST) ** 2 : Math.max(0, 1 - (ph - CREST) / 0.3) ** 2, fl = Math.max(0, 1 - Math.abs(ph - CREST) / 0.06), line = clamp((ph - 0.03) / 0.3, 0, 1);   // one flash, at the crest, on the line alone
   c.save(); c.globalAlpha = a;
@@ -2597,10 +2603,14 @@ const skyName = (k) => ({ bolt: 'Lightning', wind: 'Wind', rain: here().snow ? '
 const cycle = (k) => { const L = CHOICES[k] || [4, 5, 6, 7, 8], i = L.indexOf(PREFS[k]); return L[(i + 1) % L.length]; };   // a tap moves to the next
 function botCells() {
   const m = S.mode, w = here(), val = (v) => `<b class="val">${v}</b>`;
-  if (S.intro && S.intro.go == null) return S.intro.rest ? [cell('data-act="introplay"', ICON.play, 'Play now'), `<button class="cell go" data-act="introstart">Start</button>`, cell('data-act="introrelax"', ICON.breathe, 'Relax now')] : [];
+  if (S.intro && S.intro.go == null) return S.intro.rest ? [cell('data-act="introplay"', ICON.play, 'Play now'), cell('data-act="introfidget"', ICON.touch, 'Fidget now'), cell('data-act="introrelax"', ICON.breathe, 'Relax now')] : [];
+  const wx = cell(`data-act="weather"${w.indoor ? ' disabled' : ''}`, CLOUD, 'Weather');   // the weather, one tap away in every mode
+  if (m === 'fidget' || S.wx) return [wx, ...ATMO.map(k => cell(`data-sky="${k}"${w.indoor ? ' disabled' : ''}`, k === 'rain' && w.snow ? ICON.snow : ICON[k], skyName(k)))];
+  return [wx, ...modeCells(m, val)];
+}
+function modeCells(m, val) {
   if (m === 'play') return TOOLS.map(k => cell(`data-tool="${k}"`, ICON[k], TOOL_NAMES[k], `<b class="n">${S.tools[k]}</b>`));
-  if (m === 'settle') return [cell('data-act="deep"', ICON.breathe, 'Deep breath'), cell('data-act="pace"', val(`${PREFS.bpm}`), 'Breaths a minute'), cell('data-act="play"', ICON.play, 'Play')];
-  if (m === 'fidget') return ATMO.map(k => cell(`data-sky="${k}"${w.indoor ? ' disabled' : ''}`, k === 'rain' && w.snow ? ICON.snow : ICON[k], skyName(k)));
+  if (m === 'settle') return [cell('data-act="deep"', ICON.breathe, 'Deep breath'), cell('data-act="pace"', val(`${PREFS.bpm}`), 'Pace'), cell('data-act="play"', ICON.play, 'Play')];
   return [cell('data-act="ambient"', val(LABELS.ambient[PREFS.ambient]), 'Ambient'), cell('data-act="fades"', val(LABELS.sleepTimer[PREFS.sleepTimer]), 'Fades after'), cell('data-act="play"', ICON.play, 'Wake')];
 }
 function syncBars() {
@@ -2612,8 +2622,9 @@ function syncBars() {
   if (!S.goal) $('sessSub').textContent = SHORT[here().label] || here().label;
   const pb = top.querySelector('[data-act=pause]'); pb.classList.toggle('on', S.paused); pb.lastChild.textContent = S.paused ? 'Paused' : 'Pause';
   const mb = top.querySelector('[data-act=mute]'); mb.dataset.muted = String(!PREFS.sound); mb.lastChild.textContent = PREFS.sound ? 'Sound' : 'Muted';
-  const key = [S.mode, here().key, S.intro && S.intro.rest, JSON.stringify(S.tools), PREFS.bpm, PREFS.ambient, PREFS.sleepTimer].join();
+  const key = [S.mode, S.wx, here().key, S.intro && S.intro.rest, JSON.stringify(S.tools), PREFS.bpm, PREFS.ambient, PREFS.sleepTimer].join();
   if (BAR.bot !== key) { BAR.bot = key; bot.innerHTML = botCells().join(''); }
+  const wb = bot.querySelector('[data-act=weather]'); if (wb) wb.classList.toggle('on', S.mode === 'fidget' || !!S.wx);
   bot.querySelectorAll('[data-sky]').forEach(b => b.classList.toggle('on', PREFS.atmo[b.dataset.sky].on));
   bot.querySelectorAll('[data-tool]').forEach(b => { const k = b.dataset.tool, armed = (k === 'strike' && S.armed) || (k === 'mystery' && S.wild); b.classList.toggle('on', armed); b.classList.toggle('live', armed); b.classList.toggle('none', !S.tools[k] && !armed); });
   document.body.classList.toggle('intro-in', !!(S.intro && S.intro.rest));
@@ -2678,7 +2689,7 @@ const SHEETS = {
     ...(here().indoor ? [] : [head('Sky'),
       row('Clouds', 'How the sky looks. Changing moves on by itself.', choice('clouds'), true),
       row('Time of day', 'Live follows your clock; or hold an hour.', choice('hour'), true),
-      ...ATMO.map(k => row(skyName(k), { bolt: 'How often it strikes. Thunder follows.', wind: 'How hard it blows. It carries falling spheres.', rain: 'How hard it falls.' }[k], `${toggle(`atmo.${k}.on`)}${slider(`atmo.${k}.lv`, 0.05, 1)}`, true))]),
+      '<p class="rdesc">Lightning, wind and rain: Weather, on the ribbon below the pool.</p>']),
     head('Breath'),
     row('Breathing', 'The edge and the spheres breathe with your pace.', toggle('breathing')),
     row('Pace', DESCS.Pace, slider('bpm', 4, 8, 0.5), true),
@@ -2701,7 +2712,7 @@ const SHEETS = {
   help: { title: 'How to play', body: () => ['<p class="tagline">Somewhere to renew.<br>Settle. Touch. Return.</p><div class="ladder" id="ladder"></div>', `<div class="faq">${FAQ.map(([q, a]) => `<details><summary>${q}</summary><p>${a}</p></details>`).join('')}</div>`], foot: ['close', 'Done'] }
 };
 const FAQ = [
-  ['How does a session go?', 'Settle: three breaths with the circle, then say what you’re here for, a break or a list. Touch: play. Return: three breaths out, your list, and Go. When you’re back, tick what you did.'],
+  ['How does a session go?', 'Settle: the circle, then say what you’re here for, a break or a list. Touch: play. Return: three breaths out, your list, and Go. When you’re back, tick what you did.'],
   ['How do I play?', 'Touch the board and slide to move the waiting sphere; let go to drop it. Two of a kind merge into the next size up, and the two largest make a Full Bloom.'],
   ['What are the tools?', 'Strike: lightning takes one sphere you touch. Mystery: your next sphere becomes whatever it touches first. Storm: the place’s own weather blows in and every sphere lands somewhere new. A chain of three or a Full Bloom earns one, up to three of each, for that game.'],
   ['What do the colours mean?', 'Green is on. Blue is in hand. Gold means you did something right. Red is trouble: a sphere that goes unless you act. A silver shimmer means this, now.'],
@@ -2807,7 +2818,8 @@ function bind() {
     start: () => { closeSheet(); startSession(); }, continue: () => { loadPool(S.prev); S.prev = null; closeSheet(); startSession(); say('Your last game', here().label); },
     introstart: () => { introGo(); openSheet('setup'); },
     introplay: () => { introGo(); S.prev = null; S.goal = null; setMode('play'); setPaused(false); Object.assign(S, { zen: true, fair: false }); syncUI(); },   // Play now: the base game, Zen for this game, no timer
-    introrelax: () => { introGo(); S.prev = null; setMode('settle'); }
+    introrelax: () => { introGo(); S.prev = null; setMode('settle'); }, introfidget: () => { introGo(); S.prev = null; setMode('fidget'); },
+    weather: () => { if (S.mode !== 'fidget') { S.wx = !S.wx; syncBars(); } }
   };
   document.addEventListener('click', (e) => {
     const t = e.target, act = t.closest('[data-act]');
@@ -2833,7 +2845,7 @@ function bind() {
   $('sheetBack').addEventListener('click', backSheet); $('sheetClose').addEventListener('click', closeSheet); $('scrim').addEventListener('click', closeSheet);
   const flush = () => { savePrefs(); saveJournal(); savePool(); };
   document.addEventListener('visibilitychange', () => {
-    if (document.visibilityState === 'hidden') { $('veil').classList.add('on'); if (S.mode !== 'rest' && !S.intro) setPaused(true); flush(); return; }   // everything waits for a tap, your time too; the phone's snapshot is dark
+    if (document.visibilityState === 'hidden') { $('veil').classList.add('on'); sound.off(); if (S.mode !== 'rest' && !S.intro) setPaused(true); flush(); return; }   // everything waits for a tap, your time too; the phone's snapshot is dark
     requestAnimationFrame(() => requestAnimationFrame(() => $('veil').classList.remove('on')));
     updateWarmth(); syncBars(); if (S.mode === 'rest') requestWake(true);
   });
