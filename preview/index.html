@@ -134,10 +134,8 @@ body.see .scrim { background: rgba(2, 5, 10, 0.4); }   /* Session Setup: the wor
 .rdesc:empty { display: none; }
 .sect { margin: 14px 0 0; padding-top: 12px; border-top: 1px solid var(--chip-line); font: normal 600 var(--t6) var(--serif); letter-spacing: 0.13em; text-transform: uppercase; color: var(--ink-dim); }
 .links { display: flex; flex-direction: column; gap: 8px; margin-top: 14px; }
-.sheet.stars { background: radial-gradient(1px 1px at 12% 20%, #fff 50%, transparent), radial-gradient(1px 1px at 72% 12%, #dbe4ff 50%, transparent), radial-gradient(1.5px 1.5px at 40% 64%, #fff 50%, transparent),
-  radial-gradient(1px 1px at 86% 48%, #fff 50%, transparent), radial-gradient(1px 1px at 22% 82%, #c7d2fe 50%, transparent), radial-gradient(1px 1px at 58% 36%, #fff 50%, transparent), radial-gradient(1.5px 1.5px at 92% 86%, #fff 50%, transparent),
-  radial-gradient(ellipse at 50% 120%, #1e1b4b, #02040c 70%); background-size: 180px 220px, 240px 200px, 300px 260px, 200px 180px, 260px 240px, 220px 300px, 340px 280px, 100% 100%; animation: drift 120s linear infinite; }   /* Beta: a field of slow stars */
-@keyframes drift { to { background-position: 180px 0, 240px 0, 300px 0, 200px 0, 260px 0, 220px 0, 340px 0, 0 0; } }
+#warp { position: absolute; inset: 0; width: 100%; height: 100%; border-radius: inherit; display: none; }
+.sheet.stars { overflow: hidden; } .sheet.stars #warp { display: block; } .sheet > :not(#warp) { position: relative; }   /* Beta: travelling through stars */
 .btn.beta { border-color: rgba(165, 180, 252, 0.5); }
 .stats { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; }
 .stat { background: var(--well); border: 1px solid rgba(255, 255, 255, 0.08); border-radius: 12px; padding: 10px; }
@@ -181,7 +179,7 @@ body.rm *, body.rm *::before, body.rm *::after { transition: none !important; an
 </div>
 
 <div class="scrim" id="scrim" hidden></div>
-<div class="sheet" id="sheet" hidden role="dialog" aria-modal="true" aria-labelledby="sheetTitle">
+<div class="sheet" id="sheet" hidden role="dialog" aria-modal="true" aria-labelledby="sheetTitle"><canvas id="warp" aria-hidden="true"></canvas>
   <div class="sheet-head"><button class="nav" id="sheetBack" aria-label="Back">‹</button><span class="sheet-title" id="sheetTitle"></span><button class="nav" id="sheetClose" aria-label="Close">✕</button></div>
   <div class="sheet-body" id="sheetBody"></div>
   <div class="sheet-foot" id="sheetFoot"></div>
@@ -1958,6 +1956,29 @@ function drawCreatures(c, dt) {
   }
 }
 /* ---------- Beta: to seek out new science and innovation ---------- */
+// The door: Beta's card opens on stars coming toward you, as if you were travelling through space. Engage is warp: the stars
+// stretch into streaks for a second and a half, then you're back. Streaks, never a flash; with Reduce motion they hold still.
+const WARP = { stars: Array.from({ length: 140 }, () => ({ x: Math.random() * 2 - 1, y: Math.random() * 2 - 1, z: Math.random() })), go: 0, cv: null };
+function drawWarp(now) {
+  const cv = $('warp'); if (S.sheet !== 'beta' || !cv.offsetWidth) return;
+  const dpr = Math.min(2, window.devicePixelRatio || 1), w = cv.offsetWidth, h = cv.offsetHeight, c = cv.getContext('2d');
+  if (cv.width !== Math.round(w * dpr)) { cv.width = Math.round(w * dpr); cv.height = Math.round(h * dpr); }
+  c.setTransform(dpr, 0, 0, dpr, 0, 0); c.fillStyle = '#02040c'; c.fillRect(0, 0, w, h);
+  const warp = WARP.go ? clamp((now - WARP.go) / 1500, 0, 1) : 0, speed = lessMo() ? 0 : 0.0016 + 0.06 * warp * warp, trail = 1 + 40 * warp * warp, f = Math.max(w, h) * 0.5;
+  c.lineCap = 'round';
+  for (const s of WARP.stars) {
+    const z0 = s.z; s.z -= speed; if (s.z <= 0.02) { s.x = Math.random() * 2 - 1; s.y = Math.random() * 2 - 1; s.z = 1; continue; }
+    const px = w / 2 + s.x / s.z * f * 0.5, py = h / 2 + s.y / s.z * f * 0.5, zt = Math.min(1, s.z + speed * trail), qx = w / 2 + s.x / zt * f * 0.5, qy = h / 2 + s.y / zt * f * 0.5;
+    c.strokeStyle = `rgba(226,236,255,${(clamp(1.2 - s.z, 0.15, 1)).toFixed(3)})`; c.lineWidth = clamp(1.6 - s.z, 0.6, 2);
+    c.beginPath(); c.moveTo(qx, qy); c.lineTo(px + 0.01, py); c.stroke();
+  }
+}
+function engage() {   // warp, then home
+  if (lessMo() || WARP.go) { closeSheet(); return; }
+  WARP.go = performance.now(); sound.whoosh(1, 0); haptic(20);
+  setTimeout(() => { WARP.go = 0; closeSheet(); }, 1500);
+}
+
 // Experiments, each off until you switch it on in Settings › Beta. They read the phone's own motion sensor, on the phone,
 // and nothing is kept or sent. iPhones ask once, when you switch one on.
 const SENSE = { tilt: false, moving: false, beta: 45, gamma: 0, g: null, slow: 0, fast: 0, amp: 0.02, lvl: 0.5 };
@@ -2556,7 +2577,7 @@ function frame(now) {
   lastFrame = now;
   if (S.paused) { if ((audioT += ms / 1000) > 0.1) { sound.update(audioT); audioT = 0; } }   // paused: nothing moves and the sound goes quiet (your time waits: setPaused)
   else update(ms / (1000 / 60), ms / 1000);
-  render(); tickBars();
+  render(); tickBars(); drawWarp(now);
   const b = clamp(S.breath, 0, 1).toFixed(2); if (b !== frame.b) { frame.b = b; document.documentElement.style.setProperty('--b', b); }   // the heave, for what is live
   tickBanner(now);
   if (dark) setTimeout(() => requestAnimationFrame(frame), 100); else requestAnimationFrame(frame);
@@ -2673,7 +2694,7 @@ const SHEETS = {
     row('Look Up', 'Lift the phone toward the sky: the real stars overhead. Hold the light steady on each star to draw the constellation; lower the phone to come back.', toggle('beta.lookup')),
     row('Chest breathing', 'In Relax, lay the phone flat on your chest, hands off. After fifteen seconds the pool follows your breath.', toggle('beta.chest')),
     row('Heavy glass', 'Big spheres follow your finger slowly, like real weight. How they fall doesn’t change.', toggle('beta.heavy')),
-    '<p class="rdesc">These read the phone’s motion sensor, on the phone. Nothing is kept or sent. They’re rough at the edges: keep what helps.</p>'], foot: ['close', 'Engage'] },
+    '<p class="rdesc">These read the phone’s motion sensor, on the phone. Nothing is kept or sent. They’re rough at the edges: keep what helps.</p>'], foot: ['engage', 'Engage'] },
   stats: { title: 'Statistics', body: () => { const j = journalStats(), c = (n, l) => `<div class="stat"><b>${n}</b><span>${l}</span></div>`;
     return [`<div class="stats">${PREFS.numbers ? c(fmt(j.best), 'Best') : ''}${c(fmt(j.lists), 'Lists finished')}${c(fmt(j.blooms), 'Full Blooms')}${c(fmt(S.merges), 'Merges this game')}${c(hm(j.today), 'Today')}${c(hm(j.week), 'This week')}</div>`,
       '<p class="rdesc">Only what is shown here is kept, and only on this phone. No streaks: nothing to keep up, nothing to lose.</p>']; }, foot: ['close', 'Done'] },
@@ -2780,7 +2801,7 @@ function bind() {
   });
   // One listener for every control, wherever it was built.
   const ACTS = {
-    settings: () => openSheet('settings'), setup: () => openSheet('setup'), stats: () => openSheet('stats'), close: closeSheet, mute: () => setPref('sound', !PREFS.sound),
+    settings: () => openSheet('settings'), engage, setup: () => openSheet('setup'), stats: () => openSheet('stats'), close: closeSheet, mute: () => setPref('sound', !PREFS.sound),
     pause: () => { setPaused(!S.paused); syncBars(); }, deep: () => startSigh(), play: () => setMode('play'), newgame: () => { closeSheet(); startPool(); },
     pace: () => setPref('bpm', cycle('bpm')), ambient: () => setPref('ambient', cycle('ambient')), fades: () => setPref('sleepTimer', cycle('sleepTimer')),
     start: () => { closeSheet(); startSession(); }, continue: () => { loadPool(S.prev); S.prev = null; closeSheet(); startSession(); say('Your last game', here().label); },
