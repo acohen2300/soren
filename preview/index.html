@@ -1,4 +1,4 @@
-<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="robots" content="noindex"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><meta name="theme-color" content="#081428"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"><meta name="apple-mobile-web-app-title" content="SoRen"><link rel="manifest" href="../manifest.webmanifest"><link rel="apple-touch-icon" href="../apple-touch-icon.png"><link rel="icon" href="../icon-192.png"><style>html{height:100vh}body{padding-top:calc(8px + env(safe-area-inset-top,0px))!important;padding-bottom:calc(8px + env(safe-area-inset-bottom,0px))!important;overscroll-behavior:none}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body><title>SoRen preview p6</title>
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="robots" content="noindex"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><meta name="theme-color" content="#081428"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"><meta name="apple-mobile-web-app-title" content="SoRen"><link rel="manifest" href="../manifest.webmanifest"><link rel="apple-touch-icon" href="../apple-touch-icon.png"><link rel="icon" href="../icon-192.png"><style>html{height:100vh}body{padding-top:calc(8px + env(safe-area-inset-top,0px))!important;padding-bottom:calc(8px + env(safe-area-inset-bottom,0px))!important;overscroll-behavior:none}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body><title>SoRen preview p7</title>
 <meta name="claude:viewport-fit-sides" content="cover">
 <style>
 /* One screen, never scrolls: a ribbon above the pool reads how things are, a ribbon below it is for playing, and the pool fills
@@ -79,7 +79,8 @@ body.lamp { --glint: rgba(255, 236, 196, 0.95); --glint-soft: rgba(255, 205, 130
 .pool-card { position: absolute; inset: 0; display: grid; place-items: center; padding: clamp(8px, 4%, 20px); background: rgba(2, 6, 10, 0.6); backdrop-filter: blur(3px); -webkit-backdrop-filter: blur(3px); animation: fade .3s; }
 .pool-card .card { max-height: 100%; overflow-y: auto; width: min(300px, 100%); display: flex; flex-direction: column; gap: 8px; align-items: center; text-align: center; padding: 20px; border-radius: 16px;
   background: var(--panel); border: 1px solid var(--line); box-shadow: 0 16px 36px -16px rgba(0, 0, 0, 0.7); }
-#cardEyebrow:empty, #cardNote:empty { display: none; }
+#cardEyebrow:empty, #cardNote:empty, #cardArt:empty { display: none; }
+#cardArt svg { width: 84px; height: 84px; fill: none; stroke: var(--ink); stroke-width: 1.6; stroke-linecap: round; stroke-linejoin: round; }
 #cardEyebrow { font-size: var(--t6); letter-spacing: 0.13em; text-transform: uppercase; color: var(--ink-dim); font-weight: 600; font-style: normal; }
 #cardTitle { font-size: var(--t1); font-weight: 600; line-height: 1.1; text-wrap: balance; overflow-wrap: anywhere; }
 #cardNote { font-size: var(--t5); color: var(--ink-dim); line-height: 1.45; }
@@ -133,6 +134,11 @@ body.see .scrim { background: rgba(2, 5, 10, 0.4); }   /* Session Setup: the wor
 .rdesc:empty { display: none; }
 .sect { margin: 14px 0 0; padding-top: 12px; border-top: 1px solid var(--chip-line); font: normal 600 var(--t6) var(--serif); letter-spacing: 0.13em; text-transform: uppercase; color: var(--ink-dim); }
 .links { display: flex; flex-direction: column; gap: 8px; margin-top: 14px; }
+.sheet.stars { background: radial-gradient(1px 1px at 12% 20%, #fff 50%, transparent), radial-gradient(1px 1px at 72% 12%, #dbe4ff 50%, transparent), radial-gradient(1.5px 1.5px at 40% 64%, #fff 50%, transparent),
+  radial-gradient(1px 1px at 86% 48%, #fff 50%, transparent), radial-gradient(1px 1px at 22% 82%, #c7d2fe 50%, transparent), radial-gradient(1px 1px at 58% 36%, #fff 50%, transparent), radial-gradient(1.5px 1.5px at 92% 86%, #fff 50%, transparent),
+  radial-gradient(ellipse at 50% 120%, #1e1b4b, #02040c 70%); background-size: 180px 220px, 240px 200px, 300px 260px, 200px 180px, 260px 240px, 220px 300px, 340px 280px, 100% 100%; animation: drift 120s linear infinite; }   /* Beta: a field of slow stars */
+@keyframes drift { to { background-position: 180px 0, 240px 0, 300px 0, 200px 0, 260px 0, 220px 0, 340px 0, 0 0; } }
+.btn.beta { border-color: rgba(165, 180, 252, 0.5); }
 .stats { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; }
 .stat { background: var(--well); border: 1px solid rgba(255, 255, 255, 0.08); border-radius: 12px; padding: 10px; }
 .stat b { display: block; font: normal 600 var(--t1)/1 var(--serif); font-variant-numeric: tabular-nums; }
@@ -156,6 +162,7 @@ body.settle::before { opacity: 1; }
 .warm { position: fixed; inset: 0; z-index: 100; pointer-events: none; background: rgb(255, 150, 60); mix-blend-mode: multiply; opacity: 0; transition: opacity 6s; }
 .veil { position: fixed; inset: 0; z-index: 1000; background: #050d1c; opacity: 0; pointer-events: none; transition: opacity .5s; } .veil.on { opacity: 1; transition: none; }
 body.rm *, body.rm *::before, body.rm *::after { transition: none !important; animation: none !important; }
+@media (max-height: 640px) { #cardArt svg { width: 40px; height: 40px; } .pool-card .card { padding: 12px 14px; gap: 5px; } #cardTitle { font-size: var(--t2); } .card-actions { gap: 6px; } .card-actions .btn { min-height: 38px; } }   /* small phones: the way forward stays in view */
 @media (max-width: 360px) { .cell { padding: 0 2px; } .cell .sub { font-size: 11px; } .choice.grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
 </style>
 <script>document.body.classList.add('intro')</script>
@@ -167,7 +174,7 @@ body.rm *, body.rm *::before, body.rm *::after { transition: none !important; an
       <canvas id="game" tabindex="0" aria-label="The pool. Touch and slide to move the waiting sphere, let go to drop it; or the arrow keys and Space. In Relax, hold to breathe in and let go to breathe out."></canvas>
       <div class="banner" id="banner" aria-live="polite"><div id="bannerTitle"></div><div id="bannerSub"></div></div>
       <div class="alert" id="alert" hidden><span id="alertText"></span><span id="alertTime"></span></div>
-      <div class="pool-card" id="poolCard" hidden><div class="card"><div id="cardEyebrow"></div><div id="cardTitle"></div><div id="cardNote"></div><div class="clist" id="cardList"></div><div class="card-actions" id="cardActions"></div></div></div>
+      <div class="pool-card" id="poolCard" hidden><div class="card"><div id="cardEyebrow"></div><div id="cardArt"></div><div id="cardTitle"></div><div id="cardNote"></div><div class="clist" id="cardList"></div><div class="card-actions" id="cardActions"></div></div></div>
     </div>
   </div>
   <nav class="bar" id="botBar" aria-label="What you can do here"></nav>
@@ -419,13 +426,15 @@ const DEFAULTS = {
   atmo: { bolt: { on: false, lv: 1 }, wind: { on: false, lv: 0.4 }, rain: { on: false, lv: 1 } },
   breathing: true, bpm: 6, aim: true, next: false, numbers: true,
   sound: true, vol: 0.85, ambient: 'off', sleepTimer: 60, calm: false, still: reduceMotion,
-  kind: 'task', breakMins: 10, mins: 20, tasks: []   // your list: up to three lines, each { text, due: minutes after midnight or -1 }
+  kind: 'task', breakMins: 10, mins: 20, tasks: [],
+  beta: { lookup: false, chest: false, heavy: false }   // the experiments: each off until you switch it on   // your list: up to three lines, each { text, due: minutes after midnight or -1 }
 };
 const PREFS = (() => {
   const s = loadJSON(PKEY), p = JSON.parse(JSON.stringify(DEFAULTS));
   for (const k in DEFAULTS) if (typeof s[k] === typeof DEFAULTS[k] && k !== 'atmo') p[k] = s[k];   // only what still means something
   for (const k in CHOICES) if (!CHOICES[k].includes(p[k])) p[k] = DEFAULTS[k];
   for (const k of ATMO) { const a = obj(obj(s.atmo)[k]); p.atmo[k] = { on: !!a.on, lv: clamp(Number(a.lv) || DEFAULTS.atmo[k].lv, 0.05, 1) }; }
+  p.beta = Object.fromEntries(Object.keys(DEFAULTS.beta).map(k => [k, obj(s.beta)[k] === true]));
   p.bpm = clamp(+p.bpm || 6, 4, 8); p.vol = clamp(+p.vol, 0, 1);
   p.tasks = (Array.isArray(s.tasks) ? s.tasks : []).slice(0, 3).map(t => ({ text: String(obj(t).text || '').slice(0, 60), due: Number.isFinite(+obj(t).due) ? clamp(Math.round(+t.due), -1, 1439) : -1 })).filter(t => t.text.trim());
   return p;
@@ -464,7 +473,7 @@ const S = {
   sleep: null, wakeLock: null, goal: null, parked: false, paused: false, intro: null, prev: null
 };
 // The spheres move only when their layer is on and nothing is asking for you: no card, no guided breath, not paused.
-const awake = () => has('spheres') && !S.sigh && !S.gameOver && !S.card && !S.sheet && !S.paused && !S.parked && !S.intro && !S.outro && !S.gone;
+const awake = () => has('spheres') && !S.sigh && !S.gameOver && !S.card && !S.sheet && !S.paused && !S.parked && !S.intro && !S.outro && !S.gone && !S.look;
 const rules = () => (S.zen ? 'zen' : PREFS.overflow);   // Play now and Keep going are Zen for this game only; your setting stays
 function setPaused(on) {   // one pause: everything waits, your time too
   if (on === S.paused) return;
@@ -655,6 +664,12 @@ class SoundBath {
     o.start(t); o.stop(t + decay + 0.05); o.onended = () => g.disconnect();
     this.tone(dest, freq * 2, style === 'wood' || style === 'marimba' ? 'sine' : 'triangle', 0.028, 0.018, decay * 0.55, t);
   }
+  fifth(tier, pan, style) {   // the out-breath's fuller sound: the merge's note with its fifth and octave above, soft
+    if (!this.live) return;
+    const f = SCALE_HZ[Math.min(SCALE_HZ.length - 1, tier)], t = this.ctx.currentTime, out = this.out('notes', pan);
+    if (style === 'glass') { this.clink(f * 3, pan, 0.03); return; }
+    this.tone(out, f * 1.5, 'sine', 0.035, 0.05, 2.4, t).connect(this.echo); this.tone(out, f * 2, 'sine', 0.02, 0.08, 2.8, t);
+  }
   chime(pan, style) {   // a soft bell on a note of the breath tone's chord (glass in Heritage)
     if (!this.live) return;
     const f = [392.0, 523.25, 659.25][Math.floor(Math.random() * 3)];
@@ -824,7 +839,8 @@ function tickBanner(now) {
 // The card in the pool: one question, up to three answers. The spheres wait while it's up.
 let cardActions = [];
 // The way forward is always the last answer, at the bottom, in white. A list, if there is one, can be ticked.
-function showCard({ eyebrow = '', title, note = '', list = null, tick = false, answers }) {
+function showCard({ eyebrow = '', title, note = '', art = '', list = null, tick = false, answers }) {
+  $('cardArt').innerHTML = art ? `<svg viewBox="0 0 48 48" aria-hidden="true"><path d="${art}"/></svg>` : '';
   $('cardEyebrow').textContent = eyebrow; $('cardTitle').textContent = title; $('cardNote').textContent = note;
   $('cardList').innerHTML = (list || []).map((l, i) => `<${tick ? 'button' : 'div'} class="cline"${tick ? ` data-tick="${i}"` : ''}><svg viewBox="0 0 48 48" aria-hidden="true"><path d="M11 25l9 9 17-20"/></svg><span>${esc(l.text)}</span></${tick ? 'button' : 'div'}>`).join('');
   $('cardList').classList.toggle('tick', tick);
@@ -842,7 +858,7 @@ function maybePraise(reason, x, y) {
 
 /* ---------- Icons, the colours of state, the shimmer ---------- */
 // Plain is off, green is on, blue is in hand, gold is you did it right, red is trouble, silver is this, now.
-const LIGHT = '240,246,255', GOLD = '255,200,90', RED = '255,90,80', GREEN = '74,222,128';
+const LIGHT = '240,246,255', GOLD = '255,200,90', RED = '255,90,80', GREEN = '74,222,128', BLUE = '96,165,250';
 const CLOUD = 'M7.5 14.5h9.5a3.5 3.5 0 0 0 .4-7 5 5 0 0 0-9.6 1.2A3 3 0 0 0 7.5 14.5z', DOT = (x, y, r) => `M${x - r} ${y}a${r} ${r} 0 1 0 ${2 * r} 0a${r} ${r} 0 1 0 ${-2 * r} 0`;
 const ICON = {
   gear: 'M12 9.2a2.8 2.8 0 1 0 0 5.6 2.8 2.8 0 0 0 0-5.6zM19.3 13.4a7.4 7.4 0 0 0 0-2.8l1.9-1.5-1.9-3.3-2.3.9a7.4 7.4 0 0 0-2.4-1.4L14.2 3h-3.8l-.4 2.3a7.4 7.4 0 0 0-2.4 1.4l-2.3-.9-1.9 3.3 1.9 1.5a7.4 7.4 0 0 0 0 2.8l-1.9 1.5 1.9 3.3 2.3-.9a7.4 7.4 0 0 0 2.4 1.4l.4 2.3h3.8l.4-2.3a7.4 7.4 0 0 0 2.4-1.4l2.3.9 1.9-3.3z',
@@ -1744,7 +1760,7 @@ function letGo(press) {   // a tap: a note, and the hold never was. A hold: let 
 }
 function updateSpace(dt) {
   const sp = S.space, H = sp.hold, inT = IN * breathLen(), outT = (1 - IN) * breathLen();
-  sp.t += dt;
+  sp.t += dt; updateChest(dt);
   if (H.state === 'in') { H.u = Math.min(1, H.u + dt / inT); if (!H.heard && animTime - H.t0 >= TAP) { H.heard = true; sound.breath(true, (1 - H.u) * inT); } }
   else if (H.state === 'out') { H.u = Math.max(0, H.u - dt / outT); if (H.u <= 0) H.state = 'rejoin'; }
   else if (H.state === 'rejoin') { const g = pacerLevel(); H.u = H.u < g ? Math.min(g, H.u + dt / inT) : Math.max(g, H.u - dt / outT); if (Math.abs(H.u - g) < 0.002) H.state = null; }
@@ -1757,7 +1773,7 @@ function updateSpace(dt) {
   }
   if (!sp.offered && sp.t > 60) { sp.offered = true; say('Ready when you are', 'Play, or stay'); }   // once, softly: the door is there
 }
-const breathIn = () => { const H = S.space && S.space.hold; return H && H.state === 'in' ? (H.heard || H.wasIn) : H && H.state === 'out' ? false : inhaling(); };   // a press counts after a quarter second
+const breathIn = () => { const H = S.space && S.space.hold; return S.space && S.space.chest ? SENSE.lvl > 0.5 : H && H.state === 'in' ? (H.heard || H.wasIn) : H && H.state === 'out' ? false : inhaling(); };   // a press counts after a quarter second
 
 // The deep breath, guided: two breaths in through the nose, a soft hold, then a long slow breath out through the mouth.
 const DEEP = [
@@ -1781,17 +1797,17 @@ function apexAmp() { const x = animTime - (S.apexT ?? -9); return x < 0 ? 0 : x 
 function updateBreath(dt) {
   const wasIn = inhaling();
   stepPacer(dt);
-  if (S.space && !S.sigh && wasIn !== inhaling() && !S.space.hold.state) sound.breath(inhaling(), (inhaling() ? IN : 1 - IN) * breathLen());   // Relax: the pacer's breaths are heard
+  if (S.space && !S.sigh && wasIn !== inhaling() && !S.space.hold.state && !S.space.chest) sound.breath(inhaling(), (inhaling() ? IN : 1 - IN) * breathLen());   // Relax: the pacer's breaths are heard
   if (S.space) updateSpace(dt);
   const prev = S.breath;
-  if (S.sigh) stepSigh(dt); else S.breath = S.space && S.space.hold.state ? S.space.hold.u : pacerLevel();
+  if (S.sigh) stepSigh(dt); else S.breath = S.space && S.space.chest ? SENSE.lvl : S.space && S.space.hold.state ? S.space.hold.u : pacerLevel();
   if (S.bRise && S.breath < prev - 0.0003 && prev > 0.75) S.apexT = animTime;
   S.bRise = S.breath > prev + 0.0003 ? true : S.breath < prev - 0.0003 ? false : S.bRise;
 }
 function breatheWords() {
   if (S.sigh) { const st = DEEP[S.sigh.i]; return { word: st.word, cue: st.cue || '', status: S.space ? '' : 'Tap to skip' }; }
   const H = S.space.hold;
-  return { word: breathIn() ? 'In through the nose' : 'Out through the mouth', cue: '', status: H.state === 'in' || H.state === 'out' ? 'Following you' : S.space.breaths < 3 ? HINT : '' };
+  return { word: breathIn() ? 'In through the nose' : 'Out through the mouth', cue: '', status: S.space.chest ? 'Following your breath' : H.state === 'in' || H.state === 'out' ? 'Following you' : S.space.breaths < 3 ? HINT : '' };
 }
 // The breath has one shape. Full, it is the pool's own border; breathing out, it draws in, rounds into a circle and shrinks to a
 // point; breathing in, it grows back out to the border. The opening uses the same shape.
@@ -1941,6 +1957,91 @@ function drawCreatures(c, dt) {
     c.restore();
   }
 }
+/* ---------- Beta: to seek out new science and innovation ---------- */
+// Experiments, each off until you switch it on in Settings › Beta. They read the phone's own motion sensor, on the phone,
+// and nothing is kept or sent. iPhones ask once, when you switch one on.
+const SENSE = { tilt: false, moving: false, beta: 45, gamma: 0, g: null, slow: 0, fast: 0, amp: 0.02, lvl: 0.5 };
+function askSensor(kind, then) {   // 'tilt' (orientation) or 'moving' (acceleration); then(true) once it listens
+  const E = kind === 'tilt' ? window.DeviceOrientationEvent : window.DeviceMotionEvent;
+  if (!E) { then(false); return; }
+  const listen = () => {
+    if (!SENSE[kind]) window.addEventListener(kind === 'tilt' ? 'deviceorientation' : 'devicemotion', kind === 'tilt' ? onTilt : onMoving);
+    SENSE[kind] = true; then(true);
+  };
+  if (typeof E.requestPermission === 'function') E.requestPermission().then(r => (r === 'granted' ? listen() : then(false))).catch(() => then(false)); else listen();
+}
+function onTilt(e) { if (e.beta == null) return; SENSE.beta += (e.beta - SENSE.beta) * 0.18; SENSE.gamma += ((e.gamma || 0) - SENSE.gamma) * 0.18; }
+function onMoving(e) {   // the phone on your chest: it lifts a little with each breath
+  const a = e.accelerationIncludingGravity; if (!a || a.z == null) return;
+  const tilt = Math.atan2(a.y || 0, a.z || 1);
+  SENSE.g = Math.abs(a.z) / Math.max(1, Math.hypot(a.x || 0, a.y || 0, a.z));   // 1 when it lies flat
+  SENSE.fast += (tilt - SENSE.fast) * 0.25; SENSE.slow += (tilt - SENSE.slow) * 0.02;
+  const d = SENSE.fast - SENSE.slow; SENSE.amp = Math.max(0.006, SENSE.amp * 0.995, Math.abs(d));
+  SENSE.lvl += (clamp(0.5 + d / (2 * SENSE.amp), 0, 1) - SENSE.lvl) * 0.3;
+}
+// Chest breathing: in Relax, lay the phone flat on your chest, hands off; after fifteen seconds the pool follows your breath.
+function updateChest(dt) {
+  const sp = S.space, flat = PREFS.beta.chest && SENSE.moving && SENSE.g > 0.94 && !sp.finger;
+  sp.flat = flat ? (sp.flat || 0) + dt : 0;
+  if (sp.flat > 15 && !sp.chest) { sp.chest = true; say('Following your breath', 'Hands off, eyes closed if you like'); }
+  if (sp.chest && !flat) sp.chest = false;   // picked up, or touched: the pool leads again
+}
+
+// Look Up: lift the phone toward the sky and the real stars overhead fill the screen, as they stand now from about 41°
+// north, facing north. A light follows the tilt of your hands. Hold it on the ringed star until the line draws; a steady hand
+// draws it, a rushed one waits. Lower the phone to come back. One constellation, one breath or two each line, then rest.
+const LOOK_SET = ['Big Dipper', 'Cassiopeia', 'Little Dipper', 'Cygnus', 'Orion', 'Leo'];
+let LOOK = { up: 0, down: 0 };
+function lookAt(ra, dec, lst) {   // full-screen sky: altitude up the screen, azimuth across, centred on north
+  const H = (lst - ra) * Math.PI / 12, de = dec * Math.PI / 180, la = SKYVIEW.lat;
+  const alt = Math.asin(clamp(Math.sin(la) * Math.sin(de) + Math.cos(la) * Math.cos(de) * Math.cos(H), -1, 1));
+  const az = Math.atan2(-Math.cos(de) * Math.sin(H), Math.sin(de) * Math.cos(la) - Math.cos(de) * Math.sin(la) * Math.cos(H));
+  return [CX + az * 180 / Math.PI * (LW / 110), LH - 24 - alt * 180 / Math.PI * ((LH - 60) / 90)];
+}
+const lookXY = (name, lst) => lookAt(STAR[name][0], STAR[name][1], lst);
+function updateLook(dt) {
+  if (!PREFS.beta.lookup || !SENSE.tilt || S.sheet || S.card || S.intro || S.outro || S.mode === 'rest') { LOOK.up = 0; return; }
+  if (!S.look) { LOOK.up = SENSE.beta > 75 ? LOOK.up + dt : 0; if (LOOK.up > 1) enterLook(); return; }
+  const L = S.look; L.t += dt;
+  LOOK.down = SENSE.beta < 55 ? LOOK.down + dt : 0; if (LOOK.down > 1) { S.look = null; LOOK.up = LOOK.down = 0; syncBars(); return; }   // lowered: back where you were
+  const tx = CX + clamp(SENSE.gamma / 35, -1, 1) * LW / 2, ty = LH - clamp((SENSE.beta - 75) / 55, 0, 1) * LH;
+  const vx = tx - L.x, vy = ty - L.y; L.x += vx * Math.min(1, dt * 6); L.y += vy * Math.min(1, dt * 6);
+  if (L.k >= L.con.lines.length) return;
+  const [ax, ay] = lookXY(L.con.lines[L.k][1], L.lst), steady = Math.hypot(vx, vy) < 40;
+  L.hold = Math.hypot(L.x - ax, L.y - ay) < 26 && steady ? L.hold + dt : Math.max(0, L.hold - dt * 0.5);   // never punished: it waits
+  if (L.hold >= 1.2) {
+    L.hold = 0; L.k++; inhaling() ? sound.chime(panFor(ax), 'glass') : sound.done();   // the out-breath connects with the fuller sound
+    if (L.k >= L.con.lines.length) { sound.wash(); haptic([20, 50, 30]); say(L.con.name, 'Drawn. You can lower your arms.'); }
+  }
+}
+function enterLook() {
+  const lst = lstHours(new Date()), up = (n) => { const [x, y] = lookXY(n, lst); return x > 10 && x < LW - 10 && y > 10 && y < LH - 30; };
+  const con = CONSTELLATIONS.find(c => LOOK_SET.includes(c.name) && c.members.every(up)) || CONSTELLATIONS[0];
+  S.look = { con, lst, k: 0, hold: 0, t: 0, x: CX, y: LH * 0.7 }; S.aiming = false; LOOK.down = 0;
+  sound.whoosh(0.3, 0); syncBars();
+}
+function drawLook(c) {
+  const L = S.look, a = clamp(L.t / 0.8, 0, 1), b = clamp(S.breath, 0, 1);
+  c.save(); c.globalAlpha = a;
+  const g = c.createLinearGradient(0, 0, 0, LH); g.addColorStop(0, '#02040c'); g.addColorStop(1, '#0a1430'); c.fillStyle = g; c.fillRect(0, 0, LW, LH);
+  c.fillStyle = '#dbe4ff';
+  FIELD.forEach((f, i) => { const p = lookAt(f[0], f[1], L.lst); if (p[1] < LH - 20) { c.globalAlpha = a * f[2] * (0.8 + 0.2 * Math.sin(animTime * 0.6 + i)); c.fillRect(p[0], p[1], 1.2, 1.2); } });
+  c.globalAlpha = a; c.lineCap = 'round';
+  L.con.lines.forEach(([s1, s2], i) => {   // drawn lines silver; all of them gold once it's whole
+    if (i >= L.k) return; const A = lookXY(s1, L.lst), B = lookXY(s2, L.lst);
+    c.strokeStyle = L.k >= L.con.lines.length ? `rgba(${GOLD},0.9)` : 'rgba(226,236,255,0.85)'; c.lineWidth = 2; c.beginPath(); c.moveTo(A[0], A[1]); c.lineTo(B[0], B[1]); c.stroke();
+  });
+  for (const n of L.con.members) { const [x, y] = lookXY(n, L.lst); c.fillStyle = '#f1f5ff'; c.beginPath(); c.arc(x, y, 2.8, 0, TAU); c.fill(); }
+  if (L.k < L.con.lines.length) {   // the next star, ringed blue; the hold draws a gold arc round it
+    const [x, y] = lookXY(L.con.lines[L.k][1], L.lst);
+    c.strokeStyle = `rgba(${BLUE},${(0.6 + 0.3 * Math.sin(animTime * 3)).toFixed(3)})`; c.lineWidth = 1.5; c.beginPath(); c.arc(x, y, 14, 0, TAU); c.stroke();
+    if (L.hold > 0) { c.strokeStyle = `rgb(${GOLD})`; c.lineWidth = 2.5; c.beginPath(); c.arc(x, y, 14, -Math.PI / 2, -Math.PI / 2 + TAU * L.hold / 1.2); c.stroke(); }
+  }
+  const r = 6 + 6 * b, gl = c.createRadialGradient(L.x, L.y, 0, L.x, L.y, r * 3);   // your light: grow, glow, slim, dim
+  gl.addColorStop(0, 'rgba(255,255,255,0.95)'); gl.addColorStop(0.35, `rgba(${LIGHT},0.5)`); gl.addColorStop(1, `rgba(${LIGHT},0)`); c.fillStyle = gl; c.beginPath(); c.arc(L.x, L.y, r * 3, 0, TAU); c.fill();
+  c.restore();
+  hint(c, `Look Up · ${L.con.name}${L.k < L.con.lines.length ? ' · hold the light on the ringed star' : ''}`);
+}
 /* ---------- Modes: the same screen, different layers in the pool ---------- */
 // Changing mode pauses the game: nothing is lost, the pool waits just as it is.
 function setMode(m) {
@@ -2050,7 +2151,7 @@ function handleEvents(events) {
       goldWave(e.id, w.glass ? 1.2 : 0);   // in Heritage the new marble cools first, then turns gold
       if (S.combo === 2) sound.done();
       if (S.combo === 3) { const got = earnTool(); if (got) say(`${TOOL_NAMES[got]} earned`, 'A chain of three'); }
-    }
+    } else if (!inhaling() && !S.sigh) sound.fifth(e.tier, panFor(e.x), w.synth);   // a merge on the out-breath sounds fuller: waiting for it is its own reward
     if (e.tier === 9) { sound.wash(); say(T.name, w.glass ? 'The largest marble. Pair it for a Full Bloom.' : '1024 reached. Pair it for a Full Bloom.'); maybePraise('big', e.x, e.y); }
   }
 }
@@ -2181,8 +2282,19 @@ function updateGoal() {
   if (left <= 60 && g.rung < 2) { g.rung = 2; sound.bell(2); say('One minute left'); }
   if (left <= 0) park();
 }
-const PHRASES = ['Get back out there, tiger.', 'See you later, alligator.', 'In a while, crocodile.', 'You’re out like trout.', 'Peace out, cub scout.',
-  'Off you go, buffalo.', 'Bye-bye, butterfly.', 'Take care, polar bear.', 'Out the door, dinosaur.', 'Be good, chipmunk.'];
+// The send-offs, each with its animal drawn in the icons' own line, on a 48-unit grid.
+const PHRASES = [
+  ['Get back out there, tiger.', 'M12 30c0-9 5-15 12-15s12 6 12 15c0 7-5 11-12 11S12 37 12 30zM14 20l-2-9 8 5M34 20l2-9-8 5M19 29h.01M29 29h.01M24 32l-2.5 2h5zM24 34c0 2-2 3-3.5 2M24 34c0 2 2 3 3.5 2M22 17l2 4 2-4M18 19l1.5 3M30 19l-1.5 3M10 32l6-1M38 32l-6-1M10 36l6-2M38 36l-6-2'],
+  ['See you later, alligator.', 'M4 29l6-5c4-2 8-3 13-3h13c4 0 7 2 8 5l-2 3H22l-3 4-3-4-5 1-3 3zM34 21a2 2 0 1 1 4 0M24 29l1.5-2.5 1.5 2.5 1.5-2.5 1.5 2.5 1.5-2.5 1.5 2.5 1.5-2.5M22 29l-2 6M31 29l1 6'],
+  ['In a while, crocodile.', 'M4 31l7-6c3-2 7-3 11-3h13c3 0 6 1 8 3l2 3-3 1H21l-3 4-2-4-5 1-3 3zM12 22l2-3 2 3 2-3 2 3 2-3 2 3M34 22a2 2 0 1 1 4 0M24 29l1.5 2.5 1.5-2.5 1.5 2.5 1.5-2.5 1.5 2.5 1.5-2.5M21 29l-1 6M31 29l1 6'],
+  ['You’re out like trout.', 'M6 24c5-7 12-11 20-11 6 0 10 4 11 11-1 7-5 11-11 11-8 0-15-4-20-11zM37 24l7-6v12zM12 22h.01M20 15c2 2 2 5 0 8M18 24c1 3 3 5 6 6M24 18l-1 4M28 18l-1 4M30 24l2 3M22 33c-1 3 0 5 2 6'],
+  ['Peace out, cub scout.', 'M24 9a6 6 0 1 0 0 12 6 6 0 0 0 0-12zM14 12c2-4 6-6 10-6s8 2 10 6M12 12h24M15 31c0-6 4-9 9-9s9 3 9 9v13H15zM24 22l-5 5h10zM24 27v6M20 44v-8M28 44v-8'],
+  ['Off you go, buffalo.', 'M12 28c0-8 5-13 12-13s12 5 12 13c0 6-3 9-6 11h-12c-3-2-6-5-6-11zM13 22c-6-1-9-5-7-10 1 4 3 6 7 6M35 22c6-1 9-5 7-10-1 4-3 6-7 6M16 15c2-4 5-6 8-6s6 2 8 6M19 28h.01M29 28h.01M21 36c1 2 5 2 6 0M24 33v3'],
+  ['Bye-bye, butterfly.', 'M24 26c-5-9-15-11-18-5s7 10 18 5c11 5 21 1 18-5s-13-4-18 5zM24 26c-6 7-13 9-15 4s7-5 15-4c8-1 17-1 15 4s-9 3-15-4M24 18v16M22 14l2 4 2-4M21 11l3 3 3-3'],
+  ['Take care, polar bear.', 'M9 33c0-10 7-17 15-17s15 7 15 17v7H9zM12 20a3 3 0 1 0 0 .1M36 20a3 3 0 1 0 0 .1M19 29h.01M29 29h.01M24 33l-2.5-2h5zM24 35c0 2-2 3-3 2M24 35c0 2 2 3 3 2M14 40v4M34 40v4'],
+  ['Out the door, dinosaur.', 'M6 40c2-7 7-11 13-11h7c4 0 7-3 8-7l1-8c1-3 3-5 6-5h5l-2 4 2 3-5 1c-1 8-5 13-11 15l2 8h-5l-1-7-4 7h-5l3-8c-5 0-9 3-14 8zM41 13h.01'],
+  ['Be good, chipmunk.', 'M10 24c0-4 3-7 7-7s7 3 7 7c0 3-2 5-4 6 6 1 10 6 10 12H12c-4 0-6-3-6-7 0-3 2-5 4-6zM14 17l-1-5 4 3M20 17l1-5-4 3M15 23h.01M22 30c3 2 5 5 5 9M30 42c7-2 11-9 8-17-1-3-3-5-6-5M18 36c2 0 4 1 5 3']
+];
 const phrase = () => PHRASES[Math.floor(Math.random() * PHRASES.length)];
 function park() {   // time's up: the game parks, greyed and saved, and three breaths out before your list
   S.goal = null; closeSheet(); hideCard(); if (S.mode !== 'play') setMode('play');
@@ -2192,7 +2304,8 @@ function park() {   // time's up: the game parks, greyed and saved, and three br
 }
 function parkCard() {
   S.outro = null; $('pool').classList.add('grey'); const list = tasks(), brk = PREFS.kind === 'break' || !list.length;
-  showCard({ eyebrow: 'Your time', title: brk ? 'Break’s over' : 'Time to go', note: phrase(), list: brk ? null : list.map(t => ({ text: t.text })),
+  const [words, art] = phrase();
+  showCard({ eyebrow: 'Your time', title: brk ? 'Break’s over' : 'Time to go', note: words, art, list: brk ? null : list.map(t => ({ text: t.text })),
     answers: [['Relax first', () => { unpark(); setMode('settle'); startSigh(); }], ['Back to the game', unpark], ['Go', goNow]] });
 }
 function unpark() { S.parked = false; S.gone = false; $('pool').classList.remove('grey', 'dark'); hideCard(); if (S.roundDone) startPool(); syncUI(); }
@@ -2335,6 +2448,7 @@ function render() {
     words(ctx, 'Tap to play', 'Paused', 212);
   }
   if (S.outro) { const u = S.outro.t / (breathLen() / 2); drawCircle(ctx, 1, 0.38 + 0.12 * twice(S.outro.t), 'Breathe out', `${Math.max(1, 3 - Math.floor(u))}`); }   // Return: three breaths out
+  if (S.look) drawLook(ctx);
   if (S.intro) drawIntro(ctx, S.intro);
   ctx.restore();
 }
@@ -2412,13 +2526,14 @@ function update(k, dt) {
   updateGoal();
   updateScene(dt); updateWind(dt); updateLife(dt); updateBreath(dt); updateActions(dt, k); updateStorms(dt); updateStorm(dt); updateBoard(dt);
   if (S.fid) updateFidget(dt);
+  updateLook(dt);
   journalTick(dt);
   if (S.mode === 'rest') updateSleep(dt);
   S.ballFade += ((has('spheres') ? 1 : 0) - S.ballFade) * (1 - Math.pow(0.9, k));
   const swayTo = ENV.blow * 20 + Math.sin(animTime * 2.3) * Math.min(1, Math.abs(ENV.blow)) * 4;
   S.sway += (swayTo - S.sway) * (1 - Math.pow(0.95, k));
   if (awake()) {
-    S.dropX += (S.targetX - S.dropX) * (1 - Math.pow(0.65, k));
+    S.dropX += (S.targetX - S.dropX) * (1 - Math.pow(PREFS.beta.heavy ? 0.65 + 0.3 * (RADII[S.current] - 12) / 81 : 0.65, k));   // Beta, heavy glass: a big sphere follows your finger slowly
     if (!S.canDrop && (S.cooldown -= k) <= 0) S.canDrop = true;
     if (S.comboT > 0 && (S.comboT -= k) <= 0) S.combo = 0;
     nudgePile();
@@ -2517,16 +2632,17 @@ const head = (t) => `<h3 class="sect">${t}</h3>`;
 const DESCS = { Mode: () => MODE_NOTES[PREFS.mode], Rules: () => (PREFS.overflow === 'end' ? 'The game ends at the line, and counts toward your best.' : 'Nothing ends: over the line, the top dissolves.'),
   Pace: () => `${(+PREFS.bpm).toFixed(1)} breaths a minute: in for ${(24 / PREFS.bpm).toFixed(1)} s, out for ${(36 / PREFS.bpm).toFixed(1)} s.` };
 const hhmm = (m) => (m < 0 ? '' : `${String(Math.floor(m / 60)).padStart(2, '0')}:${String(m % 60).padStart(2, '0')}`);
+const FIRST = ['Like “Stand up and stretch”', 'Like “Shoes by the door”', 'Like “Open the laptop”'];   // the first move: small and physical, so it's easy to start
 function listRows() {   // your list: up to three lines, each with a time it's due if it has one, and a blank for the next
   const L = PREFS.tasks.slice(0, 3); if (L.length < 3 && (!L.length || L[L.length - 1].text.trim())) L.push({ text: '', due: -1 });
-  return L.map((t, i) => `<div class="tline"><input class="text-input" type="text" maxlength="60" enterkeyhint="done" autocomplete="off" placeholder="${i ? 'And then…' : 'Like “Call Sam”'}" data-task="${i}" value="${esc(t.text)}"><input class="text-input due" type="time" data-due="${i}" value="${hhmm(t.due)}" aria-label="When it's due"></div>`).join('');
+  return L.map((t, i) => `<div class="tline"><input class="text-input" type="text" maxlength="60" enterkeyhint="done" autocomplete="off" placeholder="${FIRST[i]}" data-task="${i}" value="${esc(t.text)}"><input class="text-input due" type="time" data-due="${i}" value="${hhmm(t.due)}" aria-label="When it's due"></div>`).join('');
 }
 const stopWords = () => { const d = soonestDue(); return d != null ? `Play stops at ${clockAt(Date.now() + Math.max(1, d - 5) * MIN)}, five minutes before the first is due.` : 'Add a time to any of them, or choose how long below.'; };
 const SHEETS = {
   setup: { title: 'Session Setup', body: () => [
     row('A break, or a task?', 'Say what you’re here for. It comes back when your time is up.', choice('kind'), true),
     ...(PREFS.kind === 'break' ? [row('How long?', 'A soft bell at three minutes left, two at one.', choice('breakMins'), true)]
-      : [row('Your list', stopWords, listRows(), true), ...(soonestDue() == null ? [row('How long?', 'A soft bell at three minutes left, two at one.', choice('mins', true), true)] : [])]),
+      : [row('What’s the first move?', stopWords, listRows(), true), ...(soonestDue() == null ? [row('How long?', 'A soft bell at three minutes left, two at one.', choice('mins', true), true)] : [])]),
     ...(S.prev ? ['<button class="btn" data-act="continue">Continue last game</button>'] : [])
   ], foot: ['start', 'Start'] },
   settings: { title: 'Settings', body: () => [
@@ -2551,8 +2667,13 @@ const SHEETS = {
     head('Comfort'),
     row('Low stimulation', 'No flashes, softer thunder, quieter words.', toggle('calm')),
     row('Reduce motion', 'What moves on its own is stilled; the breath only glows.', toggle('still')),
-    '<div class="links"><button class="btn" data-sheet="setup">Session Setup</button><button class="btn" data-sheet="stats">Statistics</button><button class="btn" data-sheet="help">How to play</button></div>'
+    '<div class="links"><button class="btn" data-sheet="setup">Session Setup</button><button class="btn" data-sheet="stats">Statistics</button><button class="btn" data-sheet="help">How to play</button><button class="btn beta" data-sheet="beta">Beta ›</button></div>'
   ], foot: ['close', 'Done'] },
+  beta: { title: 'SoRen · Beta', body: () => ['<p class="tagline"><b>The next generation. V3.0</b><br>To seek out new science and innovation.<br>To boldly go where no app has gone before!</p>',
+    row('Look Up', 'Lift the phone toward the sky: the real stars overhead. Hold the light steady on each star to draw the constellation; lower the phone to come back.', toggle('beta.lookup')),
+    row('Chest breathing', 'In Relax, lay the phone flat on your chest, hands off. After fifteen seconds the pool follows your breath.', toggle('beta.chest')),
+    row('Heavy glass', 'Big spheres follow your finger slowly, like real weight. How they fall doesn’t change.', toggle('beta.heavy')),
+    '<p class="rdesc">These read the phone’s motion sensor, on the phone. Nothing is kept or sent. They’re rough at the edges: keep what helps.</p>'], foot: ['close', 'Engage'] },
   stats: { title: 'Statistics', body: () => { const j = journalStats(), c = (n, l) => `<div class="stat"><b>${n}</b><span>${l}</span></div>`;
     return [`<div class="stats">${PREFS.numbers ? c(fmt(j.best), 'Best') : ''}${c(fmt(j.lists), 'Lists finished')}${c(fmt(j.blooms), 'Full Blooms')}${c(fmt(S.merges), 'Merges this game')}${c(hm(j.today), 'Today')}${c(hm(j.week), 'This week')}</div>`,
       '<p class="rdesc">Only what is shown here is kept, and only on this phone. No streaks: nothing to keep up, nothing to lose.</p>']; }, foot: ['close', 'Done'] },
@@ -2576,7 +2697,7 @@ function openSheet(name, push) {
   $('sheetTitle').textContent = def.title; $('sheetBack').hidden = !NAV.length;
   $('sheetBody').innerHTML = def.body().join(''); $('sheetBody').scrollTop = 0;
   $('sheetFoot').innerHTML = `<button class="btn primary" data-act="${def.foot[0]}">${def.foot[1]}</button>`; $('sheetFoot').hidden = false;
-  document.body.classList.toggle('see', name === 'setup');   // the world shows through behind Session Setup
+  document.body.classList.toggle('see', name === 'setup'); $('sheet').classList.toggle('stars', name === 'beta');   // Beta: the card opens on the stars   // the world shows through behind Session Setup
   $('scrim').hidden = false; $('sheet').hidden = false;
   if (name === 'help') renderLadder();
   syncControls();
@@ -2607,6 +2728,7 @@ function setPref(k, v) {   // a change takes effect everywhere, at once, and is 
   else if (k === 'overflow') S.fair = S.world.balls.length || S.score ? S.fair && v === 'end' : v === 'end';   // changing the rules mid-game: it no longer counts
   else if (k === 'sleepTimer' && S.sleep) S.sleep.left = v * 60;
   else if (k === 'numbers') renderLadder();
+  else if (k.startsWith('beta.') && v && k !== 'beta.heavy') askSensor(k === 'beta.lookup' ? 'tilt' : 'moving', (ok) => { if (!ok) { setPrefRaw(k, false); savePrefs(); syncControls(); say('Not on this device', 'It needs a phone’s motion sensor'); } });   // iPhones ask once
   syncControls(); syncBars();
 }
 
@@ -2621,7 +2743,7 @@ function bind() {
   canvas.addEventListener('pointerdown', (e) => {
     if (e.button !== undefined && e.button !== 0) return;
     e.preventDefault();
-    if (S.intro || S.sheet || S.card || S.mode === 'rest') return;
+    if (S.intro || S.sheet || S.card || S.look || S.mode === 'rest') return;
     if (S.outro) { S.outro.t = S.outro.len; return; }   // Return's breaths: a tap moves on
     if (S.paused) { setPaused(false); syncBars(); return; }   // tap to play
     if (S.sigh && !S.space) { endSigh(); return; }
