@@ -93,6 +93,13 @@ body.comp #game { filter: saturate(1.25) contrast(1.05); }
 .sp #scoreVal { flex: 1; text-align: right; padding-right: calc(14 * var(--u)); }
 .sp .bar { flex: none; width: calc(2 * var(--u)); align-self: stretch; background: var(--edge); }
 .sp #clock { flex: none; width: calc(170 * var(--u)); text-align: center; font-weight: 600; font-size: var(--t2); color: var(--ink-2); }
+.alertbar { position: absolute; inset: 0; display: flex; align-items: center; justify-content: space-between; gap: calc(16 * var(--u)); padding: 0 calc(28 * var(--u)); border-radius: var(--r-pill); background: var(--black); color: #fff;
+  box-shadow: inset 0 0 0 calc(6 * var(--u)) rgb(var(--red)); animation: alertglow 1s ease-in-out infinite; }   /* Comp's warnings: one place, red for danger, the seconds big */
+.alertbar .al { flex: 1; min-width: 0; display: flex; flex-direction: column; align-items: center; text-align: center; line-height: 1.05; white-space: nowrap; }
+.alertbar .hz { flex: none; width: calc(60 * var(--u)); height: calc(60 * var(--u)); fill: rgba(var(--red), .25); stroke: rgb(var(--red)); stroke-width: 2.2; stroke-linejoin: round; stroke-linecap: round; animation: hzblink 1s steps(2, jump-none) infinite; } .alertbar .hz path + path { stroke: #fff; stroke-width: 2.6; }
+@keyframes hzblink { 50% { opacity: .45; } } .alertbar b { font-weight: 800; font-size: var(--t1); } .alertbar i { font-style: normal; font-weight: 600; font-size: var(--t2); color: rgb(255, 200, 195); }
+.alertbar .num { flex: none; font-weight: 800; font-size: calc(64 * var(--u)); width: calc(60 * var(--u)); text-align: center; }
+@keyframes alertglow { 50% { box-shadow: inset 0 0 0 calc(6 * var(--u)) rgb(var(--red)), 0 0 calc(34 * var(--u)) rgba(var(--red), .85); } }
 .sub-menu { position: absolute; inset: 0; display: flex; align-items: center; justify-content: flex-end; gap: calc(14 * var(--u)); border-radius: var(--r-pill); background: var(--black); }
 
 /* The pool: one fixed outline, as large as the space allows at its own shape. Its glow is drawn on the canvas. */
@@ -2367,9 +2374,11 @@ function newWorld(quiet) {
 const panFor = (x) => ((x / LW) - 0.5) * 1.4;
 const aimX = (r) => clamp(S.dropX + S.sway, r + 5, LW - r - 5);
 function dropCurrent() {
-  if (!awake() || !S.canDrop) return;
-  const r = S.wild ? WILD_R : RADII[S.current], x = aimX(r);   // exactly where the waiting sphere is drawn
-  addBall(S.world, x, DROP_Y, S.wild ? 0 : S.current, { wild: S.wild, vy: 1.4 });
+  if (!awake() || !S.canDrop || compLocked()) return;   // Comp: no drops while lightning waits
+  const r = S.wild ? WILD_R : RADII[S.current], x = aimX(r), fault = compOn() ? dropFault() : null;   // exactly where the waiting sphere is drawn. Comp, power out: the dropper misbehaves
+  if (fault === 'jam') { sound.tick(); haptic(8); S.canDrop = false; S.cooldown = 30; return; }   // nothing comes out
+  if (fault === 'two') { const r2 = RADII[S.next], x2 = clamp(x + (x < LW / 2 ? 1 : -1) * (r + r2 + 2), r2 + 5, LW - r2 - 5); addBall(S.world, x2, DROP_Y, S.next, { vy: 1.4 }); S.next = pickNextTier(); }   // two at once
+  addBall(S.world, x, DROP_Y, S.wild ? 0 : S.current, { wild: S.wild, vy: fault === 'fast' ? 9 : 1.4 });   // too fast: a hard knock, glass and all
   sound.drop(panFor(x), here().synth);
   Object.assign(S, { canDrop: false, cooldown: 20, wild: false, current: S.next, next: pickNextTier(), combo: 0 });
 }
@@ -2669,19 +2678,19 @@ const CT = {   // the tuning table: every number play can change, in one place
 };
 const RHO_AIR = 1.225, RHO_GLASS = 2500, G = 9.81, NU = 1.5e-5, MS_PER = 0.157;   // kg/m³, kg/m³, m/s², m²/s; m/s per px/frame (1 px = 1 mm at 60 fps, on the engine's slower clock)
 const WATER = '90,180,255';
-const COMP = { on: false, step: 0, glow: null, line: DANGER_Y, v: 0, vTo: 0, gap: 0, ball: null, wave: null, good: [], bad: [], wx: null, gust: null, vw: 0, lv: 0, prev: null, pairs: new Set() };
+const COMP = { on: false, step: 0, glow: null, line: DANGER_Y, v: 0, vTo: 0, gap: 0, ball: null, wave: null, good: [], bad: [], wx: null, gust: null, vw: 0, lv: 0, prev: null, pairs: new Set(), hz: null, hzGap: 0, hzDeck: [], floor: null, cool: null };
 const compOn = () => COMP.on && S.mode === 'play';
 const rnd = (a, b) => a + Math.random() * (b - a);
 const wait = () => rnd(...CT.wait);
 const gauss = () => Math.sqrt(-2 * Math.log(1 - Math.random())) * Math.cos(TAU * Math.random());
 const deal = (bag, all) => { if (!bag.length) bag.push(...[...all].sort(() => Math.random() - 0.5)); return bag.pop(); };   // a shuffled deck: no streaks of bad luck
 function compStart() {
-  Object.assign(COMP, { on: true, step: 0, glow: null, line: DANGER_Y, v: 0, vTo: rnd(...CT.line.v), gap: wait(), ball: null, wave: null, good: [], bad: [], gust: null, vw: 0, lv: 0, prev: null, pairs: new Set(), wx: { U: 0, v: 0, a: 0, aim: 0, t: 0 } });
+  Object.assign(COMP, { on: true, step: 0, glow: null, line: DANGER_Y, v: 0, vTo: rnd(...CT.line.v), gap: wait(), ball: null, wave: null, good: [], bad: [], gust: null, vw: 0, lv: 0, prev: null, pairs: new Set(), wx: { U: 0, v: 0, a: 0, aim: 0, t: 0 }, hz: null, hzGap: wait(), hzDeck: [], floor: null, cool: null });
   for (const b of S.world.balls) b.dmg = null;
   windEpisode(); S.fair = false; say('Comp', 'The line creeps. The wind is wild. Leave any time.');
 }
-function compStop() { if (!COMP.on) return; COMP.on = false; COMP.ball = COMP.wave = COMP.gust = null; S.fx.wind = 0; say('Comp off', 'Back to Play'); }
-const compForget = (id) => { if (COMP.ball && COMP.ball.id === id) COMP.ball = null; };   // a timer sphere struck or shattered: no outcome either way
+function compStop() { if (!COMP.on) return; COMP.on = false; COMP.ball = COMP.wave = COMP.gust = COMP.hz = COMP.floor = null; S.fx.wind = 0; say('Comp off', 'Back to Play'); }
+const compForget = (id) => { if (COMP.ball && COMP.ball.id === id) COMP.ball = null; if (COMP.hz && COMP.hz.id === id) COMP.hz = null; };   // a timer sphere struck or shattered: no outcome either way
 
 /* The line: it creeps, and under a wave it rolls. The overflow check and the drawing both read it here. */
 const waveAt = (x) => { const w = COMP.wave; if (!w) return 0; const env = smooth(Math.min(w.t / 2, (w.len - w.t) / 2, 1)); return CT.wave.amp * env * Math.sin(TAU * (x / LW - (lessMo() ? 0 : w.t / CT.wave.period))); };
@@ -2692,6 +2701,8 @@ function compTick(dt) {
   if (COMP.wave && (COMP.wave.t += dt) >= COMP.wave.len) COMP.wave = null;
   if (COMP.glow && (COMP.glow.t += dt) >= COMP.glow.len) COMP.glow = null;
   const step = Math.floor((COMP.line - DANGER_Y) / 4); if (step > COMP.step && !COMP.glow) glowLine(RED, 0.9, 0.55); COMP.step = step;   // every 4 px it creeps, a soft red pulse
+  if (COMP.cool && (COMP.cool.t += dt) > 0.9) COMP.cool = null;
+  hazTick(dt);
   const tb = COMP.ball;
   if (tb) {
     if (!S.world.balls.some(b => b.id === tb.id)) { COMP.ball = null; outcome(true); }   // it merged: in time
@@ -2715,6 +2726,120 @@ function outcome(good) {
   else { COMP.wave = { t: 0, len: wait() }; say('Too late', 'A wave rolls in'); sound.whoosh(0.7, 0); }
 }
 
+/* Hazards that come on their own, one at a time, from a shuffled deck, each announced on the state bar with its countdown:
+   a storm (10 s of warning, then a gust with its category), ice or a wet floor (winter freezes, everywhere else it rains), and
+   lightning (a sphere heats red and sparks; touch it within 3 s to cool it; the dropper is locked meanwhile, and the bar says so). */
+const HAZ = ['storm', 'floor', 'lightning', 'storm', 'floor', 'lightning', 'outage', 'double', 'triple'];   // a deck of nine: the outage and the combinations are the rare cards
+const PART = { storm: 'Storm', zap: 'Lightning', sink: 'Line drop' };
+const PLAN = { storm: [['storm', 10]], lightning: [['zap', 3]], double: [['storm', 3], ['zap', 5]], triple: [['sink', 3], ['storm', 3], ['zap', 5]] };   // what fires, and when
+function hazTick(dt) {
+  const h = COMP.hz;
+  if (!h) { if ((COMP.hzGap -= dt) <= 0) hazStart(deal(COMP.hzDeck, HAZ)); return; }
+  h.t += dt;
+  if (h.kind === 'outage') { if (h.t >= h.len) { hazEnd(); say('Power restored', 'The lights are back'); sound.done(); } return; }
+  if (h.kind === 'floor') { const f = COMP.floor; f.lv = h.t < 3 ? h.t / 3 : h.t > h.len ? Math.max(0, 1 - (h.t - h.len) / 2) : 1; if (h.t > h.len + 2) { COMP.floor = null; hazEnd(); } return; }
+  const b = h.id && S.world.balls.find(x => x.id === h.id);
+  for (const p of h.parts) if (!p.done && (h.t >= p.at || (p.k === 'zap' && !b))) {
+    p.done = true;
+    if (p.k === 'storm') compGust(h.cat);
+    else if (p.k === 'sink') { COMP.line = Math.min(CT.line.cap, COMP.line + CT.line.step); glowLine(RED, 2, 1); sound.crack(0.1); }
+    else if (b) zap(b);
+  }
+  if (h.parts.every(p => p.done)) hazEnd();
+}
+function hazStart(kind) {
+  if (kind === 'outage') { if (here().dry) { COMP.hzGap = CT.wait[0]; return; } COMP.hz = { kind, t: 0, warn: 5, len: 5 + rnd(8, 20), x: rnd(90, 290), dir: Math.random() < 0.5 ? -1 : 1, st: 0, held: false }; setTimeout(() => sound.crack(0.14), 1300); return; }
+  if (kind === 'floor') { const ice = !!here().snow; COMP.floor = { ice, lv: 0 }; COMP.hz = { kind, t: 0, len: wait() }; return; }
+  const h = { kind, t: 0, cat: rollCat(), parts: PLAN[kind].map(([k, at]) => ({ k, at, done: false })), name: { double: 'Double trouble', triple: 'Triple threat' }[kind] };
+  if (h.parts.some(p => p.k === 'zap')) {
+    const L = S.world.balls.filter(b => b.landed && !b.wild && (!COMP.ball || b.id !== COMP.ball.id)); if (!L.length) { COMP.hzGap = CT.wait[0]; return; }
+    h.id = L[Math.floor(Math.random() * L.length)].id; S.aiming = false; sound.crackle(4); haptic([10, 30, 10]);
+  } else sound.whoosh(0.4, 0);
+  COMP.hz = h;
+}
+function hazEnd() { COMP.hz = null; COMP.hzGap = Math.max(wait(), CT.quiet); }
+function zap(b) {   // the bolt: the sphere comes down a size, as a Strike in Comp
+  if (flash(1) && !lessMo()) S.zap = { kind: 'bolt', path: makeBolt(b.x, b.y - b.radius * 0.3), until: animTime + TIME.beat };
+  S.rumbles.push({ at: animTime + 0.08, close: 1, vol: 0.8 }); haptic([30, 30, 60]); compStrike(b, 'Lightning');
+}
+const zapPart = () => COMP.hz && COMP.hz.parts && COMP.hz.parts.find(p => p.k === 'zap' && !p.done);
+const compLocked = () => compOn() && !!zapPart();   // the dropper waits while a sphere is hot
+const hotId = () => (zapPart() ? COMP.hz.id : 0);
+function compTouch(p) {   // while a sphere is hot a touch only cools: on it (generously), or nothing. The storm may have pushed it: find it
+  const h = COMP.hz, b = S.world.balls.find(x => x.id === h.id); if (!b) return;
+  if (Math.hypot(p.x - b.x, p.y - b.y) > b.radius * 1.6 + 14) { sound.tick(); return; }
+  zapPart().done = true; COMP.cool = { id: b.id, t: 0 }; sound.done(); haptic(20); say('Cooled', 'Lightning missed');
+  if (h.parts.every(q => q.done)) hazEnd();
+}
+function compAlert() {   // what the state bar shows, or nothing: [words, smaller words, seconds to the next thing]
+  const h = COMP.hz;
+  if (h && h.parts) {
+    const left = h.parts.filter(p => !p.done), next = Math.min(...left.map(p => p.at)) - h.t;
+    if (h.name) return [`${h.name} alert`, left.map(p => `${p.k === 'storm' ? stormName(h.cat) : PART[p.k]} ${Math.max(0, Math.ceil(p.at - h.t))}`).join(' · ') + (zapPart() ? ' · find the red sphere' : ''), next];
+    return zapPart() ? ['Lightning: touch the red sphere', 'Dropper locked', next] : [`${stormName(h.cat)} incoming`, `${h.cat[1]} to ${h.cat[2]} km/h`, next];
+  }
+  if (h && h.kind === 'outage') return h.t < h.warn ? ['Power outage: a tree is down', 'Lights out', h.warn - h.t] : ['Power out', 'Dropper malfunctioning', h.len - h.t];
+  if (h && h.kind === 'floor' && h.t < h.len) { const ice = COMP.floor.ice, end = h.len - h.t <= 3; return [end ? (ice ? 'Ice melting' : 'Floor drying') : (ice ? 'Ice on the ground' : 'Wet floor'), ice ? 'Spheres skid' : 'Slick, and it drags', h.len - h.t]; }
+  if (COMP.wave) return ['A wave rolls', 'The line is a sea', COMP.wave.len - COMP.wave.t];
+  return null;
+}
+/* The power outage: a tree falls on the line behind the pool, sparks and a little fire; "Lights out in 5". Then a brownout: the
+   pool dims and swells back unevenly (slow, never a flash: well under three changes a second; steady with Low stimulation or
+   Reduce motion), the spheres hard to see, and the dropper freezes and stutters, as a screen on failing power would. Then "Power restored". */
+const outageOn = () => !!COMP.hz && COMP.hz.kind === 'outage' && COMP.hz.t >= COMP.hz.warn;
+const dropFault = () => (outageOn() ? ['jam', 'fast', 'two', null][Math.floor(Math.random() * 4)] : null);   // jammed, too fast, two at once, or it works
+function outageDim() {   // how dark the pool is, 0 to about 0.8
+  const h = COMP.hz; if (!h || h.kind !== 'outage' || h.t < h.warn) return 0;
+  const k = clamp((h.t - h.warn) / 0.8, 0, 1) * clamp((h.len - h.t) / 0.8, 0, 1);
+  return k * (PREFS.calm || lessMo() ? 0.62 : clamp(0.6 + 0.18 * Math.sin(h.t * 2.1) + 0.1 * Math.sin(h.t * 5.3 + 1), 0.35, 0.85));
+}
+function outageFrozen(dt) {   // the dropper on failing power: held for a moment, then a quick catch-up, at random
+  const h = COMP.hz; if (!h || h.kind !== 'outage' || h.t < h.warn) return false;
+  if ((h.st -= dt) <= 0) { h.held = !h.held; h.st = h.held ? rnd(0.25, 0.8) : rnd(0.08, 0.25); }
+  return h.held;
+}
+function drawOutage(c) {
+  const h = COMP.hz; if (!h || h.kind !== 'outage') return;
+  const x = h.x, d = h.dir, base = HORIZON + 26, len = 74, p = smooth(clamp(h.t / 1.4, 0, 1)), a = p * Math.PI / 2 * 0.86 * d, px = x + d * 66, top = base - 58;
+  c.save(); c.strokeStyle = 'rgba(30,22,18,0.95)'; c.lineCap = 'round';
+  c.lineWidth = 3; c.beginPath(); c.moveTo(px, base + 4); c.lineTo(px, top); c.stroke();   // the pole, and its wire
+  c.lineWidth = 1; c.beginPath(); c.moveTo(px, top + 3); c.quadraticCurveTo(px - d * 60, top + 14 + 10 * p, px - d * 140, top + 8); c.stroke();
+  const tx = x + Math.sin(a) * len, ty = base - Math.cos(a) * len;   // the tree, falling toward the wire
+  c.lineWidth = 5; c.beginPath(); c.moveTo(x, base); c.lineTo(tx, ty); c.stroke();
+  c.fillStyle = 'rgba(28,34,26,0.95)'; c.beginPath(); c.arc(x + Math.sin(a) * len * 0.82, base - Math.cos(a) * len * 0.82, 16, 0, TAU); c.fill();
+  if (h.t > 1.3 && h.t < h.warn + 2) {   // where it hit the wire: sparks, then a small fire
+    const fx = x + Math.sin(a) * len * 0.9, fy = base - Math.cos(a) * len * 0.9, f = 0.6 + 0.4 * Math.sin(animTime * 9);
+    glow(c, fx, fy, 22, '255,150,60', 0.7 * f); dot(c, fx, fy - 3, 3 + 2 * f, 'rgba(255,190,90,0.9)');
+    if (!lessMo()) { c.strokeStyle = 'rgba(255,240,180,0.95)'; c.lineWidth = 1.2; for (let i = 0; i < 5; i++) { const s = Math.random() * TAU, r = 4 + Math.random() * 12; c.beginPath(); c.moveTo(fx, fy); c.lineTo(fx + Math.cos(s) * r, fy + Math.sin(s) * r); c.stroke(); } }
+  }
+  c.restore();
+}
+/* The floor, with real numbers. Sliding friction: glass on glass is the engine's own 0.22; glass on ice about 0.03; wet glass
+   about 0.1. The engine's floor takes 0.6% of a rolling sphere's speed each frame; that loss scales with the friction, so the
+   difference is handed back. Water also drags: a film 1 mm deep wets a slice of each sphere's silhouette (a circular segment),
+   drag ½·ρ·Cd·A·v² (Cd 1) against the sphere's own mass, 4/3·π·r³ of glass, on the engine's clock like the wind. */
+const MU = { glass: 0.22, ice: 0.03, wet: 0.1 }, FILM = 0.001, RHO_WATER = 1000;
+function floorPush(b) {
+  const f = COMP.floor; if (!f || f.lv <= 0 || b.y < LH - b.radius - 6.5) return;
+  b.vx *= 1 + 0.006 * f.lv * (1 - (f.ice ? MU.ice : MU.wet) / MU.glass);
+  if (f.ice) return;
+  const r = b.radius / 1000, h = FILM * f.lv, A = r * r * Math.acos((r - h) / r) - (r - h) * Math.sqrt(2 * r * h - h * h), v = b.vx * MS_PER;
+  b.vx -= Math.sign(v) * Math.min(Math.abs(b.vx), PHYS.gravity * 0.5 * RHO_WATER * A * v * v / ((4 / 3) * Math.PI * r ** 3 * RHO_GLASS) / G);
+}
+function drawFloor(c) {
+  const f = COMP.floor, y = LH - 6, a = f.lv; if (a < 0.02) return;
+  c.save(); c.fillStyle = f.ice ? `rgba(225,242,255,${(0.55 * a).toFixed(3)})` : `rgba(${WATER},${(0.35 * a).toFixed(3)})`; c.fillRect(8, y - 7 * a, LW - 16, 7 * a + 2);
+  c.strokeStyle = f.ice ? `rgba(255,255,255,${(0.9 * a).toFixed(3)})` : `rgba(190,225,255,${(0.7 * a).toFixed(3)})`; c.lineWidth = 1.2; c.beginPath();
+  for (let x = 8; x <= LW - 8; x += 6) c.lineTo(x, y - 7 * a + (f.ice || lessMo() ? 0 : Math.sin(x / 14 + animTime * 2) * 1.2)); c.stroke(); c.restore();
+}
+function drawHot(c, b, R) {   // lightning's target: heats red, static sparks off it, quickening
+  const h = COMP.hz, u = clamp(h.t / zapPart().at, 0, 1), k = 0.6 + 0.4 * Math.sin(animTime * (8 + 16 * u));
+  halo(c, b.x, b.y, R, RED, k); dot(c, b.x, b.y, R, `rgba(${RED},${(0.25 + 0.35 * u).toFixed(3)})`);
+  if (lessMo()) return;
+  c.save(); c.strokeStyle = `rgb(${RED})`; c.lineWidth = 1.4; c.lineCap = 'round';
+  for (let i = 0; i < 3 + Math.round(4 * u); i++) { const a = Math.random() * TAU, r0 = R * 1.02, r1 = R * (1.25 + 0.3 * Math.random()), m = (r0 + r1) / 2; c.beginPath(); c.moveTo(b.x + Math.cos(a) * r0, b.y + Math.sin(a) * r0); c.lineTo(b.x + Math.cos(a + 0.12) * m, b.y + Math.sin(a + 0.12) * m); c.lineTo(b.x + Math.cos(a - 0.05) * r1, b.y + Math.sin(a - 0.05) * r1); c.stroke(); }
+  c.restore();
+}
 const glowLine = (rgb, len, amp) => { COMP.glow = { rgb, t: 0, len, amp }; };
 function compLook() {   // what the line shows: a pulse (red sinking, gold lifting), else water blue while a wave rolls
   const g = COMP.glow; if (g) return { rgb: g.rgb, a: g.amp * Math.sin(Math.PI * g.t / g.len) };
@@ -2735,14 +2860,15 @@ function compWind(dt) {
   ENV.blow = clamp(Math.sign(vw) * ratio(Math.abs(vw), 0.03) / 0.1125, -1.6, 1.6); W.nudge = 0;   // the engine's own scale: blow 1 is the drag on a 30 mm sphere at 19 m/s
 }
 const ratio = (v, r) => { const Re = Math.abs(v) * 2 * r / NU, cd = Re < 2e5 ? 0.47 : Re > 4e5 ? 0.2 : 0.47 - 0.27 * (Re - 2e5) / 2e5; return 3 * RHO_AIR * cd * v * Math.abs(v) / (8 * r * RHO_GLASS * G); };   // drag over weight, signed; r in metres; the drag crisis included
-function compGust() {   // the Storm tool in Comp: a gust from the left or the right, its category rolled, weighted low
-  const r = Math.random() * 100; let acc = 0, c = CT.cat[0]; for (const k of CT.cat) { acc += k[3]; if (r < acc) { c = k; break; } }
+const rollCat = () => { const r = Math.random() * 100; let acc = 0; for (const k of CT.cat) { acc += k[3]; if (r < acc) return k; } return CT.cat[0]; };   // weighted low
+const stormName = (c) => (c === CT.cat[0] ? 'Tropical storm' : `${c[0]} storm`);   // "Category 2 storm"
+function compGust(c = rollCat()) {   // the Storm tool, or a storm that came on its own: a gust from the left or the right, its category already known
   const dir = Math.random() < 0.5 ? -1 : 1, kmh = Math.round(rnd(c[1], c[2]));
   COMP.gust = { t: 0, v: kmh / 3.6, dir };
   say(c === CT.cat[0] ? c[0] : `Hurricane? ${c[0]}`, `${kmh} km/h, from the ${dir > 0 ? 'left' : 'right'}`); sound.whoosh(1, -dir * 0.5); haptic([15, 40, 15]);
 }
 function compBefore() {   // before each physics step: the wind on every sphere as drag against its own speed, then where everything was
-  for (const b of S.world.balls) { const rel = COMP.vw - b.vx * MS_PER; b.vx += PHYS.gravity * ratio(rel, b.radius / 1000) * (b.wild ? 0.5 : 1); }
+  for (const b of S.world.balls) { const rel = COMP.vw - b.vx * MS_PER; b.vx += PHYS.gravity * ratio(rel, b.radius / 1000) * (b.wild ? 0.5 : 1); floorPush(b); }
   COMP.prev = new Map(S.world.balls.map(b => [b.id, [b.x, b.y, b.vx, b.vy]]));
 }
 /* Glass. Each sphere keeps a strength s (1 is pristine). A new contact is an impact at the closing speed before it; Hertz gives the
@@ -2843,6 +2969,7 @@ function render() {
   drawCreatures(ctx, stepDt);
   for (const p of particles) if (p.bg) { ctx.globalAlpha = Math.max(0, p.alpha); ctx.fillStyle = p.color; ctx.beginPath(); ctx.arc(p.x, p.y, p.r, 0, TAU); ctx.fill(); }
   ctx.globalAlpha = 1;
+  if (compOn()) drawOutage(ctx);   // Comp: the fallen tree, behind everything
   drawWeather(ctx); drawStreaks(ctx); drawFog(ctx);
   if (S.flash > 0.01) { ctx.fillStyle = `rgba(255,255,255,${S.flash.toFixed(3)})`; ctx.fillRect(0, 0, LW, LH); }
   if (fade > 0.02) {   // the waterline holds still while the pool breathes: a fine inlay in the world's own colour, warming to red
@@ -2874,13 +3001,16 @@ function render() {
       }
     }
     ctx.globalAlpha = fade;
+    if (compOn() && COMP.floor) drawFloor(ctx);   // Comp: ice or water on the floor
     for (const ball of S.world.balls) {   // each sphere breathes in place; red: this goes unless you act; gold: you did it right
       const g = goldOf(ball);
       drawOrb(ctx, ball.x, ball.y, ball.radius, ball.tier, ball.angle, { aura: breathe ? FEEL.glow * 0.5 * b : 0, lift: breathe ? FEEL.glow * 0.06 * b : 0, scale: s, wild: ball.wild,
         halo: ball.id === S.offender ? [RED, red * beat] : g > 0.01 ? [GOLD, g] : null });
       if (ball.hot && ball.age < HOT_AGE && w.glass) hotGlass(ctx, ball);
       if (ball.dmg && ball.dmg.marks.length) drawCracks(ctx, ball, ball.radius * s);   // Comp: chipped or cracked glass
-      if (COMP.ball && ball.id === COMP.ball.id) drawTimerBall(ctx, ball, ball.radius * s);   // Comp: the countdown in place of the number
+      if (COMP.ball && ball.id === COMP.ball.id) drawTimerBall(ctx, ball, ball.radius * s);
+      if (ball.id === hotId()) drawHot(ctx, ball, ball.radius * s);   // Comp: lightning's target
+      if (COMP.cool && COMP.cool.id === ball.id) halo(ctx, ball.x, ball.y, ball.radius * s, BLUE, 1 - COMP.cool.t / 0.9);   // cooled: blue, then itself   // Comp: the countdown in place of the number
       if (S.doom && ball.id === S.doom.id) {   // watch out: red, quickening
         const k = 0.55 + 0.45 * Math.sin(S.doom.t * (14 + 20 * S.doom.t));
         halo(ctx, ball.x, ball.y, ball.radius, RED, k); ring(ctx, ball.x, ball.y, ball.radius * s + 3, `rgba(${RED},${(0.6 + 0.4 * k).toFixed(3)})`, 2.5);
@@ -2888,6 +3018,7 @@ function render() {
     }
     if (S.armed) { ctx.save(); ctx.strokeStyle = `rgba(${GREEN},${(0.35 + 0.25 * Math.sin(animTime * 4.4)).toFixed(3)})`; ctx.lineWidth = 2; ctx.setLineDash([5, 6]); for (const ball of S.world.balls) { ctx.beginPath(); ctx.arc(ball.x, ball.y, ball.radius * s + 3, 0, TAU); ctx.stroke(); } ctx.restore(); }   // armed: every sphere is a target
   }
+  const dim = compOn() ? outageDim() : 0; if (dim > 0.01) { ctx.globalAlpha = 1; const g = ctx.createLinearGradient(0, HORIZON, 0, LH); g.addColorStop(0, 'rgba(4,6,10,0)'); g.addColorStop(0.55, `rgba(4,6,10,${(0.75 * dim).toFixed(3)})`); g.addColorStop(1, `rgba(4,6,10,${Math.min(0.95, 1.12 * dim).toFixed(3)})`); ctx.fillStyle = g; ctx.fillRect(0, HORIZON, LW, LH - HORIZON); }   // Comp: the brownout, darkest down where the spheres are; the sky, the moon and lightning untouched
   if (!focus) { ctx.globalAlpha = 1; drawBoard(ctx); }
   ctx.globalAlpha = 1;
   if (S.zap && animTime < S.zap.until) drawZap(ctx, S.zap, clamp((S.zap.until - animTime) / TIME.beat, 0, 1)); else S.zap = null;   // a Strike, all the way down
@@ -3021,7 +3152,7 @@ function update(k, dt) {
   const swayTo = ENV.blow * 20 + Math.sin(animTime * 2.3) * Math.min(1, Math.abs(ENV.blow)) * 4;
   S.sway += (swayTo - S.sway) * (1 - Math.pow(0.95, k));
   if (awake()) {
-    S.dropX += (S.targetX - S.dropX) * (1 - Math.pow(PREFS.beta.heavy ? 0.65 + 0.3 * (RADII[S.current] - 12) / 81 : 0.65, k));   // Beta, heavy glass: a big sphere follows your finger slowly
+    if (!(compOn() && outageFrozen(dt))) S.dropX += (S.targetX - S.dropX) * (1 - Math.pow(PREFS.beta.heavy ? 0.65 + 0.3 * (RADII[S.current] - 12) / 81 : 0.65, k));   // Beta, heavy glass: a big sphere follows your finger slowly
     if (!S.canDrop && (S.cooldown -= k) <= 0) S.canDrop = true;
     if (S.comboT > 0 && (S.comboT -= k) <= 0) S.combo = 0;
     nudgePile();
@@ -3244,9 +3375,11 @@ function wxHTML() {   // folded: the words in a blue ring; open: Weather (all of
 // The sentence line: what you're doing and where, each word in a green ring. Touch either and Change Settings is offered,
 // with Cancel. Muting the sound covers the line with Cancel and Sound Settings: the sub menu, there only while muted.
 const LINE = { sub: null };
+const HAZARD = '<svg class="hz" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3 22 20.5H2z"/><path d="M12 9.5v5M12 17.6h.01"/></svg>';   // the hazard sign: a red triangle, the international warning shape
 const VERB = { play: 'Playing', relax: 'Relaxing', fidget: 'Fidgeting', rest: 'Resting' };
 function lineHTML() {
   const sp = '<button class="sp" data-card="stats" aria-label="Score and time"><span class="star">★</span><b class="num" id="scoreVal"></b><i class="bar"></i><span class="num" id="clock"></span></button>';
+  const al = compOn() && compAlert(); if (al) return `<div class="alertbar" role="alert">${HAZARD}<span class="al"><b>${al[0]}</b><i>${al[1]}</i></span><span class="num" id="alertN"></span></div>`;   // Comp: the warning takes the whole bar, glowing, with its countdown
   if (LINE.sub === 'sound') return '<div class="sub-menu"><button class="cancel" data-act="subcancel">Cancel</button><button class="pill" data-act="soundcard">Sound Settings</button></div>';
   if (LINE.sub === 'change') return `<button class="pill" data-act="change">Change Settings</button><button class="cancel" data-act="subcancel">Cancel</button>${sp}`;
   return `<button class="say" data-act="words"><span class="w">${compOn() ? 'Comp' : VERB[S.mode]}</span>in<span class="w">${esc(here().label)}</span></button>${sp}`;
@@ -3258,7 +3391,7 @@ function syncBars() {
   const set = (sel, cls, on) => { const e = top.querySelector(sel); if (e) e.classList.toggle(cls, !!on); };
   set('[data-act=menu]', 'on', fam === 0); set('[data-act=scene]', 'on', fam === 1); set('[data-act=session]', 'on', fam === 2);
   set('[data-act=pause]', 'on', S.paused); set('[data-act=vol]', 'on', !PREFS.sound); set('[data-act=vol]', 'muted', !PREFS.sound);
-  const lkey = [LINE.sub, S.mode, here().label, compOn()].join(); if (BAR.line !== lkey) { BAR.line = lkey; $('line').innerHTML = lineHTML(); tickBars.t = 0; }
+  const al = compOn() && compAlert(), lkey = [LINE.sub, S.mode, here().label, compOn(), al && al[0]].join(); if (BAR.line !== lkey) { BAR.line = lkey; $('line').innerHTML = lineHTML(); tickBars.t = 0; }
   const key = [S.mode, here().key, S.intro && S.intro.go == null, S.intro && S.intro.rest, JSON.stringify(S.tools), PREFS.calm, PREFS.bpm, PREFS.ambient, PREFS.fadeAfter].join();
   if (BAR.bot !== key) { BAR.bot = key; const cells = botCells(); bot.innerHTML = six(cells); bot.classList.toggle('wide', cells.length > 0 && cells.length <= 3); }
   const wkey = [S.wxOpen, here().key, here().snow, compOn()].join(); if (BAR.wx !== wkey) { BAR.wx = wkey; wx.innerHTML = wxHTML(); }
@@ -3272,6 +3405,8 @@ function syncBars() {
   document.body.classList.toggle('carded', !!CARD.name);
 }
 function tickBars() {   // every frame: the score and its glow, your time running down (or the clock)
+  const an = $('alertN'), al = compOn() && compAlert(); if ((!!al) !== !!an || (al && $('line').querySelector('.al b').textContent !== al[0])) syncBars();   // Comp: the warning comes, changes and goes
+  if (al && $('alertN')) { const n = String(Math.max(0, Math.ceil(al[2]))), sub = $('line').querySelector('.al i'); if ($('alertN').textContent !== n) $('alertN').textContent = n; if (sub.textContent !== al[1]) sub.textContent = al[1]; }
   const sc = $('scoreVal'); if (!sc) return;
   const n = PREFS.numbers ? fmt(S.score) : '', g = scoreGlow(); if (sc.textContent !== n) sc.textContent = n;
   const sh = g > 0.01 ? `0 0 ${(12 * g).toFixed(1)}px rgba(${SG.gold ? GOLD : LIGHT},${(0.8 * g).toFixed(3)})` : ''; if (sc._g !== sh) { sc._g = sh; sc.style.textShadow = sh; }
@@ -3330,7 +3465,7 @@ const FAQ = [
   ['How does a session go?', 'Settle: the circle, then plan your session: up to three things to do, and how it ends. Touch: play. Return: three breaths out, your list, and Go. When you’re back, tick what you did.'],
   ['How do I play?', 'Touch the pool and slide to move the waiting sphere; let go to drop it. Two of a kind merge into the next size up, and the two largest make a Full Bloom.'],
   ['What are the tools?', 'Strike: touch a sphere; it turns red, then the place’s own strike takes it. Mystery: your next sphere becomes whatever it touches first. Storm: the place’s own weather blows in and every sphere lands somewhere new. A chain of three or a Full Bloom earns one, up to three of each.'],
-  ['What is Comp?', 'Play with the calm taken off, in Menu › Game. The line creeps down; the wind is real and restless. One sphere at a time carries a countdown: merge it in time and the line lifts or a tool is yours; miss it and the line sinks or a wave rolls in. Strike knocks a sphere down a size; Storm is a gust with a hurricane category. Glass knocked hard enough chips, cracks and shatters. No aim line, no Heritage. Leave Comp, under the pool, ends it at once.'],
+  ['What is Comp?', 'Play with the calm taken off, in Menu › Game. The line creeps down; the wind is real and restless. One sphere at a time carries a countdown: merge it in time and the line lifts or a tool is yours; miss it and the line sinks or a wave rolls in. Strike knocks a sphere down a size; Storm is a gust with a hurricane category. Storms, ice, rain and lightning come on their own, each announced on the bar under the ribbon with its countdown; when lightning heats a sphere red, touch it to cool it (the dropper waits meanwhile). Now and then two or three come at once: Double trouble, Triple threat. Rarely, a tree takes the power out: the pool browns out and the dropper malfunctions (it stutters, jams, drops too fast or drops two) until it comes back. Glass knocked hard enough chips, cracks and shatters. No aim line, no Heritage. Leave Comp, under the pool, ends it at once.'],
   ['What do the colours mean?', 'Green is on. Blue is under your finger, or yours to touch. White is quiet, or off. Red erases. Gold means you did something right.'],
   ['How do I get around?', 'The top ribbon: Menu, Scene, your Task and Timer, Pause, and Sound. Touch the words in the line under it to change what you’re doing or where. Under the pool, Weather Settings opens the weather; the tools sit below it. Every card closes with Close or Done at its foot.'],
   ['What are the modes?', 'Play: the merge game. Relax: hold to breathe in, let go to breathe out. Fidget: a light to follow, drops on still water, the weather in your hands. Rest: the pool fades to dark while sound plays on. Phones stop sound when they lock, so Rest keeps the screen awake; plug in for long sessions.'],
@@ -3553,6 +3688,7 @@ function bind() {
     if (S.relax) { if (!S.sigh) relaxTouch(p, true); return; }
     if (S.fid) { fidgetTouch(p, 'down'); return; }
     if (S.armed) { strikeSphere(sphereAt(p.x, p.y)); return; }   // armed: this touch uses it
+    if (compLocked()) { compTouch(p); return; }   // Comp lightning: a touch cools, it never drops
     if (!awake() || !S.canDrop) return;
     pointerId = e.pointerId; S.aiming = true; S.aimCancelled = false; grab = S.dropX - p.x;
   });
