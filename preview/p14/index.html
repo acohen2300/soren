@@ -1,5 +1,5 @@
 <!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="robots" content="noindex"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><meta name="theme-color" content="#081428"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"><meta name="apple-mobile-web-app-title" content="SoRen"><link rel="manifest" href="../../manifest.webmanifest"><link rel="apple-touch-icon" href="../../apple-touch-icon.png"><link rel="icon" href="../../icon-192.png"><style>html{height:100vh}body{padding-top:calc(8px + env(safe-area-inset-top,0px))!important;padding-bottom:calc(8px + env(safe-area-inset-bottom,0px))!important;overscroll-behavior:none}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body><meta charset="utf-8">
-<title>SoRen preview p14</title>
+<title>SoRen preview v70</title>
 <meta name="claude:viewport-fit-sides" content="cover">
 <style>
 /* One screen that never scrolls, five zones top to bottom: the top ribbon, the sentence line, the pool, the weather line,
@@ -9,17 +9,16 @@
 :root {
   color-scheme: dark;
   --u: calc(min(100vw, 460px) / 1206);
+  --t1: calc(40 * var(--u)); --t2: calc(30 * var(--u));   /* headers and everything else: the only two sizes */
   --row: calc(132 * var(--u)); --cw: calc(1166 * var(--u));   /* a row, and the card width: named once */
   --bg-top: #0d1b33; --bg-mid: #071020; --bg-bot: #03070e; --accent: #bae6fd; --accent-soft: rgba(186, 230, 253, 0.22);
   --ink: #f2f8fc; --ink-2: rgba(242, 248, 252, 0.72); --ink-3: rgba(242, 248, 252, 0.48);
   --panel: rgba(12, 24, 46, 0.86); --line: rgba(186, 230, 253, 0.24);
-  --chip: rgba(255, 255, 255, 0.07); --chip-2: rgba(255, 255, 255, 0.11); --chip-line: rgba(255, 255, 255, 0.16);
+  --chip: rgba(var(--ink-rgb), 0.07); --chip-2: rgba(var(--ink-rgb), 0.11); --chip-line: rgba(var(--ink-rgb), 0.16);
   --shade-1: rgba(0, 0, 0, 0.22); --shade-3: rgba(0, 0, 0, 0.6);
-  --on: 67, 194, 112; --pick: 80, 155, 255; --off: 80, 155, 255; --red: 255, 90, 80; --gold: 255, 200, 90; --gold-hi: 255, 214, 120; --ink-rgb: 236, 238, 240; --warn: 250, 204, 21; --white: 240, 244, 247;
+  --on: 67, 194, 112; --pick: 80, 155, 255; --red: 255, 90, 80; --gold: 255, 200, 90; --ink-rgb: 242, 248, 252; --edge: rgb(56, 50, 46);
   --glow-on: inset 0 0 0 2px rgba(var(--on), 0.85), inset 0 0 14px rgba(var(--on), 0.22);
-  --black: rgb(9, 5, 4); --rib: rgb(12, 10, 9); --rib-line: rgb(56, 50, 46); --div: rgb(50, 44, 41);
-  --icon: rgb(232, 234, 236); --label: rgb(179, 180, 182); --dim: rgb(122, 124, 126); --dim-2: rgb(96, 98, 100);
-  --track: rgb(62, 56, 52); --track-dim: rgb(40, 36, 34); --fill: rgb(200, 205, 210);
+  --black: rgb(9, 5, 4); --label: rgb(179, 180, 182); --dim: rgb(122, 124, 126);
   --serif: ui-serif, 'New York', 'Iowan Old Style', Georgia, serif;
   --sans: -apple-system, BlinkMacSystemFont, system-ui, 'Segoe UI', Inter, sans-serif;
   --fs-1: 10px; --fs-2: 12.5px; --fs-3: 14px; --fs-4: 20px; --fs-5: 24px;
@@ -49,46 +48,52 @@ button { cursor: pointer; background: none; border: 0; padding: 0; }
 
 /* The ribbon: one mold. Six equal cells, an icon (its longest side 44) centred 44 down, the word under it 56 lower. */
 .rib { flex: none; position: relative; display: flex; width: 100%; height: var(--row); border-radius: var(--r); overflow: hidden;
-  background: linear-gradient(180deg, rgb(24, 21, 19), var(--rib) 45%, rgb(5, 4, 3)); box-shadow: inset 0 0 0 calc(3 * var(--u)) var(--rib-line); transition: opacity var(--sweep); }
-.cell { position: relative; flex: 1 1 0; min-width: 0; height: 100%; color: var(--icon); }
-.cell + .cell::before { content: ''; position: absolute; left: 0; top: calc(3 * var(--u)); bottom: calc(3 * var(--u)); width: calc(2 * var(--u)); background: var(--div); }
+  background: linear-gradient(180deg, var(--black), var(--black) 45%, var(--black)); box-shadow: inset 0 0 0 calc(3 * var(--u)) var(--edge); transition: opacity var(--sweep); }
+.cell { position: relative; flex: 1 1 0; min-width: 0; height: 100%; color: var(--ink); }
+.cell + .cell::before { content: ''; position: absolute; left: 0; top: calc(3 * var(--u)); bottom: calc(3 * var(--u)); width: calc(2 * var(--u)); background: var(--edge); }
 .cell.two { flex-grow: 2; } .cell.blank { pointer-events: none; }
 .cell:active:not(:disabled) { background: var(--chip); }
 .ic { position: absolute; left: 50%; top: calc(44 * var(--u)); width: calc(44 * var(--u)); height: calc(44 * var(--u)); transform: translate(-50%, -50%); display: grid; place-items: center; }
 .ic svg { width: 100%; height: 100%; overflow: visible; fill: none; stroke: currentColor; stroke-width: calc(4 * var(--u)); stroke-linecap: round; stroke-linejoin: round; }
 .ic svg path { vector-effect: non-scaling-stroke; }
-.ic .val { font-weight: 700; font-size: calc(42 * var(--u)); line-height: 1; white-space: nowrap; }
-.sub { position: absolute; left: 0; right: 0; top: calc(100 * var(--u)); transform: translateY(-50%); text-align: center; font-weight: 600; font-size: calc(31 * var(--u)); line-height: 1; color: var(--label); white-space: nowrap; overflow: visible; letter-spacing: -0.01em; }
+.ic .val { font-weight: 700; font-size: var(--t1); line-height: 1; white-space: nowrap; }
+.sub { position: absolute; left: 0; right: 0; top: calc(100 * var(--u)); transform: translateY(-50%); text-align: center; font-weight: 600; font-size: var(--t2); line-height: 1; color: var(--label); white-space: nowrap; overflow: visible; letter-spacing: -0.01em; }
 .cell.two .half { position: absolute; top: 0; bottom: 0; left: 0; width: 50%; } .cell.two .half + .half { left: 50%; }
-.n { position: absolute; left: calc(50% + 52 * var(--u)); top: calc(10 * var(--u)); min-width: calc(40 * var(--u)); height: calc(40 * var(--u)); padding: 0 calc(8 * var(--u)); border-radius: var(--r-pill); background: rgb(150, 152, 154); color: var(--black); font-weight: 700; font-size: calc(28 * var(--u)); line-height: calc(40 * var(--u)); text-align: center; transform: translateX(-50%); }
+.n { position: absolute; left: calc(50% + 52 * var(--u)); top: calc(10 * var(--u)); min-width: calc(40 * var(--u)); height: calc(40 * var(--u)); padding: 0 calc(8 * var(--u)); border-radius: var(--r-pill); background: var(--label); color: var(--black); font-weight: 700; font-size: var(--t2); line-height: calc(40 * var(--u)); text-align: center; transform: translateX(-50%); }
 /* The ring: a rounded square round the icon only, never the whole tile. Green on, blue under your finger, white quiet, red erasing. */
 .ic::after { content: ''; position: absolute; left: 50%; top: 50%; width: calc(72 * var(--u)); height: calc(72 * var(--u)); transform: translate(-50%, -50%); border-radius: calc(22 * var(--u));
   box-shadow: inset 0 0 0 calc(4 * var(--u)) var(--ring, transparent); background: var(--tint, none); pointer-events: none; transition: box-shadow var(--quick), background var(--quick); }
-.on > .ic, .on > .half > .ic, .ic.on { --ring: rgb(var(--on)); }
+.on > .ic, .ic.on { --ring: rgb(var(--on)); } .ic.gold { --ring: rgb(var(--gold)); }
+.ic.arc::after { box-shadow: none; padding: calc(4 * var(--u)); box-sizing: border-box; background: conic-gradient(rgb(var(--on)) 0 calc(var(--p) * 1turn), transparent 0); -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0); -webkit-mask-composite: xor; mask: linear-gradient(#000 0 0) content-box exclude, linear-gradient(#000 0 0); }
+.ic.arc.cw::after { background: conic-gradient(transparent 0 calc((1 - var(--p)) * 1turn), rgb(var(--on)) 0); }
 .pick > .ic, .ic.pick { --ring: rgb(var(--pick)); }
-.quiet > .ic, .ic.quiet { --ring: rgb(var(--white)); }
+.quiet > .ic, .ic.quiet { --ring: rgb(var(--ink-rgb)); }
 .erase > .ic { --ring: rgb(var(--red)); }
-.warn > .ic { --ring: rgb(var(--warn)); } .cell.warn { color: rgb(var(--warn)); }
 .cell.none { opacity: 0.38; } .cell:disabled { opacity: 0.32; }
 .hush { stroke: rgb(var(--red)); } .cell.muted .waves, .cell:not(.muted) .hush { display: none; }
 .live > .ic { --ring: rgb(var(--on)); filter: drop-shadow(0 0 calc(10 * var(--u) * var(--b, 0)) rgba(var(--on), 0.7)); }   /* armed: the ring breathes */
 
 /* The pill: one size everywhere (78 high, 22 each side, bold italic 38). */
 .pill { flex: none; display: inline-flex; align-items: center; height: calc(78 * var(--u)); padding: 0 calc(22 * var(--u)); border-radius: var(--r-pill); white-space: nowrap;
-  box-shadow: inset 0 0 0 calc(3 * var(--u)) var(--ring, rgb(var(--pick))); background: var(--rib); font-weight: 700; font-style: italic; font-size: calc(38 * var(--u)); color: rgb(245, 245, 245); transition: box-shadow var(--quick); }
-.pill.on { --ring: rgb(var(--on)); } .pill:disabled { --ring: var(--div); color: var(--dim); }
-.cancel { flex: none; padding: 0 calc(10 * var(--u)); font-size: calc(36 * var(--u)); text-decoration: underline; text-underline-offset: calc(6 * var(--u)); color: var(--ink); }
+  box-shadow: inset 0 0 0 calc(3 * var(--u)) var(--ring, rgb(var(--pick))); background: var(--black); font-weight: 700; font-style: italic; font-size: var(--t1); color: rgb(245, 245, 245); transition: box-shadow var(--quick); }
+.pill.on { --ring: rgb(var(--on)); } .pill:disabled { --ring: var(--edge); color: var(--dim); }
+.pill.esc { width: 100%; justify-content: center; }   /* Comp's way out: the whole weather row, white words in the blue ring */
+#botBar.wide .cell::before { display: none; }   /* three double-wide tiles: no dividers */
+/* Comp: the same hues, brighter; the pool a touch more vivid. */
+body.comp { --on: 90, 220, 130; --pick: 110, 175, 255; --gold: 255, 215, 110; }
+body.comp #game { filter: saturate(1.25) contrast(1.05); }
+.cancel { flex: none; padding: 0 calc(10 * var(--u)); font-size: var(--t1); text-decoration: underline; text-underline-offset: calc(6 * var(--u)); color: var(--ink); }
 
 /* The sentence line: one height, never wraps. The sentence on the left, the score and the time in their own sunken pill. */
 .line { flex: none; position: relative; height: calc(84 * var(--u)); display: flex; align-items: center; gap: calc(12 * var(--u)); transition: opacity var(--sweep); }
-.say { flex: none; max-width: calc(583 * var(--u)); display: flex; align-items: center; gap: calc(10 * var(--u)); font-weight: 700; font-style: italic; font-size: calc(36 * var(--u)); white-space: nowrap; color: var(--ink); }
+.say { flex: none; max-width: calc(583 * var(--u)); display: flex; align-items: center; gap: calc(10 * var(--u)); font-weight: 700; font-style: italic; font-size: var(--t1); white-space: nowrap; color: var(--ink); }
 .say .w { height: calc(78 * var(--u)); display: inline-flex; align-items: center; padding: 0 calc(18 * var(--u)); border-radius: var(--r-pill); box-shadow: inset 0 0 0 calc(3 * var(--u)) rgb(var(--on)); background: rgba(0, 0, 0, 0.35); }
-.sp { position: absolute; right: 0; left: calc(777 * var(--u)); height: calc(78 * var(--u)); display: flex; align-items: center; border-radius: var(--r-pill); background: rgba(0, 0, 0, 0.55); box-shadow: inset 0 calc(3 * var(--u)) calc(8 * var(--u)) rgba(0, 0, 0, 0.7), inset 0 0 0 calc(2 * var(--u)) var(--rib-line); font-weight: 700; font-size: calc(36 * var(--u)); }
-.sp .star { flex: none; width: calc(56 * var(--u)); height: calc(56 * var(--u)); margin-left: calc(11 * var(--u)); display: grid; place-items: center; border-radius: 50%; box-shadow: inset 0 0 0 calc(3 * var(--u)) rgb(var(--pick)); color: rgb(var(--pick)); font-size: calc(30 * var(--u)); }
+.sp { position: absolute; right: 0; left: calc(777 * var(--u)); height: calc(78 * var(--u)); display: flex; align-items: center; border-radius: var(--r-pill); background: rgba(0, 0, 0, 0.55); box-shadow: inset 0 calc(3 * var(--u)) calc(8 * var(--u)) rgba(0, 0, 0, 0.7), inset 0 0 0 calc(2 * var(--u)) var(--edge); font-weight: 700; font-size: var(--t1); }
+.sp .star { flex: none; width: calc(56 * var(--u)); height: calc(56 * var(--u)); margin-left: calc(11 * var(--u)); display: grid; place-items: center; border-radius: 50%; box-shadow: inset 0 0 0 calc(3 * var(--u)) rgb(var(--pick)); color: rgb(var(--pick)); font-size: var(--t2); }
 .sp #scoreVal { flex: 1; text-align: right; padding-right: calc(14 * var(--u)); }
-.sp .bar { flex: none; width: calc(2 * var(--u)); align-self: stretch; background: var(--rib-line); }
-.sp #clock { flex: none; width: calc(170 * var(--u)); text-align: center; font-weight: 600; font-size: calc(30 * var(--u)); color: var(--ink-2); }
-.sub-menu { position: absolute; inset: 0; display: flex; align-items: center; justify-content: flex-end; gap: calc(14 * var(--u)); border-radius: var(--r-pill); background: var(--rib); }
+.sp .bar { flex: none; width: calc(2 * var(--u)); align-self: stretch; background: var(--edge); }
+.sp #clock { flex: none; width: calc(170 * var(--u)); text-align: center; font-weight: 600; font-size: var(--t2); color: var(--ink-2); }
+.sub-menu { position: absolute; inset: 0; display: flex; align-items: center; justify-content: flex-end; gap: calc(14 * var(--u)); border-radius: var(--r-pill); background: var(--black); }
 
 /* The pool: one fixed outline, as large as the space allows at its own shape. Its glow is drawn on the canvas. */
 .pool { position: relative; width: min(var(--cw), calc((100vh - 16px - env(safe-area-inset-top, 0px) - env(safe-area-inset-bottom, 0px) - 552 * var(--u)) * 380 / 490));
@@ -115,15 +120,19 @@ button { cursor: pointer; background: none; border: 0; padding: 0; }
 .cline svg { flex: none; width: 22px; height: 22px; fill: none; stroke: var(--ink-3); stroke-width: 3; stroke-linecap: round; stroke-linejoin: round; }
 .clist:not(.tick) .cline svg { display: none; } .clist:not(.tick) .cline { min-height: 0; padding: 2px; border: 0; background: none; justify-content: center; }
 .cline.done { border-color: rgba(var(--gold), 0.8); } .cline.done svg { stroke: rgb(var(--gold)); filter: drop-shadow(0 0 6px rgba(var(--gold), 0.6)); }
+.cline.win { animation: fade .5s both; }
+#cardArt { position: relative; } #cardArt svg.uni { width: 120px; height: 120px; stroke: rgb(var(--gold)); filter: drop-shadow(0 0 8px rgba(var(--gold), 0.5)); }
+#cardArt svg.uni path { stroke-dasharray: 1; stroke-dashoffset: 1; animation: draw 2.2s ease-out forwards; } #cardArt svg.uni.still path { stroke-dashoffset: 0; animation: fade 1.2s both; }
+@keyframes draw { to { stroke-dashoffset: 0; } }
 .btn { width: 100%; min-height: 44px; padding: 6px 12px; border-radius: var(--r-key); border: 1px solid var(--chip-line); background: var(--chip); font-weight: 600; }
 .btn:active { background: var(--chip-2); }
 .btn.primary { background: var(--ink); color: var(--bg-bot); border-color: var(--ink); }
 /* The opening's name and check box: they wait, then fade in together once the circle is at rest. */
 .soren, .go-in { position: absolute; left: 50%; opacity: 0; pointer-events: none; }
-.soren { top: calc(50% - 72 * var(--u)); transform: translateX(-50%); font: italic 700 calc(64 * var(--u))/1 var(--sans, inherit); color: #fff; white-space: nowrap; -webkit-text-stroke: calc(1.2 * var(--u)) rgba(150, 200, 255, 0.6);
-  text-shadow: 0 0 calc(10 * var(--u)) rgba(100, 170, 255, 0.95), 0 0 calc(26 * var(--u)) rgba(var(--pick), 0.75), 0 0 calc(52 * var(--u)) rgba(var(--pick), 0.45); }
-.go-in { top: calc(50% + 36 * var(--u)); width: calc(88 * var(--u)); height: calc(88 * var(--u)); transform: translate(-50%, -50%); background: none; border: 0; color: var(--icon); }
-.go-in .ic { top: 50%; --ring: rgb(var(--white)); } .go-in .ic::after { transition-duration: 1.4s; }
+.soren { top: calc(50% - 72 * var(--u)); transform: translateX(-50%); font: italic 700 calc(64 * var(--u))/1 var(--sans, inherit); color: var(--ink); white-space: nowrap; -webkit-text-stroke: calc(1.2 * var(--u)) rgba(var(--pick), 0.6);
+  text-shadow: 0 0 calc(10 * var(--u)) rgba(var(--pick), 0.95), 0 0 calc(26 * var(--u)) rgba(var(--pick), 0.75), 0 0 calc(52 * var(--u)) rgba(var(--pick), 0.45); }
+.go-in { top: calc(50% + 36 * var(--u)); width: calc(88 * var(--u)); height: calc(88 * var(--u)); transform: translate(-50%, -50%); background: none; border: 0; color: var(--ink); }
+.go-in .ic { top: 50%; --ring: rgb(var(--ink-rgb)); } .go-in .ic::after { transition-duration: 1.4s; }
 body.intro-in .soren, body.intro-in .go-in { opacity: 1; transition: opacity 3s cubic-bezier(0.4, 0, 0.2, 1); }
 body.intro-ready .go-in { pointer-events: auto; } body.intro-ready .go-in .ic { --ring: rgb(var(--pick)); }
 .go-in.on > .ic { --ring: rgb(var(--on)); --tint: rgba(var(--on), 0.4); } .go-in.on .ic::after { transition-duration: 0.3s; }
@@ -132,58 +141,62 @@ body.intro-quick.intro-in .soren, body.intro-quick.intro-in .go-in { transition-
 /* The card: every menu is this one frame, at one size, grown from the sentence line. Its pill names it, under the tile
    that opened it. Rows of 132: icon, name, one line on what it does, the control, the ✓ on the row you're on. The rail on
    the right moves you between rows. The foot: Close, Help, Reset, and Done, the one blue. */
-.mc { position: absolute; z-index: 30; left: calc(20 * var(--u)); width: var(--cw); height: calc(1316 * var(--u)); border-radius: var(--r); background: var(--black); box-shadow: inset 0 0 0 calc(3 * var(--u)) var(--rib-line), 0 calc(24 * var(--u)) calc(60 * var(--u)) rgba(0, 0, 0, 0.65); animation: grow var(--quick) ease-out; transform-origin: top center; }
+.mc { position: absolute; z-index: 30; left: calc(20 * var(--u)); width: var(--cw); border-radius: var(--r); background: var(--black); box-shadow: inset 0 0 0 calc(3 * var(--u)) var(--edge), 0 calc(24 * var(--u)) calc(60 * var(--u)) rgba(0, 0, 0, 0.65); animation: grow var(--quick) ease-out; transform-origin: top center; }
 @keyframes grow { from { opacity: 0; transform: scaleY(0.96); } to { opacity: 1; transform: none; } }
 .mc > .pill { position: absolute; top: calc(8 * var(--u)); --ring: rgb(var(--on)); pointer-events: none; }
 .rows { position: absolute; top: calc(100 * var(--u)); left: 0; right: 0; }
 .mrow { position: relative; height: var(--row); color: var(--dim); }
 .mrow::before { content: ''; position: absolute; inset: 0; border-radius: var(--r); box-shadow: inset 0 0 0 calc(3 * var(--u)) transparent; pointer-events: none; transition: box-shadow var(--quick); }
-.mrow.lit { color: var(--icon); } .mrow.lit::before { box-shadow: inset 0 0 0 calc(3 * var(--u)) rgb(var(--pick)); }
+.mrow.lit { color: var(--ink); } .mrow.lit::before { box-shadow: inset 0 0 0 calc(3 * var(--u)) rgb(var(--pick)); }
 .mrow > .ic { left: calc(97 * var(--u)); top: 50%; }
 .mrow.lit > .ic { --ring: rgb(var(--pick)); }
 .nm, .ds { position: absolute; left: calc(164 * var(--u)); white-space: nowrap; transform: translateY(-50%); }
-.nm { top: calc(41 * var(--u)); font-weight: 500; font-size: calc(38 * var(--u)); }
-.ds { top: calc(91 * var(--u)); font-style: italic; font-size: calc(28 * var(--u)); color: var(--dim-2); max-width: calc(860 * var(--u)); overflow: hidden; text-overflow: ellipsis; }
-.mrow.lit .nm { color: rgb(var(--white)); } .mrow.lit .ds { color: var(--label); }
+.nm { top: calc(41 * var(--u)); font-weight: 700; font-size: var(--t1); }
+.ds { top: calc(91 * var(--u)); font-style: italic; font-size: var(--t2); color: var(--dim); max-width: calc(860 * var(--u)); overflow: hidden; text-overflow: ellipsis; }
+.mrow.lit .nm { color: rgb(var(--ink-rgb)); } .mrow.lit .ds { color: var(--label); }
 .mrow.off { opacity: 0.45; } .mrow.dis { opacity: 0.35; pointer-events: none; }
 .ok { position: absolute; left: calc(1069 * var(--u)); top: 50%; width: calc(72 * var(--u)); height: calc(72 * var(--u)); transform: translate(-50%, -50%); display: none; color: rgb(var(--on)); }
 .ok .ic { left: 50%; top: 50%; --ring: rgb(var(--on)); } .go .ic { left: 50%; top: 50%; width: calc(30 * var(--u)); height: calc(30 * var(--u)); }
-.mrow.lit .ok { display: block; } .mrow.off .ok { color: rgb(var(--white)); } .mrow.off .ok .ic { --ring: rgb(var(--white)); }
+.mrow.lit .ok { display: block; } .mrow.off .ok { color: rgb(var(--ink-rgb)); } .mrow.off .ok .ic { --ring: rgb(var(--ink-rgb)); }
 .mrow .go { position: absolute; left: calc(1030 * var(--u)); top: 50%; width: calc(40 * var(--u)); height: calc(40 * var(--u)); transform: translate(-50%, -50%); }
 /* The controls. A level is a slider; two or three choices are one pill whose highlight slides; four or more, a wheel. */
-.lvl { position: absolute; left: calc(380 * var(--u)); width: calc(520 * var(--u)); top: calc(41 * var(--u)); height: calc(80 * var(--u)); transform: translateY(-50%); margin: 0; background: transparent; -webkit-appearance: none; appearance: none; --p: 0%; }
-.lvl::-webkit-slider-runnable-track { height: calc(8 * var(--u)); border-radius: calc(4 * var(--u)); background: linear-gradient(to right, var(--fill-c, rgb(84, 84, 84)) var(--p), var(--track-c, var(--track-dim)) var(--p)); }
-.lvl::-moz-range-track { height: calc(8 * var(--u)); border-radius: calc(4 * var(--u)); background: linear-gradient(to right, var(--fill-c, rgb(84, 84, 84)) var(--p), var(--track-c, var(--track-dim)) var(--p)); }
+.lvl { position: absolute; left: calc(380 * var(--u)); width: calc(520 * var(--u)); top: 50%; height: calc(80 * var(--u)); transform: translateY(-50%); margin: 0; background: transparent; -webkit-appearance: none; appearance: none; --p: 0%; }
+.lvl::-webkit-slider-runnable-track { height: calc(8 * var(--u)); border-radius: calc(4 * var(--u)); background: linear-gradient(to right, var(--fill-c, var(--dim)) var(--p), var(--track-c, var(--edge)) var(--p)); }
+.lvl::-moz-range-track { height: calc(8 * var(--u)); border-radius: calc(4 * var(--u)); background: linear-gradient(to right, var(--fill-c, var(--dim)) var(--p), var(--track-c, var(--edge)) var(--p)); }
 .lvl::-webkit-slider-thumb { -webkit-appearance: none; width: calc(28 * var(--u)); height: calc(28 * var(--u)); margin-top: calc(-10 * var(--u)); border-radius: 50%; border: 0; background: var(--dim); }
 .lvl::-moz-range-thumb { width: calc(28 * var(--u)); height: calc(28 * var(--u)); border-radius: 50%; border: 0; background: var(--dim); }
-.mrow.lit .lvl { --fill-c: var(--fill); --track-c: var(--track); }
+.mrow.lit .lvl { --fill-c: var(--label); --track-c: var(--edge); }
 .mrow.lit .lvl::-webkit-slider-thumb { width: calc(56 * var(--u)); height: calc(56 * var(--u)); margin-top: calc(-24 * var(--u)); background: var(--handle) center / 100% 100%; }
 .mrow.lit .lvl::-moz-range-thumb { width: calc(56 * var(--u)); height: calc(56 * var(--u)); background: var(--handle) center / 100% 100%; }
-.pct { position: absolute; right: calc(176 * var(--u)); top: calc(41 * var(--u)); transform: translateY(-50%); font-weight: 500; font-size: calc(32 * var(--u)); }
+.mrow .lvl.x { }
+.due { position: absolute; top: 50%; left: calc(690 * var(--u)); width: calc(300 * var(--u)); height: calc(60 * var(--u)); transform: translateY(-50%); border: 0; border-bottom: calc(3 * var(--u)) solid rgb(70, 66, 62); background: none; font-size: 16px; color: var(--ink); text-align: right; color-scheme: dark; }
+.due::-webkit-calendar-picker-indicator { display: none; } .due:focus { outline: none; border-bottom-color: rgb(var(--pick)); }
+.mrow.clock .lvl { left: calc(400 * var(--u)); width: calc(290 * var(--u)); } .mrow.clock .pct { display: none; }
+.pct { position: absolute; right: calc(176 * var(--u)); top: 50%; transform: translateY(-50%); font-weight: 500; font-size: var(--t2); }
 .mrow.lit .pct { color: var(--label); }
-.seg { position: absolute; right: calc(186 * var(--u)); top: calc(41 * var(--u)); height: calc(60 * var(--u)); transform: translateY(-50%); display: flex; border-radius: var(--r-pill); box-shadow: inset 0 0 0 calc(3 * var(--u)) rgb(60, 62, 64); }
-.mrow.lit .seg { box-shadow: inset 0 0 0 calc(3 * var(--u)) rgb(120, 122, 124); }
-.seg button { position: relative; z-index: 1; width: calc(150 * var(--u)); font-weight: 600; font-size: calc(30 * var(--u)); color: rgb(80, 82, 84); }
-.mrow.lit .seg button { color: rgb(150, 152, 154); } .seg button.sel { color: var(--dim); } .mrow.lit .seg button.sel { color: rgb(var(--white)); }
+.seg { position: absolute; right: calc(186 * var(--u)); top: 50%; height: calc(60 * var(--u)); transform: translateY(-50%); display: flex; border-radius: var(--r-pill); box-shadow: inset 0 0 0 calc(3 * var(--u)) var(--edge); }
+.mrow.lit .seg { box-shadow: inset 0 0 0 calc(3 * var(--u)) var(--dim); }
+.seg button { position: relative; z-index: 1; width: calc(150 * var(--u)); font-weight: 600; font-size: var(--t2); color: var(--dim); }
+.mrow.lit .seg button { color: var(--label); } .seg button.sel { color: var(--dim); } .mrow.lit .seg button.sel { color: rgb(var(--ink-rgb)); }
 .seg i { position: absolute; z-index: 0; top: calc(5 * var(--u)); bottom: calc(5 * var(--u)); left: calc(5 * var(--u)); width: calc(140 * var(--u)); border-radius: var(--r-pill); transform: translateX(calc(150 * var(--u) * var(--k, 0)));
   transition: transform .35s cubic-bezier(.45, 0, .25, 1), background .35s, box-shadow .35s; --c: 96, 98, 100; background: rgba(var(--c), 0.4); box-shadow: inset 0 0 0 calc(4 * var(--u)) rgb(var(--c)); }
-.mrow.lit .seg i { --c: var(--pick); } .mrow.lit .seg.onoff i { --c: var(--white); } .mrow.lit .seg.onoff.yes i { --c: var(--on); } .seg.onoff.yes i { --c: 96, 110, 100; }
+.mrow.lit .seg i { --c: var(--pick); } .mrow.lit .seg.onoff i { --c: var(--ink-rgb); } .mrow.lit .seg.onoff.yes i { --c: var(--on); } .seg.onoff.yes i { --c: 96, 110, 100; }
 .wheel { position: absolute; left: calc(730 * var(--u)); width: calc(260 * var(--u)); top: 0; height: 100%; overflow: hidden; touch-action: none; text-align: center; }
-.wheel::before, .wheel::after { content: ''; position: absolute; left: 0; right: 0; height: calc(3 * var(--u)); background: rgb(64, 66, 68); }
+.wheel::before, .wheel::after { content: ''; position: absolute; left: 0; right: 0; height: calc(3 * var(--u)); background: var(--edge); }
 .wheel::before { top: calc(39 * var(--u)); } .wheel::after { top: calc(90 * var(--u)); }
 .mrow.lit .wheel::before, .mrow.lit .wheel::after { background: rgb(var(--pick)); }
 .wheel b, .wheel s { position: absolute; left: 0; right: 0; transform: translateY(-50%); white-space: nowrap; text-decoration: none; }
-.wheel b { top: 50%; font-weight: 600; font-size: calc(34 * var(--u)); }
-.mrow.lit .wheel b { color: rgb(var(--white)); }
-.wheel s { font-weight: 500; font-size: calc(27 * var(--u)); color: rgb(70, 72, 74); transform: translateY(-50%) scaleY(0.7); }
+.wheel b { top: 50%; font-weight: 600; font-size: var(--t1); }
+.mrow.lit .wheel b { color: rgb(var(--ink-rgb)); }
+.wheel s { font-weight: 500; font-size: var(--t2); color: var(--dim); transform: translateY(-50%) scaleY(0.7); }
 .wheel s.up { top: calc(20 * var(--u)); } .wheel s.dn { top: calc(111 * var(--u)); }
 .mrow.lit .wheel s { color: rgb(140, 142, 144); }
-.big { position: absolute; right: calc(176 * var(--u)); top: 50%; transform: translateY(-50%); font-weight: 700; font-size: calc(50 * var(--u)); }
-.mrow.lit .big { color: rgb(var(--white)); }
-.tx, .due { position: absolute; top: calc(41 * var(--u)); height: calc(60 * var(--u)); transform: translateY(-50%); border: 0; border-bottom: calc(3 * var(--u)) solid rgb(45, 41, 39); background: none; font-size: 16px; font-style: italic; color: var(--ink); -webkit-user-select: text; user-select: text; padding: 0; }
-.tx { left: calc(400 * var(--u)); width: calc(390 * var(--u)); } .due { left: calc(800 * var(--u)); width: calc(200 * var(--u)); color-scheme: dark; font-style: normal; }
-.due::-webkit-calendar-picker-indicator { display: none; } .tx::placeholder { color: rgb(80, 82, 84); } .mrow.lit .tx, .mrow.lit .due { border-bottom-color: rgb(70, 66, 62); } .mrow.lit .tx::placeholder { color: rgb(150, 152, 154); }
-.tx:focus, .due:focus { outline: none; border-bottom-color: rgb(var(--pick)); }
+.big { position: absolute; right: calc(176 * var(--u)); top: 50%; transform: translateY(-50%); font-weight: 700; font-size: var(--t1); }
+.mrow.lit .big { color: rgb(var(--ink-rgb)); }
+.tx { position: absolute; top: calc(41 * var(--u)); height: calc(60 * var(--u)); transform: translateY(-50%); border: 0; border-bottom: calc(3 * var(--u)) solid var(--edge); background: none; font-size: 16px; font-style: italic; color: var(--ink); -webkit-user-select: text; user-select: text; padding: 0; }
+.tx { left: calc(400 * var(--u)); width: calc(390 * var(--u)); }
+.tx::placeholder { color: rgb(80, 82, 84); } .mrow.lit .tx { border-bottom-color: rgb(70, 66, 62); } .mrow.lit .tx::placeholder { color: rgb(150, 152, 154); }
+.tx:focus { outline: none; border-bottom-color: rgb(var(--pick)); }
 
 /* ---------- The first session: a lone plus, a box to write in, gold and a wash of green ---------- */
 .mrow.gone { display: none; }
@@ -192,44 +205,45 @@ body.intro-quick.intro-in .soren, body.intro-quick.intro-in .go-in { transition-
 @keyframes fall { from { height: var(--row); opacity: 1; } to { height: 0; opacity: 0; } }
 .seg.x3 button { width: calc(164 * var(--u)); } .seg.x3 i { width: calc(154 * var(--u)); transform: translateX(calc(164 * var(--u) * var(--k, 0))); }
 .mrow .ic { overflow: visible; } .mrow.box > .ic svg { transition: transform .8s cubic-bezier(.3, 1.5, .5, 1), color .5s; cursor: pointer; }
-.mrow.box .nm .pill { height: calc(54 * var(--u)); padding: 0 calc(18 * var(--u)); font-size: calc(32 * var(--u)); font-weight: 700; font-style: italic; margin-left: calc(4 * var(--u)); vertical-align: middle; color: var(--ink); transition: color .6s; }
-.mrow.box .tx { left: calc(462 * var(--u)); width: calc(556 * var(--u)); height: calc(76 * var(--u)); top: 50%; border: calc(3 * var(--u)) solid rgb(150, 152, 154); border-radius: calc(22 * var(--u)); padding: 0 calc(8 * var(--u)); font-size: max(16px, calc(34 * var(--u))); background-color: rgba(255, 255, 255, .04); transition: border-color .4s, box-shadow .6s, opacity .9s; }
+.mrow.box .nm .pill { height: calc(54 * var(--u)); padding: 0 calc(18 * var(--u)); font-size: var(--t2); font-weight: 700; font-style: italic; margin-left: calc(4 * var(--u)); vertical-align: middle; color: var(--ink); transition: color .6s; }
+.mrow.box .tx { left: calc(462 * var(--u)); width: calc(556 * var(--u)); height: calc(76 * var(--u)); top: 50%; border: calc(3 * var(--u)) solid var(--label); border-radius: calc(22 * var(--u)); padding: 0 calc(8 * var(--u)); font-size: max(16px, calc(34 * var(--u))); background-color: rgba(var(--ink-rgb), .04); transition: border-color .4s, box-shadow .6s, opacity .9s; }
 .mrow.box .tx:focus { border-color: rgb(var(--ink-rgb)); box-shadow: 0 0 calc(30 * var(--u)) rgba(var(--ink-rgb), .28), inset 0 0 calc(14 * var(--u)) rgba(var(--ink-rgb), .08); }
 .mrow.box .tx.gone { opacity: 0; pointer-events: none; }
 .mrow.box > :not(.ic) { transition: opacity .8s ease; }
 .mrow.lead > :not(.ic) { opacity: 0; pointer-events: none; } .mrow.lead::before { opacity: 0; }
+.mrow.prime > .ic { --ring: rgb(var(--pick)); }
 .mrow.lead > .ic { --ring: rgb(var(--pick)); color: rgb(var(--on)); animation: pulse 2.6s ease-in-out infinite; --glow: var(--pick); }
 .mrow.glow > .ic { animation: pulse 2.6s ease-in-out infinite; --glow: var(--gold); }
 @keyframes pulse { 0%, 100% { filter: drop-shadow(0 0 calc(3 * var(--u)) rgba(var(--glow), .3)); } 50% { filter: drop-shadow(0 0 calc(16 * var(--u)) rgba(var(--glow), .9)); } }
-.mrow.golden > .ic svg { color: rgb(var(--gold-hi)); }
-.mrow.gold2 .pill { color: rgb(var(--gold-hi)); --ring: rgb(var(--gold)); }
+.mrow.golden > .ic svg { color: rgb(var(--gold)); }
+.mrow.gold2 .pill { color: rgb(var(--gold)); --ring: rgb(var(--gold)); }
 .mrow.minus > .ic { --ring: rgb(var(--red)); color: rgb(var(--red)); }
 .mrow.locked.lit::before { box-shadow: inset 0 0 0 calc(3 * var(--u)) rgb(var(--gold)); transition: box-shadow .8s; } .mrow.locked > .ic { --ring: rgb(var(--gold)); }
-.mrow.locked .ok { color: rgb(var(--gold-hi)); } .mrow.locked .ok .ic { --ring: rgb(var(--gold)); }
+.mrow.locked .ok { color: rgb(var(--gold)); } .mrow.locked .ok .ic { --ring: rgb(var(--gold)); }
 .mrow.box .ok { overflow: visible; transition: color 1.8s ease; } .mrow.box .ok .ic::after { transition-duration: 1.8s; }
-.mrow.preok:not(.locked) .ok { color: rgb(var(--ink-rgb)); } .mrow.preok:not(.locked) .ok .ic { --ring: rgb(var(--ink-rgb)); }
+.mrow.preok:not(.locked) .ok { color: rgb(var(--pick)); } .mrow.preok:not(.locked) .ok .ic { --ring: rgb(var(--pick)); }
 .mrow .ds.wave { background: linear-gradient(90deg, rgb(var(--on)) 0%, rgb(var(--on)) 38%, var(--label) 62%, var(--label) 100%); background-size: 260% 100%; background-position: 100% 0; -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent; animation: wash 3.4s cubic-bezier(.45, .05, .55, .95) forwards; }
 .mrow .ds.wave.fin { background: none; -webkit-text-fill-color: rgb(var(--on)); color: rgb(var(--on)); animation: none; }
-.mrow.box .tx.wave { border-color: transparent; background-image: linear-gradient(#111, #111), linear-gradient(90deg, rgb(var(--on)) 0%, rgb(var(--on)) 38%, rgb(var(--ink-rgb)) 62%, rgb(var(--ink-rgb)) 100%); background-clip: padding-box, border-box; background-origin: padding-box, border-box; background-repeat: no-repeat; background-size: 100% 100%, 260% 100%; background-position: 0 0, 100% 0; animation: wash2 3.4s cubic-bezier(.45, .05, .55, .95) 1s forwards; box-shadow: 0 0 calc(30 * var(--u)) rgba(var(--ink-rgb), .28); }
+.mrow.box .tx.wave { border-color: transparent; background-image: linear-gradient(var(--black), var(--black)), linear-gradient(90deg, rgb(var(--on)) 0%, rgb(var(--on)) 38%, rgb(var(--ink-rgb)) 62%, rgb(var(--ink-rgb)) 100%); background-clip: padding-box, border-box; background-origin: padding-box, border-box; background-repeat: no-repeat; background-size: 100% 100%, 260% 100%; background-position: 0 0, 100% 0; animation: wash2 3.4s cubic-bezier(.45, .05, .55, .95) 1s forwards; box-shadow: 0 0 calc(30 * var(--u)) rgba(var(--ink-rgb), .28); }
 .mrow.box .tx.wave.fin { animation: none; background-image: none; border-color: rgb(var(--on)); box-shadow: 0 0 calc(24 * var(--u)) rgba(var(--on), .3); }
 @keyframes wash { to { background-position: 0% 0; } } @keyframes wash2 { to { background-position: 0 0, 0% 0; } }
-.shine { position: absolute; left: calc(-14 * var(--u)); top: calc(-14 * var(--u)); width: calc(72 * var(--u)); height: calc(72 * var(--u)); border-radius: 50%; pointer-events: none; opacity: 0; background: radial-gradient(circle, rgba(255, 226, 150, .85) 0%, rgba(var(--gold), .45) 38%, rgba(var(--gold), 0) 70%); }
-.shine.r { background: none; border: calc(3 * var(--u)) solid rgba(var(--gold-hi), .8); } .shine.fire { animation: shine 1s ease-out; } .shine.r.fire { animation: shine2 1s ease-out; }
+.shine { position: absolute; left: calc(-14 * var(--u)); top: calc(-14 * var(--u)); width: calc(72 * var(--u)); height: calc(72 * var(--u)); border-radius: 50%; pointer-events: none; opacity: 0; background: radial-gradient(circle, rgba(var(--gold), .85) 0%, rgba(var(--gold), .45) 38%, rgba(var(--gold), 0) 70%); }
+.shine.r { background: none; border: calc(3 * var(--u)) solid rgba(var(--gold), .8); } .shine.fire { animation: shine 1s ease-out; } .shine.r.fire { animation: shine2 1s ease-out; }
 .pill > .shine, .ok > .shine { left: 50%; top: 50%; } .pill > .shine { width: calc(120 * var(--u)); height: calc(120 * var(--u)); margin: calc(-60 * var(--u)) 0 0 calc(-60 * var(--u)); } .ok > .shine { width: calc(140 * var(--u)); height: calc(140 * var(--u)); margin: calc(-70 * var(--u)) 0 0 calc(-70 * var(--u)); }
 .pill > .shine.fire { animation-duration: 1.4s; } .ok > .shine.fire { animation-duration: 1.8s; }
 @keyframes shine { 0% { opacity: .95; transform: scale(.5); } 100% { opacity: 0; transform: scale(3.2); } } @keyframes shine2 { 0% { opacity: .9; transform: scale(.7); } 100% { opacity: 0; transform: scale(2.6); } }
 #spot { position: fixed; z-index: 40; pointer-events: none; opacity: 0; transition: opacity 1.2s ease; box-shadow: 0 0 0 200vmax rgba(0, 0, 0, .68); } #spot.on { opacity: 1; }
 #mcFoot [data-foot=back].off { opacity: .35; pointer-events: none; }
 .rail { position: absolute; left: calc(1136 * var(--u)); width: calc(60 * var(--u)); transform: translateX(-50%); touch-action: none; }
-.rail::before { content: ''; position: absolute; left: 50%; top: 0; bottom: 0; width: calc(8 * var(--u)); transform: translateX(-50%); border-radius: calc(4 * var(--u)); background: var(--track); }
+.rail::before { content: ''; position: absolute; left: 50%; top: 0; bottom: 0; width: calc(8 * var(--u)); transform: translateX(-50%); border-radius: calc(4 * var(--u)); background: var(--edge); }
 .rail i { position: absolute; left: 50%; width: calc(18 * var(--u)); height: calc(18 * var(--u)); transform: translate(-50%, -50%); border-radius: 50%; background: rgb(var(--pick)); }
 .rail b { position: absolute; left: 50%; width: calc(56 * var(--u)); height: calc(56 * var(--u)); transform: translate(-50%, -50%); background: var(--handle-v) center / 100% 100%; transition: top var(--quick); filter: drop-shadow(0 calc(2 * var(--u)) calc(6 * var(--u)) rgba(0, 0, 0, 0.6)); }
-.foot { position: absolute; left: 0; right: 0; top: calc(1170 * var(--u)); height: var(--row); display: flex; }
+.foot { position: absolute; left: 0; right: 0; bottom: calc(14 * var(--u)); height: var(--row); display: flex; }
 .foot .cell:nth-child(4) { margin-left: auto; } .foot .cell { flex: 0 0 calc(194.33 * var(--u)); } .foot .cell::before { display: none; }
 /* The one pop-up: the card goes solid black; a question, one grey line, and two tiles: ‹ back in blue, › the action in red. */
 .pop { position: absolute; inset: 0; z-index: 2; border-radius: var(--r); background: var(--black); display: flex; flex-direction: column; justify-content: center; align-items: center; gap: calc(40 * var(--u)); padding: 0 calc(60 * var(--u)); text-align: center; }
-.pop h3 { margin: 0; font-weight: 700; font-style: italic; font-size: calc(48 * var(--u)); color: rgb(var(--white)); }
-.pop p { margin: 0; font-size: calc(32 * var(--u)); line-height: 1.45; color: var(--label); }
+.pop h3 { margin: 0; font-weight: 700; font-style: italic; font-size: var(--t1); color: rgb(var(--ink-rgb)); }
+.pop p { margin: 0; font-size: var(--t2); line-height: 1.45; color: var(--label); }
 .pop .two { position: relative; width: var(--cw); height: var(--row); margin-top: calc(20 * var(--u)); }
 .pop .two .cell { position: absolute; top: 0; width: calc(194.33 * var(--u)); } .pop .two .cell::before { display: none; }
 .pop .two .cell:first-child { left: calc(194.33 * var(--u)); } .pop .two .cell + .cell { left: calc(777.33 * var(--u)); }
@@ -238,7 +252,7 @@ body.intro-quick.intro-in .soren, body.intro-quick.intro-in .go-in { transition-
 /* The shimmer: one sweep of silver across a key, "this, now". */
 .glint { overflow: hidden; }
 .glint::after { content: ""; position: absolute; inset: 0; border-radius: inherit; pointer-events: none; transform: translateX(-130%); animation: glint var(--sweep) ease-out var(--d, 0s) both;
-  background: linear-gradient(105deg, transparent 25%, rgba(200, 225, 255, 0.35) 42%, rgba(244, 249, 255, 0.95) 50%, rgba(200, 225, 255, 0.35) 58%, transparent 75%); }
+  background: linear-gradient(105deg, transparent 25%, rgba(var(--ink-rgb), 0.35) 42%, rgba(var(--ink-rgb), 0.95) 50%, rgba(var(--ink-rgb), 0.35) 58%, transparent 75%); }
 .glint.back::after { animation-name: glint-back; }
 @keyframes glint { from { transform: translateX(-130%); } to { transform: translateX(130%); } }
 @keyframes glint-back { from { transform: translateX(130%); } to { transform: translateX(-130%); } }
@@ -254,7 +268,7 @@ body.intro #botBar { background: none; box-shadow: none; } body.intro .cell::bef
 body.intro .sky { display: block; } @keyframes skyin { from { opacity: 0; } }
 body.rest { background: #000; } body.rest .rib, body.rest .line, body.rest .zone4 { opacity: 0.22; } body.rest .rib:active, body.rest .rib:focus-within { opacity: 0.8; } body.rest .pool { box-shadow: none; }
 body.rest.carded .rib, body.rest.carded .line { opacity: 1; }
-body::before { content: ""; position: fixed; inset: 0; background: rgba(3, 5, 9, 0.42); opacity: 0; transition: opacity var(--settle); pointer-events: none; }
+body::before { content: ""; position: fixed; inset: 0; background: rgba(0, 0, 0, 0.42); opacity: 0; transition: opacity var(--settle); pointer-events: none; }
 body.relax::before { opacity: 1; }
 .warm { position: fixed; inset: 0; z-index: 100; pointer-events: none; background: rgb(255, 150, 60); mix-blend-mode: multiply; opacity: 0; transition: opacity 6s; }
 .veil { position: fixed; inset: 0; z-index: 1000; background: #050d1c; opacity: 0; pointer-events: none; transition: opacity var(--sweep); } .veil.on { opacity: 1; transition: none; }
@@ -519,18 +533,18 @@ const MODES = {   // one record per mode: its name, what's on in the pool, and t
 // Every setting, and the one list of words each choice can take. The app opens calm: no weather, and the sound low.
 const ATMO = ['bolt', 'wind', 'rain'];
 const CHOICES = {
-  mode: Object.keys(MODES), overflow: ['end', 'zen'], where: ['live', ...Object.keys(PLACES)], kind: ['break', 'task'], exit: ['time', 'timer', 'free'], breakMins: [5, 10, 15, 20],
+  mode: Object.keys(MODES), overflow: ['end', 'zen'], where: ['live', ...Object.keys(PLACES)], kind: ['break', 'task'], exit: ['timer', 'free'],
   clouds: ['clear', 'some', 'overcast', 'dark', 'changing'], hour: ['live', 'dawn', 'day', 'dusk', 'night'],
-  ambient: ['off', 'rain', 'wind', 'night', 'fire'], fadeAfter: [15, 30, 60, 120, 0], mins: [10, 20, 30, 60],
+  ambient: ['off', 'rain', 'wind', 'night', 'fire'], fadeAfter: [15, 30, 60, 120, 0],
   'pacer.track': ['eight', 'circle', 'oval', 'box', 'zigzag'], 'pacer.glass': ['moonstone', 'ember', 'aurora', 'rose', 'lutz', 'amethyst']
 };
 const DEFAULTS = {
   mode: 'play', overflow: 'end', where: 'live', clouds: 'clear', hour: 'live',
   atmo: { bolt: { on: false, lv: 1 }, wind: { on: false, lv: 0.4 }, rain: { on: false, lv: 1 } },
-  breathing: true, bpm: 6, aim: true, next: false, numbers: true,
+  breathing: true, bpm: 6, aim: true, next: false, numbers: true, comp: false,   // comp: Play with the calm taken off; never remembered, a double opt-in every time
   sound: true, vol: 0.85, ambient: 'off', ambLv: 1, fadeAfter: 60, calm: false, still: reduceMotion, vibe: true,
-  mix: { game: { on: true, lv: 0.7 }, alerts: { on: true, lv: 0.7 }, breath: { on: true, lv: 0.7 }, touch: { on: true, lv: 0.7 }, drone: { on: true, lv: 0.7 }, nature: { on: true, lv: 0.6 } },   // the Sound card: each kind of sound, its level and whether it plays
-  kind: 'task', exit: 'timer', stopAt: -1, breakMins: 10, mins: 20, tasks: [],   // stopAt: the clock time the session ends, in minutes after midnight; tasks: your list, up to three lines, each { text }
+  mix: { game: { on: true, lv: 0.7 }, alerts: { on: true, lv: 0.7 }, breath: { on: true, lv: 0.7 }, touch: { on: true, lv: 0.7 }, drone: { on: true, lv: 0.7 }, nature: { on: true, lv: 0.6 }, weather: { on: true, lv: 0.6 } },   // the Sound card: each kind of sound, its level and whether it plays
+  kind: 'break', exit: 'timer', mins: 15, byClock: false, tasks: [],   // tasks: your list, up to three lines, each { text }
   pacer: { on: true, drops: false, track: 'eight', glass: 'moonstone', glow: 0.6, bright: 0.85, speed: 7 },   // Fidget's light: its track, its glass, how it shines, laps a minute
   beta: { lookup: false, chest: false, heavy: false }   // the experiments: each off until you switch it on
 };
@@ -539,15 +553,15 @@ const PREFS = (() => {
   if (s.fadeAfter == null) s.fadeAfter = s.sleepTimer;   // the Rest timer's old name
   for (const k in DEFAULTS) if (typeof s[k] === typeof DEFAULTS[k] && k !== 'atmo') p[k] = s[k];   // only what still means something
   for (const k in CHOICES) if (!k.includes('.') && !CHOICES[k].includes(p[k])) p[k] = DEFAULTS[k];
-  if (s.mins === 0 && s.exit == null) p.exit = 'free';   // the old "No timer" is now Free Play
-  p.stopAt = Number.isFinite(+s.stopAt) ? clamp(Math.round(+s.stopAt), -1, 1439) : -1;
+  if (s.mins === 0 && s.exit == null) p.exit = 'free';
+  p.mins = clamp(Math.round(p.mins / 3) * 3, 3, 96);   // the old "No timer" is now Free Play
   const pc = obj(s.pacer), pd = DEFAULTS.pacer; p.pacer = { on: pc.on !== false, drops: pc.drops === true, track: CHOICES['pacer.track'].includes(pc.track) ? pc.track : pd.track, glass: CHOICES['pacer.glass'].includes(pc.glass) ? pc.glass : pd.glass,
     glow: clamp(Number(pc.glow ?? pd.glow) || 0, 0, 1), bright: clamp(Number(pc.bright ?? pd.bright) || 0.2, 0.2, 1), speed: clamp(Number(pc.speed) || pd.speed, 4, 15) };
   for (const k of ATMO) { const a = obj(obj(s.atmo)[k]); p.atmo[k] = { on: !!a.on, lv: clamp(Number(a.lv) || DEFAULTS.atmo[k].lv, 0.05, 1) }; }
   for (const k in DEFAULTS.mix) { const m = obj(obj(s.mix)[k]); p.mix[k] = { on: m.on !== false, lv: clamp(Number(m.lv ?? DEFAULTS.mix[k].lv) || 0, 0, 1) }; }
   p.ambLv = clamp(+p.ambLv, 0, 1);
   p.beta = Object.fromEntries(Object.keys(DEFAULTS.beta).map(k => [k, obj(s.beta)[k] === true]));
-  p.bpm = clamp(+p.bpm || 6, 4, 8); p.vol = clamp(+p.vol, 0, 1);
+  p.bpm = clamp(+p.bpm || 6, 4, 8); p.vol = clamp(+p.vol, 0, 1); p.comp = false;
   p.tasks = (Array.isArray(s.tasks) ? s.tasks : []).slice(0, 3).map(t => ({ text: String(obj(t).text || '').slice(0, 60) })).filter(t => t.text.trim());
   return p;
 })();
@@ -583,7 +597,7 @@ const S = {
 };
 // The spheres move only when their layer is on and nothing is asking for you: no card, no guided breath, not paused.
 const awake = () => has('spheres') && !S.sigh && !S.gameOver && !S.card && !S.sheet && !S.paused && !S.parked && !S.intro && !S.outro && !S.gone && !S.look;
-const rules = () => (S.zen ? 'zen' : PREFS.overflow);   // Play now and Keep going are Zen for this game only; your setting stays
+const rules = () => (compOn() ? 'end' : S.zen ? 'zen' : PREFS.overflow);   // Play now and Keep going are Zen for this game only; your setting stays. Comp always ends at the line
 function setPaused(on) {   // one pause: everything waits, your time too
   if (on === S.paused) return;
   if (on) S.pauseT = Date.now(); else if (S.goal) S.goal.end += Date.now() - S.pauseT;
@@ -660,7 +674,7 @@ function updateWind(dt) {
     if (Math.abs(ENV.blow) > 0.85 && awake()) W.nudge = Math.sign(ENV.blow) * Math.min(1, Math.abs(ENV.blow) - 0.6);
   }
 }
-const windFall = () => ENV.blow * 0.045;
+const windFall = () => (compOn() ? 0 : ENV.blow * 0.045);   // in Comp the wind reaches every sphere through its own drag (65-comp.js), not the engine's input
 function nudgePile() {   // a strong gust gives the pile one push as it arrives: spheres rock and resettle rather than slide away
   if (W.nudge) for (const b of S.world.balls) if (b.landed) { const k = W.nudge * 0.3 * Math.sqrt(30 / b.radius); b.vx += k; b.omega += k / b.radius; }
   W.nudge = 0;
@@ -669,7 +683,7 @@ function nudgePile() {   // a strong gust gives the pile one push as it arrives:
 // One calm scale for everything. Every sound is made here, in the browser: no files, nothing fetched.
 // Seven kinds of sound, each on its own bus. Six are on the Sound card (a level and on or off); the weather's follows the sky.
 const BUSES = ['game', 'alerts', 'breath', 'touch', 'drone', 'nature', 'weather'];
-const busLevel = (k) => (k === 'weather' ? 0.6 : PREFS.mix[k].on ? PREFS.mix[k].lv : 0);
+const busLevel = (k) => (PREFS.mix[k].on ? PREFS.mix[k].lv : 0);
 class SoundBath {
   constructor() { this.ctx = null; this.drone = null; this.droneAge = 0; this.birdT = 2; this.cricketT = 1; }
   // SoRen follows the phone's silent switch, and mixes politely with music or a podcast instead of stopping it.
@@ -938,12 +952,12 @@ function maybePraise(reason, x, y) {
 /* ---------- Icons, the colours of state, the shimmer ---------- */
 // Plain is off, green is on, blue is in hand, gold is you did it right, red is trouble, silver is this, now.
 const cssRGB = (n) => getComputedStyle(document.documentElement).getPropertyValue(n).replace(/\s/g, '');   // state colours live in the CSS :root, once
-const LIGHT = '240,246,255', GOLD = cssRGB('--gold'), RED = cssRGB('--red'), GREEN = cssRGB('--on'), BLUE = cssRGB('--pick');
+const LIGHT = cssRGB('--ink-rgb'), GOLD = cssRGB('--gold'), RED = cssRGB('--red'), GREEN = cssRGB('--on'), BLUE = cssRGB('--pick');
 const CLOUD = 'M7.5 14.5h9.5a3.5 3.5 0 0 0 .4-7 5 5 0 0 0-9.6 1.2A3 3 0 0 0 7.5 14.5z', DOT = (x, y, r) => `M${x - r} ${y}a${r} ${r} 0 1 0 ${2 * r} 0a${r} ${r} 0 1 0 ${-2 * r} 0`;
 const ICON = {
   skip: 'M9 5.5l7 6.5-7 6.5', fwd: 'M3.5 6l6 6-6 6M12.5 6l6 6-6 6', last: 'M6 6l6 6-6 6M19 5.5v13',
   gear: 'M12 9.2a2.8 2.8 0 1 0 0 5.6 2.8 2.8 0 0 0 0-5.6zM19.3 13.4a7.4 7.4 0 0 0 0-2.8l1.9-1.5-1.9-3.3-2.3.9a7.4 7.4 0 0 0-2.4-1.4L14.2 3h-3.8l-.4 2.3a7.4 7.4 0 0 0-2.4 1.4l-2.3-.9-1.9 3.3 1.9 1.5a7.4 7.4 0 0 0 0 2.8l-1.9 1.5 1.9 3.3 2.3-.9a7.4 7.4 0 0 0 2.4 1.4l.4 2.3h3.8l.4-2.3a7.4 7.4 0 0 0 2.4-1.4l2.3.9 1.9-3.3z',
-  pp: 'M3.5 6.5v11l8-5.5zM16 6.5v11M20.5 6.5v11', play: 'M8 5.5v13l10.5-6.5z',
+  pp: 'M3.5 6.5v11l8-5.5zM16 6.5v11M20.5 6.5v11', pause: 'M8.5 6.5v11M15.5 6.5v11', play: 'M8 5.5v13l10.5-6.5z',
   speaker: 'M4.5 9.5h3.2L12 6v12l-4.3-3.5H4.5z', waves: 'M15 9.5a3.5 3.5 0 0 1 0 5M17.5 7a7 7 0 0 1 0 10', hush: 'M15.5 9.5l5 5M20.5 9.5l-5 5',
   bolt: 'M13 2.5 5.5 13.5h5.5L10 21.5l8-11.5h-5.5z', wind: 'M3.5 9h10a2.5 2.5 0 1 0-2.4-3.2M3.5 13h15a2.8 2.8 0 1 1-2.6 3.8M3.5 17h6',
   rain: CLOUD + 'M9 17l-1 2.5M13 17l-1 2.5M17 17l-1 2.5', snow: CLOUD + 'M9 18.5h.01M13 20h.01M17 18.5h.01M11 21.5h.01M15 21.5h.01',
@@ -966,7 +980,7 @@ const ICON = {
   inf: 'M12 12c-2-2.8-3.8-4-5.5-4a4 4 0 0 0 0 8c1.7 0 3.5-1.2 5.5-4s3.8-4 5.5-4a4 4 0 0 1 0 8c-1.7 0-3.5-1.2-5.5-4z', gem: 'M12 3l7.5 9L12 21l-7.5-9z',
   sun: DOT(12, 12, 3.5) + 'M12 2.5V5M12 19v2.5M2.5 12H5M19 12h2.5M5.3 5.3l1.8 1.8M16.9 16.9l1.8 1.8M5.3 18.7l1.8-1.8M16.9 7.1l1.8-1.8',
   sea: 'M3 8c2.2-2 4.3-2 6.5 0s4.3 2 6.5 0 3.7-2 5 0M3 13c2.2-2 4.3-2 6.5 0s4.3 2 6.5 0 3.7-2 5 0M3 18c2.2-2 4.3-2 6.5 0s4.3 2 6.5 0 3.7-2 5 0',
-  bloom: DOT(9, 12, 5) + DOT(15, 12, 5), still: 'M8 5.5v13M16 5.5v13'
+  bloom: DOT(9, 12, 5) + DOT(15, 12, 5), still: 'M8 5.5v13M16 5.5v13', comp: 'M3 12h4l2.5-6 4 12 2.5-6H21'   // comp: a pulse
 };
 const svg = (d) => `<svg viewBox="0 0 24 24" aria-hidden="true"><path d="${d}"/></svg>`;
 const VOL = `<svg viewBox="0 0 24 24" aria-hidden="true"><path d="${ICON.speaker}"/><path class="waves" d="${ICON.waves}"/><path class="hush" d="${ICON.hush}"/></svg>`;
@@ -1776,7 +1790,7 @@ function updateStorms(dt) {   // the light and the sound of every strike, played
 // What each is doing right now, 0 to 1: its switch, or a swipe in Fidget. Nothing without weather; no lightning while you rest.
 // Severe: whatever is on runs at full strength, and a hurricane or a blizzard brings its own gale. The physics sees no more
 // wind than the strongest normal setting: severe is louder, darker and thicker, never a different game.
-const made = (k) => { const a = PREFS.atmo[k], gale = k === 'wind' && S.severe && PREFS.atmo.rain.on; return has('weather') && !(k === 'bolt' && S.mode === 'rest') ? Math.max(a.on ? (S.severe ? 1 : a.lv) : 0, gale ? 1 : 0, S.fx[k] || 0) : 0; };
+const made = (k) => { const a = PREFS.atmo[k], gale = k === 'wind' && S.severe && PREFS.atmo.rain.on; return has('weather') && !(k === 'bolt' && S.mode === 'rest') ? Math.max(a.on ? (S.severe ? 1 : a.lv) : 0, gale ? 1 : 0, S.fx[k] || 0) : 0; };   // in Comp the wind is always on: its level rides in on S.fx.wind
 const LT = { next: 0, tail: 0, level: 0, was: false }, RN = { level: 0 };
 const QUIET_START = 30;   // seconds after launch with no strike, whatever the weather
 const stormYouMake = () => { const L = made('bolt'); return L ? 0.5 + 0.5 * L : LT.tail > 0 ? 0.6 : 0; };
@@ -2337,6 +2351,7 @@ function newPool() {
   Object.assign(S, { world: createWorld(), score: 0, blooms: 0, merges: 0, highestTier: 2, current: 0, next: 1, fair: PREFS.overflow === 'end', zen: false, wild: false,
     canDrop: true, cooldown: 0, overT: 0, offender: 0, gameOver: false, combo: 0, comboT: 0, tools: { strike: 0, mystery: 0, storm: 0 }, armed: false, storm: null, stormQ: [], roundDone: false });
   $('alert').hidden = true; if (S.parked) unpark(); else hideCard();
+  if (PREFS.comp) compStart();   // a fresh game in Comp starts its line and its clocks again
 }
 function startPool() { newPool(); savePool(); syncUI(); say('A fresh game', here().label); }
 function keepGoing() { Object.assign(S, { gameOver: false, overT: 0, fair: false, zen: true }); savePool(); syncUI(); say('Keep going', 'Zen for this game · nothing ends'); }
@@ -2433,9 +2448,10 @@ function useTool(k) {
   setPaused(false);
   if (k === 'strike' && S.doom) return;   // one Strike at a time: the last one is still landing
   if (k === 'strike' && S.armed) { S.armed = false; syncBars(); return; }   // a second tap puts it away
-  if (!(S.tools[k] > 0)) { say(TOOL_NAMES[k], 'Earned by a Full Bloom or a chain of three'); sound.tick(); return; }
+  if (!(S.tools[k] > 0)) { say(TOOL_NAMES[k], compOn() ? 'Earned by a timer sphere, a Full Bloom or a chain of three' : 'Earned by a Full Bloom or a chain of three'); sound.tick(); return; }
   if (k === 'strike') { S.armed = true; say('Strike', 'Touch the sphere to take'); }
   else if (k === 'mystery') { if (S.wild) return; S.wild = true; S.tools.mystery--; sound.wash(); say('Mystery', 'It becomes whatever it touches first'); }
+  else if (compOn()) { if (COMP.gust) return; S.tools.storm--; compGust(); }   // Comp: a gust, not a lift
   else if (!S.stormQ.length) { S.tools.storm--; stirPile(); }
   syncBars();
 }
@@ -2454,7 +2470,7 @@ function updateDoom(dt) {
   else if (kind === 'bolt') { if (flash(1) && !lessMo()) S.zap = { kind, path: makeBolt(b.x, b.y - b.radius * 0.3), until: animTime + TIME.beat }; S.rumbles.push({ at: animTime + 0.08, close: 1, vol: 0.8 }); }
   else { S.zap = { kind, x: b.x, y: b.y, r: b.radius, rgb, until: animTime + TIME.beat }; ({ ice: () => sound.crackle(6), wave: () => sound.whoosh(0.9, panFor(b.x)), meteor: () => sound.crack(0.18) })[kind](); }
   if (!lessMo()) spawnParticles(b.x, b.y, `rgb(${rgb})`, 26, 6);
-  haptic([30, 30, 60]); mist([b], name, 'Space opened'); syncBars();
+  haptic([30, 30, 60]); if (compOn()) compStrike(b, name); else mist([b], name, 'Space opened'); syncBars();   // Comp: knocked down a size, not taken
 }
 function stirPile() {   // they lift off behind the weather, shuffled, and come back in from the top one at a time; the physics does the fall
   S.stormQ = [...S.world.balls].sort(() => Math.random() - 0.5).map(b => ({ tier: b.tier, wild: b.wild }));
@@ -2478,9 +2494,9 @@ const OVERFLOW_SEC = 4;
 function checkOverflow(dt) {
   // Any sphere come to rest on the pile counts while it stays over the line; one thrown upward by a merge doesn't, and a merged
   // one (born at age 46) gets its moment to settle.
-  const over = S.world.balls.filter(b => b.landed && b.age > (b.hot ? 75 : 45) && b.vy > -0.6 && b.y - b.radius < DANGER_Y);
+  const over = S.world.balls.filter(b => b.landed && b.age > (b.hot ? 75 : 45) && b.vy > -0.6 && b.y - b.radius < dangerAt(b.x));   // in Comp the line creeps and can be a sea
   if (!over.length) {
-    if (S.rescueAt && animTime - S.rescueAt < 1.5) maybePraise('rescue', LW / 2, DANGER_Y + 60);
+    if (S.rescueAt && animTime - S.rescueAt < 1.5) maybePraise('rescue', LW / 2, dangerAt(LW / 2) + 60);
     S.rescueAt = 0; S.overT = Math.max(0, S.overT - dt); if (S.overT <= 0) clearAlert();
     return;
   }
@@ -2531,12 +2547,11 @@ const tasks = () => PREFS.tasks.filter(t => t.text.trim());
 const nowMins = () => { const d = new Date(); return d.getHours() * 60 + d.getMinutes(); };
 function sessionEnd() {   // when play stops, or 0 for Free Play
   if (PREFS.exit === 'free') return 0;
-  if (PREFS.exit === 'time') { const m = PREFS.stopAt < 0 ? 0 : (PREFS.stopAt - nowMins() + 1440) % 1440; return m ? Date.now() + m * MIN : 0; }
-  return Date.now() + (PREFS.kind === 'break' ? PREFS.breakMins : PREFS.mins) * MIN;
+  return Date.now() + PREFS.mins * MIN;
 }
 function startSession() {
   S.prev = null; const end = sessionEnd();
-  S.goal = end ? { end, start: Date.now(), rung: 0 } : null;
+  S.goal = end ? { end, start: Date.now(), rung: 0, total: (end - Date.now()) / 1000, cw: PREFS.byClock } : null;   // the ring: green is time left; set by clock it recedes clockwise, by timer counterclockwise
   setMode('play'); setPaused(false); syncUI();
   say(PREFS.kind === 'break' ? 'Your session' : tasks()[0] ? tasks()[0].text : 'Play', S.goal ? `Until ${clockAt(S.goal.end)}` : 'Free Play · you decide');
 }
@@ -2586,11 +2601,36 @@ function backCard() {
   S.ticks = list.map(() => false); S.listWon = false;
   showCard({ title: 'Did you do it?', note: 'Tick each one you did.', list: list.map(t => ({ text: t.text })), tick: true, answers: [['Done', finish]] });
 }
-function tickLine(i) {   // gold, and the one "done"; the whole list: you made a list, you finished it
+// The finish. One thing done: a gold "done". Two or more: the list you secretly made ticks itself off, the unicorn draws, the words change.
+const MYTHS = ['M32 1l-3.5 12h7zM29.4 8h4.2M28.7 10.5h5.6M24 14l-1.5-8 5.5 5M30 13c4 3 7 7 9 13l1.5 3.5c.5 2-.5 3.5-2.5 3.5H35c-2 0-3.5 1-4.5 2.5M33.5 31c1 .6 2.2.6 3.2 0M31 36c-1 3-1 6 0 9M22 14c-4 1-8 4-9 10 3 0 4 2 3.5 4-3 0-5 2-5 5 3 0 4 2 3.5 4-2 1-3 3-3 6 2 0 5-1 7-2M32.5 19.5h.01M39 28h.01M8 8l.9 2.1 2.1.9-2.1.9L8 14l-.9-2.1L5 11l2.1-.9zM41 7l.7 1.5 1.5.7-1.5.7L41 11.4l-.7-1.5-1.5-.7 1.5-.7z'];   // mythical animals in the icons' line, one at random each win: add one by adding a path
+const WIN_ONE = [['You did it.', 'One down, and it counted.'], ['Done.', 'That’s a real one.'], ['Nicely done.', 'Small, and done.'], ['Look at you.', 'Done.'], ['There it is.', 'Done and dusted.']];
+const WIN_MANY = [['Did you realize?', 'You made a to-do list and finished it. Well done!'], ['Plot twist.', 'That was a to-do list. You finished it.'], ['Sneaky.', 'You made a list and crushed it.'], ['Ta-da!', 'A whole list, all done.'], ['Look at that.', 'A list, and every line is done.'], ['Surprise!', 'You made a list. You finished it.'], ['Well, well.', 'A list, done. Who knew?'], ['You did the thing.', 'The whole list. Done.']];
+const lastWin = {};
+const pickWin = (k, list) => { let i; do i = Math.floor(Math.random() * list.length); while (i === lastWin[k] && list.length > 1); lastWin[k] = i; return list[i]; };
+const SCALE = [523.25, 587.33, 659.25, 698.46, 783.99, 880, 987.77];   // each tick climbs a major scale
+const tickNote = (n) => { sound.init(); if (sound.live) sound.voice({ f: SCALE[Math.min(n, 7) - 1], peak: 0.07, attack: 0.02, decay: 1.6, echo: true, bus: 'game' }); };
+const winLine = (text, d) => `<div class="cline win" style="animation-delay:${d}s"><svg viewBox="0 0 48 48" aria-hidden="true"><path d="M11 25l9 9 17-20"/></svg><span>${text}</span></div>`;
+function tickLine(i) {
   S.ticks[i] = !S.ticks[i]; $('cardList').children[i].classList.toggle('done', S.ticks[i]);
   if (!S.ticks[i]) return;
-  sound.done(); haptic(20);
-  if (S.ticks.every(Boolean) && !S.listWon) { S.listWon = true; J.lists++; journalDirty = true; saveJournal(); $('cardTitle').textContent = 'You made a list.'; $('cardNote').textContent = 'You finished it.'; setTimeout(() => sound.wash(), 700); }
+  const n = S.ticks.length, all = S.ticks.every(Boolean), got = S.ticks.filter(Boolean).length;
+  haptic(20); if (!all) { tickNote(got); return; }
+  if (S.listWon) return; S.listWon = true;
+  if (n === 1) { const [t, w] = pickWin('one', WIN_ONE); sound.done(); $('cardTitle').textContent = t; $('cardNote').textContent = w; setTimeout(() => sound.wash(), 700); return; }
+  J.lists++; journalDirty = true; saveJournal(); tickNote(got); celebrate();
+}
+function celebrate() {   // about five seconds: two plain lines tick gold, then the unicorn, the swell and the words
+  const L = $('cardList'), at = (ms, fn) => setTimeout(() => { if (S.ticks && S.listWon) fn(); }, ms), still = lessMo();
+  at(500, () => { L.insertAdjacentHTML('beforeend', winLine('Make a To Do List', 0)); });
+  at(1100, () => { L.lastElementChild.classList.add('done'); tickNote(5); haptic(20); });
+  at(1700, () => { L.insertAdjacentHTML('beforeend', winLine('Do the To Do List', 0)); });
+  at(2300, () => { L.lastElementChild.classList.add('done'); tickNote(7); haptic(30); });
+  at(3000, () => {
+    const [t, w] = pickWin('many', WIN_MANY), art = $('cardArt');
+    art.innerHTML = `<svg viewBox="0 0 48 48" class="uni${still ? ' still' : ''}" aria-hidden="true"><path pathLength="1" d="${pickWin('myth', MYTHS.map(m => [m]))[0]}"/></svg>`;
+    $('cardTitle').textContent = t; $('cardNote').textContent = w; sound.done(); haptic([30, 60, 30, 60, 30]);
+    setTimeout(() => sound.wash(), 600); if (!still && !METEOR) meteor(false);
+  });
 }
 function finish() {   // what you did leaves the list; what's left waits for next time. Then Settle again.
   if (S.ticks) { const list = tasks(); PREFS.tasks = list.filter((t, i) => !S.ticks[i]); S.ticks = null; savePrefs(); }
@@ -2607,6 +2647,148 @@ function journalStats() {   // only what was measured: your best, your Full Bloo
   const sum = (keys) => keys.reduce((s, k) => s + (Number(J.days[k]) || 0), 0), week = [];
   for (let i = 0; i < 7; i++) { const d = new Date(); d.setDate(d.getDate() - i); week.push(dayKey(d)); }
   return { best: J.best, blooms: J.blooms, lists: J.lists, today: sum([dayKey()]), week: sum(week) };
+}
+/* ---------- Comp: Play with the calm taken off ---------- */
+// An overlay on Play, a double opt-in away, left with one touch. The overflow line creeps down and can turn into a slow sea; one
+// sphere at a time carries a countdown: merge it in time and the line lifts or a tool is yours, miss it and the line sinks or a
+// wave rolls in. The wind is real and restless. Strike knocks a sphere down a size instead of taking it; Storm is a gust with a
+// hurricane category. Glass knocked hard enough chips, then cracks, then shatters. Random when, never random whether: a merged
+// timer sphere always pays, and nothing bad comes without the countdown as its warning.
+// Everything here reaches the physics the way the tools already do, through addBall and vx: the Physics block is never touched.
+// The numbers are real: drag on a sphere (½ρ·Cd·A·v²), Hertz contact, Auerbach's law for the crack threshold, the Weibull size
+// effect, Wiederhorn's static fatigue, the Kaimal spectrum for the wind. COMP-SPEC.md has the derivations and the one stated anchor.
+const CT = {   // the tuning table: every number play can change, in one place
+  line: { v: [0.2, 0.6], cap: LH * 0.4, step: 20 },   // px/s, re-drawn each cycle; how far down it may creep; how far a lift or a sink moves it
+  wait: [3, 60], quiet: 10,                           // every wait is random in this range, in seconds; at least this long after a bad outcome
+  wave: { amp: 14, period: 8 },                        // px, and seconds a swell
+  wind: { scale: 12, cap: 32, I: 0.25, L: 30 },        // Weibull scale (m/s), the tropical-storm cap, turbulence intensity, integral length scale (m)
+  cat: [['Tropical storm', 63, 118, 35], ['Category 1', 119, 153, 30], ['Category 2', 154, 177, 20], ['Category 3', 178, 208, 10], ['Category 4', 209, 251, 5]],   // Saffir-Simpson in km/h, and the odds
+  glass: { v0: 5, temper: 1, n: 16, k: 0.5 }           // m/s to crack a tier-0 pair; tempered glass is 4; the fatigue exponent, and its rate (a few storms wear a sphere down)
+};
+const RHO_AIR = 1.225, RHO_GLASS = 2500, G = 9.81, NU = 1.5e-5, MS_PER = 0.157;   // kg/m³, kg/m³, m/s², m²/s; m/s per px/frame (1 px = 1 mm at 60 fps, on the engine's slower clock)
+const COMP = { on: false, line: DANGER_Y, v: 0, vTo: 0, gap: 0, ball: null, wave: null, good: [], bad: [], wx: null, gust: null, vw: 0, lv: 0, prev: null, pairs: new Set() };
+const compOn = () => COMP.on && S.mode === 'play';
+const rnd = (a, b) => a + Math.random() * (b - a);
+const wait = () => rnd(...CT.wait);
+const gauss = () => Math.sqrt(-2 * Math.log(1 - Math.random())) * Math.cos(TAU * Math.random());
+const deal = (bag, all) => { if (!bag.length) bag.push(...[...all].sort(() => Math.random() - 0.5)); return bag.pop(); };   // a shuffled deck: no streaks of bad luck
+function compStart() {
+  Object.assign(COMP, { on: true, line: DANGER_Y, v: 0, vTo: rnd(...CT.line.v), gap: wait(), ball: null, wave: null, good: [], bad: [], gust: null, vw: 0, lv: 0, prev: null, pairs: new Set(), wx: { U: 0, v: 0, a: 0, aim: 0, t: 0 } });
+  for (const b of S.world.balls) b.dmg = null;
+  windEpisode(); S.fair = false; say('Comp', 'The line creeps. The wind is wild. Leave any time.');
+}
+function compStop() { if (!COMP.on) return; COMP.on = false; COMP.ball = COMP.wave = COMP.gust = null; S.fx.wind = 0; say('Comp off', 'Back to Play'); }
+const compForget = (id) => { if (COMP.ball && COMP.ball.id === id) COMP.ball = null; };   // a timer sphere struck or shattered: no outcome either way
+
+/* The line: it creeps, and under a wave it rolls. The overflow check and the drawing both read it here. */
+const waveAt = (x) => { const w = COMP.wave; if (!w) return 0; const env = smooth(Math.min(w.t / 2, (w.len - w.t) / 2, 1)); return CT.wave.amp * env * Math.sin(TAU * (x / LW - (lessMo() ? 0 : w.t / CT.wave.period))); };
+const dangerAt = (x) => (compOn() ? COMP.line + waveAt(x) : DANGER_Y);
+function compTick(dt) {
+  if (!compOn() || !awake()) return;
+  const L = CT.line; COMP.v += (COMP.vTo - COMP.v) * Math.min(1, dt * 0.5); COMP.line = clamp(COMP.line + COMP.v * dt, DANGER_Y, L.cap);
+  if (COMP.wave && (COMP.wave.t += dt) >= COMP.wave.len) COMP.wave = null;
+  const tb = COMP.ball;
+  if (tb) {
+    if (!S.world.balls.some(b => b.id === tb.id)) { COMP.ball = null; outcome(true); }   // it merged: in time
+    else if ((tb.left -= dt) <= 0) { COMP.ball = null; outcome(false); }
+    return;
+  }
+  if ((COMP.gap -= dt) > 0) return;
+  COMP.gap = wait(); COMP.vTo = rnd(...L.v);
+  const b = timerPick(); if (!b) { COMP.gap = CT.wait[0]; return; }   // no pair on the board yet: look again soon
+  const left = wait(); COMP.ball = { id: b.id, left, total: left }; sound.tick(); say('Timer sphere', 'Merge it before the ring is gone');
+}
+function timerPick() {   // a sphere at rest that has a partner on the board, so the merge is always possible
+  const L = S.world.balls.filter(b => b.landed && !b.wild && b.age > 45), twins = L.filter(a => L.some(b => b !== a && b.tier === a.tier));
+  return twins.length ? twins[Math.floor(Math.random() * twins.length)] : null;
+}
+function outcome(good) {
+  const L = CT.line, lift = () => { COMP.line = Math.max(DANGER_Y, COMP.line - L.step); return 'The line lifts'; };
+  if (good) { const got = deal(COMP.good, ['lift', 'tool']) === 'tool' && earnTool(); say('In time', got ? `${TOOL_NAMES[got]} earned` : lift()); sound.done(); haptic(20); return; }
+  COMP.gap = Math.max(COMP.gap, CT.quiet);
+  if (deal(COMP.bad, ['sink', 'wave']) === 'sink') { COMP.line = Math.min(L.cap, COMP.line + L.step); say('Too late', 'The line sinks'); }
+  else { COMP.wave = { t: 0, len: wait() }; say('Too late', 'A wave rolls in'); sound.whoosh(0.7, 0); }
+}
+
+/* The wind. A mean per episode (Weibull, shape 2), turbulence and direction as Ornstein-Uhlenbeck processes (the discrete form of
+   the Kaimal spectrum): intensity I, correlation time L/U. Only the sideways part acts on a side-on pool; the push flips when the
+   direction wanders through the perpendicular, often in light wind, rarely in strong. The Storm tool's gust adds on top. */
+function windEpisode() { const w = COMP.wx, K = CT.wind; w.U = Math.min(K.cap, K.scale * Math.sqrt(-Math.log(1 - Math.random()))); w.aim = Math.random() < 0.5 ? 0 : Math.PI; w.t = wait(); }
+function compWind(dt) {
+  const w = COMP.wx, K = CT.wind; if ((w.t -= dt) <= 0) windEpisode();
+  const T = Math.max(0.5, K.L / Math.max(w.U, 1)), q = Math.sqrt(2 * dt / T);
+  w.v = Math.max(0, w.v + (w.U - w.v) / T * dt + K.I * w.U * q * gauss());
+  const sa = 0.26 * clamp(15 / Math.max(w.v, 1), 1, 6); w.a += (w.aim - w.a) / T * dt + sa * q * gauss();   // 15° of wander in strong wind, more in light
+  let vw = w.v * Math.cos(w.a);   // m/s, positive blows right
+  const g = COMP.gust; if (g) { if ((g.t += dt) >= 5) COMP.gust = null; else vw += g.dir * g.v * (g.t < 1 ? smooth(g.t) : g.t < 3 ? 1 : smooth((5 - g.t) / 2)); }   // a 3 s peak, the WMO gust
+  COMP.vw = vw; COMP.lv = clamp(Math.abs(vw) / K.cap, 0, 1); S.fx.wind = Math.max(S.fx.wind, COMP.lv);   // the streaks and the sound follow the real wind
+  ENV.blow = clamp(Math.sign(vw) * ratio(Math.abs(vw), 0.03) / 0.1125, -1.6, 1.6); W.nudge = 0;   // the engine's own scale: blow 1 is the drag on a 30 mm sphere at 19 m/s
+}
+const ratio = (v, r) => { const Re = Math.abs(v) * 2 * r / NU, cd = Re < 2e5 ? 0.47 : Re > 4e5 ? 0.2 : 0.47 - 0.27 * (Re - 2e5) / 2e5; return 3 * RHO_AIR * cd * v * Math.abs(v) / (8 * r * RHO_GLASS * G); };   // drag over weight, signed; r in metres; the drag crisis included
+function compGust() {   // the Storm tool in Comp: a gust from the left or the right, its category rolled, weighted low
+  const r = Math.random() * 100; let acc = 0, c = CT.cat[0]; for (const k of CT.cat) { acc += k[3]; if (r < acc) { c = k; break; } }
+  const dir = Math.random() < 0.5 ? -1 : 1, kmh = Math.round(rnd(c[1], c[2]));
+  COMP.gust = { t: 0, v: kmh / 3.6, dir };
+  say(c === CT.cat[0] ? c[0] : `Hurricane? ${c[0]}`, `${kmh} km/h, from the ${dir > 0 ? 'left' : 'right'}`); sound.whoosh(1, -dir * 0.5); haptic([15, 40, 15]);
+}
+function compBefore() {   // before each physics step: the wind on every sphere as drag against its own speed, then where everything was
+  for (const b of S.world.balls) { const rel = COMP.vw - b.vx * MS_PER; b.vx += PHYS.gravity * ratio(rel, b.radius / 1000) * (b.wild ? 0.5 : 1); }
+  COMP.prev = new Map(S.world.balls.map(b => [b.id, [b.x, b.y, b.vx, b.vy]]));
+}
+/* Glass. Each sphere keeps a strength s (1 is pristine). A new contact is an impact at the closing speed before it; Hertz gives the
+   stress as (v / v_c)^(2/5), with v_c from Auerbach's law: 5 m/s for a tier-0 pair (the stated anchor), falling with the contact
+   radius to the power 5/6. Over the threshold: a chip, a crack, or a shatter by how far over. Under it: static fatigue, only near it. */
+const vCrack = (Rs) => CT.glass.v0 * CT.glass.temper * Math.pow(Rs / 6, -5 / 6);   // Rs: the contact radius in mm, R·R' / (R + R'), or R on a wall
+function compAfter() {
+  const balls = S.world.balls, P = COMP.prev, now = new Set(), hits = [];
+  for (let i = 0; i < balls.length; i++) {
+    const a = balls[i], pa = P.get(a.id);
+    for (let j = i + 1; j < balls.length; j++) {
+      const b = balls[j], dx = b.x - a.x, dy = b.y - a.y, d = Math.hypot(dx, dy); if (d > a.radius + b.radius + 0.6) continue;
+      const key = Math.min(a.id, b.id) * 1e6 + Math.max(a.id, b.id); now.add(key);
+      const pb = P.get(b.id); if (!pa || !pb || COMP.pairs.has(key)) continue;
+      const vn = ((pa[2] - pb[2]) * dx + (pa[3] - pb[3]) * dy) / (d || 1);   // closing speed along the line of centres, px/frame
+      if (vn > 0.5) hits.push([a, b, vn * MS_PER, a.radius * b.radius / (a.radius + b.radius)]);
+    }
+    if (!pa) continue;
+    if ((a.x <= a.radius + 4.5 && pa[0] > a.radius + 4.5) || (a.x >= LW - a.radius - 4.5 && pa[0] < LW - a.radius - 4.5)) hits.push([a, null, Math.abs(pa[2]) * MS_PER, a.radius]);
+    if (a.y >= LH - a.radius - 6.5 && pa[1] < LH - a.radius - 6.5) hits.push([a, null, Math.abs(pa[3]) * MS_PER, a.radius]);
+  }
+  COMP.pairs = now;
+  for (const [a, b, v, Rs] of hits) { const x = Math.pow(v / vCrack(Rs), 0.4); damage(a, x); if (b) damage(b, x); }   // both feel the same pressure
+}
+function damage(b, x) {
+  if (b.wild || b.merged || !S.world.balls.includes(b)) return;
+  const d = b.dmg || (b.dmg = { s: 1, marks: [] });
+  if (x < d.s) { d.s -= CT.glass.k * Math.pow(x / d.s, CT.glass.n); return; }
+  const k = x / d.s;
+  if (k >= 2.5 || d.marks.length >= 3) { shatter(b); return; }
+  d.s *= k < 1.5 ? 0.6 : 0.3; d.marks.push({ a: Math.random() * TAU, n: k < 1.5 ? 1 : 2 });   // a chip, or a crack: a new flaw, and weaker for it
+  sound.crackle(k < 1.5 ? 2 : 4); if (k >= 1.5) haptic(12);
+}
+function shatter(b) { compForget(b.id); if (!lessMo()) spawnParticles(b.x, b.y, '#ffffff', 14, 5); sound.crack(0.12); haptic([10, 20, 40]); mist([b], 'Shattered', 'Glass breaks'); }
+function compStrike(b, name) {   // Strike in Comp: down to a random smaller size, not gone (the smallest goes)
+  if (!b.tier) { mist([b], name, 'Space opened'); return; }
+  compForget(b.id); const t = Math.floor(Math.random() * b.tier);
+  spawnParticles(b.x, b.y, here().tiers[b.tier].c1, 20, 4.5); S.world.balls = S.world.balls.filter(x => x !== b);
+  addBall(S.world, b.x, b.y, t, { vx: b.vx, vy: b.vy, angle: b.angle, omega: b.omega, landed: true, age: 46 }); sound.wash(); say(name, `Down to ${VALUES[t]}`);
+}
+/* Drawing: the timer sphere's receding gold ring and its countdown; a chip or a crack as a fine white line that turns with the glass. */
+function drawTimerBall(c, b, R) {
+  const tb = COMP.ball, p = clamp(tb.left / tb.total, 0, 1), n = Math.ceil(tb.left);
+  halo(c, b.x, b.y, R, GOLD, 0.5); c.save(); c.strokeStyle = `rgb(${GOLD})`; c.lineWidth = 3; c.lineCap = 'round';
+  c.beginPath(); c.arc(b.x, b.y, R + 3, -Math.PI / 2, -Math.PI / 2 + TAU * p); c.stroke();
+  dot(c, b.x, b.y, R * 0.52, 'rgba(0,0,0,0.55)'); c.fillStyle = '#fff'; c.textAlign = 'center'; c.textBaseline = 'middle'; c.font = `700 ${Math.round(R * (n > 9 ? 0.62 : 0.78))}px ${FONT.sans}`; c.fillText(String(n), b.x, b.y + 1); c.restore();
+}
+function drawCracks(c, b, R) {
+  c.save(); c.translate(b.x, b.y); c.rotate(b.angle); c.strokeStyle = 'rgba(255,255,255,0.85)'; c.lineCap = 'round';
+  for (const m of b.dmg.marks) {
+    const r0 = R * 0.95, ca = Math.cos(m.a), sa = Math.sin(m.a), px = -sa, py = ca; c.lineWidth = m.n === 1 ? 1.2 : 1.6;
+    c.beginPath(); c.moveTo(ca * r0, sa * r0);
+    for (let i = 1; i <= m.n * 2; i++) { const t = i / (m.n * 2), rr = r0 - R * (m.n === 1 ? 0.35 : 0.9) * t, s = (i % 2 ? 1 : -1) * R * 0.1 * (1 - t); c.lineTo(ca * rr + px * s, sa * rr + py * s); }
+    c.stroke();
+  }
+  c.restore();
 }
 /* ---------- Render ---------- */
 // The pool's edge is anchored: breathing in, a band of light grows inward from it; breathing out, it draws back. Each sphere
@@ -2656,8 +2838,10 @@ function render() {
   if (fade > 0.02) {   // the waterline holds still while the pool breathes: a fine inlay in the world's own colour, warming to red
     const end = rules() === 'end', col = mix(w.edgeRGB, [255, 90, 80], red), la = end ? 0.6 : 0.28, g = ctx.createLinearGradient(12, 0, LW - 12, 0);
     ctx.globalAlpha = fade; g.addColorStop(0, rgba(col, 0)); g.addColorStop(0.12, rgba(col, la)); g.addColorStop(0.88, rgba(col, la)); g.addColorStop(1, rgba(col, 0));
-    ctx.strokeStyle = g; ctx.lineWidth = end ? 1.5 : 1; ctx.beginPath(); ctx.moveTo(12, DANGER_Y); ctx.lineTo(LW - 12, DANGER_Y); ctx.stroke();
-    if (end) { ctx.fillStyle = rgba(col, 0.65); ctx.font = `italic 400 12px ${FONT.serif}`; ctx.textAlign = 'right'; ctx.textBaseline = 'alphabetic'; ctx.fillText('overflow', LW - 16, DANGER_Y - 6); }
+    ctx.strokeStyle = g; ctx.lineWidth = end ? 1.5 : 1; ctx.beginPath();
+    if (compOn()) for (let x = 12; x <= LW - 12; x += 4) ctx.lineTo(x, dangerAt(x)); else { ctx.moveTo(12, DANGER_Y); ctx.lineTo(LW - 12, DANGER_Y); }   // Comp: it creeps, and under a wave it rolls
+    ctx.stroke();
+    if (end) { ctx.fillStyle = 'rgba(179,180,182,0.7)'; ctx.font = `400 12px ${FONT.sans}`; ctx.textAlign = 'right'; ctx.textBaseline = 'alphabetic'; ctx.fillText('overflow', LW - 16, dangerAt(LW - 16) - 6); }
   }
   if (S.mode !== 'fidget') drawRipples(ctx);   // Fidget draws its own, on the water
   ctx.globalAlpha = S.mode === 'relax' ? fade : 1;
@@ -2668,7 +2852,7 @@ function render() {
       const pr = S.wild ? WILD_R : RADII[S.current], hx = aimX(pr);
       if (S.aimCancelled) { ctx.fillStyle = 'rgba(255,255,255,0.85)'; ctx.font = `italic 400 12px ${FONT.serif}`; ctx.textAlign = 'center'; ctx.fillText('Let go outside the board to cancel', LW / 2, DROP_Y); }
       else {
-        if (PREFS.aim) {
+        if (PREFS.aim && !compOn()) {   // Comp: no aim line
           const pts = predictPath(hx, 1.4, pr), [lx, ly] = pts[pts.length - 1];
           ctx.save(); ctx.strokeStyle = S.wild ? '#fef08a' : w.tiers[S.current].c1; ctx.globalAlpha = 0.45 * fade; ctx.lineWidth = 1.4; ctx.setLineDash([4, 5]);
           ctx.beginPath(); pts.forEach(([x, y], i) => i ? ctx.lineTo(x, y) : ctx.moveTo(x, y + pr)); ctx.stroke();
@@ -2684,6 +2868,8 @@ function render() {
       drawOrb(ctx, ball.x, ball.y, ball.radius, ball.tier, ball.angle, { aura: breathe ? FEEL.glow * 0.5 * b : 0, lift: breathe ? FEEL.glow * 0.06 * b : 0, scale: s, wild: ball.wild,
         halo: ball.id === S.offender ? [RED, red * beat] : g > 0.01 ? [GOLD, g] : null });
       if (ball.hot && ball.age < HOT_AGE && w.glass) hotGlass(ctx, ball);
+      if (ball.dmg && ball.dmg.marks.length) drawCracks(ctx, ball, ball.radius * s);   // Comp: chipped or cracked glass
+      if (COMP.ball && ball.id === COMP.ball.id) drawTimerBall(ctx, ball, ball.radius * s);   // Comp: the countdown in place of the number
       if (S.doom && ball.id === S.doom.id) {   // watch out: red, quickening
         const k = 0.55 + 0.45 * Math.sin(S.doom.t * (14 + 20 * S.doom.t));
         halo(ctx, ball.x, ball.y, ball.radius, RED, k); ring(ctx, ball.x, ball.y, ball.radius * s + 3, `rgba(${RED},${(0.6 + 0.4 * k).toFixed(3)})`, 2.5);
@@ -2814,7 +3000,7 @@ function update(k, dt) {
   if (S.intro && S.intro.go == null && ((S.intro.t >= S.intro.len && !S.intro.rest) || (S.intro.t >= S.intro.len + 3 && !S.intro.ready))) { S.intro.rest = true; S.intro.ready = S.intro.t >= S.intro.len + 3; syncBars(); }   // at rest the name, the check box and the ribbon fade in; three seconds on, the box can be touched
   if (S.outro && (S.outro.t += dt) >= S.outro.len) parkCard();
   updateGoal();
-  updateScene(dt); updateWind(dt); updateLife(dt); updateBreath(dt); updateActions(dt, k); updateStorms(dt); updateStorm(dt); updateBoard(dt); updateCreatures(dt);
+  updateScene(dt); updateWind(dt); if (compOn()) { compWind(dt); compTick(dt); } updateLife(dt); updateBreath(dt); updateActions(dt, k); updateStorms(dt); updateStorm(dt); updateBoard(dt); updateCreatures(dt);
   if (awake()) updateDoom(dt);   // a Strike waits while the game waits
   if (S.fid) updateFidget(dt);
   updateLook(dt);
@@ -2831,7 +3017,9 @@ function update(k, dt) {
     physAcc = Math.min(physAcc + k, 4);
     while (physAcc >= 1 && awake()) {   // fixed 60 Hz physics: every screen plays out the same pile
       physAcc -= 1;
+      const comp = compOn(); if (comp) compBefore();   // Comp: the wind's push, and where everything was
       const res = stepWorld(S.world, windFall());
+      if (comp) compAfter();   // Comp: every new contact is a knock on glass
       if (res.landed) S.cooldown = Math.min(S.cooldown, 6);
       if (res.events.length) handleEvents(res.events);
     }
@@ -2889,21 +3077,21 @@ function flowOpen() {   // from the intro: the ceremony. From the Timer tile lat
 }
 function flowPlan(quiet) {   // Session Plan confirmed
   FLOW.plan = true;
-  if (PREFS.kind === 'task') { let n = 0; while (n < 3 && taskText(n)) FLOW.box[n++] = 5; if (n < 3) FLOW.box[n] = 1; FLOW.exit = quiet || n > 0; }
+  if (PREFS.kind === 'task' && !quiet) { FLOW.box[0] = 1; FLOW.exit = false; }   // Yes replays the ritual; saved tasks stay stored
+  else if (PREFS.kind === 'task') { let n = 0; while (n < 3 && taskText(n)) FLOW.box[n++] = 5; if (n < 3) FLOW.box[n] = 1; FLOW.exit = quiet || n > 0; }
   else FLOW.exit = true;
   FLOW.sub = FLOW.exit; if (!quiet) flowGo(FLOW.exit ? 'exit' : 0); else syncCard();
 }
 function flowRows() {
-  const kind = pref('kind', ICON.task, 'Session Plan', 'Do you have something to do soon?'), set = kind.set;
+  const kind = pref('kind', ICON.task, 'Session Plan', 'Have something to do soon?'), set = kind.set;
   const plan = { ...kind, flow: 'plan', set: (v) => { flowReset(); set(v); }, confirm: () => { if (!FLOW.plan) flowPlan(); else engageRow(CARD.i + 1); } };
   const box = (k) => ({ ic: GLYPH.x, name: 'Let’s Name It', html: `Let’s <span class="pill on">Name It${SHINES}</span>`, kind: 'text', i: k, flow: k,
     desc: () => (stage(k) === 3 || stage(k) === 5 ? taskText(k) : 'What’s the Task?'), hide: () => stage(k) === 0 || stage(k) === 4,
     tap: () => flowTap(k), confirm: () => flowLock(k), focus: () => flowFocus(k) });
-  const timerKey = PREFS.kind === 'break' ? 'breakMins' : 'mins';
-  const exit = { ...pref('exit', ICON.clock, 'Plan an Exit', stopWords), flow: 'exit', hide: () => !FLOW.exit };
-  const timer = { ...pref(timerKey, ICON.clock, 'How long', 'Minutes until the bell.'), flow: 'timer', hide: () => !FLOW.sub || PREFS.exit !== 'timer' };
-  const time = { ic: ICON.clock, name: 'Time', desc: 'When you’ll stop.', kind: 'time', flow: 'time', hide: () => !FLOW.sub || PREFS.exit !== 'time' };
-  return PREFS.kind === 'task' ? [plan, box(0), box(1), box(2), exit, timer, time] : [plan, exit, timer, time];
+  const exit = { ...pref('exit', ICON.clock, 'Plan an Exit', stopWords), flow: 'exit', hide: () => !FLOW.exit,
+    prime: () => FLOW.box.includes(1) };   // beside the lone plus the exit is primed in blue; touching it just lights it, the plus stays
+  const timer = { ...pref('mins', ICON.clock, 'How long', () => `${PREFS.mins} min`), clock: true, flow: 'timer', hide: () => !FLOW.sub || PREFS.exit !== 'timer' };
+  return PREFS.kind === 'task' ? [plan, box(0), box(1), box(2), exit, timer] : [plan, exit, timer];
 }
 // What a box looks like: from its stage and its ceremony, all as classes, so a card rebuilt mid-way still draws the same.
 function flowSync(el, r) {
@@ -2911,12 +3099,12 @@ function flowSync(el, r) {
   const k = r.flow, st = stage(k), c = FLOW.cer[k], b = c.beat, on = (n, b) => el.classList.toggle(n, !!b), tx = el.querySelector('.tx'), ds = el.querySelector('.ds'), ic = el.querySelector(':scope > .ic');
   el.classList.add('box'); el.dataset.k = k;
   on('lead', st === 1); on('golden', b >= 1 && !FLOW.minus[k]); on('gold2', b >= 2); on('locked', st === 3); on('preok', b >= 1 && b <= 3); on('glow', c.hide === 1); on('minus', FLOW.minus[k]); on('plain', st === 5);
-  if (st === 1 || st === 5) el.classList.remove('lit'); if (st === 3) el.classList.add('lit');
+  if (st === 1 || st === 5) el.classList.remove('lit'); if (st === 3) el.classList.toggle('lit', c.hide < 2);   // gold frame while it locks; gone once the next plus is there (a finished module carries no ring)
   tx.classList.toggle('wave', b >= 3); tx.classList.toggle('fin', b >= 5); tx.classList.toggle('gone', st === 3 && c.hide > 0 || st === 5);
   ds.classList.toggle('wave', b >= 3); ds.classList.toggle('fin', b >= 5);
   const want = st === 5 ? 'pen' : st === 1 ? 'plus' : FLOW.minus[k] ? 'dash' : 'x', was = el.dataset.ik;
   if (was !== want) { el.dataset.ik = want; flowIcon(ic, was, want); }
-  const sv = ic.querySelector('svg'); if (sv && want === 'x') sv.style.transform = `rotate(${b >= 1 && !FLOW.minus[k] ? 135 : 0}deg)`;
+  const sv = ic.querySelector('svg'); if (sv && want === 'x') sv.style.transform = b >= 1 && !FLOW.minus[k] ? 'rotate(135deg) scale(0.71)' : 'rotate(0deg)';   // an X turned into a plus is longer by the diagonal: scaled back to the plus's own size
 }
 function flowIcon(ic, was, want) {   // a change of glyph rolls sideways: plus into X, X into a minus
   if (want === 'pen' || was === 'pen' || !ic.querySelector('svg')) {   // only the glyph changes; the shines stay
@@ -2948,7 +3136,7 @@ function flowLock(k) {   // Enter, or the check
   if (c.beat < 2) return;
   FLOW.box[k] = 3; syncCard(); shine(k, '.ok > .shine');
   flowAt(() => { c.hide = 1; syncCard(); }, MS.hide);
-  flowAt(() => { if (k < 2) { FLOW.box[k + 1] = 1; c.hide = 2; syncCard(); } else flowExit(); }, MS.next);
+  flowAt(() => { if (k < 2) { FLOW.box[k + 1] = 1; c.hide = 2; FLOW.exit = FLOW.sub = true; syncCard(); } else flowExit(); }, MS.next);
 }
 function flowExit() {   // on to Plan an Exit: every box goes back to an ordinary row
   FLOW.exit = true; FLOW.box.forEach((s, k) => { if (s === 3 || s === 2) { FLOW.box[k] = taskText(k) ? 5 : 4; FLOW.cer[k] = newCer(); } else if (s === 1) FLOW.box[k] = 0; });
@@ -3001,7 +3189,8 @@ function spot(on, k) {
 const BAR = { bot: '', wx: '', line: '' };
 const icon = (d, more = '') => `<span class="ic">${d.startsWith('<') ? d : svg(d)}${more}</span>`;
 const cell = (attrs, d, word, extra = '') => `<button class="cell" ${attrs}>${icon(d)}<span class="sub">${word}</span>${extra}</button>`;
-const six = (cells) => [...cells, ...Array(Math.max(0, 6 - cells.length)).fill('<span class="cell blank"></span>')].join('');
+// Six cells, or three or fewer that fill the ribbon as double-wide tiles with no dividers (the top ribbon's Task and Timer tile is the same width).
+const six = (cells) => (cells.length && cells.length <= 3 ? cells.map(c => c.replace('class="cell', 'class="cell two')) : [...cells, ...Array(Math.max(0, 6 - cells.length)).fill('<span class="cell blank"></span>')]).join('');
 const val = (t) => `<b class="val">${t}</b>`;
 const skyName = (k) => ({ bolt: 'Lightning', wind: 'Wind', rain: here().snow ? 'Snow' : 'Rain' }[k]);
 const MUTED = `<svg viewBox="0 0 24 24" aria-hidden="true"><path d="${ICON.speaker}"/><path class="hush" d="${ICON.hush}"/></svg>`;
@@ -3013,21 +3202,23 @@ function fitIcons(root) {
     const side = Math.max(b.width, b.height, 1); s.setAttribute('viewBox', `${b.x + b.width / 2 - side / 2} ${b.y + b.height / 2 - side / 2} ${side} ${side}`); s.dataset.fit = '1';
   }
 }
+const pauseCell = () => (S.paused ? cell('data-act="pause"', ICON.play, 'Play') : cell('data-act="pause"', ICON.pause, 'Pause'));   // what touching it will do
 function topCells() {
   return cell('data-act="menu"', ICON.menu, 'Menu') + cell('data-act="scene"', ICON.scene, 'Scene')
     + `<button class="cell two" data-act="session"><span class="half">${icon(ICON.task)}<span class="sub">Task</span></span><span class="half">${icon(ICON.clock)}<span class="sub">Timer</span></span></button>`
-    + cell('data-act="pause"', ICON.pp, 'Pause / Play') + cell('data-act="vol"', VOL, 'Sound');
+    + pauseCell() + cell('data-act="vol"', VOL, 'Sound');
 }
 function botCells() {
   const m = S.mode;
-  if (S.intro && S.intro.go == null) return S.intro.rest ? [['introgo', ICON.skip, 'Skip'], ['introplay', ICON.fwd, 'Play'], ['introrelax', ICON.last, 'Relax']].map(([a, d, w]) => cell(`data-act="${a}"`, `<svg viewBox="0 0 24 24" data-fit="1" aria-hidden="true"><path d="${d}"/></svg>`, w).replace('class="cell"', 'class="cell quiet"')) : [];
-  if (m === 'play') return TOOLS.map(k => cell(`data-tool="${k}"`, ICON[k], TOOL_NAMES[k], `<b class="n">${S.tools[k]}</b>`));
+  if (S.intro && S.intro.go == null) return S.intro.rest ? [['introgo', ICON.skip, 'Skip'], ['introplay', ICON.fwd, 'Play'], ['introrelax', ICON.last, 'Relax']].map(([a, d, w]) => cell(`data-act="${a}"`, `<svg viewBox="0 0 24 24" data-fit="1" aria-hidden="true"><path d="${d}"/></svg>`, w).replace('class="cell"', 'class="cell quiet"')).concat(Array(2).fill('<span class="cell blank"></span>'), cell('data-act="introcalm"', ICON.heart, 'Calm').replace('class="cell"', PREFS.calm ? 'class="cell on"' : 'class="cell quiet"')) : [];   // far right: Low stimulation, a switch, so it works before anything else
+  if (m === 'play') return TOOLS.map(k => cell(`data-tool="${k}"`, ICON[k], TOOL_NAMES[k], S.tools[k] > 0 ? `<b class="n">${S.tools[k]}</b>` : ''));   // a badge only when there is one to use
   if (m === 'relax') return [cell('data-act="deep"', ICON.breathe, 'Deep breath'), cell('data-card="pace"', val((+PREFS.bpm).toFixed(1)), 'Pace'), cell('data-act="play"', ICON.play, 'Play')];
   if (m === 'fidget') return [cell('data-act="pacer"', ICON.orb, 'Pacer'), cell('data-act="drops"', ICON.drop, 'Drops'), cell('data-card="style"', ICON.tune, 'Style')];
   return [cell('data-card="ambient"', val(LABELS.ambient[PREFS.ambient]), 'Ambient'), cell('data-card="ambient"', val(LABELS.fadeAfter[PREFS.fadeAfter]), 'Fades after'), cell('data-act="play"', ICON.play, 'Wake')];
 }
-function wxHTML() {   // folded: the words in a blue ring; open: Weather (all of it), Lightning, Wind, Rain, Severe, and Hide to fold it
+function wxHTML() {   // folded: the words in a blue ring; open: Weather (all of it), Lightning, Wind, Rain, Severe, and Hide to fold it. Comp: the way out, the whole row
   const w = here();
+  if (compOn()) return '<button class="pill esc" data-act="compoff">Leave Comp</button>';
   if (!S.wxOpen || w.dry) return `<button class="pill" data-act="weather"${w.dry ? ' disabled' : ''}>${w.dry ? 'No weather here' : 'Weather Settings'}</button>`;
   return `<nav class="rib">${[cell('data-act="allwx"', ICON.cloud, 'Weather'), ...ATMO.map(k => cell(`data-sky="${k}"`, k === 'rain' && w.snow ? ICON.snow : ICON[k], skyName(k))),
     cell('data-act="severe"', ICON.turn, 'Severe'), cell('data-act="fold"', ICON.left, 'Hide')].join('')}</nav>`;
@@ -3040,21 +3231,23 @@ function lineHTML() {
   const sp = '<button class="sp" data-card="stats" aria-label="Score and time"><span class="star">★</span><b class="num" id="scoreVal"></b><i class="bar"></i><span class="num" id="clock"></span></button>';
   if (LINE.sub === 'sound') return '<div class="sub-menu"><button class="cancel" data-act="subcancel">Cancel</button><button class="pill" data-act="soundcard">Sound Settings</button></div>';
   if (LINE.sub === 'change') return `<button class="pill" data-act="change">Change Settings</button><button class="cancel" data-act="subcancel">Cancel</button>${sp}`;
-  return `<button class="say" data-act="words"><span class="w">${VERB[S.mode]}</span>in<span class="w">${esc(here().label)}</span></button>${sp}`;
+  return `<button class="say" data-act="words"><span class="w">${compOn() ? 'Comp' : VERB[S.mode]}</span>in<span class="w">${esc(here().label)}</span></button>${sp}`;
 }
 function syncBars() {
   const top = $('topBar'), bot = $('botBar'), wx = $('wxBar'), fam = CARD.name && CARDS[CARD.name].tile;
   if (!top.firstChild) { top.innerHTML = topCells(); fitIcons(top); }
+  const pp = S.paused ? 'play' : 'pause'; if (top.dataset.pp !== pp) { top.dataset.pp = pp; const old = top.querySelector('[data-act=pause]'); if (old) { old.outerHTML = pauseCell(); fitIcons(top); } }
   const set = (sel, cls, on) => { const e = top.querySelector(sel); if (e) e.classList.toggle(cls, !!on); };
   set('[data-act=menu]', 'on', fam === 0); set('[data-act=scene]', 'on', fam === 1); set('[data-act=session]', 'on', fam === 2);
   set('[data-act=pause]', 'on', S.paused); set('[data-act=vol]', 'on', !PREFS.sound); set('[data-act=vol]', 'muted', !PREFS.sound);
-  const lkey = [LINE.sub, S.mode, here().label].join(); if (BAR.line !== lkey) { BAR.line = lkey; $('line').innerHTML = lineHTML(); tickBars.t = 0; }
-  const key = [S.mode, here().key, S.intro && S.intro.go == null, S.intro && S.intro.rest, JSON.stringify(S.tools), PREFS.bpm, PREFS.ambient, PREFS.fadeAfter].join();
-  if (BAR.bot !== key) { BAR.bot = key; bot.innerHTML = six(botCells()); }
-  const wkey = [S.wxOpen, here().key, here().snow].join(); if (BAR.wx !== wkey) { BAR.wx = wkey; wx.innerHTML = wxHTML(); }
+  const lkey = [LINE.sub, S.mode, here().label, compOn()].join(); if (BAR.line !== lkey) { BAR.line = lkey; $('line').innerHTML = lineHTML(); tickBars.t = 0; }
+  const key = [S.mode, here().key, S.intro && S.intro.go == null, S.intro && S.intro.rest, JSON.stringify(S.tools), PREFS.calm, PREFS.bpm, PREFS.ambient, PREFS.fadeAfter].join();
+  if (BAR.bot !== key) { BAR.bot = key; const cells = botCells(); bot.innerHTML = six(cells); bot.classList.toggle('wide', cells.length > 0 && cells.length <= 3); }
+  const wkey = [S.wxOpen, here().key, here().snow, compOn()].join(); if (BAR.wx !== wkey) { BAR.wx = wkey; wx.innerHTML = wxHTML(); }
+  document.body.classList.toggle('comp', compOn());
   for (const [a, on] of [['allwx', ATMO.some(k => PREFS.atmo[k].on)], ['severe', S.severe], ['pacer', PREFS.pacer.on], ['drops', PREFS.pacer.drops]]) for (const b of [bot, wx]) { const e = b.querySelector(`[data-act=${a}]`); if (e) e.classList.toggle('on', !!on); }
-  wx.querySelectorAll('[data-sky]').forEach(b => { const on = PREFS.atmo[b.dataset.sky].on; b.classList.toggle('on', on && !S.severe); b.classList.toggle('warn', on && S.severe); });   // severe: what's on turns yellow
-  const sv = wx.querySelector('[data-act=severe]'); if (sv) { sv.classList.toggle('on', false); sv.classList.toggle('warn', S.severe); }
+  wx.querySelectorAll('[data-sky]').forEach(b => b.classList.toggle('on', PREFS.atmo[b.dataset.sky].on));   // green is on, severe or not (yellow left with the colour cleanup)
+  const sv = wx.querySelector('[data-act=severe]'); if (sv) { sv.classList.toggle('on', S.severe); }
   bot.querySelectorAll('[data-tool]').forEach(b => { const k = b.dataset.tool, armed = (k === 'strike' && S.armed) || (k === 'mystery' && S.wild); b.classList.toggle('on', armed); b.classList.toggle('live', armed); b.classList.toggle('none', !S.tools[k] && !armed); });
   for (const r of [top, bot, wx]) fitIcons(r);
   document.body.classList.toggle('intro-in', !!(S.intro && S.intro.rest)); document.body.classList.toggle('intro-ready', !!(S.intro && S.intro.ready)); document.body.classList.toggle('intro-quick', !!(S.intro && S.intro.quick));
@@ -3067,6 +3260,9 @@ function tickBars() {   // every frame: the score and its glow, your time runnin
   const ms = performance.now(); if (ms - (tickBars.t || 0) < 250) return; tickBars.t = ms;
   const t = S.goal ? mmss(Math.ceil(goalLeft())) : new Date().toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' }).toLowerCase();
   const c = $('clock'); if (c && c.textContent !== t) c.textContent = t;
+  const half = $('topBar').querySelectorAll('[data-act=session] .ic'), run = S.goal && S.goal.total > 0;   // Task: green once written. Timer: while a session runs, a whole green ring that recedes to nothing (timer: counterclockwise, end time: clockwise)
+  if (half[0]) { half[0].classList.toggle('on', PREFS.kind === 'task' && tasks().length > 0); half[0].classList.toggle('gold', !!(S.ticks && S.listWon)); }   // gold when the whole list is finished
+  if (half[1]) { const p = run ? clamp(goalLeft() / S.goal.total, 0, 1) : -1; half[1].classList.toggle('arc', p >= 0); half[1].classList.toggle('cw', !!(run && S.goal.cw)); if (p >= 0) half[1].style.setProperty('--p', p.toFixed(3)); }
 }
 function applySeason() {   // the page takes the place's colours; the ribbons stay gloss black
   const s = here(), root = document.documentElement.style;
@@ -3081,20 +3277,21 @@ function applySeason() {   // the page takes the place's colours; the ribbons st
 // keeps your level for when it comes back); a row without one is confirmed. A change is heard and seen at once. Done keeps it;
 // Close puts it back, asking first. Reset goes back to how SoRen came; Help is How to play.
 const LABELS = {
-  mode: Object.fromEntries(Object.entries(MODES).map(([k, m]) => [k, m.name])), overflow: { end: 'Classic', zen: 'Zen' }, kind: { break: 'No', task: 'Yes' }, exit: { time: 'Time', timer: 'Timer', free: 'Free Play' },
+  mode: Object.fromEntries(Object.entries(MODES).map(([k, m]) => [k, m.name])), overflow: { end: 'Classic', zen: 'Zen' }, kind: { break: 'No', task: 'Yes' }, exit: { timer: 'Set', free: 'Free' },
   where: { live: 'Live', ...Object.fromEntries(Object.entries(PLACES).map(([k, p]) => [k, p.label])) },
   clouds: { clear: 'Clear', some: 'Some', overcast: 'Overcast', dark: 'Dark', changing: 'Changing' }, hour: { live: 'Live', dawn: 'Dawn', day: 'Day', dusk: 'Dusk', night: 'Night' },
   ambient: { off: 'Off', rain: 'Rain', wind: 'Wind', night: 'Night', fire: 'Fire' }, fadeAfter: { 15: '15 min', 30: '30 min', 60: '1 hour', 120: '2 hours', 0: 'Never' },
-  mins: { 10: '10 min', 20: '20 min', 30: '30 min', 60: '1 hour' }, breakMins: { 5: '5 min', 10: '10 min', 15: '15 min', 20: '20 min' },
   'pacer.track': { eight: 'Infinity', circle: 'Circle', oval: 'Oval', box: 'Box', zigzag: 'Zigzag' },
   'pacer.glass': { moonstone: 'Moonstone', ember: 'Ember', aurora: 'Aurora', rose: 'Rose quartz', lutz: 'Goldstone', amethyst: 'Amethyst' }
 };
-const RANGES = { bpm: [4, 8, 0.5], vol: [0, 1], ambLv: [0, 1], 'pacer.glow': [0, 1], 'pacer.bright': [0.2, 1], 'pacer.speed': [4, 15, 1] };
+const RANGES = { mins: [3, 96, 3], bpm: [4, 8, 0.5], vol: [0, 1], ambLv: [0, 1], 'pacer.glow': [0, 1], 'pacer.bright': [0.2, 1], 'pacer.speed': [4, 15, 1] };
 const pctOf = (v) => `${Math.round(v * 100)}%`;
-const FMT = { bpm: (v) => (+v).toFixed(1), 'pacer.speed': (v) => `${Math.round(v)} /min` };
+const FMT = { mins: (v) => `${v} min`, breakMins: (v) => `${v} min`, bpm: (v) => (+v).toFixed(1), 'pacer.speed': (v) => `${Math.round(v)} /min` };
 const esc = (t) => String(t).replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' })[c]);
 const text = (t) => (typeof t === 'function' ? t() : t);
-const DESCS = { Mode: () => MODES[CARD.pend.mode || PREFS.mode].note, Rules: () => (PREFS.overflow === 'end' ? 'Classic ends at the line. Zen never ends.' : 'Zen: nothing ends; over the line, the top dissolves.'),
+const DESCS = { Mode: () => MODES[CARD.pend.mode || PREFS.mode].note, Rules: () => (PREFS.overflow === 'end' ? 'Classic ends. Zen never does.' : 'Zen never ends. The top dissolves.'),
+  Place: () => ((CARD.pend.where || PREFS.where) === 'stars' ? 'The real sky, as seen from 41° north.' : 'Live is the season where you are.'),   // the stars are drawn for one latitude: said so
+  Comp: () => (here().dry ? 'Not indoors: Comp needs wind.' : PREFS.comp ? 'Leave Comp under the pool, any time.' : 'Edgier. The line creeps, the wind is wild.'),
   Pace: () => `In for ${(24 / PREFS.bpm).toFixed(1)} s, out for ${(36 / PREFS.bpm).toFixed(1)} s.`, Speed: () => `${Math.round(PREFS.pacer.speed)} laps a minute. Slow is calming.` };
 // A setting's row knows its own control from the setting: on or off is a pill, a few words a pill, many words a wheel, a range a slider.
 function pref(k, ic, name, desc, more = {}) {
@@ -3109,13 +3306,14 @@ const bus = (k, ic, name, desc) => ({ ic, name, desc, kind: 'lvl', min: 0, max: 
 const hub = (ic, name, desc, go) => ({ ic, name, desc, kind: 'hub', go });
 const show = (ic, name, desc, v) => ({ ic, name, desc, kind: 'value', get: v });
 const PLACE = 'We’ll Help. Write it Here';
-const hhmm = (m) => (m < 0 ? '' : `${String(Math.floor(m / 60)).padStart(2, '0')}:${String(m % 60).padStart(2, '0')}`);
-const stopWords = () => (PREFS.exit === 'free' ? 'No timer. You decide when to stop.' : 'A soft bell at three minutes left.');
+const hhmm = (ms) => { const d = new Date(ms); return `${String(d.getHours()).padStart(2, '0')}:${String(d.getMinutes()).padStart(2, '0')}`; };
+const stopWords = () => (PREFS.exit === 'free' ? 'Stop when you’re ready.' : 'Set a session length.');
 const FAQ = [
   ['How does a session go?', 'Settle: the circle, then plan your session: up to three things to do, and how it ends. Touch: play. Return: three breaths out, your list, and Go. When you’re back, tick what you did.'],
   ['How do I play?', 'Touch the pool and slide to move the waiting sphere; let go to drop it. Two of a kind merge into the next size up, and the two largest make a Full Bloom.'],
   ['What are the tools?', 'Strike: touch a sphere; it turns red, then the place’s own strike takes it. Mystery: your next sphere becomes whatever it touches first. Storm: the place’s own weather blows in and every sphere lands somewhere new. A chain of three or a Full Bloom earns one, up to three of each.'],
-  ['What do the colours mean?', 'Green is on. Blue is under your finger, or yours to touch. White is quiet, or off. Red erases. Gold means you did something right. Yellow is severe weather.'],
+  ['What is Comp?', 'Play with the calm taken off, in Menu › Game. The line creeps down; the wind is real and restless. One sphere at a time carries a countdown: merge it in time and the line lifts or a tool is yours; miss it and the line sinks or a wave rolls in. Strike knocks a sphere down a size; Storm is a gust with a hurricane category. Glass knocked hard enough chips, cracks and shatters. No aim line, no Heritage. Leave Comp, under the pool, ends it at once.'],
+  ['What do the colours mean?', 'Green is on. Blue is under your finger, or yours to touch. White is quiet, or off. Red erases. Gold means you did something right.'],
   ['How do I get around?', 'The top ribbon: Menu, Scene, your Task and Timer, Pause, and Sound. Touch the words in the line under it to change what you’re doing or where. Under the pool, Weather Settings opens the weather; the tools sit below it. Every card closes with Close or Done at its foot.'],
   ['What are the modes?', 'Play: the merge game. Relax: hold to breathe in, let go to breathe out. Fidget: a light to follow, drops on still water, the weather in your hands. Rest: the pool fades to dark while sound plays on. Phones stop sound when they lock, so Rest keeps the screen awake; plug in for long sessions.'],
   ['Does SoRen collect anything?', 'No. Everything stays on this phone: no accounts, no ads, no tracking, no notifications, nothing to buy. Leaving costs you nothing.'],
@@ -3131,15 +3329,15 @@ const CARDS = {
     hub(ICON.ask, 'How to play', 'Settle. Touch. Return.', () => openCard('help', true)),
     hub(ICON.flask, 'Beta', 'Rough at the edges. Keep what helps.', () => openCard('beta', true))] },
   scene: { title: 'Scene', tile: 1, stage: true, keys: ['mode', 'where'], rows: () => [
-    pref('mode', ICON.grid, 'Mode', DESCS.Mode), pref('where', ICON.pin, 'Place', 'Live is the season where you are.')],
+    pref('mode', ICON.grid, 'Mode', DESCS.Mode), { ...pref('where', ICON.pin, 'Place', DESCS.Place), opts: CHOICES.where.filter(v => !(PREFS.comp && v === 'heritage')).map(v => [v, LABELS.where[v]]) }],   // Comp and Heritage never meet: indoors there is no wind
     done: () => { const { mode, where } = CARD.pend; closeSheet(); if (where != null && where !== PREFS.where) setPref('where', where); if (mode != null && mode !== S.mode) setPref('mode', mode); } },
-  session: { title: 'Timer and Task', tile: 2, keys: ['kind', 'exit', 'mins', 'stopAt', 'breakMins', 'tasks'], rows: () => flowRows(), norail: true, open: flowOpen, back: flowBack, canBack: () => FLOW.plan,
+  session: { title: 'Timer and Task', tile: 2, keys: ['kind', 'exit', 'mins', 'tasks'], rows: () => flowRows(), norail: true, open: flowOpen, back: flowBack, canBack: () => FLOW.plan,
     done: () => { closeSheet(); startSession(); } },
   sound: { title: 'Sound', tile: 5, keys: ['sound', 'vol', 'mix', 'vibe'], rows: () => [
-    { ...pref('vol', ICON.speaker, 'Volume', 'How loud SoRen is, under your music.'), mute: true, set: (v) => { setPref('vol', v); if (!PREFS.sound) setPref('sound', true); }, on: { get: () => PREFS.sound, set: (v) => setPref('sound', v) } },
+    { ...pref('vol', ICON.speaker, 'Volume', 'How loud, under your music.'), mute: true, set: (v) => { setPref('vol', v); if (!PREFS.sound) setPref('sound', true); }, on: { get: () => PREFS.sound, set: (v) => setPref('sound', v) } },
     bus('game', ICON.note, 'Game', 'Merges, chimes and harmony.'), bus('alerts', ICON.clock, 'Alerts', 'Time bell, done chime and tick.'),
-    bus('breath', ICON.rings, 'Breath', 'Rises and falls with your breath.'), bus('touch', ICON.hand, 'Touch', 'Taps, a fingertip on the glass, drops.'),
-    bus('drone', ICON.hum, 'Drone', 'A low hum that holds it together.'), bus('nature', ICON.leaf, 'Nature', 'Birds, crickets and frogs.'),
+    bus('breath', ICON.rings, 'Breath', 'Rises and falls with your breath.'), bus('touch', ICON.hand, 'Touch', 'Taps, fingertips, drops.'),
+    bus('drone', ICON.hum, 'Drone', 'A low hum that holds it together.'), bus('nature', ICON.leaf, 'Nature', 'Birds, crickets and frogs.'), bus('weather', ICON.cloud, 'Weather', 'Rain, wind and thunder.'),
     pref('vibe', ICON.vibe, 'Vibration', canVibrate ? 'A soft buzz with thunder and bells.' : 'Android phones only. iPhone can’t vibrate.')] },
   pace: { title: 'Pace', bot: 1, keys: ['bpm'], rows: () => [pref('bpm', ICON.hum, 'Pace', DESCS.Pace)] },
   style: { title: 'Style', bot: 2, keys: ['pacer.track', 'pacer.glass', 'pacer.glow', 'pacer.bright', 'pacer.speed'], rows: () => [
@@ -3148,16 +3346,18 @@ const CARDS = {
   ambient: { title: 'Ambient', bot: 0, keys: ['ambient', 'ambLv', 'fadeAfter'], rows: () => [
     pref('ambient', ICON.sea, 'Ambient', 'One steady sound under everything.'), pref('ambLv', ICON.sea, 'Level', 'How loud it plays.'), pref('fadeAfter', ICON.clock, 'Fades after', 'When Rest lets the sound go.')] },
   game: { title: 'Game', tile: 0, keys: ['overflow', 'aim', 'next', 'numbers'], rows: () => [
-    pref('overflow', ICON.flag, 'Rules', DESCS.Rules), pref('aim', ICON.aim, 'Aim', 'A faint line shows where it will land.'),
-    pref('next', ICON.arrow, 'Next', 'Shows the sphere that comes after.'), pref('numbers', ICON.hash, 'Numbers', 'The score and the values on the spheres.'),
+    pref('overflow', ICON.flag, 'Rules', DESCS.Rules), pref('aim', ICON.aim, 'Aim', () => (PREFS.comp ? 'No aim line in Comp.' : 'A faint line shows where it will land.'), { dis: () => PREFS.comp }),
+    pref('next', ICON.arrow, 'Next', 'Shows the sphere that comes after.'), pref('numbers', ICON.hash, 'Numbers', 'Score and sphere values.'),
+    // Comp: a double opt-in. On asks first (the action in blue: nothing is erased); indoors the row is dim and nothing happens.
+    pref('comp', ICON.comp, 'Comp', DESCS.Comp, { dis: () => here().dry, set: (v) => (v ? popup({ title: 'Comp mode?', line: 'The line creeps, the wind is wild, glass can break. Leave any time: nothing is lost.', back: 'Back to Game', act: 'Comp', safe: true, go: () => setPref('comp', true) }) : setPref('comp', false)) }),
     hub(ICON.reset, 'New game', 'Start over. Asks first.', () => popup({ title: 'Start a new game?', line: 'This game ends here.', back: 'Back to Game', act: 'New Game', go: () => { closeSheet(); setMode('play'); startPool(); } })),
     ...(S.prev ? [hub(ICON.play, 'Continue last game', 'Where you left it.', () => { loadPool(S.prev); S.prev = null; closeSheet(); setMode('play'); setPaused(false); say('Your last game', here().label); })] : [])] },
   sky: { title: 'Sky', tile: 0, keys: ['clouds', 'hour'], rows: () => [
     pref('clouds', ICON.cloud, 'Clouds', () => (here().dry ? 'No sky here.' : 'How the sky looks.'), { dis: () => here().dry }),
     pref('hour', ICON.sun, 'Time of day', () => (here().dry ? 'No sky here.' : 'Live follows your clock.'), { dis: () => here().dry })] },
   comfort: { title: 'Comfort', tile: 0, keys: ['calm', 'still', 'breathing'], rows: () => [
-    pref('calm', ICON.heart, 'Low stimulation', 'No flashes, softer thunder, quieter words.'), pref('still', ICON.still, 'Reduce motion', 'What moves on its own is stilled.'),
-    pref('breathing', ICON.rings, 'Breathing', 'The edge and the spheres breathe with you.')] },
+    pref('calm', ICON.heart, 'Low stimulation', 'No flashes. Softer sound and words.'), pref('still', ICON.still, 'Reduce motion', 'What moves on its own is stilled.'),
+    pref('breathing', ICON.rings, 'Breathing', 'Edge and spheres breathe with you.')] },
   stats: { title: 'Statistics', tile: 0, keys: [], rows: () => { const j = journalStats(); return [
     ...(PREFS.numbers ? [show(ICON.star, 'Best', 'Your highest score.', () => fmt(j.best))] : []), show(ICON.task, 'Lists finished', 'Tasks you ticked, all of them.', () => fmt(j.lists)),
     show(ICON.bloom, 'Full Blooms', 'The two largest, merged.', () => fmt(j.blooms)), show(ICON.grid, 'Merges this game', '', () => fmt(S.merges)),
@@ -3165,8 +3365,8 @@ const CARDS = {
   help: { title: 'Help', tile: 0, keys: [], rows: () => FAQ.map(([q, a], i) => hub(ICON.ask, q, a, () => popup({ title: q, line: a, back: 'Back to Help' }))) },
   // Beta: the experiments, on the stars. They read the phone's motion sensor, on the phone; nothing is kept or sent. Done is warp.
   beta: { title: 'Beta', tile: 0, keys: ['beta'], stars: true, done: () => engage(), rows: () => [
-    pref('beta.lookup', ICON.star, 'Look Up', 'Lift the phone: the real stars overhead, to draw.'), pref('beta.chest', ICON.rings, 'Chest breathing', 'In Relax, the phone on your chest follows you.'),
-    pref('beta.heavy', ICON.mystery, 'Heavy glass', 'Big spheres follow your finger slowly.')] }
+    pref('beta.lookup', ICON.star, 'Look Up', 'Lift the phone to see the stars.'), pref('beta.chest', ICON.rings, 'Chest breathing', 'In Relax, phone on chest follows you.'),
+    pref('beta.heavy', ICON.mystery, 'Heavy glass', 'Big spheres move slowly.')] }
 };
 const CARD = { name: null, stack: [], rows: [], i: 0, snap: '', pend: {}, stage: false };
 const U = (n) => `calc(${n} * var(--u))`;
@@ -3174,8 +3374,7 @@ const ROW = 132, CARD_W = 1166, RAIL_TOP = 166;   // the card grid, in u: same n
 const SHINES = '<span class="shine"></span><span class="shine r"></span>';   // the gold flash of the flow ceremony, part of every box row
 const okHTML = (more = '') => `<button class="ok" data-ok aria-label="On or off">${icon(ICON.check)}${more}</button>`;
 function ctlHTML(r, i) {
-  if (r.kind === 'lvl') return `<input class="lvl" type="range" min="${r.min}" max="${r.max}" step="${r.step}" data-lvl="${i}" aria-label="${r.name}"><span class="pct num"></span>`;
-  if (r.kind === 'time') return `<input class="due" type="time" data-stop value="${hhmm(PREFS.stopAt)}" aria-label="${r.name}">`;
+  if (r.kind === 'lvl') return `<input class="lvl" type="range" min="${r.min}" max="${r.max}" step="${r.step}" data-lvl="${i}" aria-label="${r.name}"><span class="pct num"></span>${r.clock ? `<input class="due" type="time" data-stop aria-label="Stop time">` : ''}`;
   if (r.kind === 'seg') return `<div class="seg${r.onoff ? ' onoff' : ''}${r.opts.length > 2 && !r.onoff ? ' x3' : ''}"><i></i>${r.opts.map(([v, w], j) => `<button data-seg="${i}:${j}">${w}</button>`).join('')}</div>`;
   if (r.kind === 'wheel') return `<div class="wheel" data-wheel="${i}" role="listbox" aria-label="${r.name}"><s class="up"></s><b></b><s class="dn"></s></div>`;
   if (r.kind === 'hub') return `<span class="go">${icon(ICON.right)}</span>`;
@@ -3198,7 +3397,7 @@ function syncCard() {   // every row shows its setting as it stands
     const el = rows[i]; if (!el) return;
     const off = !!(r.on && !r.on.get()), shown = !(r.hide && r.hide()), lit = i === CARD.i && shown, dis = !!(r.dis && r.dis());
     rowShow(el, shown);
-    el.classList.toggle('lit', lit); el.classList.toggle('off', off); el.classList.toggle('dis', dis);
+    el.classList.toggle('lit', lit); el.classList.toggle('off', off); el.classList.toggle('dis', dis); el.classList.toggle('clock', !!r.clock); el.classList.toggle('prime', !!(r.prime && r.prime() && !lit));
     const ic = el.querySelector(':scope > .ic'), want = off && r.mute ? 'mute' : 'own';
     if (r.flow == null && ic.dataset.is !== want) { ic.dataset.is = want; ic.innerHTML = want === 'mute' ? MUTED : svg(r.ic); }
     const ds = el.querySelector('.ds'), d = text(r.desc) || ''; if (ds.textContent !== d) ds.textContent = d;
@@ -3206,6 +3405,7 @@ function syncCard() {   // every row shows its setting as it stands
       const inp = el.querySelector('.lvl'), v = off ? r.min : r.get();
       if (document.activeElement !== inp || off) inp.value = v;
       inp.style.setProperty('--p', `${((inp.value - r.min) / (r.max - r.min) * 100).toFixed(1)}%`);
+      const due = el.querySelector('.due'); if (due && document.activeElement !== due) due.value = hhmm(Date.now() + r.get() * MIN);   // the end, as a clock
       el.querySelector('.pct').textContent = off ? (r.fmt === pctOf ? '0%' : r.fmt(r.min)) : r.fmt(r.get());
     } else if (r.kind === 'seg') {
       const v = String(r.get()), k = Math.max(0, r.opts.findIndex(([o]) => String(o) === v)), seg = el.querySelector('.seg');
@@ -3215,7 +3415,6 @@ function syncCard() {   // every row shows its setting as it stands
       const v = String(r.get()), k = Math.max(0, r.opts.findIndex(([o]) => String(o) === v)), w = el.querySelector('.wheel'), lab = (j) => (r.opts[j] ? r.opts[j][1] : '');
       w.children[0].textContent = lab(k - 1); w.children[1].textContent = lab(k); w.children[2].textContent = lab(k + 1); w.dataset.k = k;
     } else if (r.kind === 'value') { const b = el.querySelector('.big'), t = r.get(); if (b.textContent !== t) b.textContent = t; }
-    else if (r.kind === 'time') { const inp = el.querySelector('.due'); if (document.activeElement !== inp) inp.value = hhmm(PREFS.stopAt); }
     if (r.flow != null) flowSync(el, r);
   });
   const bk = $('mcFoot').querySelector('[data-foot=back]'); if (bk) bk.classList.toggle('off', !CARDS[CARD.name].canBack());
@@ -3231,11 +3430,12 @@ function rowShow(el, shown) {   // a row that isn't there yet: kept out of sight
   else { el.classList.add('fall'); setTimeout(() => { if (el.dataset.vis === '0') el.classList.add('gone'); el.classList.remove('fall'); }, ms()); }
 }
 function engageRow(i) { if (i >= 0 && i < CARD.rows.length && i !== CARD.i && !(CARD.rows[i].hide && CARD.rows[i].hide())) { CARD.i = i; syncCard(); } }
-function placePill() {   // the pill, left-justified under the tile it belongs to, kept on the card
-  const def = CARDS[CARD.name], mc = $('mc'), pill = $('mcPill');
-  const tile = def.bot != null ? $('botBar').children[def.bot] : $('topBar').children[[0, 1, 2, 2, 3, 4][def.tile]];   // Task and Timer are one tile
-  const m = mc.getBoundingClientRect(), u = m.width / CARD_W, x = tile ? tile.getBoundingClientRect().left - m.left : 20 * u;
-  pill.style.left = `${clamp(x, 20 * u, m.width - pill.offsetWidth - 20 * u)}px`;
+function fitCard() {   // the card is three zones: the line, the gap, the pool; it ends where the pool ends
+  const mc = $('mc'); mc.style.top = `${$('line').offsetTop}px`; mc.style.height = `${$('pool').getBoundingClientRect().bottom - $('line').getBoundingClientRect().top}px`;
+}
+function placePill() {   // the pill, flush left like every other pill (20u in: about 7 px on a phone); Timer and Task centred, however it was opened
+  const mc = $('mc'), pill = $('mcPill'), m = mc.getBoundingClientRect(), u = m.width / CARD_W;
+  pill.style.left = `${CARD.name === 'session' ? (m.width - pill.offsetWidth) / 2 : 20 * u}px`;
 }
 function openCard(name, push) {
   if (!CARDS[name]) return;
@@ -3250,7 +3450,7 @@ function openCard(name, push) {
   $('mcFoot').querySelector('[data-foot=help]').classList.toggle('none', name === 'help');
   $('mcPop').hidden = true;
   if (CARDS[name].open) CARDS[name].open();
-  const mc = $('mc'); mc.style.top = `${$('line').offsetTop}px`; mc.hidden = false; mc.classList.toggle('stars', !!CARDS[name].stars);   // Beta opens on the stars
+  const mc = $('mc'); mc.hidden = false; fitCard(); mc.classList.toggle('stars', !!CARDS[name].stars);   // Beta opens on the stars
   cardRows(); placePill(); syncBars();
 }
 const changed = () => JSON.stringify(PREFS) !== CARD.snap || Object.keys(CARD.pend).some(k => CARD.pend[k] !== getPref(k));
@@ -3271,10 +3471,10 @@ function closeSheet() {   // everything away, as it stands (time's up, or Rest, 
   try { canvas.focus({ preventScroll: true }); } catch (e) {}
   syncUI(); if (was === 'session') setTimeout(welcome, TIME.beat * 1000);   // into the session: the breeze, once
 }
-function popup({ title, line, back, act, go }) {   // the one pop-up: a question, a line, ‹ back in blue, › the action in red
+function popup({ title, line, back, act, go, safe }) {   // the one pop-up: a question, a line, ‹ back in blue, › the action in red (blue when nothing is erased: safe)
   const p = $('mcPop');
   p.innerHTML = `<h3>${esc(title)}</h3><p>${esc(line)}</p><div class="two">${cell('data-pop="back"', ICON.left, esc(back))}${act ? cell('data-pop="go"', ICON.right, esc(act)) : ''}</div>`;
-  p.querySelector('[data-pop=back]').classList.add('pick'); const g = p.querySelector('[data-pop=go]'); if (g) g.classList.add('erase');
+  p.querySelector('[data-pop=back]').classList.add('pick'); const g = p.querySelector('[data-pop=go]'); if (g) g.classList.add(safe ? 'pick' : 'erase');
   POP.go = go; p.hidden = false; fitIcons(p);
 }
 const POP = { go: null };
@@ -3305,6 +3505,7 @@ function setPref(k, v) {   // a change takes effect everywhere, at once, and is 
   if (k === 'where') newWorld();
   else if (k === 'kind' && CARD.name === 'session') cardRows();
   else if (k === 'overflow') S.fair = S.world.balls.length || S.score ? S.fair && v === 'end' : v === 'end';   // changing the rules mid-game: it no longer counts
+  else if (k === 'comp') { if (v) { if (S.mode !== 'play') setMode('play'); compStart(); } else compStop(); }
   else if (k === 'fadeAfter' && S.rest) S.rest.left = v * 60;
   else if (k.startsWith('beta.') && v && k !== 'beta.heavy') askSensor(k === 'beta.lookup' ? 'tilt' : 'moving', (ok) => { if (!ok) { setPrefRaw(k, false); savePrefs(); syncUI(); say('Not on this device', 'It needs a phone’s motion sensor'); } });   // iPhones ask once
   syncUI();
@@ -3381,6 +3582,8 @@ function bind() {
     introstart: () => { $('introGo').classList.add('on'); S.intro.eng = S.intro.t; introGo(); FLOW.fresh = true; openCard('session'); },   // the box turns green and the circle stops breathing
     introgo: () => { introGo(); S.prev = null; S.goal = null; setMode('play'); setPaused(false); syncUI(); setTimeout(welcome, TIME.beat * 1000); },   // Skip: the game as it is
     introplay: () => { introGo(); S.prev = null; S.goal = null; setMode('play'); setPaused(false); Object.assign(S, { zen: true, fair: false }); syncUI(); setTimeout(welcome, TIME.beat * 1000); },   // Play now: the base game, Zen for this game, no timer
+    introcalm: () => setPref('calm', !PREFS.calm),
+    compoff: () => setPref('comp', false),   // Leave Comp: one touch, nothing lost
     introrelax: () => { introGo(); S.prev = null; setMode('relax'); setTimeout(welcome, TIME.beat * 1000); },
     engage, close: closeSheet
   };
@@ -3433,12 +3636,12 @@ function bind() {
   });
   document.addEventListener('pointercancel', () => { drag = null; });
   document.addEventListener('input', (e) => {
-    const lv = e.target.closest('[data-lvl]'); if (lv) { const i = +lv.dataset.lvl; engageRow(i); CARD.rows[i].set(+lv.value); syncCard(); return; }
+    const lv = e.target.closest('[data-lvl]'); if (lv) { const i = +lv.dataset.lvl; engageRow(i); CARD.rows[i].set(+lv.value); if (CARD.rows[i].flow === 'timer') { PREFS.byClock = false; savePrefs(); } syncCard(); return; }
     const tx = e.target.closest('[data-task]'); if (tx) { const i = +tx.dataset.task; PREFS.tasks[i] = { text: tx.value.slice(0, 60) }; savePrefs(); syncCard(); }
   });
-  document.addEventListener('change', (e) => {   // a stop time settled
-    const st = e.target.closest('[data-stop]');
-    if (st) { const [h, m] = st.value.split(':').map(Number); PREFS.stopAt = st.value ? h * 60 + m : -1; savePrefs(); syncCard(); }
+  document.addEventListener('change', (e) => {   // a stop time settled: the slider follows it
+    const du = e.target.closest('.due'); if (!du || !du.value) return; const [h, m] = du.value.split(':').map(Number);
+    PREFS.mins = clamp((h * 60 + m - nowMins() + 1440) % 1440, 3, 96); PREFS.byClock = true; savePrefs(); syncCard();
   });
 
   document.addEventListener('focusin', (e) => { const r = e.target.closest && e.target.closest('[data-row]'); if (!r) return; engageRow(+r.dataset.row); const d = CARD.rows[+r.dataset.row]; if (d && d.focus && e.target.matches('.tx')) d.focus(); });
@@ -3458,7 +3661,7 @@ function bind() {
     updateWarmth(); syncBars(); if (S.mode === 'rest') requestWake(true);
   });
   window.addEventListener('pagehide', flush);
-  window.addEventListener('resize', () => { setupDPI(); if (CARD.name) { $('mc').style.top = `${$('line').offsetTop}px`; placePill(); } });
+  window.addEventListener('resize', () => { setupDPI(); if (CARD.name) { fitCard(); placePill(); } });
 }
 function setupDPI() { const dpr = poolDPR(); canvas.width = Math.round(LW * dpr); canvas.height = Math.round(LH * dpr); ctx.setTransform(dpr, 0, 0, dpr, 0, 0); makeSprites(); }
 // The slider's handle: a blue ring round white, with ‹ › (or, on the rail, up and down).
