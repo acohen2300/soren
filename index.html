@@ -54,11 +54,11 @@ button { cursor: pointer; background: none; border: 0; padding: 0; }
 .cell + .cell::before { content: ''; position: absolute; left: 0; top: calc(3 * var(--u)); bottom: calc(3 * var(--u)); width: calc(2 * var(--u)); background: var(--edge); }
 .cell.two { flex-grow: 2; } .cell.blank { pointer-events: none; }
 .cell:active:not(:disabled) { background: var(--chip); }
-.ic { position: absolute; left: 50%; top: calc(44 * var(--u)); width: calc(44 * var(--u)); height: calc(44 * var(--u)); transform: translate(-50%, -50%); display: grid; place-items: center; }
+.ic { position: absolute; left: 50%; top: calc(50 * var(--u));   /* ring 14 from the top, word 13 from the bottom, 3 between: centred in the row */ width: calc(44 * var(--u)); height: calc(44 * var(--u)); transform: translate(-50%, -50%); display: grid; place-items: center; }
 .ic svg { width: 100%; height: 100%; overflow: visible; fill: none; stroke: currentColor; stroke-width: calc(4 * var(--u)); stroke-linecap: round; stroke-linejoin: round; }
 .ic svg path { vector-effect: non-scaling-stroke; }
 .ic .val { font-weight: 700; font-size: var(--t1); line-height: 1; white-space: nowrap; }
-.sub { position: absolute; left: 0; right: 0; top: calc(100 * var(--u)); transform: translateY(-50%); text-align: center; font-weight: 600; font-size: var(--t2); line-height: 1; color: var(--label); white-space: nowrap; overflow: visible; letter-spacing: -0.01em; }
+.sub { position: absolute; left: 0; right: 0; top: calc(104 * var(--u)); transform: translateY(-50%); text-align: center; font-weight: 600; font-size: var(--t2); line-height: 1; color: var(--label); white-space: nowrap; overflow: visible; letter-spacing: -0.01em; }
 .cell.two .half { position: absolute; top: 0; bottom: 0; left: 0; width: 50%; } .cell.two .half + .half { left: 50%; }
 .n { position: absolute; left: calc(50% + 52 * var(--u)); top: calc(10 * var(--u)); min-width: calc(40 * var(--u)); height: calc(40 * var(--u)); padding: 0 calc(8 * var(--u)); border-radius: var(--r-pill); background: var(--label); color: var(--black); font-weight: 700; font-size: var(--t2); line-height: calc(40 * var(--u)); text-align: center; transform: translateX(-50%); }
 /* The ring: a rounded square round the icon only, never the whole tile. Green on, blue under your finger, white quiet, red erasing. */
@@ -209,7 +209,7 @@ body.intro-quick.intro-in .soren, body.intro-quick.intro-in .go-in { transition-
 
 /* ---------- The first session: a lone plus, a box to write in, gold and a wash of green ---------- */
 .mrow.gone { display: none; }
-.mrow.rise { animation: rise .8s ease both; overflow: hidden; } .mrow.fall { animation: fall .8s ease both; overflow: hidden; }
+.mrow.rise { animation: rise var(--sweep) ease both; overflow: hidden; } .mrow.fall { animation: fall var(--sweep) ease both; overflow: hidden; }   /* a row comes and goes in a sweep: nothing to wait for */
 @keyframes rise { from { height: 0; opacity: 0; } to { height: var(--row); opacity: 1; } }
 @keyframes fall { from { height: var(--row); opacity: 1; } to { height: 0; opacity: 0; } }
 .seg.x3 button { width: calc(164 * var(--u)); } .seg.x3 i { width: calc(154 * var(--u)); transform: translateX(calc(164 * var(--u) * var(--k, 0))); }
@@ -255,7 +255,9 @@ body.intro-quick.intro-in .soren, body.intro-quick.intro-in .go-in { transition-
 #spot { position: fixed; z-index: 40; pointer-events: none; opacity: 0; transition: opacity 1.2s ease; box-shadow: 0 0 0 200vmax rgba(0, 0, 0, .68); } #spot.on { opacity: 1; }
 #mcFoot [data-foot=back].off { opacity: .35; pointer-events: none; }
 .foot .cell[data-foot=done] > .ic { --ring: rgb(var(--pick)); } .foot .cell.ready > .ic { filter: drop-shadow(0 0 calc(10 * var(--u)) rgba(var(--pick), 0.9)); }
-.foot .cell[data-foot=done] { flex-basis: calc(388.66 * var(--u)); margin-left: auto; } .foot .cell[data-foot=done] > .ic::after { width: calc(330 * var(--u)); }   /* Done: a double-wide pill, ending where Back ends, on every card */
+.foot .cell[data-foot=done] { flex-basis: calc(388.66 * var(--u)); margin-left: auto; } .foot .cell[data-foot=done] > .ic { left: calc(100% - 97.17 * var(--u)); } .foot .cell[data-foot=done] .sub { left: auto; width: calc(194.33 * var(--u)); }   /* Done keeps its own slot, the last; its pill reaches left, the normal gap short of Back's ring */
+.foot .cell[data-foot=done] > .ic::after { left: auto; right: calc(50% - 36 * var(--u)); transform: translateY(-50%); width: calc(266 * var(--u)); transition: width var(--sweep) ease-in, box-shadow var(--sweep); }
+.foot .cell.ready > .ic::after { width: calc(72 * var(--u)); }   /* the last row finished: the pill closes to the ring, the eye lands on the check */
 .mrow.recede::before { animation: recede .9s ease-in forwards; } @keyframes recede { to { clip-path: inset(0 0 0 100%); } }   /* the last row is finished: its ring draws off to the right, into Done */
 .rail { position: absolute; left: calc(1136 * var(--u)); width: calc(60 * var(--u)); transform: translateX(-50%); touch-action: none; }
 .rail::before { content: ''; position: absolute; left: 50%; top: 0; bottom: 0; width: calc(8 * var(--u)); transform: translateX(-50%); border-radius: calc(4 * var(--u)); background: var(--edge); }
