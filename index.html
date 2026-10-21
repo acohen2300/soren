@@ -125,6 +125,9 @@ body.comp #game { filter: saturate(1.25) contrast(1.05); }
   text-shadow: 0 0 calc(10 * var(--u)) rgba(var(--pick), 0.95), 0 0 calc(26 * var(--u)) rgba(var(--pick), 0.75), 0 0 calc(52 * var(--u)) rgba(var(--pick), 0.45); }
 .go-in { top: calc(50% + 36 * var(--u)); width: calc(88 * var(--u)); height: calc(88 * var(--u)); transform: translate(-50%, -50%); background: none; border: 0; color: var(--ink); }
 .go-in .ic { top: 50%; --ring: rgb(var(--ink-rgb)); } .go-in .ic::after { transition-duration: 1.4s; }
+.go-two { position: absolute; left: 50%; top: calc(50% - 14 * var(--u)); width: calc(388.66 * var(--u)); height: calc(132 * var(--u)); transform: translateX(-50%); display: none; }   /* Start with a game waiting: Resume or New, in the circle, in place of the check */
+body.intro-two .go-in { display: none; } body.intro-two .go-two { display: flex; }
+.go-two .cell { flex: 0 0 calc(194.33 * var(--u)); } .go-two .cell::before { display: none; } .go-two .ic { --ring: rgb(var(--pick)); }
 body.intro-in .soren, body.intro-in .go-in { opacity: 1; transition: opacity 3s cubic-bezier(0.4, 0, 0.2, 1); }
 body.intro-ready .go-in { pointer-events: auto; } body.intro-ready .go-in .ic { --ring: rgb(var(--pick)); }
 .go-in.on > .ic { --ring: rgb(var(--on)); --tint: rgba(var(--on), 0.3); } .go-in.on .ic::after { transition-duration: 0.3s; }
@@ -208,7 +211,8 @@ body.intro-quick.intro-in .soren, body.intro-quick.intro-in .go-in { transition-
 .opts .o2 { left: calc(96 * var(--u)); transition-delay: 0s; } .mrow.open .opts .o1 { transform: none; } .mrow.open .opts .o2 { transform: none; transition-delay: var(--quick); } .mrow.open .opts .o1 { transition-delay: 0s; }
 .opts .ic { left: calc(60 * var(--u)); top: 0; cursor: pointer; } .opts .o1 > .ic { --ring: rgb(var(--ink-rgb)); color: rgb(var(--red)); } .opts .o1 > .ic svg { transform: rotate(45deg); }
 .opts .o2 > .ic { --ring: rgb(var(--pick)); color: rgb(var(--ink-rgb)); } .opts .o2 > .ic svg { transform: rotate(90deg); } .mrow.two .opts .o2 { display: none; }
-.mrow.box.lead > .opts { opacity: 1; pointer-events: auto; } .mrow:not(.lead) > .opts { display: none; }
+.mrow.box.lead > .opts, .mrow.box.offer > .opts { opacity: 1; pointer-events: auto; } .mrow:not(.lead):not(.offer) > .opts { display: none; }
+.mrow.offer .opts .o1, .mrow.offer .opts .o2 { transform: none; transition-delay: 0s; } .mrow.offer .nm, .mrow.offer .ds { opacity: 0; }   /* the next move's row, open at the check: + ✕ − beside its icon until the box is touched */
 .mrow.box .nm .pill { height: calc(54 * var(--u)); padding: 0 calc(18 * var(--u)); font-size: var(--t2); font-weight: 700; font-style: italic; margin-left: calc(4 * var(--u)); vertical-align: middle; color: var(--ink); transition: color var(--sweep); }
 .mrow.box .tx { left: calc(462 * var(--u)); width: calc(556 * var(--u)); height: calc(76 * var(--u)); top: 50%; border: calc(3 * var(--u)) solid var(--label); border-radius: calc(22 * var(--u)); padding: 0 calc(8 * var(--u)); font-size: 16px; background-color: rgba(var(--ink-rgb), .04); transition: border-color var(--quick), box-shadow var(--sweep), opacity var(--sweep); }
 .mrow.box .tx:focus { border-color: rgb(var(--ink-rgb)); box-shadow: 0 0 calc(30 * var(--u)) rgba(var(--ink-rgb), .28), inset 0 0 calc(14 * var(--u)) rgba(var(--ink-rgb), .08); }
@@ -221,6 +225,7 @@ body.intro-quick.intro-in .soren, body.intro-quick.intro-in .go-in { transition-
 .mrow.gold2 .pill { color: rgb(var(--gold)); --ring: rgb(var(--gold)); }
 .mrow.locked.lit::before { box-shadow: inset 0 0 0 calc(3 * var(--u)) rgb(var(--gold)); transition: box-shadow var(--sweep); } .mrow.locked > .ic { --ring: rgb(var(--gold)); }
 .mrow.locked .ok { color: rgb(var(--gold)); } .mrow.locked .ok .ic { --ring: rgb(var(--gold)); }
+.mrow.locked::before { inset: calc(3 * var(--u)); border-radius: calc(var(--r) - 3 * var(--u)); background: rgba(var(--gold), .3); }   /* a task locked in: its own gold at 30%, inside the line, never on it */
 .mrow.box .ok { overflow: visible; transition: color var(--settle) ease; } .mrow.box .ok .ic::after { transition-duration: var(--settle); }
 .mrow.preok:not(.locked) .ok { color: rgb(var(--pick)); } .mrow.preok:not(.locked) .ok .ic { --ring: rgb(var(--pick)); }
 .mrow .ds.wave { background: linear-gradient(90deg, rgb(var(--on)) 0%, rgb(var(--on)) 38%, var(--label) 62%, var(--label) 100%); background-size: 260% 100%; background-position: 100% 0; -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent; animation: wash var(--long) cubic-bezier(.45, .05, .55, .95) forwards; }
@@ -241,10 +246,10 @@ body.intro-quick.intro-in .soren, body.intro-quick.intro-in .go-in { transition-
 .mrow > .ic svg.uni { color: rgb(var(--gold)); } .mrow > .ic svg.uni path { vector-effect: none; stroke-width: 3.6; stroke-dasharray: 1; stroke-dashoffset: 1; animation: draw var(--long) ease-out forwards; }   /* the mythical animal draws itself */
 @keyframes draw { to { stroke-dashoffset: 0; } } body.rm .mrow > .ic svg.uni path { stroke-dashoffset: 0; }
 .mrow.locked .ok { display: block; }   /* a task locked in: no ring round the row, its check stays gold */
-.foot .cell[data-foot=done] > .ic { --ring: rgb(var(--pick)); } .foot .cell.ready > .ic { filter: drop-shadow(0 0 calc(10 * var(--u)) rgba(var(--pick), 0.9)); }
+.foot .cell[data-foot=done] > .ic { --ring: rgb(var(--pick)); } 
 .foot .cell[data-foot=done] { flex-basis: calc(388.66 * var(--u)); margin-left: auto; } .foot .cell[data-foot=done] > .ic { left: calc(100% - 97.17 * var(--u)); } .foot .cell[data-foot=done] .sub { left: auto; width: calc(194.33 * var(--u)); }   /* Done keeps its own slot, the last; its pill reaches left, the normal gap short of Back's ring */
 .foot .cell[data-foot=done] > .ic::after { left: auto; right: calc(50% - 36 * var(--u)); transform: translateY(-50%); width: calc(266 * var(--u)); transition: width var(--sweep) ease-in, box-shadow var(--sweep); }
-.foot .cell.ready > .ic::after { width: calc(72 * var(--u)); }   /* the last row finished: the pill closes to the ring, the eye lands on the check */
+.foot .cell.ready > .ic::after { width: calc(72 * var(--u)); box-shadow: inset 0 0 0 calc(4 * var(--u)) var(--ring, transparent), 0 0 calc(10 * var(--u)) rgba(var(--pick), 0.9); }   /* the last row finished: the pill closes to the ring, the eye lands on the check */
 .mrow.recede::before { animation: recede var(--sweep) ease-in forwards; } @keyframes recede { to { clip-path: inset(0 0 0 100%); } }   /* the last row is finished: its ring draws off to the right, into Done */
 .rail { position: absolute; left: calc(1136 * var(--u)); width: calc(60 * var(--u)); transform: translateX(-50%); touch-action: none; }
 .rail::before { content: ''; position: absolute; left: 50%; top: 0; bottom: 0; width: calc(8 * var(--u)); transform: translateX(-50%); border-radius: calc(4 * var(--u)); background: var(--edge); }
@@ -294,7 +299,7 @@ body.rm *, body.rm *::before, body.rm *::after { transition: none !important; an
   <div class="pool-wrap">
     <div class="pool" id="pool">
       <canvas id="game" tabindex="0" aria-label="The pool. Touch and slide to move the waiting sphere, let go to drop it; or the arrow keys and Space. In Relax, hold to breathe in and let go to breathe out."></canvas>
-      <div class="soren" aria-hidden="true">Soren</div><button class="go-in" id="introGo" data-act="introstart" aria-label="Session start"><span class="ic"><svg viewBox="0 0 24 24"><path d="M3 12.5l6 6L21 6"/></svg></span></button>
+      <div class="soren" aria-hidden="true">Soren</div><button class="go-in" id="introGo" data-act="introstart" aria-label="Session start"><span class="ic"><svg viewBox="0 0 24 24"><path d="M3 12.5l6 6L21 6"/></svg></span></button><div class="go-two" id="introTwo"></div>
       <div class="banner" id="banner" aria-live="polite"><div id="bannerTitle"></div><div id="bannerSub"></div></div>
     </div>
   </div>
@@ -527,7 +532,7 @@ const ENV = { cover: 0, gloom: 0, precip: 0, rain: 0, snow: 0, wind: 0, blow: 0,
 const FEEL = { life: 0.45, heave: 0.035, glow: 0.65 };
 
 /* ---------- Storage (guarded: private windows and sandboxes can throw) ---------- */
-const VERSION = 71.2, PHYSICS_ID = '12627fd9';   // the build, and the first eight of the locked Physics block's hash
+const VERSION = 71.3, PHYSICS_ID = '12627fd9';   // the build, and the first eight of the locked Physics block's hash
 const JKEY = 'soren:journal:p5', JKEY_OLD = 'somatic-resonance:journal:v2', PKEY = 'soren:prefs:p5', SKEY = 'soren:pool:p5';
 function loadJSON(key) { try { const v = JSON.parse(localStorage.getItem(key) || 'null'); return v && typeof v === 'object' ? v : {}; } catch (e) { return {}; } }
 const SAVED = {};   // what each key last held: a save that changes nothing writes nothing
@@ -2382,11 +2387,6 @@ function newPool() {
   if (S.parked) unpark(); else hideCard();
   if (PREFS.comp) compStart();   // a fresh game in Comp starts its line and its clocks again
 }
-function resumeAsk(fresh) {   // Play or Start with a game waiting: one question, only then. Resume skips the plan; the Task tile is a touch away
-  if (!S.prev) { fresh(); return; }
-  showCard({ title: 'Still waiting', rows: [{ ic: ICON.play, name: 'Your last game', desc: `${PREFS.numbers ? fmt(S.prev.score) + ' · ' : ''}where you left it` }],
-    answers: [['Resume', () => { const p = S.prev; introLeave('play'); loadPool(p); syncUI(); }, ICON.left], ['New game', fresh]] });
-}
 function startPool() { S.prev = null; newPool(); savePool(); syncUI(); say('A fresh game', here().label); }
 function keepGoing() { Object.assign(S, { gameOver: false, overT: 0, fair: false, zen: true }); savePool(); syncUI(); say('Keep going', 'Zen for this game · nothing ends'); }
 // Where you are can change any time: the same pool, repainted.
@@ -3290,19 +3290,20 @@ function flowOpen() {   // from the intro: the ceremony. From the Timer tile lat
 }
 function flowPlan(quiet) {   // Session Plan confirmed
   FLOW.plan = true;
-  if (PREFS.kind === 'task' && !quiet) { FLOW.box[0] = 1; FLOW.exit = false; }   // Yes replays the ritual; saved tasks stay stored
+  if (PREFS.kind === 'task' && !quiet) { FLOW.box[0] = 2; FLOW.exit = false; }   // Yes replays the ritual; saved tasks stay stored
   else if (PREFS.kind === 'task') { let n = 0; while (n < 3 && taskText(n)) FLOW.box[n++] = 5; if (n < 3) FLOW.box[n] = 1; FLOW.exit = quiet || n > 0; }
   else FLOW.exit = true;
   FLOW.sub = FLOW.exit && PREFS.exit === 'timer'; if (!quiet) flowGo(FLOW.exit ? 'exit' : 0); else syncCard();
 }
+// A choice on Session Plan opens the next row at that touch (bkRow reset: it is not a change on a last row, so nothing recedes).
 function flowRows() {
   const kind = pref('kind', ICON.task, 'Session Plan', 'Have something to do soon?'), set = kind.set;
-  const plan = { ...kind, flow: 'plan', set: (v) => { flowReset(); set(v); }, confirm: () => { if (!FLOW.plan) flowPlan(); else finishRow(CARD.i); } };
+  const plan = { ...kind, flow: 'plan', set: (v) => { if (FLOW.plan && v === kind.get()) return; flowReset(); CARD.bkRow = -2; set(v); flowPlan(); }, confirm: () => { if (!FLOW.plan) flowPlan(); else finishRow(CARD.i); } };
   const box = (k) => ({ ic: BARS, name: 'Let’s Name It', html: `Let’s <span class="pill on">Name It${SHINES}</span>`, kind: 'text', i: k, flow: k,
     desc: () => (stage(k) === 3 || stage(k) === 5 ? taskText(k) : stage(k) === 6 ? 'Not now' : 'What’s the Task?'), hide: () => stage(k) === 0 || stage(k) === 4,
     tap: () => flowTap(k), opt: (o) => flowOpt(k, o), confirm: () => flowLock(k), focus: () => flowFocus(k), typed: () => flowType(k) });
   const ex = pref('exit', ICON.clock, 'Plan an Exit', stopWords), mins = pref('mins', ICON.clock, 'How long', () => `${PREFS.mins} min`);
-  const exit = { ...ex, flow: 'exit', hide: () => !FLOW.exit, prime: () => FLOW.box.includes(1),   // beside the lone plus the exit is primed in blue
+  const exit = { ...ex, flow: 'exit', hide: () => !FLOW.exit, prime: () => FLOW.box.includes(1) || FLOW.box.includes(2),   // beside the lone plus the exit is primed in blue
     set: (v) => { ex.set(v); FLOW.sub = v === 'timer'; }, lvl: { ...mins, clock: true }, sub: () => FLOW.sub && PREFS.exit === 'timer',   // Set: the row becomes its own slider
     words: () => { if (FLOW.sub) { FLOW.sub = false; syncCard(); } } };   // touch the words: Set or Free again
   return PREFS.kind === 'task' ? [plan, box(0), box(1), box(2), exit] : [plan, exit];
@@ -3313,14 +3314,14 @@ function flowSync(el, r) {
   const k = r.flow, st = stage(k), c = FLOW.cer[k], b = c.beat, on = (n, b) => el.classList.toggle(n, !!b), tx = el.querySelector('.tx'), ds = el.querySelector('.ds'), ic = el.querySelector(':scope > .ic');
   el.classList.add('box'); el.dataset.k = k;
   on('lead', st === 1); on('golden', b >= 1); on('gold2', b >= 2); on('locked', st === 3); on('preok', b >= 1); on('later', st === 6);
-  on('hint', st === 1 && c.opt === 1); on('open', st === 1 && c.opt === 2); on('two', c.two);
+  on('hint', st === 1 && c.opt === 1); on('open', st === 1 && c.opt === 2); on('offer', st === 2 && k > 0 && b < 1 && !c.quiet); on('two', c.two);
   if (st === 1 || st === 3 || st === 5 || st === 6) el.classList.remove('lit');   // locked: a finished module carries no ring; its icon and check stay gold
   tx.classList.toggle('wave', b >= 2); tx.classList.toggle('fin', c.fin); tx.classList.toggle('gone', st === 3 || st === 5 || st === 6);
   ds.classList.toggle('wave', b >= 2); ds.classList.toggle('fin', c.fin);
   if (b >= 2 && !c.fin) ds.onanimationend = () => { c.fin = true; syncCard(); };   // the wash has run its length: green from here on, rebuilt or not
   const want = st === 5 ? 'pen' : 'bars', was = el.dataset.ik;
   if (was !== want) { el.dataset.ik = want; const old = ic.querySelector('svg'), now = want === 'pen' ? svg(ICON.pen) : BARS; if (old) { old.insertAdjacentHTML('afterend', now); old.remove(); } else ic.insertAdjacentHTML('afterbegin', now); }
-  el.style.setProperty('--turn', st === 2 && b < 1 ? '45deg' : st === 6 ? '90deg' : st === 1 && c.opt ? '180deg' : '0deg');   // open: an X. Not now: a minus. Otherwise a plus (after the hint's half turn, the same plus)
+  el.style.setProperty('--turn', st === 2 && b < 1 && !(k > 0 && !c.quiet) ? '45deg' : st === 6 ? '90deg' : st === 1 && c.opt ? '180deg' : '0deg');   // open: an X. Not now: a minus. Otherwise a plus (after the hint's half turn, the same plus)
   if (st === 1 && c.opt === 0 && !c.hinted) { c.hinted = true; flowAt(() => { c.opt = 1; syncCard(); }, TIME.settle * 1000, k); flowAt(() => { c.opt = 2; syncCard(); }, TIME.settle * 2000, k); }   // a timed hint (named as one): the turn, then they fold out
   if (!el.querySelector('.opts')) el.insertAdjacentHTML('beforeend', `<span class="opts"><span class="o1"><button class="ic" data-opt="x" aria-label="No more">${BARS}</button><span class="o2"><button class="ic" data-opt="minus" aria-label="Not now">${BARS}</button></span></span></span>`);   // ✕ and −, folded behind the plus
 }
@@ -3343,7 +3344,7 @@ function flowLock(k) {   // Enter, or the check: locked in gold, tone three, and
   if (c.quiet) { FLOW.box[k] = 5; FLOW.cer[k] = newCer(); syncCard(); return; }
   if (c.beat < 2) c.beat = 2; c.fin = true; cue(CUES[k].n[2], 4.2, 0.12);   // words written before the box was touched: it is all gold now
   FLOW.box[k] = 3;
-  if (k < 2) { FLOW.box[k + 1] = 1; FLOW.exit = true; syncCard(); shine(k, '.ok > .shine'); } else flowExit();
+  if (k < 2) { FLOW.box[k + 1] = 2; FLOW.exit = true; flowGo(k + 1); shine(k, '.ok > .shine'); } else flowExit();
 }
 function flowExit() {   // on to Plan an Exit: every box goes back to an ordinary row
   FLOW.exit = true; FLOW.box.forEach((s, k) => { if (s === 3 || s === 2) { FLOW.box[k] = taskText(k) ? 5 : 4; FLOW.cer[k] = newCer(); } else if (s === 1) FLOW.box[k] = 0; });
@@ -3355,8 +3356,8 @@ function flowTap(k) {   // the icon: a lone plus opens; a grey minus offers + an
   if (st === 6) { FLOW.box[k] = 1; FLOW.cer[k] = { ...newCer(), two: true, hinted: true, opt: 2 }; flowGo(k); return; }
   if (st === 5) { FLOW.cer[k] = newCer(true); FLOW.box[k] = 2; flowGo(k); $('mcRows').querySelector(`.mrow.box[data-k="${k}"] .tx`).focus(); }
 }
-function flowOpt(k, o) {   // the lone plus's other options, then on to Plan an Exit
-  if (stage(k) !== 1) return; flowStop(k);
+function flowOpt(k, o) {   // the other options, then on to Plan an Exit
+  if (stage(k) !== 1 && !(stage(k) === 2 && FLOW.cer[k].beat < 1)) return; flowStop(k);
   if (o === 'x') { FLOW.box[k] = 4; sound.tick(); } else { FLOW.box[k] = 6; sound.voice({ f: 196, f1: 130.81, glide: 0.5, type: 'triangle', peak: 0.12, attack: 0.05, decay: 1.6, lp: 600, bus: 'game' }); }   // ✕ a click; − a warm fifth, set down
   FLOW.exit = true; flowGo('exit');
 }
@@ -3365,13 +3366,12 @@ function flowBack() {   // one step back
   if (FLOW.exit && PREFS.kind === 'task' && last != null) {   // from the exit to the moves, in gold again, with a plus for the next
     FLOW.exit = FLOW.sub = false;
     for (let k = 0; k <= last; k++) if (stage(k) === 5) { FLOW.box[k] = 3; FLOW.cer[k] = { ...newCer(), beat: 2, fin: true }; }
-    if (stage(last) === 6) { FLOW.box[last] = 1; FLOW.cer[last] = newCer(); } else if (last < 2) { FLOW.box[last + 1] = 1; FLOW.cer[last + 1] = newCer(); }
+    if (stage(last) === 6) { FLOW.box[last] = 1; FLOW.cer[last] = newCer(); } else if (last < 2) { FLOW.box[last + 1] = 2; FLOW.cer[last + 1] = newCer(); }
   } else if (FLOW.exit) FLOW.exit = FLOW.sub = FLOW.plan = false;
   else if (last == null) FLOW.plan = false;
-  else if (stage(last) === 1) {   // from a lone plus: the box before it, to write in again
-    FLOW.box[last] = 0; if (last === 0) FLOW.plan = false; else { const p = last - 1; FLOW.box[p] = 2; FLOW.cer[p] = { ...newCer(), beat: 2, fin: true }; }
-  } else if (stage(last) === 2) { PREFS.tasks[last] = { text: '' }; savePrefs(); FLOW.box[last] = 1; FLOW.cer[last] = newCer(); }   // an open box: back to its plus
-  else if (stage(last) === 3) FLOW.box[last] = 2;
+  else if (stage(last) === 1 || stage(last) === 2) {   // from a lone plus or an open box: the box before it, to write in again
+    PREFS.tasks[last] = { text: '' }; savePrefs(); FLOW.box[last] = 0; FLOW.cer[last] = newCer(); if (last === 0) FLOW.plan = false; else { const p = last - 1; FLOW.box[p] = 2; FLOW.cer[p] = { ...newCer(), beat: 2, fin: true }; }
+  } else if (stage(last) === 3) FLOW.box[last] = 2;
   else { FLOW.box[last] = 2; FLOW.cer[last] = newCer(true); }   // an ordinary row: written again, quietly
   const at = FLOW.exit ? 'exit' : [0, 1, 2].filter(k => [1, 2, 3, 5].includes(stage(k))).pop();
   CARD.i = 0; at == null ? syncCard() : flowGo(at);
@@ -3834,9 +3834,11 @@ function bind() {
     severe: () => { S.severe = !S.severe; say(S.severe ? 'Severe weather' : 'Weather', S.severe ? 'Whatever is on runs at full strength' : 'Back to normal'); sound.whoosh(S.severe ? 0.8 : 0.3, 0); syncBars(); },
     deep: () => startSigh(), play: () => setMode('play'),
     pacer: () => setPref('pacer.on', !PREFS.pacer.on), drops: () => setPref('pacer.drops', !PREFS.pacer.drops),
-    introstart: () => { $('introGo').classList.add('on'); S.intro.eng = S.intro.t; resumeAsk(() => { introGo(); FLOW.fresh = true; openCard('session'); }); },   // the box turns green and the circle stops breathing; a game waiting is offered first
+    introstart: () => { $('introGo').classList.add('on'); S.intro.eng = S.intro.t; if (S.prev) { $('introTwo').innerHTML = cell('data-act="introresume"', ICON.play, 'Resume') + cell('data-act="intronew"', ICON.fwd, 'New'); document.body.classList.add('intro-two'); return; } introGo(); FLOW.fresh = true; openCard('session'); },
+    introresume: () => { const p = S.prev; document.body.classList.remove('intro-two'); introLeave('play'); loadPool(p); syncUI(); },   // Start, then the last game: Resume skips the plan
+    intronew: () => { document.body.classList.remove('intro-two'); introGo(); FLOW.fresh = true; openCard('session'); },   // the box turns green and the circle stops breathing; a game waiting is offered first
     introgo: () => introLeave('play'),   // Skip: a new game as it is, no question
-    introplay: () => resumeAsk(() => introLeave('play', true)),   // Play now: Zen for this game, no timer; a game waiting is offered first
+    introplay: () => introLeave('play', true),   // Play now: Zen for this game, no timer, a new game
     introcalm: () => setPref('calm', !PREFS.calm),
     compmenu: () => { LINE.sub = 'comp'; syncBars(); }, compoff: () => { LINE.sub = null; setPref('comp', false); },   // COMPETITION offers Leave Comp, with Cancel: nothing lost
     introrelax: () => introLeave('relax'),
