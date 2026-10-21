@@ -234,6 +234,7 @@ body.intro-quick.intro-in .soren, body.intro-quick.intro-in .go-in { transition-
 @keyframes shine { 0% { opacity: .95; transform: scale(.5); } 100% { opacity: 0; transform: scale(3.2); } } @keyframes shine2 { 0% { opacity: .9; transform: scale(.7); } 100% { opacity: 0; transform: scale(2.6); } }
 #spot { position: fixed; z-index: 40; pointer-events: none; opacity: 0; transition: opacity 1.2s ease; box-shadow: 0 0 0 200vmax rgba(0, 0, 0, .68); } #spot.on { opacity: 1; }
 #mcFoot [data-foot=back].off { opacity: .35; pointer-events: none; }
+.foot .cell.beckon > .ic { animation: beckon 1.3s ease-in-out 2; } @keyframes beckon { 50% { filter: brightness(1.9) drop-shadow(0 0 calc(18 * var(--u)) rgb(var(--pick))); } }   /* Done shows itself after the last row changes */
 .rail { position: absolute; left: calc(1136 * var(--u)); width: calc(60 * var(--u)); transform: translateX(-50%); touch-action: none; }
 .rail::before { content: ''; position: absolute; left: 50%; top: 0; bottom: 0; width: calc(8 * var(--u)); transform: translateX(-50%); border-radius: calc(4 * var(--u)); background: var(--edge); }
 .rail i { position: absolute; left: 50%; width: calc(18 * var(--u)); height: calc(18 * var(--u)); transform: translate(-50%, -50%); border-radius: 50%; background: rgb(var(--pick)); }
@@ -606,6 +607,7 @@ function setPaused(on) {   // one pause: everything waits, your time too
 // The app's few timings, named once (the styles use the same three): a sweep is how long a shimmer takes to cross a key; a
 // beat, the pause before something answers you; a settle, how long a fade takes. Anything slower follows the breath.
 const TIME = { sweep: 0.5, beat: 0.6, settle: 1.2 };
+const LOW = { n: 0, ema: 0, slow: 0 };   // shedding: 1 no bursts, 2 the pool at 1x. Set by the frame loop when the phone falls behind; never by you
 const lessMo = () => PREFS.still;   // Reduce motion: what moves on its own is stilled, and the breath only glows
 let particles = [], ripples = [], floaters = [], animTime = 0, canvas, ctx;
 
@@ -1035,7 +1037,7 @@ const ring = (c, x, y, r, stroke, w) => { if (stroke) c.strokeStyle = stroke; if
 
 /* ---------- Effects ---------- */
 function spawnParticles(x, y, color, count = 16, speed = 4.5) {
-  if (PREFS.calm || lessMo()) return;   // low stimulation, or Reduce motion: no bursts
+  if (PREFS.calm || lessMo() || LOW.n) return;   // low stimulation, Reduce motion, or a phone that has fallen behind: no bursts
   for (let i = 0; i < count; i++) {
     const a = (TAU * i) / count + (Math.random() - 0.5) * 0.4, sp = (0.3 + Math.random() * 0.7) * speed;
     particles.push({ x, y, vx: Math.cos(a) * sp, vy: Math.sin(a) * sp - 0.5, r: 2 + Math.random() * 3.2, color, alpha: 0.9, decay: 0.016 + Math.random() * 0.015, g: 0.06 });
@@ -1177,7 +1179,7 @@ const hexRGB = (h) => hex(h).slice(0, 3).join(',');
 // and near ground; each element paints itself into the layers it lives in. Distance haze pulls the far layers toward the
 // horizon colour, and the time of day (plus storm gloom) grades all three. Both happen only when something visibly changes.
 const HORIZON = 192, LAND_LAYERS = ['far', 'mid', 'near'], HAZE = { far: 0.5, mid: 0.2, near: 0 };
-const poolDPR = () => Math.min(2, window.devicePixelRatio || 1);   // 2x looks the same as 3x on a phone, at half the pixels
+const poolDPR = () => Math.min(LOW.n >= 2 ? 1 : 2, window.devicePixelRatio || 1);   // 2x looks the same as 3x on a phone, at half the pixels
 const SPR = {};
 const scene = { key: '', gradeKey: '', base: {}, layer: {}, bolt: null, boltUntil: 0, sheetX: 190 };
 const curve = (y, amp, f, ph = 0) => (x) => y + Math.sin(x * f + ph) * amp + Math.sin(x * f * 2.3 + ph * 1.7) * amp * 0.35;
@@ -2666,14 +2668,15 @@ const CT = {   // the tuning table: every number play can change, in one place
   glass: { v0: 5, temper: 1, n: 16, k: 0.5 }           // m/s to crack a tier-0 pair; tempered glass is 4; the fatigue exponent, and its rate (a few storms wear a sphere down)
 };
 const RHO_AIR = 1.225, RHO_GLASS = 2500, G = 9.81, NU = 1.5e-5, MS_PER = 0.157;   // kg/m³, kg/m³, m/s², m²/s; m/s per px/frame (1 px = 1 mm at 60 fps, on the engine's slower clock)
-const COMP = { on: false, line: DANGER_Y, v: 0, vTo: 0, gap: 0, ball: null, wave: null, good: [], bad: [], wx: null, gust: null, vw: 0, lv: 0, prev: null, pairs: new Set() };
+const WATER = '90,180,255';
+const COMP = { on: false, step: 0, glow: null, line: DANGER_Y, v: 0, vTo: 0, gap: 0, ball: null, wave: null, good: [], bad: [], wx: null, gust: null, vw: 0, lv: 0, prev: null, pairs: new Set() };
 const compOn = () => COMP.on && S.mode === 'play';
 const rnd = (a, b) => a + Math.random() * (b - a);
 const wait = () => rnd(...CT.wait);
 const gauss = () => Math.sqrt(-2 * Math.log(1 - Math.random())) * Math.cos(TAU * Math.random());
 const deal = (bag, all) => { if (!bag.length) bag.push(...[...all].sort(() => Math.random() - 0.5)); return bag.pop(); };   // a shuffled deck: no streaks of bad luck
 function compStart() {
-  Object.assign(COMP, { on: true, line: DANGER_Y, v: 0, vTo: rnd(...CT.line.v), gap: wait(), ball: null, wave: null, good: [], bad: [], gust: null, vw: 0, lv: 0, prev: null, pairs: new Set(), wx: { U: 0, v: 0, a: 0, aim: 0, t: 0 } });
+  Object.assign(COMP, { on: true, step: 0, glow: null, line: DANGER_Y, v: 0, vTo: rnd(...CT.line.v), gap: wait(), ball: null, wave: null, good: [], bad: [], gust: null, vw: 0, lv: 0, prev: null, pairs: new Set(), wx: { U: 0, v: 0, a: 0, aim: 0, t: 0 } });
   for (const b of S.world.balls) b.dmg = null;
   windEpisode(); S.fair = false; say('Comp', 'The line creeps. The wind is wild. Leave any time.');
 }
@@ -2687,6 +2690,8 @@ function compTick(dt) {
   if (!compOn() || !awake()) return;
   const L = CT.line; COMP.v += (COMP.vTo - COMP.v) * Math.min(1, dt * 0.5); COMP.line = clamp(COMP.line + COMP.v * dt, DANGER_Y, L.cap);
   if (COMP.wave && (COMP.wave.t += dt) >= COMP.wave.len) COMP.wave = null;
+  if (COMP.glow && (COMP.glow.t += dt) >= COMP.glow.len) COMP.glow = null;
+  const step = Math.floor((COMP.line - DANGER_Y) / 4); if (step > COMP.step && !COMP.glow) glowLine(RED, 0.9, 0.55); COMP.step = step;   // every 4 px it creeps, a soft red pulse
   const tb = COMP.ball;
   if (tb) {
     if (!S.world.balls.some(b => b.id === tb.id)) { COMP.ball = null; outcome(true); }   // it merged: in time
@@ -2703,13 +2708,18 @@ function timerPick() {   // a sphere at rest that has a partner on the board, so
   return twins.length ? twins[Math.floor(Math.random() * twins.length)] : null;
 }
 function outcome(good) {
-  const L = CT.line, lift = () => { COMP.line = Math.max(DANGER_Y, COMP.line - L.step); return 'The line lifts'; };
+  const L = CT.line, lift = () => { COMP.line = Math.max(DANGER_Y, COMP.line - L.step); glowLine(GOLD, 1.6, 1); return 'The line lifts'; };
   if (good) { const got = deal(COMP.good, ['lift', 'tool']) === 'tool' && earnTool(); say('In time', got ? `${TOOL_NAMES[got]} earned` : lift()); sound.done(); haptic(20); return; }
   COMP.gap = Math.max(COMP.gap, CT.quiet);
-  if (deal(COMP.bad, ['sink', 'wave']) === 'sink') { COMP.line = Math.min(L.cap, COMP.line + L.step); say('Too late', 'The line sinks'); }
+  if (deal(COMP.bad, ['sink', 'wave']) === 'sink') { COMP.line = Math.min(L.cap, COMP.line + L.step); glowLine(RED, 2, 1); say('Too late', 'The line sinks'); }
   else { COMP.wave = { t: 0, len: wait() }; say('Too late', 'A wave rolls in'); sound.whoosh(0.7, 0); }
 }
 
+const glowLine = (rgb, len, amp) => { COMP.glow = { rgb, t: 0, len, amp }; };
+function compLook() {   // what the line shows: a pulse (red sinking, gold lifting), else water blue while a wave rolls
+  const g = COMP.glow; if (g) return { rgb: g.rgb, a: g.amp * Math.sin(Math.PI * g.t / g.len) };
+  const w = COMP.wave; return w ? { rgb: WATER, a: 0.8 * smooth(Math.min(w.t / 2, (w.len - w.t) / 2, 1)) } : null;
+}
 /* The wind. A mean per episode (Weibull, shape 2), turbulence and direction as Ornstein-Uhlenbeck processes (the discrete form of
    the Kaimal spectrum): intensity I, correlation time L/U. Only the sideways part acts on a side-on pool; the push flips when the
    direction wanders through the perpendicular, often in light wind, rarely in strong. The Storm tool's gust adds on top. */
@@ -2775,8 +2785,8 @@ function compStrike(b, name) {   // Strike in Comp: down to a random smaller siz
 }
 /* Drawing: the timer sphere's receding gold ring and its countdown; a chip or a crack as a fine white line that turns with the glass. */
 function drawTimerBall(c, b, R) {
-  const tb = COMP.ball, p = clamp(tb.left / tb.total, 0, 1), n = Math.ceil(tb.left);
-  halo(c, b.x, b.y, R, GOLD, 0.5); c.save(); c.strokeStyle = `rgb(${GOLD})`; c.lineWidth = 3; c.lineCap = 'round';
+  const tb = COMP.ball, p = clamp(tb.left / tb.total, 0, 1), n = Math.ceil(tb.left), k = 0.6 + 0.4 * Math.sin(animTime * (4 + 14 * (1 - p)));   // red: something is about to happen to it; it quickens as time runs out
+  halo(c, b.x, b.y, R, RED, k); halo(c, b.x, b.y, R * 1.15, RED, 0.5 * k); c.save(); c.strokeStyle = `rgb(${RED})`; c.lineWidth = 3; c.lineCap = 'round';
   c.beginPath(); c.arc(b.x, b.y, R + 3, -Math.PI / 2, -Math.PI / 2 + TAU * p); c.stroke();
   dot(c, b.x, b.y, R * 0.52, 'rgba(0,0,0,0.55)'); c.fillStyle = '#fff'; c.textAlign = 'center'; c.textBaseline = 'middle'; c.font = `700 ${Math.round(R * (n > 9 ? 0.62 : 0.78))}px ${FONT.sans}`; c.fillText(String(n), b.x, b.y + 1); c.restore();
 }
@@ -2841,6 +2851,7 @@ function render() {
     ctx.strokeStyle = g; ctx.lineWidth = end ? 1.5 : 1; ctx.beginPath();
     if (compOn()) for (let x = 12; x <= LW - 12; x += 4) ctx.lineTo(x, dangerAt(x)); else { ctx.moveTo(12, DANGER_Y); ctx.lineTo(LW - 12, DANGER_Y); }   // Comp: it creeps, and under a wave it rolls
     ctx.stroke();
+    const lk = compOn() && compLook(); if (lk) { ctx.save(); ctx.globalAlpha = fade * lk.a; ctx.strokeStyle = `rgb(${lk.rgb})`; ctx.shadowColor = `rgb(${lk.rgb})`; ctx.shadowBlur = 14; ctx.lineWidth = 2.5; ctx.stroke(); ctx.restore(); }   // Comp: red as it sinks, gold as it lifts, water blue under a wave
     if (end) { ctx.fillStyle = 'rgba(179,180,182,0.7)'; ctx.font = `400 12px ${FONT.sans}`; ctx.textAlign = 'right'; ctx.textBaseline = 'alphabetic'; ctx.fillText('overflow', LW - 16, dangerAt(LW - 16) - 6); }
   }
   if (S.mode !== 'fidget') drawRipples(ctx);   // Fidget draws its own, on the water
@@ -3031,14 +3042,21 @@ function update(k, dt) {
   if ((warmT -= dt) <= 0) { warmT = 60; updateWarmth(); }
 }
 function frame(now) {
-  const dark = S.mode === 'rest' && S.rest && S.rest.t > WIND_IN + 1, ms = Math.min(dark ? 250 : 50, Math.max(4, now - lastFrame));   // Rest, once dark: ten frames a second is plenty
+  const dark = S.mode === 'rest' && S.rest && S.rest.t > WIND_IN + 1, idle = !dark && !S.intro && !S.outro && (S.paused || S.card || S.sheet) && CARD.name !== 'beta';   // Rest once dark, or nothing moving in the pool: fewer frames, less battery and heat
+  const ms = Math.min(dark ? 250 : idle ? 150 : 50, Math.max(4, now - lastFrame)), t0 = performance.now();
   lastFrame = now;
   if (S.paused) { if ((audioT += ms / 1000) > 0.1) { sound.update(audioT); audioT = 0; } }   // paused: nothing moves and the sound goes quiet (your time waits: setPaused)
   else update(ms / (1000 / 60), ms / 1000);
   render(); tickBars(); drawWarp(now);
   const b = clamp(S.breath, 0, 1).toFixed(2); if (b !== frame.b) { frame.b = b; document.documentElement.style.setProperty('--b', b); }   // the heave, for what is live
   tickBanner(now);
-  if (dark) setTimeout(() => requestAnimationFrame(frame), 100); else requestAnimationFrame(frame);
+  if (!dark && !idle) shed(performance.now() - t0);
+  if (dark || idle) setTimeout(() => requestAnimationFrame(frame), dark ? 100 : 66); else requestAnimationFrame(frame);
+}
+function shed(work) {   // a phone that keeps falling behind (over 12 ms of work a frame for two seconds) sheds the bursts, then half its pixels
+  LOW.ema += (work - LOW.ema) * 0.05;
+  if (LOW.ema <= 12 || LOW.n >= 2) { LOW.slow = 0; return; }
+  if (++LOW.slow > 120) { LOW.n++; LOW.slow = 0; LOW.ema = 0; if (LOW.n === 2) setupDPI(); }
 }
 function updateWarmth() {   // evening warmth: from 7 pm the screen leans a little warmer, full by 9 pm, easing back by 7 am
   const h = new Date().getHours() + new Date().getMinutes() / 60, w = h >= 19 ? clamp((h - 19) / 2, 0, 1) : h < 7 ? clamp(7 - h, 0, 1) : 0;
@@ -3420,7 +3438,10 @@ function syncCard() {   // every row shows its setting as it stands
   const bk = $('mcFoot').querySelector('[data-foot=back]'); if (bk) bk.classList.toggle('off', !CARDS[CARD.name].canBack());
   const knob = $('mcRail').lastChild; if (knob) knob.style.top = U(CARD.i * ROW);
   fitIcons($('mc'));
+  if (CARD.i === lastRow() && changed()) { const k = JSON.stringify(PREFS) + JSON.stringify(CARD.pend); if (k !== CARD.bk) { CARD.bk = k; beckon(); } }   // a change on the last row: Done shows itself
 }
+const lastRow = () => { for (let i = CARD.rows.length - 1; i >= 0; i--) if (!(CARD.rows[i].hide && CARD.rows[i].hide())) return i; return -1; };
+function beckon() { const d = $('mcFoot').querySelector('[data-foot=done]'); if (!d) return; d.classList.remove('beckon'); void d.offsetWidth; d.classList.add('beckon'); }   // Done brightens and dims, twice
 function rowShow(el, shown) {   // a row that isn't there yet: kept out of sight, then lowered in; one that goes folds away
   if (el.dataset.vis == null) { el.dataset.vis = shown ? 1 : 0; el.classList.toggle('gone', !shown); return; }
   if (shown === (el.dataset.vis === '1')) return;
@@ -3495,7 +3516,7 @@ function okTouch(i, el) {
   const r = CARD.rows[i];
   if (r.confirm) { r.confirm(); return; }
   if (r.on) { r.on.set(!r.on.get()); syncCard(); return; }
-  engageRow(i + 1 < CARD.rows.length ? i + 1 : i);   // confirmed: on to the next row
+  if (i === lastRow()) beckon(); else engageRow(i + 1);   // confirmed: on to the next row; on the last, Done shows itself
 }
 
 const syncUI = () => { syncBars(); syncCard(); document.body.classList.toggle('rm', lessMo()); };
