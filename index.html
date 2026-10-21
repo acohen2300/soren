@@ -169,11 +169,11 @@ body.intro-quick.intro-in .soren, body.intro-quick.intro-in .go-in { transition-
 .mrow .seg ~ .lvl, .mrow .seg ~ .due, .mrow .seg ~ .pct, .mrow.sub .seg { display: none; } .mrow.sub .seg ~ .lvl, .mrow.sub .seg ~ .due { display: block; } .mrow.sub .lvl { left: calc(480 * var(--u)); width: calc(220 * var(--u)); }   /* a choice that became its slider */
 .pct { position: absolute; right: calc(176 * var(--u)); top: 50%; transform: translateY(-50%); font-weight: 500; font-size: var(--t2); }
 .mrow.lit .pct { color: var(--label); }
-.seg { position: absolute; right: calc(186 * var(--u)); top: 50%; height: calc(60 * var(--u)); transform: translateY(-50%); display: flex; border-radius: var(--r-pill); box-shadow: inset 0 0 0 calc(3 * var(--u)) var(--edge); }
+.seg { --win: calc(460 * var(--u)); width: var(--win); position: absolute; right: calc(186 * var(--u)); top: 50%; height: calc(60 * var(--u)); transform: translateY(-50%); display: flex; border-radius: var(--r-pill); box-shadow: inset 0 0 0 calc(3 * var(--u)) var(--edge); }
 .mrow.lit .seg { box-shadow: inset 0 0 0 calc(3 * var(--u)) var(--dim); }
-.seg button { position: relative; z-index: 1; width: calc(150 * var(--u)); font-weight: 600; font-size: var(--t2); color: var(--dim); }
+.seg button { position: relative; z-index: 1; flex: 1 1 0; min-width: 0; font-weight: 600; font-size: var(--t2); color: var(--dim); }
 .mrow.lit .seg button { color: var(--label); } .seg button.sel { color: var(--dim); } .mrow.lit .seg button.sel { color: rgb(var(--ink-rgb)); }
-.seg i { position: absolute; z-index: 0; top: calc(5 * var(--u)); bottom: calc(5 * var(--u)); left: calc(5 * var(--u)); width: calc(140 * var(--u)); border-radius: var(--r-pill); transform: translateX(calc(150 * var(--u) * var(--k, 0)));
+.seg i { position: absolute; z-index: 0; top: calc(5 * var(--u)); bottom: calc(5 * var(--u)); left: calc(5 * var(--u)); width: calc(var(--win) / var(--n, 2) - 10 * var(--u)); border-radius: var(--r-pill); transform: translateX(calc(var(--win) / var(--n, 2) * var(--k, 0)));
   transition: transform var(--quick) cubic-bezier(.45, 0, .25, 1), background var(--quick), box-shadow var(--quick); --c: 96, 98, 100; background: rgba(var(--c), 0.3); box-shadow: inset 0 0 0 calc(4 * var(--u)) rgb(var(--c)); }
 .mrow.lit .seg i { --c: var(--pick); } .mrow.lit .seg.onoff i { --c: var(--ink-rgb); } .mrow.lit .seg.onoff.yes i { --c: var(--on); } .seg.onoff.yes i { --c: 96, 110, 100; }
 .wheel { position: absolute; left: calc(730 * var(--u)); width: calc(260 * var(--u)); top: 0; height: 100%; overflow: hidden; touch-action: none; text-align: center; }
@@ -198,7 +198,6 @@ body.intro-quick.intro-in .soren, body.intro-quick.intro-in .go-in { transition-
 .mrow.rise { animation: rise var(--sweep) ease both; overflow: hidden; } .mrow.fall { animation: fall var(--sweep) ease both; overflow: hidden; }   /* a row comes and goes in a sweep: nothing to wait for */
 @keyframes rise { from { height: 0; opacity: 0; } to { height: var(--row); opacity: 1; } }
 @keyframes fall { from { height: var(--row); opacity: 1; } to { height: 0; opacity: 0; } }
-.seg.x3 button { width: calc(164 * var(--u)); } .seg.x3 i { width: calc(154 * var(--u)); transform: translateX(calc(164 * var(--u) * var(--k, 0))); }
 .mrow .ic { overflow: visible; } .mrow.box > .ic svg { transform: rotate(var(--turn, 0deg)); transition: transform var(--sweep) cubic-bezier(.3, 1.5, .5, 1), color var(--sweep); cursor: pointer; }   /* plus 0°, X 45°, minus 90° with one bar drawn in */
 .mrow.box svg path { transform-box: fill-box; transform-origin: center; transition: transform var(--quick); } .mrow.later > .ic svg .h, .opts .o2 > .ic svg .h { transform: scaleX(0); }
 .mrow.later > .ic { --ring: var(--dim); color: var(--dim); }
@@ -238,7 +237,7 @@ body.intro-quick.intro-in .soren, body.intro-quick.intro-in .go-in { transition-
 .pill > .shine, .ok > .shine { left: 50%; top: 50%; } .pill > .shine { width: calc(120 * var(--u)); height: calc(120 * var(--u)); margin: calc(-60 * var(--u)) 0 0 calc(-60 * var(--u)); } .ok > .shine { width: calc(140 * var(--u)); height: calc(140 * var(--u)); margin: calc(-70 * var(--u)) 0 0 calc(-70 * var(--u)); }
 @keyframes shine { 0% { opacity: .95; transform: scale(.5); } 100% { opacity: 0; transform: scale(3.2); } } @keyframes shine2 { 0% { opacity: .9; transform: scale(.7); } 100% { opacity: 0; transform: scale(2.6); } }
 #spot { position: fixed; z-index: 40; pointer-events: none; opacity: 0; transition: opacity var(--settle) ease; box-shadow: 0 0 0 200vmax var(--tint-2); } #spot.on { opacity: 1; }
-#mcFoot [data-foot=back].off { opacity: .35; pointer-events: none; }
+#mcNav [data-foot=back].off { opacity: .35; pointer-events: none; }
 /* A moment (Still waiting, Game complete, Time's up, Go, Welcome back, Did you do it): the same card, its rows to read, its answers in the foot.
    Nothing is lit; a list to tick shows every check, blue to touch and gold once done. */
 .mc.moment .mrow { color: rgb(var(--ink-rgb)); } .mc.moment .ds { color: var(--label); }
@@ -247,15 +246,15 @@ body.intro-quick.intro-in .soren, body.intro-quick.intro-in .go-in { transition-
 @keyframes draw { to { stroke-dashoffset: 0; } } body.rm .mrow > .ic svg.uni path { stroke-dashoffset: 0; }
 .mrow.locked .ok { display: block; }   /* a task locked in: no ring round the row, its check stays gold */
 .foot .cell[data-foot=done] > .ic { --ring: rgb(var(--pick)); } 
-.foot .cell[data-foot=done] { flex-basis: calc(388.66 * var(--u)); margin-left: auto; } .foot .cell[data-foot=done] > .ic { left: calc(100% - 97.17 * var(--u)); } .foot .cell[data-foot=done] .sub { left: auto; width: calc(194.33 * var(--u)); }   /* Done keeps its own slot, the last; its pill reaches left, the normal gap short of Back's ring */
-.foot .cell[data-foot=done] > .ic::after { left: auto; right: calc(50% - 36 * var(--u)); transform: translateY(-50%); width: calc(266 * var(--u)); transition: width var(--sweep) ease-in, box-shadow var(--sweep); }
-.foot .cell.ready > .ic::after { width: calc(72 * var(--u)); box-shadow: inset 0 0 0 calc(4 * var(--u)) var(--ring, transparent), 0 0 calc(10 * var(--u)) rgba(var(--pick), 0.9); }   /* the last row finished: the pill closes to the ring, the eye lands on the check */
+/* the check keeps the last column */   /* Done keeps its own slot, the last; its pill reaches left, the normal gap short of Back's ring */
 .mrow.recede::before { animation: recede var(--sweep) ease-in forwards; } @keyframes recede { to { clip-path: inset(0 0 0 100%); } }   /* the last row is finished: its ring draws off to the right, into Done */
 .rail { position: absolute; left: calc(1136 * var(--u)); width: calc(60 * var(--u)); transform: translateX(-50%); touch-action: none; }
 .rail::before { content: ''; position: absolute; left: 50%; top: 0; bottom: 0; width: calc(8 * var(--u)); transform: translateX(-50%); border-radius: calc(4 * var(--u)); background: var(--edge); }
 .rail i { position: absolute; left: 50%; width: calc(18 * var(--u)); height: calc(18 * var(--u)); transform: translate(-50%, -50%); border-radius: 50%; background: rgb(var(--pick)); }
 .rail b { position: absolute; left: 50%; width: calc(56 * var(--u)); height: calc(56 * var(--u)); transform: translate(-50%, -50%); background: var(--handle-v) center / 100% 100%; transition: top var(--quick); filter: drop-shadow(0 calc(2 * var(--u)) calc(6 * var(--u)) var(--tint-2)); }
-.foot { position: absolute; left: 0; right: 0; bottom: calc(14 * var(--u)); height: var(--row); display: flex; }
+.nav { position: absolute; left: 0; right: 0; top: 0; height: calc(84 * var(--u)); display: flex; } .nav .cell { flex: 0 0 calc(194.33 * var(--u)); } .nav .cell::before { display: none; } .nav .ic { top: 50%; }   /* ‹ Back, ? Help, ✕ Close: in the bar, on the ribbon's columns */
+.foot { position: absolute; left: 0; right: 0; bottom: 0; height: var(--row); display: flex; }
+.foot::before { content: ''; position: absolute; inset: 0; border-radius: var(--r); box-shadow: inset 0 0 0 calc(3 * var(--u)) rgb(var(--pick)); pointer-events: none; transition: box-shadow var(--quick); } .foot.ready::before { box-shadow: inset 0 0 0 calc(3 * var(--u)) rgb(var(--pick)), 0 0 calc(10 * var(--u)) rgba(var(--pick), 0.6); }   /* the foot is a ribbon: a blue ring, the check inside; a steady glow once nothing is left lit */
 .foot .cell { flex: 0 0 calc(194.33 * var(--u)); } .foot .cell::before { display: none; }
 /* The one pop-up: the card goes solid black; a question, one grey line, and two tiles: ‹ back in blue, › the action in red. */
 .pop { position: absolute; inset: 0; z-index: 2; border-radius: var(--r); background: var(--black); display: flex; flex-direction: column; justify-content: center; align-items: center; gap: calc(40 * var(--u)); padding: 0 calc(60 * var(--u)); text-align: center; }
@@ -306,7 +305,7 @@ body.rm *, body.rm *::before, body.rm *::after { transition: none !important; an
   <div class="zone4" id="wxBar"></div>
   <nav class="rib" id="botBar" aria-label="What you can do here"></nav>
   <section class="mc" id="mc" hidden role="dialog" aria-modal="true" aria-labelledby="mcPill"><canvas id="warp" aria-hidden="true"></canvas>
-    <span class="pill" id="mcPill"></span>
+    <div class="nav" id="mcNav"></div><span class="pill" id="mcPill"></span>
     <div class="rows" id="mcRows"></div>
     <div class="rail" id="mcRail" aria-hidden="true"></div>
     <div class="foot" id="mcFoot"></div>
@@ -532,7 +531,7 @@ const ENV = { cover: 0, gloom: 0, precip: 0, rain: 0, snow: 0, wind: 0, blow: 0,
 const FEEL = { life: 0.45, heave: 0.035, glow: 0.65 };
 
 /* ---------- Storage (guarded: private windows and sandboxes can throw) ---------- */
-const VERSION = 71.3, PHYSICS_ID = '12627fd9';   // the build, and the first eight of the locked Physics block's hash
+const VERSION = 71.4, PHYSICS_ID = '12627fd9';   // the build, and the first eight of the locked Physics block's hash
 const JKEY = 'soren:journal:p5', JKEY_OLD = 'somatic-resonance:journal:v2', PKEY = 'soren:prefs:p5', SKEY = 'soren:pool:p5';
 function loadJSON(key) { try { const v = JSON.parse(localStorage.getItem(key) || 'null'); return v && typeof v === 'object' ? v : {}; } catch (e) { return {}; } }
 const SAVED = {};   // what each key last held: a save that changes nothing writes nothing
@@ -3295,10 +3294,10 @@ function flowPlan(quiet) {   // Session Plan confirmed
   else FLOW.exit = true;
   FLOW.sub = FLOW.exit && PREFS.exit === 'timer'; if (!quiet) flowGo(FLOW.exit ? 'exit' : 0); else syncCard();
 }
-// A choice on Session Plan opens the next row at that touch (bkRow reset: it is not a change on a last row, so nothing recedes).
+// Session Plan's choice opens the next row itself (flowPlan), at that touch; `opens` keeps it from counting as a change on a last row.
 function flowRows() {
-  const kind = pref('kind', ICON.task, 'Session Plan', 'Have something to do soon?'), set = kind.set;
-  const plan = { ...kind, flow: 'plan', set: (v) => { if (FLOW.plan && v === kind.get()) return; flowReset(); CARD.bkRow = -2; set(v); flowPlan(); }, confirm: () => { if (!FLOW.plan) flowPlan(); else finishRow(CARD.i); } };
+  const kind = pref('kind', ICON.task, 'Session Plan', 'Thing to Do After?'), set = kind.set;
+  const plan = { ...kind, flow: 'plan', set: (v) => { if (FLOW.plan && v === kind.get()) return; flowReset(); set(v); flowPlan(); }, opens: () => -1, confirm: () => { if (!FLOW.plan) flowPlan(); else finishRow(CARD.i); } };
   const box = (k) => ({ ic: BARS, name: 'Let’s Name It', html: `Let’s <span class="pill on">Name It${SHINES}</span>`, kind: 'text', i: k, flow: k,
     desc: () => (stage(k) === 3 || stage(k) === 5 ? taskText(k) : stage(k) === 6 ? 'Not now' : 'What’s the Task?'), hide: () => stage(k) === 0 || stage(k) === 4,
     tap: () => flowTap(k), opt: (o) => flowOpt(k, o), confirm: () => flowLock(k), focus: () => flowFocus(k), typed: () => flowType(k) });
@@ -3511,9 +3510,9 @@ const pctOf = (v) => `${Math.round(v * 100)}%`;
 const FMT = { mins: (v) => `${v} min`, bpm: (v) => (+v).toFixed(1), 'pacer.speed': (v) => `${Math.round(v)} /min` };
 const esc = (t) => String(t).replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' })[c]);
 const text = (t) => (typeof t === 'function' ? t() : t);
-const DESCS = { Mode: () => MODES[CARD.pend.mode || PREFS.mode].note, Rules: () => (PREFS.overflow === 'end' ? 'Classic ends. Zen never does.' : 'Zen never ends. The top dissolves.'),
+const DESCS = { Mode: () => MODES[CARD.pend.mode || PREFS.mode].note, Rules: () => 'Zen Relaxes Rules.',
   Place: () => ((CARD.pend.where || PREFS.where) === 'stars' ? 'The sky from 41° north.' : 'Live is the season where you are.'),   // the stars are drawn for one latitude: said so
-  Comp: () => (here().dry ? 'No wind here: no Comp.' : PREFS.comp ? 'Touch COMPETITION to leave.' : 'The line creeps. Wild wind.'),
+  Comp: () => (here().dry ? 'No wind here: no Comp.' : PREFS.comp ? 'Touch COMPETITION.' : 'Wild Line & Wind.'),
   Pace: () => `In ${(24 / PREFS.bpm).toFixed(1)} s, out ${(36 / PREFS.bpm).toFixed(1)} s.`, Speed: () => `${Math.round(PREFS.pacer.speed)} laps a minute.` };
 // A setting's row knows its own control from the setting: on or off is a pill, a few words a pill, many words a wheel, a range a slider.
 function pref(k, ic, name, desc, more = {}) {
@@ -3522,6 +3521,20 @@ function pref(k, ic, name, desc, more = {}) {
   if (CHOICES[k]) { const opts = CHOICES[k].map(v => [v, LABELS[k][v]]); return { ic, name, desc, kind: opts.length <= 3 ? 'seg' : 'wheel', opts, get, set, ...more }; }
   const [min, max, step = 'any'] = RANGES[k]; return { ic, name, desc, kind: 'lvl', min, max, step, fmt: FMT[k] || pctOf, get, set, ...more };
 }
+// The Sky card: two choices, each opening its second row at the touch. Clouds On or Off (Off is a clear sky), then Light, Heavy or Evolving.
+// Time of day Live Yes or No, then Dawn, Day, Dusk or Dark. A row's `opens` says which row its choice opens.
+function skyRows() {
+  const dry = () => here().dry, line = (s) => () => (dry() ? 'No sky here.' : s);
+  const cl = () => PREFS.clouds, hr = () => PREFS.hour;
+  const onoff = [[false, 'Off'], [true, 'On']];
+  return [
+    { ic: ICON.cloud, name: 'Clouds', desc: line('How the sky looks.'), kind: 'seg', onoff: true, opts: onoff, dis: dry, get: () => cl() !== 'clear', set: (v) => setPref('clouds', v ? 'some' : 'clear'), opens: (v) => (v ? 1 : -1) },
+    { ic: ICON.cloud, name: 'Cloud Cover', desc: line('How they look.'), kind: 'seg', opts: [['some', 'Light'], ['dark', 'Heavy'], ['changing', 'Evolving']], hide: () => dry() || cl() === 'clear',
+      get: () => (cl() === 'changing' || cl() === 'dark' ? cl() : 'some'), set: (v) => { setPref('clouds', v); syncCard(); } },
+    { ic: ICON.sun, name: 'Time of day', desc: line('Your Actual Time.'), kind: 'seg', onoff: true, opts: [[false, 'No'], [true, 'Yes']], dis: dry, get: () => hr() === 'live', set: (v) => setPref('hour', v ? 'live' : 'day'), opens: (v) => (v ? -1 : 3) },
+    { ic: ICON.sun, name: 'Set Time', desc: line('Pick the light.'), kind: 'seg', opts: [['dawn', 'Dawn'], ['day', 'Day'], ['dusk', 'Dusk'], ['night', 'Dark']], hide: () => dry() || hr() === 'live',
+      get: () => hr(), set: (v) => { setPref('hour', v); syncCard(); } }];
+}
 // The Sound card's rows: a level, and on or off kept apart, so a row switched off comes back where you left it.
 const bus = (k, ic, name, desc) => ({ ic, name, desc, kind: 'lvl', min: 0, max: 1, step: 'any', fmt: pctOf, mute: true, get: () => PREFS.mix[k].lv,
   set: (v) => { PREFS.mix[k].lv = v; PREFS.mix[k].on = true; savePrefs(); syncCard(); }, on: { get: () => PREFS.mix[k].on, set: (v) => { PREFS.mix[k].on = v; savePrefs(); syncCard(); } } });
@@ -3529,7 +3542,7 @@ const hub = (ic, name, desc, go) => ({ ic, name, desc, kind: 'hub', go });
 const show = (ic, name, desc, v) => ({ ic, name, desc, kind: 'value', get: v });
 const PLACE = 'We’ll Help. Write it Here';
 const hhmm = (ms) => { const d = new Date(ms); return `${String(d.getHours()).padStart(2, '0')}:${String(d.getMinutes()).padStart(2, '0')}`; };
-const stopWords = () => (PREFS.exit === 'free' ? 'Stop when you’re ready.' : 'Set a session length.');
+const stopWords = () => (PREFS.exit === 'free' ? 'Stop When Ready.' : 'Set Length of Game.');
 const FAQ = [
   ['How does a session go?', 'Settle: the circle. Then plan your session, up to three things to do, and how it ends. Touch: play. Return: three breaths out, your list, and Go. When you’re back, tick what you did.'],
   ['How do I play?', 'Touch the pool and slide to move the waiting sphere; let go to drop it. Two of a kind merge into the next size up, and the two largest make a Full Bloom.'],
@@ -3555,14 +3568,14 @@ const CARDS = {
   scene: { title: 'Scene', tile: 1, stage: true, keys: ['mode', 'where'], rows: () => [
     pref('mode', ICON.grid, 'Mode', DESCS.Mode), { ...pref('where', ICON.pin, 'Place', DESCS.Place), opts: CHOICES.where.filter(v => !(PREFS.comp && PLACES[v] && (PLACES[v].back === 'tray' || PLACES[v].back === 'space'))).map(v => [v, LABELS.where[v]]) }],   // Comp needs wind: no Heritage (indoors) and no Celestial (space) while it runs
     done: () => { const { mode, where } = CARD.pend; closeSheet(); if (where != null && where !== PREFS.where) setPref('where', where); if (mode != null && mode !== S.mode) setPref('mode', mode); } },
-  session: { title: 'Timer and Task', tile: 2, keys: ['kind', 'exit', 'mins', 'tasks'], rows: () => flowRows(), norail: true, open: flowOpen, back: flowBack, canBack: () => FLOW.plan,
+  session: { title: 'Timer & Task', tile: 2, keys: ['kind', 'exit', 'mins', 'tasks'], rows: () => flowRows(), norail: true, open: flowOpen, back: flowBack, canBack: () => FLOW.plan,
     done: () => { closeSheet(); startSession(); } },
   sound: { title: 'Sound', tile: 5, keys: ['sound', 'vol', 'mix', 'vibe'], rows: () => [
     { ...pref('vol', ICON.speaker, 'Volume', 'Under your music.'), mute: true, set: (v) => { setPref('vol', v); if (!PREFS.sound) setPref('sound', true); }, on: { get: () => PREFS.sound, set: (v) => setPref('sound', v) } },
     bus('game', ICON.note, 'Game', 'Merges and chimes.'), bus('alerts', ICON.clock, 'Alerts', 'Bells and ticks.'),
     bus('breath', ICON.rings, 'Breath', 'With your breath.'), bus('touch', ICON.hand, 'Touch', 'Taps and drops.'),
     bus('drone', ICON.hum, 'Drone', 'The low hum.'), bus('nature', ICON.leaf, 'Nature', 'Birds and crickets.'), bus('weather', ICON.cloud, 'Weather', 'Rain, wind, thunder.'),
-    pref('vibe', ICON.vibe, 'Vibration', NATIVE.haptics ? 'A soft buzz with bells.' : 'Not in this browser.')] },
+    pref('vibe', ICON.vibe, 'Vibration', NATIVE.haptics ? 'Low Buzz & Bells.' : 'Not in this browser.')] },
   pace: { title: 'Pace', bot: 1, keys: ['bpm'], rows: () => [pref('bpm', ICON.hum, 'Pace', DESCS.Pace)] },
   style: { title: 'Style', bot: 2, keys: ['pacer.track', 'pacer.glass', 'pacer.glow', 'pacer.bright', 'pacer.speed'], rows: () => [
     pref('pacer.track', ICON.inf, 'Track', 'The path the light runs.'), pref('pacer.glass', ICON.gem, 'Glass', 'What the light is made of.'),
@@ -3570,18 +3583,17 @@ const CARDS = {
   ambient: { title: 'Ambient', bot: 0, keys: ['ambient', 'ambLv', 'fadeAfter'], rows: () => [
     pref('ambient', ICON.sea, 'Ambient', 'One steady sound under everything.'), pref('ambLv', ICON.sea, 'Level', 'How loud it plays.'), pref('fadeAfter', ICON.clock, 'Fades after', 'When Rest lets the sound go.')] },
   game: { title: 'Game', tile: 0, keys: ['overflow', 'aim', 'next', 'numbers', 'comp'], rows: () => [
-    pref('overflow', ICON.flag, 'Rules', DESCS.Rules), pref('aim', ICON.aim, 'Aim', () => (PREFS.comp ? 'No aim line in Comp.' : 'Shows where it will land.'), { dis: () => PREFS.comp }),
-    pref('next', ICON.arrow, 'Next', 'Shows the sphere after.'), pref('numbers', ICON.hash, 'Numbers', 'Score and sphere values.'),
+    pref('overflow', ICON.flag, 'Rules', DESCS.Rules), pref('aim', ICON.aim, 'Aim', () => (PREFS.comp ? 'No aim line in Comp.' : 'Where Sphere Lands.'), { dis: () => PREFS.comp }),
+    pref('next', ICON.arrow, 'Next', 'Show Next Sphere.'), pref('numbers', ICON.hash, 'Numbers', 'Score & Ball Values.'),
     // Comp: a double opt-in. On asks first (the action in blue: nothing is erased); indoors the row is dim and nothing happens.
     pref('comp', ICON.comp, 'Comp', DESCS.Comp, { dis: () => here().dry, set: (v) => (v ? popup({ title: 'Comp mode?', line: 'The line creeps, the wind is wild, glass can break. Leave any time: nothing is lost.', back: 'Back to Game', act: 'Comp', safe: true, go: () => setPref('comp', true) }) : setPref('comp', false)) }),
     hub(ICON.reset, 'New game', 'Start over. Asks first.', () => popup({ title: 'Start a new game?', line: 'This game ends here.', back: 'Back to Game', act: 'New Game', go: () => { closeSheet(); setMode('play'); startPool(); } })),
     ] },
   sky: { title: 'Sky', tile: 0, keys: ['clouds', 'hour'], rows: () => [
-    pref('clouds', ICON.cloud, 'Clouds', () => (here().dry ? 'No sky here.' : 'How the sky looks.'), { dis: () => here().dry }),
-    pref('hour', ICON.sun, 'Time of day', () => (here().dry ? 'No sky here.' : 'Live follows your clock.'), { dis: () => here().dry })] },
+    ...skyRows()] },
   comfort: { title: 'Comfort', tile: 0, keys: ['calm', 'still', 'breathing'], rows: () => [
-    pref('calm', ICON.heart, 'Low stimulation', 'No flashes. Softer sound.'), pref('still', ICON.still, 'Reduce motion', 'Nothing moves on its own.'),
-    pref('breathing', ICON.rings, 'Breathing', 'Edge and spheres breathe.')] },
+    pref('calm', ICON.heart, 'Low stimulation', 'Less Lights & Sounds.'), pref('still', ICON.still, 'Reduce motion', 'Limit Movements.'),
+    pref('breathing', ICON.rings, 'Breathing', 'Display Breathes.')] },
   stats: { title: 'Statistics', tile: 0, keys: [], rows: () => { const j = journalStats(); return [
     ...(PREFS.numbers ? [show(ICON.star, 'Best', 'Your highest score.', () => fmt(j.best))] : []), show(ICON.task, 'Lists finished', 'Tasks you ticked, all of them.', () => fmt(j.lists)),
     show(ICON.bloom, 'Full Blooms', 'The two largest, merged.', () => fmt(j.blooms)), show(ICON.grid, 'Merges this game', '', () => fmt(S.merges)),
@@ -3589,8 +3601,8 @@ const CARDS = {
   help: { title: 'Help', tile: 0, keys: [], rows: () => FAQ.map(([q, a], i) => hub(ICON.ask, q, a, () => popup({ title: q, line: a, back: 'Back to Help' }))) },
   // Beta: the experiments, on the stars. They read the phone's motion sensor, on the phone; nothing is kept or sent. Done is warp.
   beta: { title: 'Beta', tile: 0, keys: ['beta'], stars: true, done: () => engage(), rows: () => [
-    pref('beta.lookup', ICON.star, 'Look Up', 'Lift the phone: the stars.'), pref('beta.chest', ICON.rings, 'Chest breathing', 'In Relax, on your chest.'),
-    pref('beta.heavy', ICON.mystery, 'Heavy glass', 'Big spheres move slowly.')] }
+    pref('beta.lookup', ICON.star, 'Look Up', 'Lift Phone to Sky.'), pref('beta.chest', ICON.rings, 'Chest breathing', 'Lay Phone on Chest.'),
+    pref('beta.heavy', ICON.mystery, 'Heavy glass', 'Slow Big Spheres.')] }
 };
 const CARD = { name: null, stack: [], rows: [], i: 0, snap: '', pend: {}, stage: false };
 const U = (n) => `calc(${n} * var(--u))`;
@@ -3599,7 +3611,7 @@ const SHINES = '<span class="shine"></span><span class="shine r"></span>';   // 
 const okHTML = (more = '') => `<button class="ok" data-ok aria-label="On or off">${icon(ICON.check)}${more}</button>`;
 function ctlHTML(r, i) {
   if (r.kind === 'lvl') return `<input class="lvl" type="range" min="${r.min}" max="${r.max}" step="${r.step}" data-lvl="${i}" aria-label="${r.name}"><span class="pct num"></span>${r.clock ? `<input class="due" type="time" data-stop aria-label="Stop time">` : ''}`;
-  if (r.kind === 'seg') return `<div class="seg${r.onoff ? ' onoff' : ''}${r.opts.length > 2 && !r.onoff ? ' x3' : ''}"><i></i>${r.opts.map(([v, w], j) => `<button data-seg="${i}:${j}">${w}</button>`).join('')}</div>${r.lvl ? ctlHTML({ ...r.lvl, name: r.name }, i) : ''}`;   // a choice that becomes its own slider in place
+  if (r.kind === 'seg') return `<div class="seg${r.onoff ? ' onoff' : ''}" style="--n:${r.opts.length}"><i></i>${r.opts.map(([v, w], j) => `<button data-seg="${i}:${j}">${w}</button>`).join('')}</div>${r.lvl ? ctlHTML({ ...r.lvl, name: r.name }, i) : ''}`;   // a choice that becomes its own slider in place
   if (r.kind === 'wheel') return `<div class="wheel" data-wheel="${i}" role="listbox" aria-label="${r.name}"><s class="up"></s><b></b><s class="dn"></s></div>`;
   if (r.kind === 'hub') return `<span class="go">${icon(ICON.right)}</span>`;
   if (r.kind === 'value') return '<b class="big num"></b>';
@@ -3637,10 +3649,10 @@ function syncCard() {   // every row shows its setting as it stands
     } else if (r.kind === 'value') { const b = el.querySelector('.big'), t = r.get(); if (b.textContent !== t) b.textContent = t; }
     if (r.flow != null) flowSync(el, r);
   });
-  const bk = $('mcFoot').querySelector('[data-foot=back]'); if (bk) bk.classList.toggle('off', !CARDS[CARD.name].canBack());
+  const bk = $('mcNav').querySelector('[data-foot=back]'); if (bk) bk.classList.toggle('off', !CARDS[CARD.name].canBack());
   const knob = $('mcRail').lastChild; if (knob) { knob.style.top = U(Math.max(0, CARD.i) * ROW); knob.style.opacity = CARD.i < 0 ? 0 : ''; }
   fitIcons($('mc'));
-  const dn = $('mcFoot').querySelector('[data-foot=done]'); if (dn) dn.classList.toggle('ready', CARD.i < 0);   // Done's pill closes to its ring only while nothing is left lit
+  $('mcFoot').classList.toggle('ready', CARD.i < 0);   // nothing left lit: the foot's ring keeps a steady glow
   if (CARD.i === lastRow() && CARD.rows[CARD.i].kind !== 'text') { const k = JSON.stringify(PREFS) + JSON.stringify(CARD.pend); if (CARD.bkRow !== CARD.i) { CARD.bkRow = CARD.i; CARD.bk = k; } else if (k !== CARD.bk && changed()) { CARD.bk = k; finishRow(CARD.i); } }   // a change made on the last row finishes it: the ring goes to Done (arriving there is not a change; typing is not a finish, the check is)
 }
 function syncLvl(el, r, off) {   // a slider shows its setting; a stop time beside it as a clock
@@ -3664,24 +3676,34 @@ function rowShow(el, shown) {   // a row that isn't there yet: kept out of sight
   if (shown) { el.classList.remove('gone'); el.classList.add('rise'); setTimeout(() => el.classList.remove('rise'), ms()); }
   else { el.classList.add('fall'); setTimeout(() => { if (el.dataset.vis === '0') el.classList.add('gone'); el.classList.remove('fall'); }, ms()); }
 }
+function chooseSeg(i, v) {   // a choice made on a row. A row that opens another (opens: the index it opens, or -1 for none) shows it at that touch: the choice is not "a change on the last row", so nothing recedes
+  const r = CARD.rows[i];
+  if (!r.opens) { r.set(v); syncCard(); return; }
+  CARD.bkRow = -2; r.set(v); const n = r.opens(v); n >= 0 ? engageRow(n) : syncCard();
+}
 function finishRow(i) { if (i === lastRow()) recede(); else engageRow(i + 1); }
 function engageRow(i) { if (CARDS[CARD.name] && CARDS[CARD.name].moment) return; if (i >= 0 && i < CARD.rows.length && i !== CARD.i && !(CARD.rows[i].hide && CARD.rows[i].hide())) { CARD.i = i; syncCard(); } }
-function fitCard() {   // the card is three zones: the line, the gap, the pool; it ends where the pool ends
-  const mc = $('mc'); mc.style.top = `${$('line').offsetTop}px`; mc.style.height = `${$('pool').getBoundingClientRect().bottom - $('line').getBoundingClientRect().top}px`;
+function fitCard() {   // the card runs from the line down to where the weather row ends, just above the tools
+  const mc = $('mc'); mc.style.top = `${$('line').offsetTop}px`; mc.style.height = `${$('wxBar').getBoundingClientRect().bottom - $('line').getBoundingClientRect().top}px`;
 }
-function placePill() {   // the title sits over the tile that opened it: left tiles flush left (20u in), Timer and Task and a moment centred, the right tile flush right
+function placePill() {   // the title: its left edge on the second icon's ring in the top ribbon (the one rule for every card); Timer and Task and a moment are centred
   const mc = $('mc'), pill = $('mcPill'), m = mc.getBoundingClientRect(), u = m.width / CARD_W, def = CARDS[CARD.name], w = pill.offsetWidth;
-  const side = CARD.name === 'session' || def.moment || def.bot === 1 ? 'c' : def.tile === 5 || def.bot === 2 ? 'r' : 'l';
-  pill.style.left = `${side === 'c' ? (m.width - w) / 2 : side === 'r' ? m.width - w - 20 * u : 20 * u}px`;
+  pill.style.left = `${CARD.name === 'session' || def.moment ? (m.width - w) / 2 : (1.5 * COL - 36) * u}px`;
 }
-// The foot: six columns that never move. Close, Help, Reset, Back, and Done two wide at the right; one a card doesn't have
-// leaves its column empty. A moment has no Close or Help: its answers are the way out, the way on in Done's place.
+// The bar and the foot (v71.4). The bar over the card: ‹ Back in the first column, the title, ? Help and ✕ Close in the last two.
+// The foot, a ringed ribbon at the card's bottom: Reset in the first column, the check at the far right (touch it at any time).
+// A column a card doesn't use stays empty. A moment has no bar: its answers are the way out, the way on in the check's place.
+const COL = CARD_W / 6;   // one of the six equal columns, in u
+function navHTML(name) {
+  const def = CARDS[name], blank = '<span class="cell blank"></span>', btn = (k, d, w) => `<button class="cell" data-foot="${k}" aria-label="${w}">${icon(d)}</button>`;
+  if (def.moment) return '';
+  return (def.back ? btn('back', ICON.left, 'Back') : blank) + blank + blank + blank + (name === 'help' ? blank : btn('help', ICON.ask, 'Help')) + btn('close', ICON.x, 'Close');
+}
 function footHTML(name) {
   const def = CARDS[name], blank = '<span class="cell blank"></span>';
   if (def.moment) { const a = MOMENT.answers, n = a.length, ans = (j) => (n - j >= 0 && j > 1 ? cell(`data-foot="ans" data-ans="${n - j}"`, a[n - j][2] || ICON.right, esc(a[n - j][0])) : blank);
-    return blank + blank + ans(3) + ans(2) + cell(`data-foot="done" data-ans="${n - 1}"`, ICON.check, esc(a[n - 1][0])); }
-  return cell('data-foot="close"', ICON.x, 'Close') + (name === 'help' ? blank : cell('data-foot="help"', ICON.ask, 'Help')) + (def.keys.length ? cell('data-foot="reset"', ICON.reset, 'Reset') : blank)
-    + (def.back ? cell('data-foot="back"', ICON.left, 'Back') : blank) + cell('data-foot="done"', ICON.check, 'Done');
+    return blank + blank + ans(3) + ans(2) + blank + cell(`data-foot="done" data-ans="${n - 1}"`, ICON.check, esc(a[n - 1][0])); }
+  return (def.keys.length ? cell('data-foot="reset"', ICON.reset, 'Reset') : blank) + blank + blank + blank + blank + cell('data-foot="done"', ICON.check, 'Done');
 }
 function openCard(name, push) {
   if (!CARDS[name]) return;
@@ -3690,8 +3712,8 @@ function openCard(name, push) {
   CARD.name = name; CARD.i = CARDS[name].moment ? -1 : 0; CARD.bkRow = -2; CARD.pend = {}; CARD.stage = !!CARDS[name].stage; CARD.snap = JSON.stringify(PREFS); CARD.snapFair = S.fair;
   S.sheet = name; S.aiming = false; LINE.sub = null;
   $('mcPill').textContent = CARDS[name].keys.length ? `${CARDS[name].title} Settings` : CARDS[name].title;   // a card with settings says so; Menu, Help, Statistics and the moments are just themselves
-  $('mcFoot').innerHTML = footHTML(name);
-  $('mcFoot').querySelectorAll('button.cell').forEach(c => c.classList.add(['close', 'help', 'reset'].includes(c.dataset.foot) ? 'quiet' : 'pick'));
+  $('mcNav').innerHTML = navHTML(name); $('mcFoot').innerHTML = footHTML(name);
+  $('mc').querySelectorAll('#mcNav button.cell, #mcFoot button.cell').forEach(c => c.classList.add(['close', 'help', 'reset'].includes(c.dataset.foot) ? 'quiet' : 'pick'));   // Back and the check are blue: where to go; the rest are white
   $('mcPop').hidden = true; $('mc').classList.toggle('moment', !!CARDS[name].moment);
   if (CARDS[name].open) CARDS[name].open();
   const mc = $('mc'); mc.hidden = false; fitCard(); mc.classList.toggle('stars', !!CARDS[name].stars);   // Beta opens on the stars
@@ -3860,7 +3882,7 @@ function bind() {
       const op = t.closest('[data-opt]'); if (op && r.opt) { r.opt(op.dataset.opt); return; }   // the lone plus's folded-out options
       const tap = t.closest('.mrow > .ic'); if (tap && r.tap) { r.tap(); return; }
       if (t.closest('.nm') && r.words) { r.words(); return; }   // the words: a row that became its slider offers its choice again
-      const sg = t.closest('[data-seg]'); if (sg) { const [, j] = sg.dataset.seg.split(':').map(Number); r.set(r.opts[j][0]); syncCard(); return; }
+      const sg = t.closest('[data-seg]'); if (sg) { const [, j] = sg.dataset.seg.split(':').map(Number); chooseSeg(i, r.opts[j][0]); return; }
       const ok = t.closest('[data-ok]'); if (ok) { okTouch(i, ok); return; }
       if (r.kind === 'hub' && (wasLit || t.closest('.go'))) r.go();
       return;
