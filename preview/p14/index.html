@@ -1,4 +1,5 @@
-<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="robots" content="noindex"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><meta name="theme-color" content="#081428"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"><meta name="apple-mobile-web-app-title" content="SoRen"><link rel="manifest" href="../../manifest.webmanifest"><link rel="apple-touch-icon" href="../../apple-touch-icon.png"><link rel="icon" href="../../icon-192.png"><style>html{height:100vh}body{padding-top:calc(8px + env(safe-area-inset-top,0px))!important;padding-bottom:calc(8px + env(safe-area-inset-bottom,0px))!important;overscroll-behavior:none}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body><meta charset="utf-8">
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="robots" content="noindex"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><meta name="theme-color" content="#081428"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"><meta name="apple-mobile-web-app-title" content="SoRen"><link rel="manifest" href="../../manifest.webmanifest"><link rel="apple-touch-icon" href="../../apple-touch-icon.png"><link rel="icon" href="../../icon-192.png"><style>html{height:100vh}body{padding-top:calc(8px + env(safe-area-inset-top,0px))!important;padding-bottom:calc(8px + env(safe-area-inset-bottom,0px))!important;overscroll-behavior:none}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body><!-- SoRen v70 · physics locked since v34 (12627fd9) -->
+<meta charset="utf-8">
 <title>SoRen preview v70</title>
 <meta name="claude:viewport-fit-sides" content="cover">
 <style>
@@ -224,7 +225,6 @@ body.intro-quick.intro-in .soren, body.intro-quick.intro-in .go-in { transition-
 @keyframes pulse { 0%, 100% { filter: drop-shadow(0 0 calc(3 * var(--u)) rgba(var(--glow), .3)); } 50% { filter: drop-shadow(0 0 calc(16 * var(--u)) rgba(var(--glow), .9)); } }
 .mrow.golden > .ic svg { color: rgb(var(--gold)); }
 .mrow.gold2 .pill { color: rgb(var(--gold)); --ring: rgb(var(--gold)); }
-.mrow.minus > .ic { --ring: rgb(var(--red)); color: rgb(var(--red)); }
 .mrow.locked.lit::before { box-shadow: inset 0 0 0 calc(3 * var(--u)) rgb(var(--gold)); transition: box-shadow .8s; } .mrow.locked > .ic { --ring: rgb(var(--gold)); }
 .mrow.locked .ok { color: rgb(var(--gold)); } .mrow.locked .ok .ic { --ring: rgb(var(--gold)); }
 .mrow.box .ok { overflow: visible; transition: color 1.8s ease; } .mrow.box .ok .ic::after { transition-duration: 1.8s; }
@@ -526,6 +526,7 @@ const ENV = { cover: 0, gloom: 0, precip: 0, rain: 0, snow: 0, wind: 0, blow: 0,
 const FEEL = { life: 0.45, heave: 0.035, glow: 0.65 };
 
 /* ---------- Storage (guarded: private windows and sandboxes can throw) ---------- */
+const VERSION = 70, PHYSICS_ID = '12627fd9';   // the build, and the first eight of the locked Physics block's hash
 const JKEY = 'somatic-resonance:journal:v2', PKEY = 'soren:prefs:p5', SKEY = 'soren:pool:p5';
 function loadJSON(key) { try { const v = JSON.parse(localStorage.getItem(key) || 'null'); return v && typeof v === 'object' ? v : {}; } catch (e) { return {}; } }
 const SAVED = {};   // what each key last held: a save that changes nothing writes nothing
@@ -573,7 +574,7 @@ const PREFS = (() => {
   p.tasks = (Array.isArray(s.tasks) ? s.tasks : []).slice(0, 3).map(t => ({ text: String(obj(t).text || '').slice(0, 60) })).filter(t => t.text.trim());
   return p;
 })();
-const savePrefs = () => saveJSON(PKEY, PREFS);
+const savePrefs = () => saveJSON(PKEY, { v: VERSION, ...PREFS });   // every saved object carries the version it was written by, so a later build can migrate it
 const getPref = (k) => k.split('.').reduce((o, p) => o[p], PREFS);
 function setPrefRaw(k, v) { const ps = k.split('.'), last = ps.pop(); ps.reduce((o, p) => o[p], PREFS)[last] = v; }
 // The real season, from the calendar. Time zones whose clocks go forward in January are south of the equator: seasons flip.
@@ -588,7 +589,7 @@ const here = () => WORLD;
 // The journal keeps only what Statistics shows: your best, your Full Blooms, lists finished, and seconds spent here each day.
 const J = (() => { const raw = loadJSON(JKEY), best = raw.best; return { best: typeof best === 'number' ? best : Number(obj(best).classic) || 0, blooms: Number(raw.blooms) || 0, lists: Number(raw.lists) || 0, days: obj(raw.days) }; })();
 let journalDirty = false, saveT = 0;
-function saveJournal() { saveJSON(JKEY, J); journalDirty = false; }
+function saveJournal() { saveJSON(JKEY, { v: VERSION, ...J }); journalDirty = false; }
 
 /* ---------- State, and the layers ---------- */
 // The screen never changes; a mode is which layers are on in the pool. Play: the scene, the weather and the spheres. Relax:
@@ -931,7 +932,7 @@ function haptic(pattern) { if (!canVibrate || !PREFS.vibe) return; try { navigat
 /* ---------- Messages ---------- */
 // One message channel, over the pool. Low stimulation keeps it quiet, and nothing is said while you rest.
 let bannerQueue = [], bannerUntil = 0;
-function say(title, sub, ms = 1900) { if (S.mode !== 'rest' && !PREFS.calm) bannerQueue.push([title, sub || '', ms]); }
+function say(title, sub, ms = 1900) { if (S.mode !== 'rest' && (!PREFS.calm || compOn())) bannerQueue.push([title, sub || '', ms]); }   // Low stimulation: no banners, except in Comp, where they are the warnings
 function tickBanner(now) {
   if (now <= bannerUntil) return;
   const next = bannerQueue.shift();
@@ -2525,13 +2526,13 @@ function endGame() {
   S.gameOver = true; S.aiming = false; clearAlert();
   const note = !S.fair ? 'This game doesn’t count toward your best' : S.score > 0 && S.score >= J.best ? 'A new best' : `Best ${fmt(J.best)}`;
   saveJournal(); savePool(); haptic(60); sound.wash();
-  showCard({ eyebrow: 'Overflow', title: 'Game complete', note: [PREFS.numbers ? fmt(S.score) : '', note].filter(Boolean).join(' · '), answers: [['Keep going', keepGoing], ['Play again', startPool]] });
+  showCard({ eyebrow: 'Overflow', title: 'Game complete', note: [PREFS.numbers ? fmt(S.score) : '', note].filter(Boolean).join(' · '), answers: [compOn() ? ['Leave Comp, keep going', () => { setPref('comp', false); keepGoing(); }] : ['Keep going', keepGoing], ['Play again', startPool]] });   // Comp always ends at the line: keeping going means leaving it
 }
 
 /* ---------- The pool keeps: saved on this phone, so it can wait for you ---------- */
 function savePool() {
-  if (S.prev || S.stormQ.length) return;   // the last game waits in Session Setup; a storm saves once it has passed
-  saveJSON(SKEY, { score: S.score, blooms: S.blooms, highestTier: S.highestTier, current: S.current, next: S.next, tools: S.tools, wild: S.wild, gameOver: S.gameOver, fair: S.fair, merges: S.merges,
+  if (S.stormQ.length) return;   // a storm saves once it has passed. The last game, offered in Menu › Game, is kept in memory (S.prev), so this one always saves
+  saveJSON(SKEY, { v: VERSION, score: S.score, blooms: S.blooms, highestTier: S.highestTier, current: S.current, next: S.next, tools: S.tools, wild: S.wild, gameOver: S.gameOver, fair: S.fair, merges: S.merges,
     balls: S.world.balls.map(b => [Math.round(b.x * 10) / 10, Math.round(b.y * 10) / 10, b.tier, b.wild ? 1 : 0, b.landed ? 1 : 0]) });   // a sphere still falling comes back falling
 }
 function loadPool(p) {
@@ -2674,26 +2675,32 @@ const CT = {   // the tuning table: every number play can change, in one place
   wave: { amp: 14, period: 8 },                        // px, and seconds a swell
   wind: { scale: 12, cap: 32, I: 0.25, L: 30 },        // Weibull scale (m/s), the tropical-storm cap, turbulence intensity, integral length scale (m)
   cat: [['Tropical storm', 63, 118, 35], ['Category 1', 119, 153, 30], ['Category 2', 154, 177, 20], ['Category 3', 178, 208, 10], ['Category 4', 209, 251, 5]],   // Saffir-Simpson in km/h, and the odds
-  glass: { v0: 5, temper: 1, n: 16, k: 0.5 }           // m/s to crack a tier-0 pair; tempered glass is 4; the fatigue exponent, and its rate (a few storms wear a sphere down)
+  glass: { v0: 5, temper: 1, n: 16, k: 0.5 },          // m/s to crack a tier-0 pair; tempered glass is 4; the fatigue exponent, and its rate (a few storms wear a sphere down)
+  reach: [1.6, 14], cool: 0.9, pulse: 18                // a hot sphere is touched within 1.6 radii + 14 px; blue for 0.9 s after; the fastest any red pulse goes (rad/s: under 3 a second)
 };
+const WALL_IN = 4.5, FLOOR_IN = 6.5;   // half a px inside the locked Physics block's own wall (4) and floor (6) insets: a sphere this close is touching
 const RHO_AIR = 1.225, RHO_GLASS = 2500, G = 9.81, NU = 1.5e-5, MS_PER = 0.157;   // kg/m³, kg/m³, m/s², m²/s; m/s per px/frame (1 px = 1 mm at 60 fps, on the engine's slower clock)
 const WATER = '90,180,255';
-const COMP = { on: false, step: 0, glow: null, line: DANGER_Y, v: 0, vTo: 0, gap: 0, ball: null, wave: null, good: [], bad: [], wx: null, gust: null, vw: 0, lv: 0, prev: null, pairs: new Set(), hz: null, hzGap: 0, hzDeck: [], floor: null, cool: null };
+const COMP = { on: false, step: 0, glow: null, line: DANGER_Y, v: 0, vTo: 0, gap: 0, ball: null, wave: null, good: [], bad: [], wx: null, gust: null, vw: 0, lv: 0, pairs: new Set(), pairs2: new Set(), hits: [], hz: null, hzGap: 0, hzDeck: [], floor: null, cool: null };
 const compOn = () => COMP.on && S.mode === 'play';
 const rnd = (a, b) => a + Math.random() * (b - a);
 const wait = () => rnd(...CT.wait);
 const gauss = () => Math.sqrt(-2 * Math.log(1 - Math.random())) * Math.cos(TAU * Math.random());
-const deal = (bag, all) => { if (!bag.length) bag.push(...[...all].sort(() => Math.random() - 0.5)); return bag.pop(); };   // a shuffled deck: no streaks of bad luck
+const deal = (bag, all) => { if (!bag.length) { bag.push(...all); for (let i = bag.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [bag[i], bag[j]] = [bag[j], bag[i]]; } } return bag.pop(); };   // a shuffled deck (Fisher-Yates): no streaks of bad luck
+const pulse = (rate) => (PREFS.calm || lessMo() ? 0.8 : 0.6 + 0.4 * Math.sin(animTime * Math.min(CT.pulse, rate)));   // every red pulse: capped under 3 a second, steady with Low stimulation or Reduce motion
 function compStart() {
-  Object.assign(COMP, { on: true, step: 0, glow: null, line: DANGER_Y, v: 0, vTo: rnd(...CT.line.v), gap: wait(), ball: null, wave: null, good: [], bad: [], gust: null, vw: 0, lv: 0, prev: null, pairs: new Set(), wx: { U: 0, v: 0, a: 0, aim: 0, t: 0 }, hz: null, hzGap: wait(), hzDeck: [], floor: null, cool: null });
+  Object.assign(COMP, { on: true, step: 0, glow: null, line: DANGER_Y, v: 0, vTo: rnd(...CT.line.v), gap: wait(), ball: null, wave: null, good: [], bad: [], gust: null, vw: 0, lv: 0, wx: { U: 0, v: 0, a: 0, aim: 0, t: 0 }, hz: null, hzGap: wait(), hzDeck: [], floor: null, cool: null });
   for (const b of S.world.balls) b.dmg = null;
   windEpisode(); S.fair = false; say('Comp', 'The line creeps. The wind is wild. Leave any time.');
 }
-function compStop() { if (!COMP.on) return; COMP.on = false; COMP.ball = COMP.wave = COMP.gust = COMP.hz = COMP.floor = null; S.fx.wind = 0; say('Comp off', 'Back to Play'); }
+function compStop() { if (!COMP.on) return; COMP.on = false; COMP.ball = COMP.wave = COMP.gust = COMP.hz = COMP.floor = COMP.cool = null; S.fx.wind = 0; for (const b of S.world.balls) b.dmg = null; say('Comp off', 'Back to Play'); }
 const compForget = (id) => { if (COMP.ball && COMP.ball.id === id) COMP.ball = null; if (COMP.hz && COMP.hz.id === id) COMP.hz = null; };   // a timer sphere struck or shattered: no outcome either way
 
 /* The line: it creeps, and under a wave it rolls. The overflow check and the drawing both read it here. */
-const waveAt = (x) => { const w = COMP.wave; if (!w) return 0; const env = smooth(Math.min(w.t / 2, (w.len - w.t) / 2, 1)); return CT.wave.amp * env * Math.sin(TAU * (x / LW - (lessMo() ? 0 : w.t / CT.wave.period))); };
+const waveEnv = () => { const w = COMP.wave; return w ? smooth(Math.min(w.t / 2, (w.len - w.t) / 2, 1)) : 0; };   // a wave rises over two seconds and ebbs over two
+const waveAt = (x) => { const w = COMP.wave; return w ? CT.wave.amp * waveEnv() * Math.sin(TAU * (x / LW - (lessMo() ? 0 : w.t / CT.wave.period))) : 0; };
+const sink = () => { COMP.line = Math.min(CT.line.cap, COMP.line + CT.line.step); glowLine(RED, 2, 1); };
+const lift = () => { COMP.line = Math.max(DANGER_Y, COMP.line - CT.line.step); glowLine(GOLD, 1.6, 1); };
 const dangerAt = (x) => (compOn() ? COMP.line + waveAt(x) : DANGER_Y);
 function compTick(dt) {
   if (!compOn() || !awake()) return;
@@ -2701,7 +2708,7 @@ function compTick(dt) {
   if (COMP.wave && (COMP.wave.t += dt) >= COMP.wave.len) COMP.wave = null;
   if (COMP.glow && (COMP.glow.t += dt) >= COMP.glow.len) COMP.glow = null;
   const step = Math.floor((COMP.line - DANGER_Y) / 4); if (step > COMP.step && !COMP.glow) glowLine(RED, 0.9, 0.55); COMP.step = step;   // every 4 px it creeps, a soft red pulse
-  if (COMP.cool && (COMP.cool.t += dt) > 0.9) COMP.cool = null;
+  if (COMP.cool && (COMP.cool.t += dt) > CT.cool) COMP.cool = null;
   hazTick(dt);
   const tb = COMP.ball;
   if (tb) {
@@ -2709,20 +2716,19 @@ function compTick(dt) {
     else if ((tb.left -= dt) <= 0) { COMP.ball = null; outcome(false); }
     return;
   }
-  if ((COMP.gap -= dt) > 0) return;
+  if ((COMP.gap -= dt) > 0 || COMP.hz) return;   // never while a hazard runs: a timer sphere must always be possible
   COMP.gap = wait(); COMP.vTo = rnd(...L.v);
   const b = timerPick(); if (!b) { COMP.gap = CT.wait[0]; return; }   // no pair on the board yet: look again soon
   const left = wait(); COMP.ball = { id: b.id, left, total: left }; sound.tick(); say('Timer sphere', 'Merge it before the ring is gone');
 }
 function timerPick() {   // a sphere at rest that has a partner on the board, so the merge is always possible
-  const L = S.world.balls.filter(b => b.landed && !b.wild && b.age > 45), twins = L.filter(a => L.some(b => b !== a && b.tier === a.tier));
+  const L = S.world.balls.filter(b => b.landed && !b.wild && b.age > 45 && b.id !== hotId()), twins = L.filter(a => L.some(b => b !== a && b.tier === a.tier));
   return twins.length ? twins[Math.floor(Math.random() * twins.length)] : null;
 }
 function outcome(good) {
-  const L = CT.line, lift = () => { COMP.line = Math.max(DANGER_Y, COMP.line - L.step); glowLine(GOLD, 1.6, 1); return 'The line lifts'; };
-  if (good) { const got = deal(COMP.good, ['lift', 'tool']) === 'tool' && earnTool(); say('In time', got ? `${TOOL_NAMES[got]} earned` : lift()); sound.done(); haptic(20); return; }
+  if (good) { const got = deal(COMP.good, ['lift', 'tool']) === 'tool' && earnTool(); if (!got) lift(); say('In time', got ? `${TOOL_NAMES[got]} earned` : 'The line lifts'); sound.done(); haptic(20); return; }
   COMP.gap = Math.max(COMP.gap, CT.quiet);
-  if (deal(COMP.bad, ['sink', 'wave']) === 'sink') { COMP.line = Math.min(L.cap, COMP.line + L.step); glowLine(RED, 2, 1); say('Too late', 'The line sinks'); }
+  if (deal(COMP.bad, ['sink', 'wave']) === 'sink') { sink(); say('Too late', 'The line sinks'); }
   else { COMP.wave = { t: 0, len: wait() }; say('Too late', 'A wave rolls in'); sound.whoosh(0.7, 0); }
 }
 
@@ -2734,21 +2740,22 @@ const PART = { storm: 'Storm', zap: 'Lightning', sink: 'Line drop' };
 const PLAN = { storm: [['storm', 10]], lightning: [['zap', 3]], double: [['storm', 3], ['zap', 5]], triple: [['sink', 3], ['storm', 3], ['zap', 5]] };   // what fires, and when
 function hazTick(dt) {
   const h = COMP.hz;
-  if (!h) { if ((COMP.hzGap -= dt) <= 0) hazStart(deal(COMP.hzDeck, HAZ)); return; }
+  if (!h) { if ((COMP.hzGap -= dt) <= 0 && !COMP.ball) hazStart(deal(COMP.hzDeck, HAZ)); return; }   // never over a timer sphere
   h.t += dt;
-  if (h.kind === 'outage') { if (h.t >= h.len) { hazEnd(); say('Power restored', 'The lights are back'); sound.done(); } return; }
+  if (h.kind === 'outage') { if (!h.hit && h.t >= 1.3) { h.hit = true; sound.crack(0.14); } if (h.t >= h.len) { hazEnd(); say('Power restored', 'The lights are back'); sound.done(); } return; }
   if (h.kind === 'floor') { const f = COMP.floor; f.lv = h.t < 3 ? h.t / 3 : h.t > h.len ? Math.max(0, 1 - (h.t - h.len) / 2) : 1; if (h.t > h.len + 2) { COMP.floor = null; hazEnd(); } return; }
   const b = h.id && S.world.balls.find(x => x.id === h.id);
   for (const p of h.parts) if (!p.done && (h.t >= p.at || (p.k === 'zap' && !b))) {
     p.done = true;
     if (p.k === 'storm') compGust(h.cat);
-    else if (p.k === 'sink') { COMP.line = Math.min(CT.line.cap, COMP.line + CT.line.step); glowLine(RED, 2, 1); sound.crack(0.1); }
+    else if (p.k === 'sink') { sink(); sound.crack(0.1); }
     else if (b) zap(b);
   }
   if (h.parts.every(p => p.done)) hazEnd();
 }
+// Alerts are read twice a frame (the bar, and its seconds): built once
 function hazStart(kind) {
-  if (kind === 'outage') { if (here().dry) { COMP.hzGap = CT.wait[0]; return; } COMP.hz = { kind, t: 0, warn: 5, len: 5 + rnd(8, 20), x: rnd(90, 290), dir: Math.random() < 0.5 ? -1 : 1, st: 0, held: false }; setTimeout(() => sound.crack(0.14), 1300); return; }
+  if (kind === 'outage') { if (here().dry) { COMP.hzGap = CT.wait[0]; return; } COMP.hz = { kind, t: 0, warn: 5, len: 5 + rnd(8, 20), x: rnd(90, 290), dir: Math.random() < 0.5 ? -1 : 1, st: 0, held: false }; return; }
   if (kind === 'floor') { const ice = !!here().snow; COMP.floor = { ice, lv: 0 }; COMP.hz = { kind, t: 0, len: wait() }; return; }
   const h = { kind, t: 0, cat: rollCat(), parts: PLAN[kind].map(([k, at]) => ({ k, at, done: false })), name: { double: 'Double trouble', triple: 'Triple threat' }[kind] };
   if (h.parts.some(p => p.k === 'zap')) {
@@ -2767,14 +2774,15 @@ const compLocked = () => compOn() && !!zapPart();   // the dropper waits while a
 const hotId = () => (zapPart() ? COMP.hz.id : 0);
 function compTouch(p) {   // while a sphere is hot a touch only cools: on it (generously), or nothing. The storm may have pushed it: find it
   const h = COMP.hz, b = S.world.balls.find(x => x.id === h.id); if (!b) return;
-  if (Math.hypot(p.x - b.x, p.y - b.y) > b.radius * 1.6 + 14) { sound.tick(); return; }
+  if (Math.hypot(p.x - b.x, p.y - b.y) > b.radius * CT.reach[0] + CT.reach[1]) { sound.tick(); return; }
   zapPart().done = true; COMP.cool = { id: b.id, t: 0 }; sound.done(); haptic(20); say('Cooled', 'Lightning missed');
   if (h.parts.every(q => q.done)) hazEnd();
 }
-function compAlert() {   // what the state bar shows, or nothing: [words, smaller words, seconds to the next thing]
+function compAlert() { if (COMP.alertAt !== animTime) { COMP.alertAt = animTime; COMP.alert = alertNow(); } return COMP.alert; }   // built once a frame
+function alertNow() {   // what the state bar shows, or nothing: [words, smaller words, seconds to the next thing]
   const h = COMP.hz;
   if (h && h.parts) {
-    const left = h.parts.filter(p => !p.done), next = Math.min(...left.map(p => p.at)) - h.t;
+    const left = h.parts.filter(p => !p.done); if (!left.length) return null; const next = Math.min(...left.map(p => p.at)) - h.t;
     if (h.name) return [`${h.name} alert`, left.map(p => `${p.k === 'storm' ? stormName(h.cat) : PART[p.k]} ${Math.max(0, Math.ceil(p.at - h.t))}`).join(' · ') + (zapPart() ? ' · find the red sphere' : ''), next];
     return zapPart() ? ['Lightning: touch the red sphere', 'Dropper locked', next] : [`${stormName(h.cat)} incoming`, `${h.cat[1]} to ${h.cat[2]} km/h`, next];
   }
@@ -2820,7 +2828,7 @@ function drawOutage(c) {
    drag ½·ρ·Cd·A·v² (Cd 1) against the sphere's own mass, 4/3·π·r³ of glass, on the engine's clock like the wind. */
 const MU = { glass: 0.22, ice: 0.03, wet: 0.1 }, FILM = 0.001, RHO_WATER = 1000;
 function floorPush(b) {
-  const f = COMP.floor; if (!f || f.lv <= 0 || b.y < LH - b.radius - 6.5) return;
+  const f = COMP.floor; if (!f || f.lv <= 0 || b.y < LH - b.radius - FLOOR_IN) return;
   b.vx *= 1 + 0.006 * f.lv * (1 - (f.ice ? MU.ice : MU.wet) / MU.glass);
   if (f.ice) return;
   const r = b.radius / 1000, h = FILM * f.lv, A = r * r * Math.acos((r - h) / r) - (r - h) * Math.sqrt(2 * r * h - h * h), v = b.vx * MS_PER;
@@ -2833,7 +2841,7 @@ function drawFloor(c) {
   for (let x = 8; x <= LW - 8; x += 6) c.lineTo(x, y - 7 * a + (f.ice || lessMo() ? 0 : Math.sin(x / 14 + animTime * 2) * 1.2)); c.stroke(); c.restore();
 }
 function drawHot(c, b, R) {   // lightning's target: heats red, static sparks off it, quickening
-  const h = COMP.hz, u = clamp(h.t / zapPart().at, 0, 1), k = 0.6 + 0.4 * Math.sin(animTime * (8 + 16 * u));
+  const h = COMP.hz, u = clamp(h.t / zapPart().at, 0, 1), k = pulse(8 + 10 * u);
   halo(c, b.x, b.y, R, RED, k); dot(c, b.x, b.y, R, `rgba(${RED},${(0.25 + 0.35 * u).toFixed(3)})`);
   if (lessMo()) return;
   c.save(); c.strokeStyle = `rgb(${RED})`; c.lineWidth = 1.4; c.lineCap = 'round';
@@ -2843,7 +2851,7 @@ function drawHot(c, b, R) {   // lightning's target: heats red, static sparks of
 const glowLine = (rgb, len, amp) => { COMP.glow = { rgb, t: 0, len, amp }; };
 function compLook() {   // what the line shows: a pulse (red sinking, gold lifting), else water blue while a wave rolls
   const g = COMP.glow; if (g) return { rgb: g.rgb, a: g.amp * Math.sin(Math.PI * g.t / g.len) };
-  const w = COMP.wave; return w ? { rgb: WATER, a: 0.8 * smooth(Math.min(w.t / 2, (w.len - w.t) / 2, 1)) } : null;
+  return COMP.wave ? { rgb: WATER, a: 0.8 * waveEnv() } : null;
 }
 /* The wind. A mean per episode (Weibull, shape 2), turbulence and direction as Ornstein-Uhlenbeck processes (the discrete form of
    the Kaimal spectrum): intensity I, correlation time L/U. Only the sideways part acts on a side-on pool; the push flips when the
@@ -2868,29 +2876,28 @@ function compGust(c = rollCat()) {   // the Storm tool, or a storm that came on 
   say(c === CT.cat[0] ? c[0] : `Hurricane? ${c[0]}`, `${kmh} km/h, from the ${dir > 0 ? 'left' : 'right'}`); sound.whoosh(1, -dir * 0.5); haptic([15, 40, 15]);
 }
 function compBefore() {   // before each physics step: the wind on every sphere as drag against its own speed, then where everything was
-  for (const b of S.world.balls) { const rel = COMP.vw - b.vx * MS_PER; b.vx += PHYS.gravity * ratio(rel, b.radius / 1000) * (b.wild ? 0.5 : 1); floorPush(b); }
-  COMP.prev = new Map(S.world.balls.map(b => [b.id, [b.x, b.y, b.vx, b.vy]]));
+  for (const b of S.world.balls) { const rel = COMP.vw - b.vx * MS_PER; b.vx += PHYS.gravity * ratio(rel, b.radius / 1000) * (b.wild ? 0.5 : 1); floorPush(b); const p = b.pv || (b.pv = {}); p.x = b.x; p.y = b.y; p.vx = b.vx; p.vy = b.vy; }   // where it was, kept on the sphere: nothing allocated per step
 }
 /* Glass. Each sphere keeps a strength s (1 is pristine). A new contact is an impact at the closing speed before it; Hertz gives the
    stress as (v / v_c)^(2/5), with v_c from Auerbach's law: 5 m/s for a tier-0 pair (the stated anchor), falling with the contact
    radius to the power 5/6. Over the threshold: a chip, a crack, or a shatter by how far over. Under it: static fatigue, only near it. */
 const vCrack = (Rs) => CT.glass.v0 * CT.glass.temper * Math.pow(Rs / 6, -5 / 6);   // Rs: the contact radius in mm, R·R' / (R + R'), or R on a wall
 function compAfter() {
-  const balls = S.world.balls, P = COMP.prev, now = new Set(), hits = [];
+  const balls = S.world.balls, was = COMP.pairs, now = COMP.pairs2; now.clear(); const hits = COMP.hits; hits.length = 0;
   for (let i = 0; i < balls.length; i++) {
-    const a = balls[i], pa = P.get(a.id);
+    const a = balls[i], pa = a.pv;
     for (let j = i + 1; j < balls.length; j++) {
       const b = balls[j], dx = b.x - a.x, dy = b.y - a.y, d = Math.hypot(dx, dy); if (d > a.radius + b.radius + 0.6) continue;
       const key = Math.min(a.id, b.id) * 1e6 + Math.max(a.id, b.id); now.add(key);
-      const pb = P.get(b.id); if (!pa || !pb || COMP.pairs.has(key)) continue;
-      const vn = ((pa[2] - pb[2]) * dx + (pa[3] - pb[3]) * dy) / (d || 1);   // closing speed along the line of centres, px/frame
+      const pb = b.pv; if (!pa || !pb || was.has(key)) continue;
+      const vn = ((pa.vx - pb.vx) * dx + (pa.vy - pb.vy) * dy) / (d || 1);   // closing speed along the line of centres, px/frame
       if (vn > 0.5) hits.push([a, b, vn * MS_PER, a.radius * b.radius / (a.radius + b.radius)]);
     }
     if (!pa) continue;
-    if ((a.x <= a.radius + 4.5 && pa[0] > a.radius + 4.5) || (a.x >= LW - a.radius - 4.5 && pa[0] < LW - a.radius - 4.5)) hits.push([a, null, Math.abs(pa[2]) * MS_PER, a.radius]);
-    if (a.y >= LH - a.radius - 6.5 && pa[1] < LH - a.radius - 6.5) hits.push([a, null, Math.abs(pa[3]) * MS_PER, a.radius]);
+    if ((a.x <= a.radius + WALL_IN && pa.x > a.radius + WALL_IN) || (a.x >= LW - a.radius - WALL_IN && pa.x < LW - a.radius - WALL_IN)) hits.push([a, null, Math.abs(pa.vx) * MS_PER, a.radius]);
+    if (a.y >= LH - a.radius - FLOOR_IN && pa.y < LH - a.radius - FLOOR_IN) hits.push([a, null, Math.abs(pa.vy) * MS_PER, a.radius]);
   }
-  COMP.pairs = now;
+  COMP.pairs = now; COMP.pairs2 = was;
   for (const [a, b, v, Rs] of hits) { const x = Math.pow(v / vCrack(Rs), 0.4); damage(a, x); if (b) damage(b, x); }   // both feel the same pressure
 }
 function damage(b, x) {
@@ -2904,14 +2911,14 @@ function damage(b, x) {
 }
 function shatter(b) { compForget(b.id); if (!lessMo()) spawnParticles(b.x, b.y, '#ffffff', 14, 5); sound.crack(0.12); haptic([10, 20, 40]); mist([b], 'Shattered', 'Glass breaks'); }
 function compStrike(b, name) {   // Strike in Comp: down to a random smaller size, not gone (the smallest goes)
-  if (!b.tier) { mist([b], name, 'Space opened'); return; }
-  compForget(b.id); const t = Math.floor(Math.random() * b.tier);
+  compForget(b.id); if (!b.tier) { mist([b], name, 'Space opened'); return; }
+  const t = Math.floor(Math.random() * b.tier);
   spawnParticles(b.x, b.y, here().tiers[b.tier].c1, 20, 4.5); S.world.balls = S.world.balls.filter(x => x !== b);
   addBall(S.world, b.x, b.y, t, { vx: b.vx, vy: b.vy, angle: b.angle, omega: b.omega, landed: true, age: 46 }); sound.wash(); say(name, `Down to ${VALUES[t]}`);
 }
-/* Drawing: the timer sphere's receding gold ring and its countdown; a chip or a crack as a fine white line that turns with the glass. */
+/* Drawing: the timer sphere's receding red ring and its countdown; a chip or a crack as a fine white line that turns with the glass. */
 function drawTimerBall(c, b, R) {
-  const tb = COMP.ball, p = clamp(tb.left / tb.total, 0, 1), n = Math.ceil(tb.left), k = 0.6 + 0.4 * Math.sin(animTime * (4 + 14 * (1 - p)));   // red: something is about to happen to it; it quickens as time runs out
+  const tb = COMP.ball, p = clamp(tb.left / tb.total, 0, 1), n = Math.ceil(tb.left), k = pulse(4 + 14 * (1 - p));   // red: something is about to happen to it; it quickens as time runs out
   halo(c, b.x, b.y, R, RED, k); halo(c, b.x, b.y, R * 1.15, RED, 0.5 * k); c.save(); c.strokeStyle = `rgb(${RED})`; c.lineWidth = 3; c.lineCap = 'round';
   c.beginPath(); c.arc(b.x, b.y, R + 3, -Math.PI / 2, -Math.PI / 2 + TAU * p); c.stroke();
   dot(c, b.x, b.y, R * 0.52, 'rgba(0,0,0,0.55)'); c.fillStyle = '#fff'; c.textAlign = 'center'; c.textBaseline = 'middle'; c.font = `700 ${Math.round(R * (n > 9 ? 0.62 : 0.78))}px ${FONT.sans}`; c.fillText(String(n), b.x, b.y + 1); c.restore();
@@ -3002,6 +3009,7 @@ function render() {
     }
     ctx.globalAlpha = fade;
     if (compOn() && COMP.floor) drawFloor(ctx);   // Comp: ice or water on the floor
+    const hot = compOn() ? hotId() : 0;
     for (const ball of S.world.balls) {   // each sphere breathes in place; red: this goes unless you act; gold: you did it right
       const g = goldOf(ball);
       drawOrb(ctx, ball.x, ball.y, ball.radius, ball.tier, ball.angle, { aura: breathe ? FEEL.glow * 0.5 * b : 0, lift: breathe ? FEEL.glow * 0.06 * b : 0, scale: s, wild: ball.wild,
@@ -3009,10 +3017,10 @@ function render() {
       if (ball.hot && ball.age < HOT_AGE && w.glass) hotGlass(ctx, ball);
       if (ball.dmg && ball.dmg.marks.length) drawCracks(ctx, ball, ball.radius * s);   // Comp: chipped or cracked glass
       if (COMP.ball && ball.id === COMP.ball.id) drawTimerBall(ctx, ball, ball.radius * s);
-      if (ball.id === hotId()) drawHot(ctx, ball, ball.radius * s);   // Comp: lightning's target
+      if (ball.id === hot) drawHot(ctx, ball, ball.radius * s);   // Comp: lightning's target
       if (COMP.cool && COMP.cool.id === ball.id) halo(ctx, ball.x, ball.y, ball.radius * s, BLUE, 1 - COMP.cool.t / 0.9);   // cooled: blue, then itself   // Comp: the countdown in place of the number
       if (S.doom && ball.id === S.doom.id) {   // watch out: red, quickening
-        const k = 0.55 + 0.45 * Math.sin(S.doom.t * (14 + 20 * S.doom.t));
+        const k = PREFS.calm || lessMo() ? 0.8 : 0.55 + 0.45 * Math.sin(S.doom.t * 18);   // under three pulses a second; steady with Low stimulation or Reduce motion
         halo(ctx, ball.x, ball.y, ball.radius, RED, k); ring(ctx, ball.x, ball.y, ball.radius * s + 3, `rgba(${RED},${(0.6 + 0.4 * k).toFixed(3)})`, 2.5);
       }
     }
@@ -3172,7 +3180,20 @@ function update(k, dt) {
   if ((uiT += dt) > 0.5) { uiT = 0; syncBars(); }
   if ((warmT -= dt) <= 0) { warmT = 60; updateWarmth(); }
 }
+// The safety net: one error never stops the loop; a second one in a session parks everything safely (Comp off, the game saved) and offers a restart.
+let faults = 0;
+function fault(e) {
+  faults++; try { console.error(e); } catch (x) {}
+  if (faults < 2 || S.card) return;
+  try { compStop(); savePool(); saveJournal(); savePrefs(); setPaused(true); showCard({ title: 'Something went wrong', note: 'Your game is saved. Restart to carry on.', answers: [['Restart', () => location.reload()]] }); } catch (x) { try { location.reload(); } catch (y) {} }
+}
+window.addEventListener('error', (e) => fault(e.error || e.message));
 function frame(now) {
+  let wait = 0;
+  try { wait = tick(now); } catch (e) { fault(e); lastFrame = now; }
+  if (wait) setTimeout(() => requestAnimationFrame(frame), wait); else requestAnimationFrame(frame);
+}
+function tick(now) {   // one frame: returns 0 for the next at once, or ms to wait
   const dark = S.mode === 'rest' && S.rest && S.rest.t > WIND_IN + 1, idle = !dark && !S.intro && !S.outro && (S.paused || S.card || S.sheet) && CARD.name !== 'beta';   // Rest once dark, or nothing moving in the pool: fewer frames, less battery and heat
   const ms = Math.min(dark ? 250 : idle ? 150 : 50, Math.max(4, now - lastFrame)), t0 = performance.now();
   lastFrame = now;
@@ -3182,7 +3203,7 @@ function frame(now) {
   const b = clamp(S.breath, 0, 1).toFixed(2); if (b !== frame.b) { frame.b = b; document.documentElement.style.setProperty('--b', b); }   // the heave, for what is live
   tickBanner(now);
   if (!dark && !idle) shed(performance.now() - t0);
-  if (dark || idle) setTimeout(() => requestAnimationFrame(frame), dark ? 100 : 66); else requestAnimationFrame(frame);
+  return dark ? 100 : idle ? 66 : 0;
 }
 function shed(work) {   // a phone that keeps falling behind (over 12 ms of work a frame for two seconds) sheds the bursts, then half its pixels
   LOW.ema += (work - LOW.ema) * 0.05;
@@ -3198,15 +3219,15 @@ function updateWarmth() {   // evening warmth: from 7 pm the screen leans a litt
 // rolls into an X and opens a box to write in. The first touch of the box is the ceremony: the X rolls to a plus and turns gold
 // (tone one), the words "Name It" turn gold (two), then "What's the Task?", the box's ring and the check wash from white to green
 // (three) and hum; write something, press Enter or the check, and it locks in gold. A new plus waits for the next move, up to
-// three. A box not yet written can be taken away: touch its icon for a minus, again to fold it. Then Plan an Exit: Time, Timer or
+// three. A box not yet written goes back to its plus with Back. Then Plan an Exit: Set, or
 // Free Play. No skips straight to the exit. Everything here is the card's own rows; the ceremony is only classes and sound.
 // A box's ceremony is one counter: beat 0 nothing yet · 1 gold icon, tone one · 2 "Name It" gold · 3 the wash begins · 4 the ring
 // settles · 5 done. hide: 0 shown · 1 the box fades and the next waits · 2 faded. quiet: a move you already had, written again.
 // A new object ends the old one: a late timer holds the old object and changes nothing that is on screen.
 const newCer = (quiet = false) => ({ beat: 0, hide: 0, quiet });
-const FLOW = { fresh: false, plan: false, box: [0, 0, 0], minus: [false, false, false], exit: false, sub: false, cer: [newCer(), newCer(), newCer()], t: [] };
+const FLOW = { fresh: false, plan: false, box: [0, 0, 0], exit: false, sub: false, cer: [newCer(), newCer(), newCer()], t: [] };
 // box: 0 not yet · 1 a lone plus · 2 open · 3 locked, in gold · 4 taken away · 5 an ordinary row, a move you already had
-const GLYPH = { plus: 'M12 6v12M6 12h12', x: 'M6 6l12 12M18 6L6 18', dash: 'M6 12h12' };
+const GLYPH = { plus: 'M12 6v12M6 12h12', x: 'M6 6l12 12M18 6L6 18' };
 // Three tones a box, each box a chord step higher (C, E, G). All one chord, so any that overlap still agree. Up, up, down.
 const CUES = [{ n: [261.63, 392, 329.63], h: [[130.81, 164.81], [164.81, 196]] }, { n: [329.63, 523.25, 392], h: [[164.81, 196], [196, 261.63]] },
   { n: [392, 659.25, 523.25], h: [[196, 261.63], [261.63, 329.63]] }];
@@ -3215,11 +3236,11 @@ const hum = (f, f1, d, pk) => { sound.init(); if (sound.live) sound.voice({ f, f
 const stage = (k) => FLOW.box[k];
 const taskText = (k) => ((PREFS.tasks[k] || {}).text || '').trim();
 // The ceremony's beats, in ms (each step waits on the one before it).
-const MS = { gold2: 1400, wave: 1400, preok: 3300, fin: 4500, hide: 1100, next: 2400, sub: 1300, minus: 1100 };
+const MS = { gold2: 1400, wave: 1400, preok: 3300, fin: 4500, hide: 1100, next: 2400, sub: 1300 };
 const flowAt = (fn, ms) => FLOW.t.push(setTimeout(fn, ms));
 const flowGo = (flow) => { const i = CARD.rows.findIndex(r => r.flow === flow); if (i >= 0) { CARD.i = i; syncCard(); } };
 function flowStop() { FLOW.t.forEach(clearTimeout); FLOW.t = []; spot(false); }
-function flowReset() { flowStop(); Object.assign(FLOW, { plan: false, box: [0, 0, 0], minus: [false, false, false], exit: false, sub: false, cer: [newCer(), newCer(), newCer()] }); }
+function flowReset() { flowStop(); Object.assign(FLOW, { plan: false, box: [0, 0, 0], exit: false, sub: false, cer: [newCer(), newCer(), newCer()] }); }
 function flowOpen() {   // from the intro: the ceremony. From the Timer tile later: what you already wrote, as plain rows
   const fresh = FLOW.fresh || (PREFS.kind === 'task' && !tasks().length); FLOW.fresh = false; flowReset();
   if (!fresh) { FLOW.plan = true; flowPlan(true); }
@@ -3247,21 +3268,21 @@ function flowSync(el, r) {
   if (typeof r.flow !== 'number') return;
   const k = r.flow, st = stage(k), c = FLOW.cer[k], b = c.beat, on = (n, b) => el.classList.toggle(n, !!b), tx = el.querySelector('.tx'), ds = el.querySelector('.ds'), ic = el.querySelector(':scope > .ic');
   el.classList.add('box'); el.dataset.k = k;
-  on('lead', st === 1); on('golden', b >= 1 && !FLOW.minus[k]); on('gold2', b >= 2); on('locked', st === 3); on('preok', b >= 1 && b <= 3); on('glow', c.hide === 1); on('minus', FLOW.minus[k]); on('plain', st === 5);
+  on('lead', st === 1); on('golden', b >= 1); on('gold2', b >= 2); on('locked', st === 3); on('preok', b >= 1 && b <= 3); on('glow', c.hide === 1); on('plain', st === 5);
   if (st === 1 || st === 5) el.classList.remove('lit'); if (st === 3) el.classList.toggle('lit', c.hide < 2);   // gold frame while it locks; gone once the next plus is there (a finished module carries no ring)
   tx.classList.toggle('wave', b >= 3); tx.classList.toggle('fin', b >= 5); tx.classList.toggle('gone', st === 3 && c.hide > 0 || st === 5);
   ds.classList.toggle('wave', b >= 3); ds.classList.toggle('fin', b >= 5);
-  const want = st === 5 ? 'pen' : st === 1 ? 'plus' : FLOW.minus[k] ? 'dash' : 'x', was = el.dataset.ik;
+  const want = st === 5 ? 'pen' : st === 1 ? 'plus' : 'x', was = el.dataset.ik;
   if (was !== want) { el.dataset.ik = want; flowIcon(ic, was, want); }
-  const sv = ic.querySelector('svg'); if (sv && want === 'x') sv.style.transform = b >= 1 && !FLOW.minus[k] ? 'rotate(135deg) scale(0.71)' : 'rotate(0deg)';   // an X turned into a plus is longer by the diagonal: scaled back to the plus's own size
+  const sv = ic.querySelector('svg'); if (sv && want === 'x') sv.style.transform = b >= 1 ? 'rotate(135deg) scale(0.71)' : 'rotate(0deg)';   // an X turned into a plus is longer by the diagonal: scaled back to the plus's own size
 }
-function flowIcon(ic, was, want) {   // a change of glyph rolls sideways: plus into X, X into a minus
+function flowIcon(ic, was, want) {   // a change of glyph rolls sideways: the plus into an X
   if (want === 'pen' || was === 'pen' || !ic.querySelector('svg')) {   // only the glyph changes; the shines stay
     const old = ic.querySelector('svg'), now = svg(want === 'pen' ? ICON.pen : GLYPH[want]);
     if (old) { old.insertAdjacentHTML('afterend', now); old.remove(); } else ic.insertAdjacentHTML('afterbegin', now);
     return;
   }
-  const sv = ic.querySelector('svg'), p = sv.querySelector('path'), roll = { plusx: -135, xdash: -180 }[was + want];
+  const sv = ic.querySelector('svg'), p = sv.querySelector('path'), roll = { plusx: -135 }[was + want];
   if (roll != null && !lessMo()) { sv.style.transition = 'none'; sv.style.transform = `rotate(${roll}deg)`; p.setAttribute('d', GLYPH[want]); void sv.getBoundingClientRect(); sv.style.transition = ''; sv.style.transform = 'rotate(0deg)'; }
   else p.setAttribute('d', GLYPH[want]);
 }
@@ -3291,14 +3312,10 @@ function flowExit() {   // on to Plan an Exit: every box goes back to an ordinar
   FLOW.exit = true; FLOW.box.forEach((s, k) => { if (s === 3 || s === 2) { FLOW.box[k] = taskText(k) ? 5 : 4; FLOW.cer[k] = newCer(); } else if (s === 1) FLOW.box[k] = 0; });
   flowGo('exit'); flowAt(() => { FLOW.sub = true; syncCard(); }, MS.sub);
 }
-function flowTap(k) {   // the icon: a lone plus opens, a box can be taken away, an ordinary row is written again
-  const st = stage(k), c = FLOW.cer[k];
+function flowTap(k) {   // the icon: a lone plus opens; an ordinary row is written again
+  const st = stage(k);
   if (st === 1) { FLOW.box[k] = 2; flowGo(k); return; }
-  if (st === 5) { FLOW.cer[k] = newCer(true); FLOW.box[k] = 2; flowGo(k); $('mcRows').querySelector(`.mrow.box[data-k="${k}"] .tx`).focus(); return; }
-  if (st !== 2 || k === 0 || c.quiet) return;
-  document.activeElement.blur(); spot(false);
-  if (!FLOW.minus[k]) { FLOW.minus[k] = true; syncCard(); return; }
-  FLOW.box[k] = 4; syncCard(); flowAt(flowExit, MS.minus);
+  if (st === 5) { FLOW.cer[k] = newCer(true); FLOW.box[k] = 2; flowGo(k); $('mcRows').querySelector(`.mrow.box[data-k="${k}"] .tx`).focus(); }
 }
 function flowBack() {   // one step back
   flowStop(); const live = [0, 1, 2].filter(k => [1, 2, 3, 5].includes(stage(k))), last = live.pop();
@@ -3310,7 +3327,7 @@ function flowBack() {   // one step back
   else if (last == null) FLOW.plan = false;
   else if (stage(last) === 1) {   // from a lone plus: the box before it, to write in again
     FLOW.box[last] = 0; if (last === 0) FLOW.plan = false; else { const p = last - 1; FLOW.box[p] = 2; FLOW.cer[p] = { beat: 5, hide: 0, quiet: false }; }
-  } else if (stage(last) === 2) { PREFS.tasks[last] = { text: '' }; savePrefs(); FLOW.box[last] = 1; FLOW.cer[last] = newCer(); FLOW.minus[last] = false; }   // an open box: back to its plus
+  } else if (stage(last) === 2) { PREFS.tasks[last] = { text: '' }; savePrefs(); FLOW.box[last] = 1; FLOW.cer[last] = newCer(); }   // an open box: back to its plus
   else if (stage(last) === 3) { FLOW.box[last] = 2; FLOW.cer[last].hide = 0; }
   else { FLOW.box[last] = 2; FLOW.cer[last] = newCer(true); }   // an ordinary row: written again, quietly
   const at = FLOW.exit ? 'exit' : [0, 1, 2].filter(k => [1, 2, 3, 5].includes(stage(k))).pop();
@@ -3439,7 +3456,7 @@ const LABELS = {
 };
 const RANGES = { mins: [3, 96, 3], bpm: [4, 8, 0.5], vol: [0, 1], ambLv: [0, 1], 'pacer.glow': [0, 1], 'pacer.bright': [0.2, 1], 'pacer.speed': [4, 15, 1] };
 const pctOf = (v) => `${Math.round(v * 100)}%`;
-const FMT = { mins: (v) => `${v} min`, breakMins: (v) => `${v} min`, bpm: (v) => (+v).toFixed(1), 'pacer.speed': (v) => `${Math.round(v)} /min` };
+const FMT = { mins: (v) => `${v} min`, bpm: (v) => (+v).toFixed(1), 'pacer.speed': (v) => `${Math.round(v)} /min` };
 const esc = (t) => String(t).replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' })[c]);
 const text = (t) => (typeof t === 'function' ? t() : t);
 const DESCS = { Mode: () => MODES[CARD.pend.mode || PREFS.mode].note, Rules: () => (PREFS.overflow === 'end' ? 'Classic ends. Zen never does.' : 'Zen never ends. The top dissolves.'),
@@ -3470,7 +3487,8 @@ const FAQ = [
   ['How do I get around?', 'The top ribbon: Menu, Scene, your Task and Timer, Pause, and Sound. Touch the words in the line under it to change what you’re doing or where. Under the pool, Weather Settings opens the weather; the tools sit below it. Every card closes with Close or Done at its foot.'],
   ['What are the modes?', 'Play: the merge game. Relax: hold to breathe in, let go to breathe out. Fidget: a light to follow, drops on still water, the weather in your hands. Rest: the pool fades to dark while sound plays on. Phones stop sound when they lock, so Rest keeps the screen awake; plug in for long sessions.'],
   ['Does SoRen collect anything?', 'No. Everything stays on this phone: no accounts, no ads, no tracking, no notifications, nothing to buy. Leaving costs you nothing.'],
-  ['Is this a medical tool?', 'No. It is somewhere to settle. If you are struggling, talk to someone you trust or a professional.']
+  ['Is this a medical tool?', 'No. It is somewhere to settle. If you are struggling, talk to someone you trust or a professional.'],
+  ['Which version is this?', `Version ${VERSION}. The physics has been locked since version 34 (${PHYSICS_ID}).`]
 ];
 // Each card: its name, the tile it belongs to (top ribbon 0–5, or a bottom tile), the settings it holds, and its rows.
 const CARDS = {
@@ -3613,7 +3631,7 @@ const changed = () => JSON.stringify(PREFS) !== CARD.snap || Object.keys(CARD.pe
 function revert() {   // Close: everything this card changed goes back
   const old = JSON.parse(CARD.snap), place = old.where !== PREFS.where;
   for (const k in old) if (JSON.stringify(PREFS[k]) !== JSON.stringify(old[k])) PREFS[k] = old[k];
-  CARD.pend = {}; savePrefs(); sound.init(); if (place) newWorld(); if (S.rest) S.rest.left = Math.min(S.rest.left, PREFS.fadeAfter * 60 || S.rest.left);
+  CARD.pend = {}; savePrefs(); sound.init(); if (place) newWorld(); if (COMP.on !== !!PREFS.comp) (PREFS.comp ? compStart() : compStop());   // Comp follows the setting, both ways if (S.rest) S.rest.left = Math.min(S.rest.left, PREFS.fadeAfter * 60 || S.rest.left);
 }
 function cardBack() {   // to the card this one came from, or away
   const prev = CARD.stack.pop();
