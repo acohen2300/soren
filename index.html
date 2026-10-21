@@ -22,7 +22,7 @@
   --black: rgb(9, 5, 4); --label-rgb: 179, 180, 182; --label: rgb(var(--label-rgb)); --dim: rgb(122, 124, 126);
   --serif: ui-serif, 'New York', 'Iowan Old Style', Georgia, serif;
   --sans: -apple-system, BlinkMacSystemFont, system-ui, 'Segoe UI', Inter, sans-serif;
-  --r-pill: 999px; --r-card: 16px; --r-key: 12px; --r: calc(34 * var(--u));
+  --r-sm: calc(22 * var(--u)); --r-card: 16px; --r-key: 12px; --r: calc(34 * var(--u));
   --quick: .2s; --sweep: .6s; --settle: 1.2s; --long: 2.4s;   /* the only durations (the opening, the evening warmth and the weather keep their own) */
 }
 * { box-sizing: border-box; }
@@ -59,7 +59,7 @@ button { cursor: pointer; background: none; border: 0; padding: 0; }
 .ic .val { font-weight: 700; font-size: var(--t1); line-height: 1; white-space: nowrap; }
 .sub { position: absolute; left: 0; right: 0; top: calc(104 * var(--u)); transform: translateY(-50%); text-align: center; font-weight: 600; font-size: var(--t2); line-height: 1; color: var(--label); white-space: nowrap; overflow: visible; letter-spacing: -0.01em; }
 .cell.two .half { position: absolute; top: 0; bottom: 0; left: 0; width: 50%; } .cell.two .half + .half { left: 50%; }
-.n { position: absolute; left: calc(50% + 52 * var(--u)); top: calc(10 * var(--u)); min-width: calc(40 * var(--u)); height: calc(40 * var(--u)); padding: 0 calc(8 * var(--u)); border-radius: var(--r-pill); background: var(--label); color: var(--black); font-weight: 700; font-size: var(--t2); line-height: calc(40 * var(--u)); text-align: center; transform: translateX(-50%); }
+.n { position: absolute; left: calc(50% + 52 * var(--u)); top: calc(10 * var(--u)); min-width: calc(40 * var(--u)); height: calc(40 * var(--u)); padding: 0 calc(8 * var(--u)); border-radius: calc(11 * var(--u)); background: var(--label); color: var(--black); font-weight: 700; font-size: var(--t2); line-height: calc(40 * var(--u)); text-align: center; transform: translateX(-50%); }
 /* The ring: a rounded square round the icon only, never the whole tile. Green on, blue under your finger, white quiet, red erasing. */
 .ic::after { content: ''; position: absolute; left: 50%; top: 50%; width: calc(72 * var(--u)); height: calc(72 * var(--u)); transform: translate(-50%, -50%); border-radius: calc(22 * var(--u));
   box-shadow: inset 0 0 0 calc(4 * var(--u)) var(--ring, transparent); background: var(--tint, none); pointer-events: none; transition: box-shadow var(--quick), background var(--quick); }
@@ -75,7 +75,7 @@ button { cursor: pointer; background: none; border: 0; padding: 0; }
 .live > .ic { --ring: rgb(var(--on)); filter: drop-shadow(0 0 calc(10 * var(--u) * var(--b, 0)) rgba(var(--on), 0.7)); }   /* armed: the ring breathes */
 
 /* The pill: one size everywhere (78 high, 22 each side, bold italic 38). */
-.pill { flex: none; display: inline-flex; align-items: center; height: calc(78 * var(--u)); padding: 0 calc(22 * var(--u)); border-radius: var(--r-pill); white-space: nowrap;
+.pill { flex: none; display: inline-flex; align-items: center; height: calc(78 * var(--u)); padding: 0 calc(22 * var(--u)); border-radius: var(--r-sm); white-space: nowrap;
   box-shadow: inset 0 0 0 calc(3 * var(--u)) var(--ring, rgb(var(--pick))); background: var(--black); font-weight: 700; font-style: italic; font-size: var(--t1); color: var(--ink); transition: box-shadow var(--quick); }
 .pill.on { --ring: rgb(var(--on)); } .pill:disabled { --ring: var(--edge); color: var(--dim); }
 #botBar.wide .cell::before { display: none; }   /* three double-wide tiles: no dividers */
@@ -87,8 +87,8 @@ body.comp #game { filter: saturate(1.25) contrast(1.05); }
 /* The sentence line: one height, never wraps. The sentence on the left, the score and the time in their own sunken pill. */
 .line { flex: none; position: relative; height: calc(84 * var(--u)); display: flex; align-items: center; gap: calc(12 * var(--u)); transition: opacity var(--sweep); }
 .say { flex: none; max-width: calc(583 * var(--u)); display: flex; align-items: center; gap: calc(10 * var(--u)); font-weight: 700; font-style: italic; font-size: var(--t1); white-space: nowrap; color: var(--ink); }
-.say .w { height: calc(78 * var(--u)); display: inline-flex; align-items: center; padding: 0 calc(18 * var(--u)); border-radius: var(--r-pill); box-shadow: inset 0 0 0 calc(3 * var(--u)) rgb(var(--on)); background: var(--tint-1); }
-.sp { position: absolute; right: 0; left: calc(777 * var(--u)); height: calc(78 * var(--u)); display: flex; align-items: center; border-radius: var(--r-pill); background: var(--tint-2); box-shadow: inset 0 calc(3 * var(--u)) calc(8 * var(--u)) var(--tint-2), inset 0 0 0 calc(2 * var(--u)) var(--edge); font-weight: 700; font-size: var(--t1); }
+.say .w { height: calc(78 * var(--u)); display: inline-flex; align-items: center; padding: 0 calc(18 * var(--u)); border-radius: var(--r-sm); box-shadow: inset 0 0 0 calc(3 * var(--u)) rgb(var(--on)); background: var(--tint-1); }
+.sp { position: absolute; right: 0; left: calc(777 * var(--u)); height: calc(78 * var(--u)); display: flex; align-items: center; border-radius: var(--r-sm); background: var(--tint-2); box-shadow: inset 0 calc(3 * var(--u)) calc(8 * var(--u)) var(--tint-2), inset 0 0 0 calc(2 * var(--u)) var(--edge); font-weight: 700; font-size: var(--t1); }
 .sp .star { flex: none; width: calc(56 * var(--u)); height: calc(56 * var(--u)); margin-left: calc(11 * var(--u)); display: grid; place-items: center; border-radius: 50%; box-shadow: inset 0 0 0 calc(3 * var(--u)) rgb(var(--pick)); color: rgb(var(--pick)); font-size: var(--t2); }
 .sp #scoreVal { flex: 1; text-align: right; padding-right: calc(14 * var(--u)); }
 .sp .bar { flex: none; width: calc(2 * var(--u)); align-self: stretch; background: var(--edge); }
@@ -101,13 +101,13 @@ body.comp #game { filter: saturate(1.25) contrast(1.05); }
 .hz .al { flex: 1; min-width: 0; display: flex; flex-direction: column; justify-content: center; line-height: 1.2; }
 .hz b, .hz i { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-size: var(--t2); color: rgb(var(--ink-rgb)); } .hz b { font-weight: 700; } .hz i { font-weight: 400; font-style: italic; }
 .hz .cd { flex: none; width: calc(72 * var(--u)); height: calc(72 * var(--u)); display: grid; place-items: center; border-radius: 50%; background: rgb(var(--ink-rgb)); color: rgb(var(--red)); font-weight: 700; font-size: var(--t1); }
-.line.warn { padding-left: calc(12 * var(--u)); } .line.warn::before { content: ''; position: absolute; inset: 0; border-radius: var(--r-pill); box-shadow: inset 0 0 0 calc(3 * var(--u)) rgb(var(--red)); pointer-events: none; }
+.line.warn { padding-left: calc(12 * var(--u)); } .line.warn::before { content: ''; position: absolute; inset: 0; border-radius: var(--r-sm); box-shadow: inset 0 0 0 calc(3 * var(--u)) rgb(var(--red)); pointer-events: none; }
 /* Comp: the overlay. The whole bar red; COMPETITION, the score and the time cut out in white, their words in red. */
-.line.comp { background: rgb(var(--red)); border-radius: var(--r-pill); padding-left: calc(12 * var(--u)); }
-.compw { flex: none; height: calc(60 * var(--u)); padding: 0 calc(18 * var(--u)); display: inline-flex; align-items: center; border-radius: var(--r-pill); background: rgb(var(--ink-rgb)); color: rgb(var(--red)); font-weight: 700; font-style: italic; font-size: var(--t2); white-space: nowrap; }
+.line.comp { background: rgb(var(--red)); border-radius: var(--r-sm); padding-left: calc(12 * var(--u)); }
+.compw { flex: none; height: calc(60 * var(--u)); padding: 0 calc(18 * var(--u)); display: inline-flex; align-items: center; border-radius: var(--r-sm); background: rgb(var(--ink-rgb)); color: rgb(var(--red)); font-weight: 700; font-style: italic; font-size: var(--t2); white-space: nowrap; }
 .line.comp .sp { background: rgb(var(--ink-rgb)); color: rgb(var(--red)); box-shadow: none; } .line.comp .sp .star { box-shadow: inset 0 0 0 calc(3 * var(--u)) rgb(var(--red)); color: rgb(var(--red)); }
 .line.comp .sp #clock { color: rgb(var(--red)); } .line.comp .sp .bar { background: rgba(var(--red), 0.3); }
-.sub-menu { position: absolute; inset: 0; display: flex; align-items: center; justify-content: flex-end; gap: calc(14 * var(--u)); border-radius: var(--r-pill); background: var(--black); }
+.sub-menu { position: absolute; inset: 0; display: flex; align-items: center; justify-content: flex-end; gap: calc(14 * var(--u)); border-radius: var(--r-sm); background: var(--black); }
 
 /* The pool: one fixed outline, as large as the space allows at its own shape. Its glow is drawn on the canvas. */
 .pool { position: relative; width: min(var(--cw), calc((100vh - 16px - env(safe-area-inset-top, 0px) - env(safe-area-inset-bottom, 0px) - 552 * var(--u)) * 380 / 490));
@@ -118,7 +118,7 @@ body.comp #game { filter: saturate(1.25) contrast(1.05); }
 .banner { pointer-events: none; position: absolute; top: 14%; left: 0; right: 0; padding: 0 16px; display: flex; flex-direction: column; align-items: center; gap: 5px; text-align: center; opacity: 0; transform: scale(0.96); transition: opacity var(--sweep), transform var(--sweep); }
 .banner.show { opacity: 1; transform: none; }
 #bannerTitle { font-weight: 700; font-style: italic; font-size: var(--t1); line-height: 1.1; text-shadow: 0 calc(3 * var(--u)) calc(14 * var(--u)) var(--tint-3); text-wrap: balance; }
-#bannerSub { padding: 3px 11px; border-radius: var(--r-pill); background: var(--tint-2); border: 1px solid var(--chip-line); font-size: var(--t2); text-wrap: balance; } #bannerSub:empty { display: none; }
+#bannerSub { padding: 3px 11px; border-radius: 10px; background: var(--tint-2); border: 1px solid var(--chip-line); font-size: var(--t2); text-wrap: balance; } #bannerSub:empty { display: none; }
 /* The opening's name and check box: they wait, then fade in together once the circle is at rest. */
 .soren, .go-in { position: absolute; left: 50%; opacity: 0; pointer-events: none; }
 .soren { top: calc(50% - 72 * var(--u)); transform: translateX(-50%); font: italic 700 calc(64 * var(--u))/1 var(--sans, inherit); color: var(--ink); white-space: nowrap; -webkit-text-stroke: calc(1.2 * var(--u)) rgba(var(--pick), 0.6);
@@ -138,7 +138,7 @@ body.intro-quick.intro-in .soren, body.intro-quick.intro-in .go-in { transition-
    the right moves you between rows. The foot: Close, Help, Reset, and Done, the one blue. */
 .mc { position: absolute; z-index: 30; left: calc(20 * var(--u)); width: var(--cw); border-radius: var(--r); background: var(--black); box-shadow: inset 0 0 0 calc(3 * var(--u)) var(--edge), 0 calc(24 * var(--u)) calc(60 * var(--u)) var(--tint-2); animation: grow var(--quick) ease-out; transform-origin: top center; }
 @keyframes grow { from { opacity: 0; transform: scaleY(0.96); } to { opacity: 1; transform: none; } }
-.mc > .pill { position: absolute; top: calc(8 * var(--u)); --ring: rgb(var(--on)); pointer-events: none; }
+.mc > .pill { position: absolute; top: calc(8 * var(--u)); left: calc((1166 - 496) / 2 * var(--u)); width: calc(496 * var(--u)); padding: 0; justify-content: center; /* the title: centred, one width (the longest title, 495u), only the words change */ --ring: rgb(var(--on)); pointer-events: none; }
 .rows { position: absolute; top: calc(100 * var(--u)); left: 0; right: 0; }
 .mrow { position: relative; height: var(--row); color: var(--dim); }
 .mrow::before { content: ''; position: absolute; inset: 0; border-radius: var(--r); box-shadow: inset 0 0 0 calc(3 * var(--u)) transparent; pointer-events: none; transition: box-shadow var(--quick); }
@@ -169,11 +169,11 @@ body.intro-quick.intro-in .soren, body.intro-quick.intro-in .go-in { transition-
 .mrow .seg ~ .lvl, .mrow .seg ~ .due, .mrow .seg ~ .pct, .mrow.sub .seg { display: none; } .mrow.sub .seg ~ .lvl, .mrow.sub .seg ~ .due { display: block; } .mrow.sub .lvl { left: calc(480 * var(--u)); width: calc(220 * var(--u)); }   /* a choice that became its slider */
 .pct { position: absolute; right: calc(176 * var(--u)); top: 50%; transform: translateY(-50%); font-weight: 500; font-size: var(--t2); }
 .mrow.lit .pct { color: var(--label); }
-.seg { --win: calc(460 * var(--u)); width: var(--win); position: absolute; right: calc(186 * var(--u)); top: 50%; height: calc(60 * var(--u)); transform: translateY(-50%); display: flex; border-radius: var(--r-pill); box-shadow: inset 0 0 0 calc(3 * var(--u)) var(--edge); }
+.seg { --win: calc(460 * var(--u)); width: var(--win); position: absolute; right: calc(186 * var(--u)); top: 50%; height: calc(60 * var(--u)); transform: translateY(-50%); display: flex; border-radius: var(--r-sm); box-shadow: inset 0 0 0 calc(3 * var(--u)) var(--edge); }
 .mrow.lit .seg { box-shadow: inset 0 0 0 calc(3 * var(--u)) var(--dim); }
 .seg button { position: relative; z-index: 1; flex: 1 1 0; min-width: 0; font-weight: 600; font-size: var(--t2); color: var(--dim); }
 .mrow.lit .seg button { color: var(--label); } .seg button.sel { color: var(--dim); } .mrow.lit .seg button.sel { color: rgb(var(--ink-rgb)); }
-.seg i { position: absolute; z-index: 0; top: calc(5 * var(--u)); bottom: calc(5 * var(--u)); left: calc(5 * var(--u)); width: calc(var(--win) / var(--n, 2) - 10 * var(--u)); border-radius: var(--r-pill); transform: translateX(calc(var(--win) / var(--n, 2) * var(--k, 0)));
+.seg i { position: absolute; z-index: 0; top: calc(5 * var(--u)); bottom: calc(5 * var(--u)); left: calc(5 * var(--u)); width: calc(var(--win) / var(--n, 2) - 10 * var(--u)); border-radius: calc(17 * var(--u)); transform: translateX(calc(var(--win) / var(--n, 2) * var(--k, 0)));
   transition: transform var(--quick) cubic-bezier(.45, 0, .25, 1), background var(--quick), box-shadow var(--quick); --c: 96, 98, 100; background: rgba(var(--c), 0.3); box-shadow: inset 0 0 0 calc(4 * var(--u)) rgb(var(--c)); }
 .mrow.lit .seg i { --c: var(--pick); } .mrow.lit .seg.onoff i { --c: var(--ink-rgb); } .mrow.lit .seg.onoff.yes i { --c: var(--on); } .seg.onoff.yes i { --c: 96, 110, 100; }
 .wheel { position: absolute; left: calc(730 * var(--u)); width: calc(260 * var(--u)); top: 0; height: 100%; overflow: hidden; touch-action: none; text-align: center; }
@@ -252,6 +252,7 @@ body.intro-quick.intro-in .soren, body.intro-quick.intro-in .go-in { transition-
 .rail::before { content: ''; position: absolute; left: 50%; top: 0; bottom: 0; width: calc(8 * var(--u)); transform: translateX(-50%); border-radius: calc(4 * var(--u)); background: var(--edge); }
 .rail i { position: absolute; left: 50%; width: calc(18 * var(--u)); height: calc(18 * var(--u)); transform: translate(-50%, -50%); border-radius: 50%; background: rgb(var(--pick)); }
 .rail b { position: absolute; left: 50%; width: calc(56 * var(--u)); height: calc(56 * var(--u)); transform: translate(-50%, -50%); background: var(--handle-v) center / 100% 100%; transition: top var(--quick); filter: drop-shadow(0 calc(2 * var(--u)) calc(6 * var(--u)) var(--tint-2)); }
+body:has(#mc:not([hidden])) #line { visibility: hidden; }   /* the card covers the status bar on purpose; nothing of it shows at the card's corners */
 .nav { position: absolute; left: 0; right: 0; top: 0; height: calc(84 * var(--u)); display: flex; } .nav .cell { flex: 0 0 calc(194.33 * var(--u)); } .nav .cell::before { display: none; } .nav .ic { top: 50%; }   /* ‹ Back, ? Help, ✕ Close: in the bar, on the ribbon's columns */
 .foot { position: absolute; left: 0; right: 0; bottom: 0; height: var(--row); display: flex; }
 .foot::before { content: ''; position: absolute; inset: 0; border-radius: var(--r); box-shadow: inset 0 0 0 calc(3 * var(--u)) rgb(var(--pick)); pointer-events: none; transition: box-shadow var(--quick); } .foot.ready::before { box-shadow: inset 0 0 0 calc(3 * var(--u)) rgb(var(--pick)), 0 0 calc(10 * var(--u)) rgba(var(--pick), 0.6); }   /* the foot is a ribbon: a blue ring, the check inside; a steady glow once nothing is left lit */
@@ -531,7 +532,7 @@ const ENV = { cover: 0, gloom: 0, precip: 0, rain: 0, snow: 0, wind: 0, blow: 0,
 const FEEL = { life: 0.45, heave: 0.035, glow: 0.65 };
 
 /* ---------- Storage (guarded: private windows and sandboxes can throw) ---------- */
-const VERSION = 71.4, PHYSICS_ID = '12627fd9';   // the build, and the first eight of the locked Physics block's hash
+const VERSION = 71.5, PHYSICS_ID = '12627fd9';   // the build, and the first eight of the locked Physics block's hash
 const JKEY = 'soren:journal:p5', JKEY_OLD = 'somatic-resonance:journal:v2', PKEY = 'soren:prefs:p5', SKEY = 'soren:pool:p5';
 function loadJSON(key) { try { const v = JSON.parse(localStorage.getItem(key) || 'null'); return v && typeof v === 'object' ? v : {}; } catch (e) { return {}; } }
 const SAVED = {};   // what each key last held: a save that changes nothing writes nothing
@@ -968,7 +969,7 @@ function showCard({ title, rows = [], answers }) {
   if (CARD.name) closeSheet(); openCard('moment'); S.card = true;
 }
 function hideCard() { const was = S.card; S.card = false; CARD.stack = CARD.stack.filter(c => c.name !== 'moment'); if (was && CARD.name === 'moment') closeSheet(); }
-const momentRows = () => { if (CARD.name === 'moment') { $('mcPill').textContent = MOMENT.title; cardRows(); placePill(); } };   // a moment that changes as you tick: rebuilt in place
+const momentRows = () => { if (CARD.name === 'moment') { $('mcPill').textContent = MOMENT.title; cardRows(); } };   // a moment that changes as you tick: rebuilt in place
 // "Well done" is earned and rare: at most once every ten minutes, and never for the same reason twice in a session.
 const PRAISE = ['Well done', 'Lovely', 'That’s it', 'Beautiful'], praise = { last: -1e9, used: new Set() };
 function maybePraise(reason, x, y) {
@@ -3686,18 +3687,14 @@ function engageRow(i) { if (CARDS[CARD.name] && CARDS[CARD.name].moment) return;
 function fitCard() {   // the card runs from the line down to where the weather row ends, just above the tools
   const mc = $('mc'); mc.style.top = `${$('line').offsetTop}px`; mc.style.height = `${$('wxBar').getBoundingClientRect().bottom - $('line').getBoundingClientRect().top}px`;
 }
-function placePill() {   // the title: its left edge on the second icon's ring in the top ribbon (the one rule for every card); Timer and Task and a moment are centred
-  const mc = $('mc'), pill = $('mcPill'), m = mc.getBoundingClientRect(), u = m.width / CARD_W, def = CARDS[CARD.name], w = pill.offsetWidth;
-  pill.style.left = `${CARD.name === 'session' || def.moment ? (m.width - w) / 2 : (1.5 * COL - 36) * u}px`;
-}
-// The bar and the foot (v71.4). The bar over the card: ‹ Back in the first column, the title, ? Help and ✕ Close in the last two.
+// The bar and the foot (v71.5). The bar over the card: ‹ Back in the first column, ✕ Close in the last, the title between them: centred, one fixed width, only its words change (CSS).
 // The foot, a ringed ribbon at the card's bottom: Reset in the first column, the check at the far right (touch it at any time).
 // A column a card doesn't use stays empty. A moment has no bar: its answers are the way out, the way on in the check's place.
 const COL = CARD_W / 6;   // one of the six equal columns, in u
 function navHTML(name) {
   const def = CARDS[name], blank = '<span class="cell blank"></span>', btn = (k, d, w) => `<button class="cell" data-foot="${k}" aria-label="${w}">${icon(d)}</button>`;
   if (def.moment) return '';
-  return (def.back ? btn('back', ICON.left, 'Back') : blank) + blank + blank + blank + (name === 'help' ? blank : btn('help', ICON.ask, 'Help')) + btn('close', ICON.x, 'Close');
+  return (def.back ? btn('back', ICON.left, 'Back') : blank) + blank + blank + blank + blank + btn('close', ICON.x, 'Close');
 }
 function footHTML(name) {
   const def = CARDS[name], blank = '<span class="cell blank"></span>';
@@ -3713,11 +3710,11 @@ function openCard(name, push) {
   S.sheet = name; S.aiming = false; LINE.sub = null;
   $('mcPill').textContent = CARDS[name].keys.length ? `${CARDS[name].title} Settings` : CARDS[name].title;   // a card with settings says so; Menu, Help, Statistics and the moments are just themselves
   $('mcNav').innerHTML = navHTML(name); $('mcFoot').innerHTML = footHTML(name);
-  $('mc').querySelectorAll('#mcNav button.cell, #mcFoot button.cell').forEach(c => c.classList.add(['close', 'help', 'reset'].includes(c.dataset.foot) ? 'quiet' : 'pick'));   // Back and the check are blue: where to go; the rest are white
+  $('mc').querySelectorAll('#mcNav button.cell, #mcFoot button.cell').forEach(c => c.classList.add(['close', 'reset'].includes(c.dataset.foot) ? 'quiet' : 'pick'));   // Back and the check are blue: where to go; the rest are white
   $('mcPop').hidden = true; $('mc').classList.toggle('moment', !!CARDS[name].moment);
   if (CARDS[name].open) CARDS[name].open();
   const mc = $('mc'); mc.hidden = false; fitCard(); mc.classList.toggle('stars', !!CARDS[name].stars);   // Beta opens on the stars
-  cardRows(); placePill(); syncBars();
+  cardRows(); syncBars();
 }
 const changed = () => JSON.stringify(PREFS) !== CARD.snap || Object.keys(CARD.pend).some(k => CARD.pend[k] !== getPref(k));
 function revert() {   // Close: everything this card changed goes back
@@ -3757,7 +3754,6 @@ function footAct(k, el) {
   if (k === 'done') { if (def.done) def.done(); else cardBack(); }
   else if (k === 'back') def.back();
   else if (k === 'close') askLeave(cardBack);
-  else if (k === 'help' && CARD.name !== 'help') openCard('help', true);
   else if (k === 'reset' && def.keys.length) popup({ title: `Reset ${def.title}?`, line: 'Every row goes back to how SoRen came.', back: `Back to ${def.title}`, act: 'Reset', go: () => {
     const place = PREFS.where;
     for (const k2 of def.keys) { const d = JSON.parse(JSON.stringify(k2.split('.').reduce((o, p) => o[p], DEFAULTS))); if (CARD.stage) CARD.pend[k2] = d; else if (typeof d === 'object') { setPrefRaw(k2, d); } else setPref(k2, d); }   // through setPref, so every setting's side effect runs, as it does for a live change
@@ -3939,7 +3935,7 @@ function bind() {
     updateWarmth(); syncBars(); if (S.mode === 'rest') requestWake(true);
   });
   window.addEventListener('pagehide', flush);
-  window.addEventListener('resize', () => { setupDPI(); if (CARD.name) { fitCard(); placePill(); } });
+  window.addEventListener('resize', () => { setupDPI(); if (CARD.name) fitCard(); });
 }
 function setupDPI() { const dpr = poolDPR(); canvas.width = Math.round(LW * dpr); canvas.height = Math.round(LH * dpr); ctx.setTransform(dpr, 0, 0, dpr, 0, 0); makeSprites(); }
 // The slider's handle: a blue ring round white, with ‹ › (or, on the rail, up and down).
