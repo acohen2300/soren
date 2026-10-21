@@ -12,14 +12,13 @@
   --u: calc(min(100vw, 460px) / 1206);
   --t1: calc(40 * var(--u)); --t2: calc(30 * var(--u));   /* headers and everything else: the only two sizes */
   --row: calc(132 * var(--u)); --cw: calc(1166 * var(--u));   /* a row, and the card width: named once */
-  --bg-top: #0d1b33; --bg-mid: #071020; --bg-bot: #03070e; --accent: #bae6fd; --accent-soft: rgba(186, 230, 253, 0.22);
+  --bg-top: #0d1b33; --bg-mid: #071020; --bg-bot: #03070e;
   --ink: #f2f8fc; --ink-2: rgba(242, 248, 252, 0.72); --ink-3: rgba(242, 248, 252, 0.48);
   --panel: rgba(12, 24, 46, 0.86); --line: rgba(186, 230, 253, 0.24);
   --chip: rgba(var(--ink-rgb), 0.07); --chip-2: rgba(var(--ink-rgb), 0.11); --chip-line: rgba(var(--ink-rgb), 0.16);
-  --shade-1: rgba(0, 0, 0, 0.22); --shade-3: rgba(0, 0, 0, 0.6);
+  --shade-3: rgba(0, 0, 0, 0.6);
   --on: 67, 194, 112; --pick: 80, 155, 255; --red: 255, 90, 80; --gold: 255, 200, 90; --ink-rgb: 242, 248, 252; --edge: rgb(56, 50, 46);
-  --glow-on: inset 0 0 0 2px rgba(var(--on), 0.85), inset 0 0 14px rgba(var(--on), 0.22);
-  --black: rgb(9, 5, 4); --label: rgb(179, 180, 182); --dim: rgb(122, 124, 126);
+  --black: rgb(9, 5, 4); --label-rgb: 179, 180, 182; --label: rgb(var(--label-rgb)); --dim: rgb(122, 124, 126);
   --serif: ui-serif, 'New York', 'Iowan Old Style', Georgia, serif;
   --sans: -apple-system, BlinkMacSystemFont, system-ui, 'Segoe UI', Inter, sans-serif;
   --fs-1: 10px; --fs-2: 12.5px; --fs-3: 14px; --fs-4: 20px; --fs-5: 24px;
@@ -36,6 +35,7 @@ body {
   padding: 8px env(safe-area-inset-right, 0px) 8px env(safe-area-inset-left, 0px);
   -webkit-tap-highlight-color: transparent; -webkit-user-select: none; user-select: none; -webkit-touch-callout: none; -webkit-text-size-adjust: 100%;
 }
+html { touch-action: manipulation; }   /* no double-tap zoom anywhere: the pool, the ribbons and the words are all one surface */
 button, input { font: inherit; color: inherit; touch-action: manipulation; }
 button { cursor: pointer; background: none; border: 0; padding: 0; }
 :focus-visible { outline: 2px solid var(--ink); outline-offset: 2px; }
@@ -65,6 +65,7 @@ button { cursor: pointer; background: none; border: 0; padding: 0; }
 .ic::after { content: ''; position: absolute; left: 50%; top: 50%; width: calc(72 * var(--u)); height: calc(72 * var(--u)); transform: translate(-50%, -50%); border-radius: calc(22 * var(--u));
   box-shadow: inset 0 0 0 calc(4 * var(--u)) var(--ring, transparent); background: var(--tint, none); pointer-events: none; transition: box-shadow var(--quick), background var(--quick); }
 .on > .ic, .ic.on { --ring: rgb(var(--on)); } .ic.gold { --ring: rgb(var(--gold)); }
+.ic.nudge::after { animation: nudge 3s ease-out forwards; } @keyframes nudge { from { box-shadow: inset 0 0 0 calc(4 * var(--u)) rgb(var(--pick)); } to { box-shadow: inset 0 0 0 calc(4 * var(--u)) transparent; } }   /* a reminder that fades: nothing more */
 .ic.arc::after { box-shadow: none; padding: calc(4 * var(--u)); box-sizing: border-box; background: conic-gradient(rgb(var(--on)) 0 calc(var(--p) * 1turn), transparent 0); -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0); -webkit-mask-composite: xor; mask: linear-gradient(#000 0 0) content-box exclude, linear-gradient(#000 0 0); }
 .ic.arc.cw::after { background: conic-gradient(transparent 0 calc((1 - var(--p)) * 1turn), rgb(var(--on)) 0); }
 .pick > .ic, .ic.pick { --ring: rgb(var(--pick)); }
@@ -76,7 +77,7 @@ button { cursor: pointer; background: none; border: 0; padding: 0; }
 
 /* The pill: one size everywhere (78 high, 22 each side, bold italic 38). */
 .pill { flex: none; display: inline-flex; align-items: center; height: calc(78 * var(--u)); padding: 0 calc(22 * var(--u)); border-radius: var(--r-pill); white-space: nowrap;
-  box-shadow: inset 0 0 0 calc(3 * var(--u)) var(--ring, rgb(var(--pick))); background: var(--black); font-weight: 700; font-style: italic; font-size: var(--t1); color: rgb(245, 245, 245); transition: box-shadow var(--quick); }
+  box-shadow: inset 0 0 0 calc(3 * var(--u)) var(--ring, rgb(var(--pick))); background: var(--black); font-weight: 700; font-style: italic; font-size: var(--t1); color: var(--ink); transition: box-shadow var(--quick); }
 .pill.on { --ring: rgb(var(--on)); } .pill:disabled { --ring: var(--edge); color: var(--dim); }
 .pill.esc { height: calc(60 * var(--u)); padding: 0 calc(18 * var(--u)); font-size: var(--t2); font-weight: 700; margin-left: calc(10 * var(--u)); }   /* Comp's way out: at the end of the state bar, white words in the blue ring */
 #botBar.wide .cell::before { display: none; }   /* three double-wide tiles: no dividers */
@@ -98,7 +99,7 @@ body.comp #game { filter: saturate(1.25) contrast(1.05); }
   box-shadow: inset 0 0 0 calc(6 * var(--u)) rgb(var(--red)); animation: alertglow 1s ease-in-out infinite; }   /* Comp's warnings: one place, red for danger, the seconds big */
 .alertbar .al { flex: 1; min-width: 0; display: flex; flex-direction: column; align-items: center; text-align: center; line-height: 1.05; white-space: nowrap; }
 .alertbar .hz { flex: none; width: calc(60 * var(--u)); height: calc(60 * var(--u)); fill: rgba(var(--red), .25); stroke: rgb(var(--red)); stroke-width: 2.2; stroke-linejoin: round; stroke-linecap: round; animation: hzblink 1s steps(2, jump-none) infinite; } .alertbar .hz path + path { stroke: #fff; stroke-width: 2.6; }
-@keyframes hzblink { 50% { opacity: .45; } } .alertbar b { font-weight: 800; font-size: var(--t1); } .alertbar i { font-style: normal; font-weight: 600; font-size: var(--t2); color: rgb(255, 200, 195); }
+@keyframes hzblink { 50% { opacity: .45; } } .alertbar b { font-weight: 800; font-size: var(--t1); } .alertbar i { font-style: normal; font-weight: 600; font-size: var(--t2); color: rgba(var(--red), .85); }
 .alertbar .num { flex: none; font-weight: 800; font-size: calc(64 * var(--u)); width: calc(60 * var(--u)); text-align: center; }
 @keyframes alertglow { 50% { box-shadow: inset 0 0 0 calc(6 * var(--u)) rgb(var(--red)), 0 0 calc(34 * var(--u)) rgba(var(--red), .85); } }
 .sub-menu { position: absolute; inset: 0; display: flex; align-items: center; justify-content: flex-end; gap: calc(14 * var(--u)); border-radius: var(--r-pill); background: var(--black); }
@@ -176,9 +177,10 @@ body.intro-quick.intro-in .soren, body.intro-quick.intro-in .go-in { transition-
 .mrow.lit .lvl { --fill-c: var(--label); --track-c: var(--edge); }
 .mrow.lit .lvl::-webkit-slider-thumb { width: calc(56 * var(--u)); height: calc(56 * var(--u)); margin-top: calc(-24 * var(--u)); background: var(--handle) center / 100% 100%; }
 .mrow.lit .lvl::-moz-range-thumb { width: calc(56 * var(--u)); height: calc(56 * var(--u)); background: var(--handle) center / 100% 100%; }
-.due { position: absolute; top: 50%; left: calc(690 * var(--u)); width: calc(300 * var(--u)); height: calc(60 * var(--u)); transform: translateY(-50%); border: 0; border-bottom: calc(3 * var(--u)) solid rgb(70, 66, 62); background: none; font-size: 16px; color: var(--ink); text-align: right; color-scheme: dark; }
+.due { position: absolute; top: 50%; left: calc(690 * var(--u)); width: calc(300 * var(--u)); height: calc(60 * var(--u)); transform: translateY(-50%); border: 0; border-bottom: calc(3 * var(--u)) solid var(--edge); background: none; font-size: 16px; color: var(--ink); text-align: right; color-scheme: dark; }
 .due::-webkit-calendar-picker-indicator { display: none; } .due:focus { outline: none; border-bottom-color: rgb(var(--pick)); }
 .mrow.clock .lvl { left: calc(400 * var(--u)); width: calc(290 * var(--u)); } .mrow.clock .pct { display: none; }
+.mrow .seg ~ .lvl, .mrow .seg ~ .due, .mrow .seg ~ .pct, .mrow.sub .seg { display: none; } .mrow.sub .seg ~ .lvl, .mrow.sub .seg ~ .due { display: block; } .mrow.sub .lvl { left: calc(480 * var(--u)); width: calc(220 * var(--u)); }   /* a choice that became its slider */
 .pct { position: absolute; right: calc(176 * var(--u)); top: 50%; transform: translateY(-50%); font-weight: 500; font-size: var(--t2); }
 .mrow.lit .pct { color: var(--label); }
 .seg { position: absolute; right: calc(186 * var(--u)); top: 50%; height: calc(60 * var(--u)); transform: translateY(-50%); display: flex; border-radius: var(--r-pill); box-shadow: inset 0 0 0 calc(3 * var(--u)) var(--edge); }
@@ -197,12 +199,12 @@ body.intro-quick.intro-in .soren, body.intro-quick.intro-in .go-in { transition-
 .mrow.lit .wheel b { color: rgb(var(--ink-rgb)); }
 .wheel s { font-weight: 500; font-size: var(--t2); color: var(--dim); transform: translateY(-50%) scaleY(0.7); }
 .wheel s.up { top: calc(20 * var(--u)); } .wheel s.dn { top: calc(111 * var(--u)); }
-.mrow.lit .wheel s { color: rgb(140, 142, 144); }
+.mrow.lit .wheel s { color: var(--label); }
 .big { position: absolute; right: calc(176 * var(--u)); top: 50%; transform: translateY(-50%); font-weight: 700; font-size: var(--t1); }
 .mrow.lit .big { color: rgb(var(--ink-rgb)); }
 .tx { position: absolute; top: calc(41 * var(--u)); height: calc(60 * var(--u)); transform: translateY(-50%); border: 0; border-bottom: calc(3 * var(--u)) solid var(--edge); background: none; font-size: 16px; font-style: italic; color: var(--ink); -webkit-user-select: text; user-select: text; padding: 0; }
 .tx { left: calc(400 * var(--u)); width: calc(390 * var(--u)); }
-.tx::placeholder { color: rgb(80, 82, 84); } .mrow.lit .tx { border-bottom-color: rgb(70, 66, 62); } .mrow.lit .tx::placeholder { color: rgb(150, 152, 154); }
+.tx::placeholder { color: var(--dim); } .mrow.lit .tx { border-bottom-color: var(--edge); } .mrow.lit .tx::placeholder { color: var(--label); }
 .tx:focus { outline: none; border-bottom-color: rgb(var(--pick)); }
 
 /* ---------- The first session: a lone plus, a box to write in, gold and a wash of green ---------- */
@@ -211,15 +213,27 @@ body.intro-quick.intro-in .soren, body.intro-quick.intro-in .go-in { transition-
 @keyframes rise { from { height: 0; opacity: 0; } to { height: var(--row); opacity: 1; } }
 @keyframes fall { from { height: var(--row); opacity: 1; } to { height: 0; opacity: 0; } }
 .seg.x3 button { width: calc(164 * var(--u)); } .seg.x3 i { width: calc(154 * var(--u)); transform: translateX(calc(164 * var(--u) * var(--k, 0))); }
-.mrow .ic { overflow: visible; } .mrow.box > .ic svg { transition: transform .8s cubic-bezier(.3, 1.5, .5, 1), color .5s; cursor: pointer; }
+.mrow .ic { overflow: visible; } .mrow.box > .ic svg { transform: rotate(var(--turn, 0deg)); transition: transform .8s cubic-bezier(.3, 1.5, .5, 1), color .5s; cursor: pointer; }   /* plus 0°, X 45°, minus 90° with one bar drawn in */
+.mrow.box svg path { transform-box: fill-box; transform-origin: center; transition: transform .4s; } .mrow.later > .ic svg .h, .opts .o2 > .ic svg .h { transform: scaleX(0); }
+.mrow.later > .ic { --ring: var(--dim); color: var(--dim); }
+.mrow.hint > .ic svg { animation: opthint 1.2s ease-in-out forwards; } .mrow.hint > .ic svg .h { animation: opthintH 1.2s ease-in-out forwards; }   /* the hint: the plus turns into ✕, into −, and back to a plus */
+@keyframes opthint { 0% { transform: rotate(0deg); color: rgb(var(--on)); } 30% { transform: rotate(45deg); color: rgb(var(--red)); } 60% { transform: rotate(90deg); color: rgb(var(--ink-rgb)); } 100% { transform: rotate(180deg); color: rgb(var(--on)); } }
+@keyframes opthintH { 0%, 30% { transform: scaleX(1); } 55%, 65% { transform: scaleX(0); } 100% { transform: scaleX(1); } }
+/* The icon option overlay: ✕ and − fold out beside the lone plus on a hinge at its ring's right edge, each on the one before; off unless the plus is waiting */
+.opts { position: absolute; left: calc(133 * var(--u)); top: 50%; width: 0; height: 0; }
+.opts .o1, .opts .o2 { position: absolute; left: 0; top: 0; width: calc(96 * var(--u)); height: 0; transform-origin: left center; transform: perspective(calc(500 * var(--u))) rotateY(-90deg); transition: transform .45s ease; }
+.opts .o2 { left: calc(96 * var(--u)); transition-delay: 0s; } .mrow.open .opts .o1 { transform: none; } .mrow.open .opts .o2 { transform: none; transition-delay: .3s; } .mrow.open .opts .o1 { transition-delay: 0s; }
+.opts .ic { left: calc(60 * var(--u)); top: 0; cursor: pointer; } .opts .o1 > .ic { --ring: rgb(var(--ink-rgb)); color: rgb(var(--red)); } .opts .o1 > .ic svg { transform: rotate(45deg); }
+.opts .o2 > .ic { --ring: rgb(var(--pick)); color: rgb(var(--ink-rgb)); } .opts .o2 > .ic svg { transform: rotate(90deg); } .mrow.two .opts .o2 { display: none; }
+.mrow.box.lead > .opts { opacity: 1; pointer-events: auto; } .mrow:not(.lead) > .opts { display: none; }
 .mrow.box .nm .pill { height: calc(54 * var(--u)); padding: 0 calc(18 * var(--u)); font-size: var(--t2); font-weight: 700; font-style: italic; margin-left: calc(4 * var(--u)); vertical-align: middle; color: var(--ink); transition: color .6s; }
-.mrow.box .tx { left: calc(462 * var(--u)); width: calc(556 * var(--u)); height: calc(76 * var(--u)); top: 50%; border: calc(3 * var(--u)) solid var(--label); border-radius: calc(22 * var(--u)); padding: 0 calc(8 * var(--u)); font-size: max(16px, calc(34 * var(--u))); background-color: rgba(var(--ink-rgb), .04); transition: border-color .4s, box-shadow .6s, opacity .9s; }
+.mrow.box .tx { left: calc(462 * var(--u)); width: calc(556 * var(--u)); height: calc(76 * var(--u)); top: 50%; border: calc(3 * var(--u)) solid var(--label); border-radius: calc(22 * var(--u)); padding: 0 calc(8 * var(--u)); font-size: 16px; background-color: rgba(var(--ink-rgb), .04); transition: border-color .4s, box-shadow .6s, opacity .9s; }
 .mrow.box .tx:focus { border-color: rgb(var(--ink-rgb)); box-shadow: 0 0 calc(30 * var(--u)) rgba(var(--ink-rgb), .28), inset 0 0 calc(14 * var(--u)) rgba(var(--ink-rgb), .08); }
 .mrow.box .tx.gone { opacity: 0; pointer-events: none; }
 .mrow.box > :not(.ic) { transition: opacity .8s ease; }
 .mrow.lead > :not(.ic) { opacity: 0; pointer-events: none; } .mrow.lead::before { opacity: 0; }
 .mrow.prime > .ic { --ring: rgb(var(--pick)); }
-.mrow.lead > .ic { --ring: rgb(var(--pick)); color: rgb(var(--on)); animation: pulse 2.6s ease-in-out infinite; --glow: var(--pick); }
+.mrow.lead > .ic { --ring: rgb(var(--pick)); color: rgb(var(--on)); }
 .mrow.glow > .ic { animation: pulse 2.6s ease-in-out infinite; --glow: var(--gold); }
 @keyframes pulse { 0%, 100% { filter: drop-shadow(0 0 calc(3 * var(--u)) rgba(var(--glow), .3)); } 50% { filter: drop-shadow(0 0 calc(16 * var(--u)) rgba(var(--glow), .9)); } }
 .mrow.golden > .ic svg { color: rgb(var(--gold)); }
@@ -241,13 +255,14 @@ body.intro-quick.intro-in .soren, body.intro-quick.intro-in .go-in { transition-
 #spot { position: fixed; z-index: 40; pointer-events: none; opacity: 0; transition: opacity 1.2s ease; box-shadow: 0 0 0 200vmax rgba(0, 0, 0, .68); } #spot.on { opacity: 1; }
 #mcFoot [data-foot=back].off { opacity: .35; pointer-events: none; }
 .foot .cell[data-foot=done] > .ic { --ring: rgb(var(--pick)); } .foot .cell.ready > .ic { filter: drop-shadow(0 0 calc(10 * var(--u)) rgba(var(--pick), 0.9)); }
-.foot .cell.beckon > .ic { animation: beckon 1.1s ease-in-out 3; } @keyframes beckon { 50% { transform: scale(1.14); filter: brightness(2.4) drop-shadow(0 0 calc(40 * var(--u)) rgb(var(--pick))) drop-shadow(0 0 calc(18 * var(--u)) rgb(var(--pick))); } }   /* Done shows itself after the last row changes */
+.foot .cell[data-foot=done] { flex-basis: calc(388.66 * var(--u)); margin-left: auto; } .foot .cell[data-foot=done] > .ic::after { width: calc(330 * var(--u)); }   /* Done: a double-wide pill, ending where Back ends, on every card */
+.mrow.recede::before { animation: recede .9s ease-in forwards; } @keyframes recede { to { clip-path: inset(0 0 0 100%); } }   /* the last row is finished: its ring draws off to the right, into Done */
 .rail { position: absolute; left: calc(1136 * var(--u)); width: calc(60 * var(--u)); transform: translateX(-50%); touch-action: none; }
 .rail::before { content: ''; position: absolute; left: 50%; top: 0; bottom: 0; width: calc(8 * var(--u)); transform: translateX(-50%); border-radius: calc(4 * var(--u)); background: var(--edge); }
 .rail i { position: absolute; left: 50%; width: calc(18 * var(--u)); height: calc(18 * var(--u)); transform: translate(-50%, -50%); border-radius: 50%; background: rgb(var(--pick)); }
 .rail b { position: absolute; left: 50%; width: calc(56 * var(--u)); height: calc(56 * var(--u)); transform: translate(-50%, -50%); background: var(--handle-v) center / 100% 100%; transition: top var(--quick); filter: drop-shadow(0 calc(2 * var(--u)) calc(6 * var(--u)) rgba(0, 0, 0, 0.6)); }
 .foot { position: absolute; left: 0; right: 0; bottom: calc(14 * var(--u)); height: var(--row); display: flex; }
-.foot .cell:nth-child(4) { margin-left: auto; } .foot .cell { flex: 0 0 calc(194.33 * var(--u)); } .foot .cell::before { display: none; }
+.foot .cell { flex: 0 0 calc(194.33 * var(--u)); } .foot .cell::before { display: none; }
 /* The one pop-up: the card goes solid black; a question, one grey line, and two tiles: ‹ back in blue, › the action in red. */
 .pop { position: absolute; inset: 0; z-index: 2; border-radius: var(--r); background: var(--black); display: flex; flex-direction: column; justify-content: center; align-items: center; gap: calc(40 * var(--u)); padding: 0 calc(60 * var(--u)); text-align: center; }
 .pop h3 { margin: 0; font-weight: 700; font-style: italic; font-size: var(--t1); color: rgb(var(--ink-rgb)); }
@@ -526,8 +541,8 @@ const ENV = { cover: 0, gloom: 0, precip: 0, rain: 0, snow: 0, wind: 0, blow: 0,
 const FEEL = { life: 0.45, heave: 0.035, glow: 0.65 };
 
 /* ---------- Storage (guarded: private windows and sandboxes can throw) ---------- */
-const VERSION = 70, PHYSICS_ID = '12627fd9';   // the build, and the first eight of the locked Physics block's hash
-const JKEY = 'somatic-resonance:journal:v2', PKEY = 'soren:prefs:p5', SKEY = 'soren:pool:p5';
+const VERSION = 71, PHYSICS_ID = '12627fd9';   // the build, and the first eight of the locked Physics block's hash
+const JKEY = 'soren:journal:p5', JKEY_OLD = 'somatic-resonance:journal:v2', PKEY = 'soren:prefs:p5', SKEY = 'soren:pool:p5';
 function loadJSON(key) { try { const v = JSON.parse(localStorage.getItem(key) || 'null'); return v && typeof v === 'object' ? v : {}; } catch (e) { return {}; } }
 const SAVED = {};   // what each key last held: a save that changes nothing writes nothing
 function saveJSON(key, v) { try { const j = JSON.stringify(v); if (SAVED[key] === j) return; localStorage.setItem(key, j); SAVED[key] = j; } catch (e) { /* storage unavailable */ } }
@@ -587,7 +602,7 @@ let WORLD = null;
 const here = () => WORLD;
 
 // The journal keeps only what Statistics shows: your best, your Full Blooms, lists finished, and seconds spent here each day.
-const J = (() => { const raw = loadJSON(JKEY), best = raw.best; return { best: typeof best === 'number' ? best : Number(obj(best).classic) || 0, blooms: Number(raw.blooms) || 0, lists: Number(raw.lists) || 0, days: obj(raw.days) }; })();
+const J = (() => { const raw = localStorage.getItem(JKEY) ? loadJSON(JKEY) : loadJSON(JKEY_OLD), best = raw.best; return { best: typeof best === 'number' ? best : Number(obj(best).classic) || 0, blooms: Number(raw.blooms) || 0, lists: Number(raw.lists) || 0, days: obj(raw.days) }; })();
 let journalDirty = false, saveT = 0;
 function saveJournal() { saveJSON(JKEY, { v: VERSION, ...J }); journalDirty = false; }
 
@@ -598,9 +613,9 @@ const has = (l) => MODES[S.mode].layers.includes(l) && !(l === 'weather' && here
 const S = {
   mode: 'play', world: createWorld(), score: 0, blooms: 0, merges: 0, highestTier: 2, current: 0, next: 1, fair: true,
   dropX: LW / 2, targetX: LW / 2, sway: 0, aiming: false, aimCancelled: false, canDrop: true, cooldown: 0,
-  overT: 0, offender: 0, gameOver: false, card: false, sheet: null, combo: 0, comboT: 0, tools: { strike: 0, mystery: 0, storm: 0 }, armed: false, zap: null,
+  overT: 0, offender: 0, gameOver: false, card: false, sheet: null, playT: 0, nudged: 0, planned: false, combo: 0, comboT: 0, tools: { strike: 0, mystery: 0, storm: 0 }, armed: false, zap: null,
   wild: false, zen: false, storm: null, stormQ: [], fx: { rain: 0, wind: 0 }, fid: null, outro: null, gone: false, roundDone: false, pauseT: 0,
-  breath: 0.5, sigh: null, space: null, ballFade: 0, rescueAt: 0, life: 0.5, rainMem: 0, wx: 0, wxOpen: false, severe: false, doom: null, cloud: 0, tod: 0,
+  breath: 0.5, sigh: null, ballFade: 0, rescueAt: 0, life: 0.5, rainMem: 0, wx: 0, wxOpen: false, severe: false, doom: null, cloud: 0, tod: 0,
   pulses: [], rumbles: [], lit: 0, growl: 0, cellA: 0, flash: 0, lastInput: -1e9,
   wakeLock: null, goal: null, parked: false, paused: false, intro: null, prev: null
 };
@@ -615,6 +630,22 @@ function setPaused(on) {   // one pause: everything waits, your time too
 // The app's few timings, named once (the styles use the same three): a sweep is how long a shimmer takes to cross a key; a
 // beat, the pause before something answers you; a settle, how long a fade takes. Anything slower follows the breath.
 const TIME = { sweep: 0.5, beat: 0.6, settle: 1.2 };
+/* The one seam to the phone itself. In a browser these are what the browser has; wrapped as an app (Capacitor), its plugins
+   fill them in, and nothing else in the code knows the difference. Everything a native shell touches goes through here. */
+const NATIVE = {
+  plugins: () => (window.Capacitor && window.Capacitor.Plugins) || {},
+  get haptics() { return !!this.plugins().Haptics || canVibrate; },
+  haptic(pattern) {   // a buzz: light, medium or heavy by its length; a pattern as one longer buzz
+    const H = this.plugins().Haptics;
+    if (!H) { if (canVibrate) navigator.vibrate(pattern); return; }
+    const ms = Array.isArray(pattern) ? pattern.reduce((a, b) => a + b, 0) : pattern;
+    if (Array.isArray(pattern)) H.vibrate({ duration: ms }); else H.impact({ style: ms <= 12 ? 'LIGHT' : ms <= 30 ? 'MEDIUM' : 'HEAVY' });
+  },
+  async wake(on) {   // keep the screen on (Rest): the app's own switch, or the browser's wake lock
+    const K = this.plugins().KeepAwake; if (K) { await (on ? K.keepAwake() : K.allowSleep()); return; }
+    if (on && 'wakeLock' in navigator) S.wakeLock = await navigator.wakeLock.request('screen'); else if (!on && S.wakeLock) { await S.wakeLock.release(); S.wakeLock = null; }
+  }
+};
 const LOW = { n: 0, ema: 0, slow: 0 };   // shedding: 1 no bursts, 2 the pool at 1x. Set by the frame loop when the phone falls behind; never by you
 const lessMo = () => PREFS.still;   // Reduce motion: what moves on its own is stilled, and the breath only glows
 let particles = [], ripples = [], floaters = [], animTime = 0, canvas, ctx;
@@ -768,7 +799,6 @@ class SoundBath {
     o.start(t); o.stop(t + decay + 0.05); o.onended = () => g.disconnect();
     return g;
   }
-  tone(dest, f, type, peak, attack, decay, t) { return this.voice({ f, type, peak, attack, decay, at: t - this.ctx.currentTime, dest }); }
   knock(pan, soft) {   // Heritage: a marble set down on wood, a short knock with a click of glass on top
     if (!this.live) return;
     this.voice({ f: soft ? 150 : 180, f1: 95, glide: 0.08, peak: soft ? 0.07 : 0.12, attack: 0.006, decay: 0.12, pan });
@@ -928,7 +958,7 @@ const launchLevel = (t) => { const m = PREFS.vol; return m <= LAUNCH.low ? m : L
 // How much glass is rolling across the wood right now, 0 to 1: sideways speed, weighted by size. Spinning in place is silent.
 const rolling = () => Math.min(1, S.world.balls.reduce((s, b) => s + (b.landed ? Math.min(3, Math.abs(b.vx)) * b.radius : 0), 0) / 300);
 // The one place a native app would wire real haptics. Safari on iPhone can't vibrate, so today this only works on Android.
-function haptic(pattern) { if (!canVibrate || !PREFS.vibe) return; try { navigator.vibrate(pattern); } catch (e) { /* unsupported */ } }
+function haptic(pattern) { if (!PREFS.vibe || !NATIVE.haptics) return; try { NATIVE.haptic(pattern); } catch (e) { /* unsupported */ } }
 /* ---------- Messages ---------- */
 // One message channel, over the pool. Low stimulation keeps it quiet, and nothing is said while you rest.
 let bannerQueue = [], bannerUntil = 0;
@@ -962,13 +992,12 @@ function maybePraise(reason, x, y) {
 /* ---------- Icons, the colours of state, the shimmer ---------- */
 // Plain is off, green is on, blue is in hand, gold is you did it right, red is trouble, silver is this, now.
 const cssRGB = (n) => getComputedStyle(document.body).getPropertyValue(n).replace(/\s/g, '');   // state colours live in the CSS :root; body.comp brightens them
-let LIGHT = cssRGB('--ink-rgb'), GOLD = cssRGB('--gold'), RED = cssRGB('--red'), GREEN = cssRGB('--on'), BLUE = cssRGB('--pick');
-function readPalette() { LIGHT = cssRGB('--ink-rgb'); GOLD = cssRGB('--gold'); RED = cssRGB('--red'); GREEN = cssRGB('--on'); BLUE = cssRGB('--pick'); }   // the canvas follows the page's colours: read again when Comp brightens them
+let LIGHT = cssRGB('--ink-rgb'), GOLD = cssRGB('--gold'), RED = cssRGB('--red'), GREEN = cssRGB('--on'), BLUE = cssRGB('--pick'), LABEL = cssRGB('--label-rgb'), RED_RGB = RED.split(',').map(Number);
+function readPalette() { LIGHT = cssRGB('--ink-rgb'); GOLD = cssRGB('--gold'); RED = cssRGB('--red'); GREEN = cssRGB('--on'); BLUE = cssRGB('--pick'); LABEL = cssRGB('--label-rgb'); RED_RGB = RED.split(',').map(Number); }   // the canvas follows the page's colours: read again when Comp brightens them
 const CLOUD = 'M7.5 14.5h9.5a3.5 3.5 0 0 0 .4-7 5 5 0 0 0-9.6 1.2A3 3 0 0 0 7.5 14.5z', DOT = (x, y, r) => `M${x - r} ${y}a${r} ${r} 0 1 0 ${2 * r} 0a${r} ${r} 0 1 0 ${-2 * r} 0`;
 const ICON = {
   skip: 'M9 5.5l7 6.5-7 6.5', fwd: 'M3.5 6l6 6-6 6M12.5 6l6 6-6 6', last: 'M6 6l6 6-6 6M19 5.5v13',
-  gear: 'M12 9.2a2.8 2.8 0 1 0 0 5.6 2.8 2.8 0 0 0 0-5.6zM19.3 13.4a7.4 7.4 0 0 0 0-2.8l1.9-1.5-1.9-3.3-2.3.9a7.4 7.4 0 0 0-2.4-1.4L14.2 3h-3.8l-.4 2.3a7.4 7.4 0 0 0-2.4 1.4l-2.3-.9-1.9 3.3 1.9 1.5a7.4 7.4 0 0 0 0 2.8l-1.9 1.5 1.9 3.3 2.3-.9a7.4 7.4 0 0 0 2.4 1.4l.4 2.3h3.8l.4-2.3a7.4 7.4 0 0 0 2.4-1.4l2.3.9 1.9-3.3z',
-  pp: 'M3.5 6.5v11l8-5.5zM16 6.5v11M20.5 6.5v11', pause: 'M8.5 6.5v11M15.5 6.5v11', play: 'M8 5.5v13l10.5-6.5z',
+  pause: 'M8.5 6.5v11M15.5 6.5v11', play: 'M8 5.5v13l10.5-6.5z',
   speaker: 'M4.5 9.5h3.2L12 6v12l-4.3-3.5H4.5z', waves: 'M15 9.5a3.5 3.5 0 0 1 0 5M17.5 7a7 7 0 0 1 0 10', hush: 'M15.5 9.5l5 5M20.5 9.5l-5 5',
   bolt: 'M13 2.5 5.5 13.5h5.5L10 21.5l8-11.5h-5.5z', wind: 'M3.5 9h10a2.5 2.5 0 1 0-2.4-3.2M3.5 13h15a2.8 2.8 0 1 1-2.6 3.8M3.5 17h6',
   rain: CLOUD + 'M9 17l-1 2.5M13 17l-1 2.5M17 17l-1 2.5', snow: CLOUD + 'M9 18.5h.01M13 20h.01M17 18.5h.01M11 21.5h.01M15 21.5h.01',
@@ -1192,6 +1221,7 @@ const poolDPR = () => Math.min(LOW.n >= 2 ? 1 : 2, window.devicePixelRatio || 1)
 const SPR = {};
 const scene = { key: '', gradeKey: '', base: {}, layer: {}, bolt: null, boltUntil: 0, sheetX: 190 };
 const curve = (y, amp, f, ph = 0) => (x) => y + Math.sin(x * f + ph) * amp + Math.sin(x * f * 2.3 + ph * 1.7) * amp * 0.35;
+const SUN = '255,214,160';   // the Sun's warm glow
 const tint = (a) => here().accentSoft.replace(/[\d.]+\)$/, `${clamp(a, 0, 1).toFixed(3)})`);
 const shade = (col, k) => rgba(mix(hex(col), [0, 0, 0], k));
 function canvasOf(w, h, dpr = 1) { const cv = document.createElement('canvas'); cv.width = Math.round(w * dpr); cv.height = Math.round(h * dpr); const c = cv.getContext('2d'); c.scale(dpr, dpr); return [cv, c]; }
@@ -1321,7 +1351,7 @@ const PAINT = {
     c.lineWidth = 6; c.beginPath(); c.moveTo(tx - 10, ty + 6); c.lineTo(tx + 18, ty - 12); c.stroke();
   } },
   flowers: { near: (c, r, w, G, L) => { const k = w.arc === 'bloom' ? L : 0.7; dots(c, r, G.near, Math.round(6 + 46 * k), ['#fbcfe8', '#fef08a', '#e0e7ff', '#fda4af'], 20, 1 + 1.3 * k, 1 + 1.3 * k); } },
-  leaves: { near: (c, r, w, G, L) => dots(c, r, G.near, Math.round(8 + 50 * (w.arc === 'turn' ? L : 0.5)), ['#ea580c', '#d97706', '#b91c1c'], 22, 2.4, 1.2) }   // fallen leaves gather
+  leaves: { near: (c, r, w, G, L) => dots(c, r, G.near, Math.round(8 + 50 * (w.arc === 'turn' ? L : 0.5)), leafCSS.slice(0, 3), 22, 2.4, 1.2) }   // fallen leaves gather
 };
 function paintLayer(c, part, w, L) {
   const G = GROUNDS[w.ground], r = seeded(23 + LAND_LAYERS.indexOf(part) * 14), els = ELEMENTS.filter(k => w.el[k] && PAINT[k]);
@@ -1486,7 +1516,7 @@ function makeSprites() {
   c.fillStyle = '#e0f2fe';
   for (let i = 0; i < 110; i++) { const y = r() * HORIZON; c.globalAlpha = (0.25 + 0.75 * r()) * (1 - y / (HORIZON * 1.25)); c.fillRect(r() * LW, y, 1.3, 1.3); }
   SPR.stars = st;
-  SPR.sun = glowImg('255,214,160', 128); SPR.cool = glowImg('214,228,255', 128); SPR.fly = glowImg('253,224,71', 32);
+  SPR.sun = glowImg(SUN, 128); SPR.cool = glowImg('214,228,255', 128); SPR.fly = glowImg('253,224,71', 32);
   SPR.cloud = cloudSprite('255,255,255'); SPR.cloudDark = cloudSprite('52,62,78');
   SPR.tray = null;   // repainted at the new resolution when next needed
   scene.key = '';
@@ -1623,7 +1653,7 @@ function drawSpace(c, b) {
     const mx = 300, my = 175, mr = 22; dot(s, mx, my, mr, '#d9dde3');   // the Moon, lit from the Sun's side
     for (const [dx, dy, r] of [[-6, -5, 5], [7, 4, 4], [-2, 9, 3], [9, -8, 2.5]]) dot(s, mx + dx, my + dy, r, 'rgba(150,158,170,0.6)');
     const sh = s.createLinearGradient(mx - mr, my, mx + mr, my); sh.addColorStop(0.35, 'rgba(5,8,20,0)'); sh.addColorStop(1, 'rgba(5,8,20,0.85)'); dot(s, mx, my, mr, sh);
-    s.globalCompositeOperation = 'lighter'; glow(s, 64, 352, 150, '255,214,160', 1); glow(s, 64, 352, 40, '255,250,235', 1);   // the Sun, rising past the Earth's edge
+    s.globalCompositeOperation = 'lighter'; glow(s, 64, 352, 150, SUN, 1); glow(s, 64, 352, 40, '255,250,235', 1);   // the Sun, rising past the Earth's edge
     s.strokeStyle = 'rgba(255,230,180,0.16)'; s.lineWidth = 1.2; for (let i = 0; i < 12; i++) { const a = i * TAU / 12, l = 60 + 30 * (i % 2); s.beginPath(); s.moveTo(64 + Math.cos(a) * 16, 352 + Math.sin(a) * 16); s.lineTo(64 + Math.cos(a) * l, 352 + Math.sin(a) * l); s.stroke(); }
     s.globalCompositeOperation = 'source-over';
     const earth = s.createRadialGradient(ex - 200, ey - er, 40, ex, ey, er); earth.addColorStop(0, '#3b8fd6'); earth.addColorStop(0.5, '#1a4f8f'); earth.addColorStop(1, '#0a1f44'); dot(s, ex, ey, er, earth);
@@ -1677,11 +1707,11 @@ function drawScene(c, b, k) {
 /* ---------- Weather particles ---------- */
 // One fixed pool per kind; the scene's level for that kind (0–1) sets how many are active. Creatures and leaves are kept a
 // little sparse (FEEL.life). Reduce motion: rain and snow come half as thick and half as fast.
-const LEAF_COLORS = ['234,88,12', '245,158,11', '220,38,38', '217,119,6'];
+const LEAF = ['234,88,12', '245,158,11', '220,38,38', '217,119,6'], leafCSS = LEAF.map(c => `rgb(${c})`);   // autumn's four leaf colours, everywhere a leaf is drawn
 const POOL_MAX = { rain: 200, snow: 180, leaves: 30, fireflies: 28, butterflies: 6 };
 const WX = Object.fromEntries(Object.entries(POOL_MAX).map(([kind, n]) => [kind, Array.from({ length: n }, (_, i) => ({
   x: Math.random() * LW, y: kind === 'butterflies' ? 210 + Math.random() * 110 : Math.random() * LH, d: 0.4 + Math.random() * 0.6, ph: Math.random() * TAU,
-  rot: Math.random() * TAU, vr: (Math.random() - 0.5) * 0.08, hue: LEAF_COLORS[i % 4], wing: i
+  rot: Math.random() * TAU, vr: (Math.random() - 0.5) * 0.08, hue: LEAF[i % 4], wing: i
 }))]));
 const falls = (kind) => kind === 'rain' || kind === 'snow';
 const active = (kind) => Math.round(clamp(ENV[kind] * (falls(kind) ? (lessMo() ? 0.5 : 1) * (S.severe ? 1 : 0.6) : FEEL.life), 0, 1) * POOL_MAX[kind]);   // severe: the full pool
@@ -1773,12 +1803,17 @@ function flash(close) {   // the sky lights from inside, once; refused if it wou
   S.pulses.push({ t0: animTime, amp, soft }); flashBusy = animTime;
   return true;
 }
+const owlOff = () => { if (OWL.away <= 0) { OWL.away = 22; OWL.fly = 0; } };   // the owl takes off, if it is here
+function boltAt(b) {   // lightning onto one sphere: the flash, the bolt, and its thunder close by
+  if (flash(1) && !lessMo()) S.zap = { kind: 'bolt', path: makeBolt(b.x, b.y - b.radius * 0.3), until: animTime + TIME.beat };
+  S.rumbles.push({ at: animTime + 0.08, close: 1, vol: 0.8 });
+}
 function strikeSky(close, dark = false) {   // the flash, a bolt if it's close, then its sound
   const lit = !dark && flash(close);
   if (!lit && lightning() > 0 && !dark) return false;   // too soon after the last flash: this one waits
   const x = 50 + Math.random() * (LW - 100);
   scene.sheetX = x;
-  if (close > 0.6 && here().el.owl && OWL.away <= 0) { OWL.away = 22; OWL.fly = 0; }   // a close strike and the owl is off
+  if (close > 0.6 && here().el.owl) owlOff();   // a close strike and the owl is off
   if (lit && !lessMo() && close > 0.3) {
     scene.bolt = makeBolt(x); scene.boltUntil = animTime + 0.25 + 0.45 * close;
     const end = scene.bolt[0][scene.bolt[0].length - 1]; scene.sheetX = end[0];
@@ -1863,7 +1898,7 @@ function updateBoard(dt) {
   if (BW.leaf && (BW.leaf.t -= dt) <= 0) BW.leaf = null;   // a leaf catches on a resting sphere, then the wind takes it on
   if (!BW.leaf && has('spheres') && ENV.leaves > 0.05 && Math.abs(ENV.blow) > 0.15 && (BW.leafT -= dt) <= 0) {
     const rest = S.world.balls.filter(b => b.landed && Math.abs(b.vx) < 0.3), b = rest[Math.floor(Math.random() * rest.length)];
-    if (b) BW.leaf = { id: b.id, t: 1.5 + Math.random() * 2, dx: (Math.random() - 0.5) * b.radius * 0.8, a: Math.random() * TAU, c: LEAF_COLORS[Math.floor(Math.random() * 4)] };
+    if (b) BW.leaf = { id: b.id, t: 1.5 + Math.random() * 2, dx: (Math.random() - 0.5) * b.radius * 0.8, a: Math.random() * TAU, c: LEAF[Math.floor(Math.random() * 4)] };
     BW.leafT = 5 + Math.random() * 8;
   }
 }
@@ -1894,12 +1929,11 @@ function drawStorm(c) {
     const d = 0.4 + (i % 7) / 10, x = (((i * 97 + t * (80 + 160 * d) * dir) % (LW + 40)) + LW + 40) % (LW + 40) - 20, y = ((i * 53 + t * (kind === 'rain' ? 420 : 60 + 60 * d)) % (LH + 20)) - 10;
     c.globalAlpha = a * (0.4 + 0.5 * d);
     if (kind === 'rain') { c.strokeStyle = '#e6f2fb'; c.lineWidth = 1; c.beginPath(); c.moveTo(x, y); c.lineTo(x - dir * 4, y + 14); c.stroke(); continue; }
-    c.fillStyle = { snow: '#ffffff', petals: '#f9c6dd', leaves: LEAF_COL[i % 4], embers: '#ffb347', sand: '#d9c08f', stars: '#e6ecff' }[kind];
+    c.fillStyle = { snow: '#ffffff', petals: '#f9c6dd', leaves: leafCSS[i % 4], embers: '#ffb347', sand: '#d9c08f', stars: '#e6ecff' }[kind];
     c.beginPath(); if (kind === 'petals' || kind === 'leaves') c.ellipse(x, y, 3.5 * d + 1, 1.8 * d + 0.8, t * 2 + i, 0, TAU); else c.arc(x, y, kind === 'sand' ? 1 : 1 + 1.6 * d, 0, TAU); c.fill();
   }
   c.restore();
 }
-const LEAF_COL = ['#ea580c', '#d97706', '#b91c1c', '#ca8a04'];
 /* ---------- Breathing ---------- */
 // One pacer at your set pace drives every breath in the app: in for 40% of each breath, out for 60%, because the long
 // out-breath is the part that calms. At six breaths a minute that's four seconds in and six out. GGSD: breathing in, things
@@ -2169,7 +2203,7 @@ let CR = [], crT = -9, crNext = 25;
 function creature(x, y, kind = here().creature, tap = true) {
   if (!kind || lessMo() || (tap && animTime - crT < 4)) return;
   if (tap) crT = animTime;
-  if (kind === 'owl') { if (OWL.away <= 0) { OWL.away = 22; OWL.fly = 0; sound.hoot(); } return; }
+  if (kind === 'owl') { if (OWL.away <= 0) { owlOff(); sound.hoot(); } return; }
   if (kind === 'meteor') { if (!METEOR) meteor(); return; }
   if (tap && (kind === 'hare' || kind === 'hawk')) { Object.assign(flock, { on: true, dir: x < LW / 2 ? 1 : -1, x, y: Math.min(y, 150) }); sound.chirp(1); }   // a tap also lifts the birds
   if (kind === 'toucan') sound.whistle();
@@ -2239,7 +2273,7 @@ function drawWarp(now) {
 function engage() {   // warp, then home
   if (lessMo() || WARP.go) { closeSheet(); return; }
   WARP.go = performance.now(); sound.whoosh(1, 0); haptic(20);
-  setTimeout(() => { WARP.go = 0; closeSheet(); }, 1500);
+  setTimeout(() => { WARP.go = 0; if (S.sheet === 'beta') closeSheet(); }, 1500);   // unless another card came first
 }
 
 // Experiments, each off until you switch it on in Settings › Beta. They read the phone's own motion sensor, on the phone,
@@ -2346,7 +2380,7 @@ function exitRest() { S.rest = null; requestWake(false); sound.init(); }
 function updateRest(dt) { const z = S.rest; z.t += dt; z.ph += dt / (10 + 5 * clamp(z.t / WIND_IN, 0, 1)); if (PREFS.fadeAfter && z.left > 0) z.left = Math.max(0, z.left - dt); }   // the glow breathes six a minute, slowing to four
 const restWords = () => { const z = S.rest; return z.t < WIND_IN * 0.6 ? 'Settling in' : !PREFS.fadeAfter ? 'Playing until you wake it' : z.left > 0 ? `Fading out in ${z.left >= 3600 ? hm(z.left) : mmss(z.left)}` : 'Faded out. Rest well.'; };
 async function requestWake(on) {   // keep the screen awake in Rest: phones stop web audio when they lock
-  try { if (on && 'wakeLock' in navigator) S.wakeLock = await navigator.wakeLock.request('screen'); else if (!on && S.wakeLock) { await S.wakeLock.release(); S.wakeLock = null; } } catch (e) { S.wakeLock = null; }
+  try { await NATIVE.wake(on); } catch (e) { S.wakeLock = null; }
 }
 
 /* ---------- Game flow ---------- */
@@ -2360,11 +2394,15 @@ function pickNextTier() {
 function newPool() {
   particles = []; ripples = []; floaters = []; S.zap = null; S.doom = null; bwClear();
   Object.assign(S, { world: createWorld(), score: 0, blooms: 0, merges: 0, highestTier: 2, current: 0, next: 1, fair: PREFS.overflow === 'end', zen: false, wild: false,
-    canDrop: true, cooldown: 0, overT: 0, offender: 0, gameOver: false, combo: 0, comboT: 0, tools: { strike: 0, mystery: 0, storm: 0 }, armed: false, storm: null, stormQ: [], roundDone: false });
+    canDrop: true, cooldown: 0, overT: 0, offender: 0, gameOver: false, combo: 0, comboT: 0, tools: { strike: 0, mystery: 0, storm: 0 }, armed: false, storm: null, stormQ: [], roundDone: false, playT: 0, nudged: 0, planned: false });
   $('alert').hidden = true; if (S.parked) unpark(); else hideCard();
   if (PREFS.comp) compStart();   // a fresh game in Comp starts its line and its clocks again
 }
-function startPool() { newPool(); savePool(); syncUI(); say('A fresh game', here().label); }
+function resumeAsk(fresh) {   // Play or Start with a game waiting: one question, only then. Resume skips the plan; the Task tile is a touch away
+  if (!S.prev) { fresh(); return; }
+  showCard({ eyebrow: 'Your last game', title: 'Still waiting', note: `${PREFS.numbers ? fmt(S.prev.score) + ' · ' : ''}where you left it`, answers: [['Resume', () => { const p = S.prev; introLeave('play'); loadPool(p); syncUI(); }], ['New game', fresh]] });
+}
+function startPool() { S.prev = null; newPool(); savePool(); syncUI(); say('A fresh game', here().label); }
 function keepGoing() { Object.assign(S, { gameOver: false, overT: 0, fair: false, zen: true }); savePool(); syncUI(); say('Keep going', 'Zen for this game · nothing ends'); }
 // Where you are can change any time: the same pool, repainted.
 function newWorld(quiet) {
@@ -2377,6 +2415,7 @@ const panFor = (x) => ((x / LW) - 0.5) * 1.4;
 const aimX = (r) => clamp(S.dropX + S.sway, r + 5, LW - r - 5);
 function dropCurrent() {
   if (!awake() || !S.canDrop || compLocked()) return;   // Comp: no drops while lightning waits
+  S.prev = null;   // the first drop in a new game: the last one is let go
   const r = S.wild ? WILD_R : RADII[S.current], x = aimX(r), fault = compOn() ? dropFault() : null;   // exactly where the waiting sphere is drawn. Comp, power out: the dropper misbehaves
   if (fault === 'jam') { sound.tick(); haptic(8); S.canDrop = false; S.cooldown = 30; return; }   // nothing comes out
   if (fault === 'two') { const r2 = RADII[S.next], x2 = clamp(x + (x < LW / 2 ? 1 : -1) * (r + r2 + 2), r2 + 5, LW - r2 - 5); addBall(S.world, x2, DROP_Y, S.next, { vy: 1.4 }); S.next = pickNextTier(); }   // two at once
@@ -2480,7 +2519,7 @@ function updateDoom(dt) {
   if (!b) { S.tools.strike++; syncBars(); return; }   // it merged first: the Strike comes back
   const [name, rgb, kind] = here().strike;
   if (kind === 'lamp') whiteFlash(0.14);
-  else if (kind === 'bolt') { if (flash(1) && !lessMo()) S.zap = { kind, path: makeBolt(b.x, b.y - b.radius * 0.3), until: animTime + TIME.beat }; S.rumbles.push({ at: animTime + 0.08, close: 1, vol: 0.8 }); }
+  else if (kind === 'bolt') boltAt(b);
   else { S.zap = { kind, x: b.x, y: b.y, r: b.radius, rgb, until: animTime + TIME.beat }; ({ ice: () => sound.crackle(6), wave: () => sound.whoosh(0.9, panFor(b.x)), meteor: () => sound.crack(0.18) })[kind](); }
   if (!lessMo()) spawnParticles(b.x, b.y, `rgb(${rgb})`, 26, 6);
   haptic([30, 30, 60]); if (compOn()) compStrike(b, name); else mist([b], name, 'Space opened'); syncBars();   // Comp: knocked down a size, not taken
@@ -2532,7 +2571,7 @@ function endGame() {
 
 /* ---------- The pool keeps: saved on this phone, so it can wait for you ---------- */
 function savePool() {
-  if (S.stormQ.length) return;   // a storm saves once it has passed. The last game, offered in Menu › Game, is kept in memory (S.prev), so this one always saves
+  if (S.stormQ.length || compOn()) return;   // a storm saves once it has passed. A Comp run is never saved: each one is a fresh run
   saveJSON(SKEY, { v: VERSION, score: S.score, blooms: S.blooms, highestTier: S.highestTier, current: S.current, next: S.next, tools: S.tools, wild: S.wild, gameOver: S.gameOver, fair: S.fair, merges: S.merges,
     balls: S.world.balls.map(b => [Math.round(b.x * 10) / 10, Math.round(b.y * 10) / 10, b.tier, b.wild ? 1 : 0, b.landed ? 1 : 0]) });   // a sphere still falling comes back falling
 }
@@ -2563,7 +2602,7 @@ function sessionEnd() {   // when play stops, or 0 for Free Play
   return Date.now() + PREFS.mins * MIN;
 }
 function startSession() {
-  S.prev = null; const end = sessionEnd();
+  S.planned = true; const end = sessionEnd();
   S.goal = end ? { end, start: Date.now(), rung: 0, total: (end - Date.now()) / 1000, cw: PREFS.byClock } : null;   // the ring: green is time left; set by clock it recedes clockwise, by timer counterclockwise
   setMode('play'); setPaused(false); syncUI();
   say(PREFS.kind === 'break' ? 'Your session' : tasks()[0] ? tasks()[0].text : 'Play', S.goal ? `Until ${clockAt(S.goal.end)}` : 'Free Play · you decide');
@@ -2606,7 +2645,7 @@ function parkCard() {
 function unpark() { S.parked = false; S.gone = false; $('pool').classList.remove('grey', 'dark'); hideCard(); if (S.roundDone) startPool(); syncUI(); }
 function goNow() {   // the pool goes dark; what you came to do; quiet
   S.gone = true; $('pool').classList.add('dark');
-  showCard({ title: 'Go.', note: 'Tap when you’re back.', list: PREFS.kind === 'task' ? tasks().map(t => ({ text: t.text })) : null, answers: [['I’m back', backCard]] });
+  showCard({ title: 'Go', note: 'Tap when you’re back.', list: PREFS.kind === 'task' ? tasks().map(t => ({ text: t.text })) : null, answers: [['I’m back', backCard]] });
 }
 function backCard() {
   S.gone = false; $('pool').classList.remove('dark');
@@ -2627,7 +2666,7 @@ function tickLine(i) {
   S.ticks[i] = !S.ticks[i]; $('cardList').children[i].classList.toggle('done', S.ticks[i]);
   if (!S.ticks[i]) return;
   const n = S.ticks.length, all = S.ticks.every(Boolean), got = S.ticks.filter(Boolean).length;
-  haptic(20); if (!all) { tickNote(got); return; }
+  haptic(20); if (!all) { tickNote(got); $('cardNote').textContent = `${got} of ${n} done`; return; }   // every tick counts: how far you are, in plain words
   if (S.listWon) return; S.listWon = true;
   if (n === 1) { const [t, w] = pickWin('one', WIN_ONE); sound.done(); $('cardTitle').textContent = t; $('cardNote').textContent = w; setTimeout(() => sound.wash(), 700); return; }
   J.lists++; journalDirty = true; saveJournal(); tickNote(got); celebrate();
@@ -2690,7 +2729,7 @@ const gauss = () => Math.sqrt(-2 * Math.log(1 - Math.random())) * Math.cos(TAU *
 const deal = (bag, all) => { if (!bag.length) { bag.push(...all); for (let i = bag.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [bag[i], bag[j]] = [bag[j], bag[i]]; } } return bag.pop(); };   // a shuffled deck (Fisher-Yates): no streaks of bad luck
 const pulse = (rate) => (PREFS.calm || lessMo() ? 0.8 : 0.6 + 0.4 * Math.sin(animTime * Math.min(CT.pulse, rate)));   // every red pulse: capped under 3 a second, steady with Low stimulation or Reduce motion
 function compStart() {
-  Object.assign(COMP, { on: true, step: 0, glow: null, line: DANGER_Y, v: 0, vTo: rnd(...CT.line.v), gap: wait(), ball: null, wave: null, good: [], bad: [], gust: null, vw: 0, lv: 0, wx: { U: 0, v: 0, a: 0, aim: 0, t: 0 }, hz: null, hzGap: wait(), hzDeck: [], floor: null, cool: null });
+  Object.assign(COMP, { on: true, step: 0, glow: null, line: DANGER_Y, v: 0, vTo: rnd(...CT.line.v), gap: wait(), ball: null, wave: null, good: [], bad: [], gust: null, vw: 0, lv: 0, wx: { U: 0, v: 0, a: 0, aim: 0, t: 0 }, hz: null, hzGap: wait(), hzDeck: [], floor: null, cool: null, rev: 0, litAt: 0, alert: null, alertAt: -1 });
   for (const b of S.world.balls) b.dmg = null;
   windEpisode(); S.fair = false; say('Comp', 'The line creeps. The wind is wild. Leave any time.');
 }
@@ -2756,7 +2795,7 @@ function hazTick(dt) {
 }
 // Alerts are read twice a frame (the bar, and its seconds): built once
 function hazStart(kind) {
-  if (kind === 'outage') { if (here().dry) { COMP.hzGap = CT.wait[0]; return; } const dir = Math.random() < 0.5 ? -1 : 1; COMP.hz = { kind, t: 0, warn: 5, len: 5 + rnd(8, 20), x: dir > 0 ? rnd(40, LW - 40 - TREE.dx) : rnd(40 + TREE.dx, LW - 40), dir, st: 0, held: false }; return; }
+  if (kind === 'outage') { const dir = Math.random() < 0.5 ? -1 : 1; COMP.hz = { kind, t: 0, warn: 5, len: 5 + rnd(8, 20), x: dir > 0 ? rnd(40, LW - 40 - TREE.dx) : rnd(40 + TREE.dx, LW - 40), dir, st: 0, held: false }; return; }
   if (kind === 'floor') { const ice = !!here().snow; COMP.floor = { ice, lv: 0 }; COMP.hz = { kind, t: 0, len: wait() }; return; }
   const h = { kind, t: 0, cat: rollCat(), parts: PLAN[kind].map(([k, at]) => ({ k, at, done: false })), name: { double: 'Double trouble', triple: 'Triple threat' }[kind] };
   if (h.parts.some(p => p.k === 'zap')) {
@@ -2767,8 +2806,7 @@ function hazStart(kind) {
 }
 function hazEnd() { COMP.hz = null; COMP.hzGap = Math.max(wait(), CT.quiet); }
 function zap(b) {   // the bolt: the sphere comes down a size, as a Strike in Comp
-  if (flash(1) && !lessMo()) S.zap = { kind: 'bolt', path: makeBolt(b.x, b.y - b.radius * 0.3), until: animTime + TIME.beat };
-  S.rumbles.push({ at: animTime + 0.08, close: 1, vol: 0.8 }); haptic([30, 30, 60]); compStrike(b, 'Lightning');
+  boltAt(b); haptic([30, 30, 60]); compStrike(b, 'Lightning');
 }
 const zapPart = () => COMP.hz && COMP.hz.parts && COMP.hz.parts.find(p => p.k === 'zap' && !p.done);
 const compLocked = () => compOn() && !!zapPart();   // the dropper waits while a sphere is hot
@@ -2964,7 +3002,7 @@ function drawFrame(c, b, breathing, red) {
   const halo = breathing ? apexAmp() : 0, key = [breathing, Math.round(b * 50), Math.round(red * 250), Math.round(halo * 50), here().key, dpr].join();
   if (FRAME.key !== key) {   // the band moves in whole pixels: nothing changed, nothing redrawn
     FRAME.key = key;
-    const f = FRAME.c, col = mix(here().edgeRGB, [255, 90, 80], red);
+    const f = FRAME.c, col = mix(here().edgeRGB, RED_RGB, red);
     f.save(); f.setTransform(dpr, 0, 0, dpr, 0, 0); f.clearRect(0, 0, LW, LH);
     const w = Math.round(breathing ? (lessMo() ? 16 : 4 + 36 * b) : 4), a = breathing ? FEEL.glow * (0.08 + 0.7 * b) : 0.2;   // deeper and brighter at the top of the breath
     for (let i = 0; i < w; i++) { const k = 1 - i / w; f.fillStyle = rgba(col, a * k * k); f.beginPath(); outline(f, i); outline(f, i + 1); f.fill('evenodd'); }
@@ -2998,13 +3036,13 @@ function render() {
   drawWeather(ctx); drawStreaks(ctx); drawFog(ctx);
   if (S.flash > 0.01) { ctx.fillStyle = `rgba(255,255,255,${S.flash.toFixed(3)})`; ctx.fillRect(0, 0, LW, LH); }
   if (fade > 0.02) {   // the waterline holds still while the pool breathes: a fine inlay in the world's own colour, warming to red
-    const end = rules() === 'end', col = mix(w.edgeRGB, [255, 90, 80], red), la = end ? 0.6 : 0.28, g = ctx.createLinearGradient(12, 0, LW - 12, 0);
+    const end = rules() === 'end', col = mix(w.edgeRGB, RED_RGB, red), la = end ? 0.6 : 0.28, g = ctx.createLinearGradient(12, 0, LW - 12, 0);
     ctx.globalAlpha = fade; g.addColorStop(0, rgba(col, 0)); g.addColorStop(0.12, rgba(col, la)); g.addColorStop(0.88, rgba(col, la)); g.addColorStop(1, rgba(col, 0));
     ctx.strokeStyle = g; ctx.lineWidth = end ? 1.5 : 1; ctx.beginPath();
     if (compOn()) for (let x = 12; x <= LW - 12; x += 4) ctx.lineTo(x, dangerAt(x)); else { ctx.moveTo(12, DANGER_Y); ctx.lineTo(LW - 12, DANGER_Y); }   // Comp: it creeps, and under a wave it rolls
     ctx.stroke();
     const lk = compOn() && compLook(); if (lk) { ctx.save(); ctx.globalAlpha = fade * lk.a; ctx.strokeStyle = `rgb(${lk.rgb})`; ctx.shadowColor = `rgb(${lk.rgb})`; ctx.shadowBlur = 14; ctx.lineWidth = 2.5; ctx.stroke(); ctx.restore(); }   // Comp: red as it sinks, gold as it lifts, water blue under a wave
-    if (end) { ctx.fillStyle = 'rgba(179,180,182,0.7)'; ctx.font = `400 12px ${FONT.sans}`; ctx.textAlign = 'right'; ctx.textBaseline = 'alphabetic'; ctx.fillText('overflow', LW - 16, dangerAt(LW - 16) - 6); }
+    if (end) { ctx.fillStyle = `rgba(${LABEL},0.7)`; ctx.font = `400 12px ${FONT.sans}`; ctx.textAlign = 'right'; ctx.textBaseline = 'alphabetic'; ctx.fillText('overflow', LW - 16, dangerAt(LW - 16) - 6); }
   }
   if (S.mode !== 'fidget') drawRipples(ctx);   // Fidget draws its own, on the water
   ctx.globalAlpha = S.mode === 'relax' ? fade : 1;
@@ -3036,7 +3074,7 @@ function render() {
       if (ball.dmg && ball.dmg.marks.length) drawCracks(ctx, ball, ball.radius * s);   // Comp: chipped or cracked glass
       if (COMP.ball && ball.id === COMP.ball.id) drawTimerBall(ctx, ball, ball.radius * s);
       if (ball.id === hot) drawHot(ctx, ball, ball.radius * s);   // Comp: lightning's target
-      if (COMP.cool && COMP.cool.id === ball.id) halo(ctx, ball.x, ball.y, ball.radius * s, BLUE, 1 - COMP.cool.t / 0.9);   // cooled: blue, then itself   // Comp: the countdown in place of the number
+      if (COMP.cool && COMP.cool.id === ball.id) halo(ctx, ball.x, ball.y, ball.radius * s, BLUE, 1 - COMP.cool.t / 0.9);   // cooled: blue, then itself
       if (S.doom && ball.id === S.doom.id) {   // watch out: red, quickening
         const k = PREFS.calm || lessMo() ? 0.8 : 0.55 + 0.45 * Math.sin(S.doom.t * 18);   // under three pulses a second; steady with Low stimulation or Reduce motion
         halo(ctx, ball.x, ball.y, ball.radius, RED, k); ring(ctx, ball.x, ball.y, ball.radius * s + 3, `rgba(${RED},${(0.6 + 0.4 * k).toFixed(3)})`, 2.5);
@@ -3172,7 +3210,7 @@ function update(k, dt) {
   if (awake()) updateDoom(dt);   // a Strike waits while the game waits
   if (S.fid) updateFidget(dt);
   updateLook(dt);
-  journalTick(dt);
+  journalTick(dt); if (awake() && !S.paused && !S.sheet && S.mode === 'play') S.playT += dt;
   if (S.mode === 'rest') updateRest(dt);
   S.ballFade += ((has('spheres') ? 1 : 0) - S.ballFade) * (1 - Math.pow(0.9, k));
   const swayTo = ENV.blow * 20 + Math.sin(animTime * 2.3) * Math.min(1, Math.abs(ENV.blow)) * 4;
@@ -3205,7 +3243,7 @@ function fault(e) {
   if (faults < 2 || S.card) return;
   try { compStop(); savePool(); saveJournal(); savePrefs(); setPaused(true); showCard({ title: 'Something went wrong', note: 'Your game is saved. Restart to carry on.', answers: [['Restart', () => location.reload()]] }); } catch (x) { try { location.reload(); } catch (y) {} }
 }
-window.addEventListener('error', (e) => fault(e.error || e.message));
+window.addEventListener('error', (e) => fault(e.error || e.message)); window.addEventListener('unhandledrejection', (e) => fault(e.reason));   // a promise that fails counts too
 function frame(now) {
   let wait = 0;
   try { wait = tick(now); } catch (e) { fault(e); lastFrame = now; }
@@ -3234,18 +3272,21 @@ function updateWarmth() {   // evening warmth: from 7 pm the screen leans a litt
 }
 /* ---------- The first session: a plan, up to three moves, an exit ---------- */
 // The Timer and Task card, walked down one step at a time. Session Plan asks Yes or No. Yes brings a lone plus: touch it and it
-// rolls into an X and opens a box to write in. The first touch of the box is the ceremony: the X rolls to a plus and turns gold
+// turns into an X and opens a box to write in. The first touch of the box is the ceremony: the X turns to a plus and goes gold
 // (tone one), the words "Name It" turn gold (two), then "What's the Task?", the box's ring and the check wash from white to green
-// (three) and hum; write something, press Enter or the check, and it locks in gold. A new plus waits for the next move, up to
-// three. A box not yet written goes back to its plus with Back. Then Plan an Exit: Set, or
-// Free Play. No skips straight to the exit. Everything here is the card's own rows; the ceremony is only classes and sound.
+// (three) and hum; write something, press Enter or the check, and it locks in gold. Enter at any point runs the ceremony to its
+// end at once: you set the pace. A new plus waits for the next move, up to three; a second later its options fold out beside it:
+// + another move · ✕ no more moves (the slot closes) · − not now (the slot waits, grey; touch it later for + and ✕). Then Plan an
+// Exit: Set turns the row into its own slider (touch the words for Set or Free again), or Free Play. No skips straight to the exit.
+// Everything here is the card's own rows; the ceremony is only classes and sound. One glyph does plus, X and minus: two bars,
+// turned 0°, 45° or 90° with one bar drawn in.
 // A box's ceremony is one counter: beat 0 nothing yet · 1 gold icon, tone one · 2 "Name It" gold · 3 the wash begins · 4 the ring
 // settles · 5 done. hide: 0 shown · 1 the box fades and the next waits · 2 faded. quiet: a move you already had, written again.
-// A new object ends the old one: a late timer holds the old object and changes nothing that is on screen.
-const newCer = (quiet = false) => ({ beat: 0, hide: 0, quiet });
+// opt: the lone plus's options: 0 just the plus · 1 the hint turns · 2 ✕ and − folded out. A new object ends the old one.
+const newCer = (quiet = false) => ({ beat: 0, hide: 0, quiet, opt: 0, two: false });
 const FLOW = { fresh: false, plan: false, box: [0, 0, 0], exit: false, sub: false, cer: [newCer(), newCer(), newCer()], t: [] };
-// box: 0 not yet · 1 a lone plus · 2 open · 3 locked, in gold · 4 taken away · 5 an ordinary row, a move you already had
-const GLYPH = { plus: 'M12 6v12M6 12h12', x: 'M6 6l12 12M18 6L6 18' };
+// box: 0 not yet · 1 a lone plus · 2 open · 3 locked, in gold · 4 taken away · 5 an ordinary row, a move you already had · 6 not now: a grey minus
+const BARS = '<svg viewBox="6 6 12 12" aria-hidden="true"><path class="h" d="M6 12h12"/><path class="v" d="M12 6v12"/></svg>';   // the one glyph
 // Three tones a box, each box a chord step higher (C, E, G). All one chord, so any that overlap still agree. Up, up, down.
 const CUES = [{ n: [261.63, 392, 329.63], h: [[130.81, 164.81], [164.81, 196]] }, { n: [329.63, 523.25, 392], h: [[164.81, 196], [196, 261.63]] },
   { n: [392, 659.25, 523.25], h: [[196, 261.63], [261.63, 329.63]] }];
@@ -3254,10 +3295,10 @@ const hum = (f, f1, d, pk) => { sound.init(); if (sound.live) sound.voice({ f, f
 const stage = (k) => FLOW.box[k];
 const taskText = (k) => ((PREFS.tasks[k] || {}).text || '').trim();
 // The ceremony's beats, in ms (each step waits on the one before it).
-const MS = { gold2: 1400, wave: 1400, preok: 3300, fin: 4500, hide: 1100, next: 2400, sub: 1300 };
-const flowAt = (fn, ms) => FLOW.t.push(setTimeout(fn, ms));
+const MS = { gold2: 1400, wave: 1400, preok: 3300, fin: 4500, hide: 400, next: 900, hint: 1000, fold: 2300 };
+const flowAt = (fn, ms, k = -1) => FLOW.t.push({ id: setTimeout(fn, ms), k });
 const flowGo = (flow) => { const i = CARD.rows.findIndex(r => r.flow === flow); if (i >= 0) { CARD.i = i; syncCard(); } };
-function flowStop() { FLOW.t.forEach(clearTimeout); FLOW.t = []; spot(false); }
+function flowStop(k = -1) { FLOW.t = FLOW.t.filter(t => { if (k >= 0 && t.k !== k) return true; clearTimeout(t.id); return false; }); if (k < 0) spot(false); }   // all of them, or one box's
 function flowReset() { flowStop(); Object.assign(FLOW, { plan: false, box: [0, 0, 0], exit: false, sub: false, cer: [newCer(), newCer(), newCer()] }); }
 function flowOpen() {   // from the intro: the ceremony. From the Timer tile later: what you already wrote, as plain rows
   const fresh = FLOW.fresh || (PREFS.kind === 'task' && !tasks().length); FLOW.fresh = false; flowReset();
@@ -3268,41 +3309,35 @@ function flowPlan(quiet) {   // Session Plan confirmed
   if (PREFS.kind === 'task' && !quiet) { FLOW.box[0] = 1; FLOW.exit = false; }   // Yes replays the ritual; saved tasks stay stored
   else if (PREFS.kind === 'task') { let n = 0; while (n < 3 && taskText(n)) FLOW.box[n++] = 5; if (n < 3) FLOW.box[n] = 1; FLOW.exit = quiet || n > 0; }
   else FLOW.exit = true;
-  FLOW.sub = FLOW.exit; if (!quiet) flowGo(FLOW.exit ? 'exit' : 0); else syncCard();
+  FLOW.sub = FLOW.exit && PREFS.exit === 'timer'; if (!quiet) flowGo(FLOW.exit ? 'exit' : 0); else syncCard();
 }
 function flowRows() {
   const kind = pref('kind', ICON.task, 'Session Plan', 'Have something to do soon?'), set = kind.set;
   const plan = { ...kind, flow: 'plan', set: (v) => { flowReset(); set(v); }, confirm: () => { if (!FLOW.plan) flowPlan(); else finishRow(CARD.i); } };
-  const box = (k) => ({ ic: GLYPH.x, name: 'Let’s Name It', html: `Let’s <span class="pill on">Name It${SHINES}</span>`, kind: 'text', i: k, flow: k,
-    desc: () => (stage(k) === 3 || stage(k) === 5 ? taskText(k) : 'What’s the Task?'), hide: () => stage(k) === 0 || stage(k) === 4,
-    tap: () => flowTap(k), confirm: () => flowLock(k), focus: () => flowFocus(k) });
-  const exit = { ...pref('exit', ICON.clock, 'Plan an Exit', stopWords), flow: 'exit', hide: () => !FLOW.exit,
-    prime: () => FLOW.box.includes(1) };   // beside the lone plus the exit is primed in blue; touching it just lights it, the plus stays
-  const timer = { ...pref('mins', ICON.clock, 'How long', () => `${PREFS.mins} min`), clock: true, flow: 'timer', hide: () => !FLOW.sub || PREFS.exit !== 'timer' };
-  return PREFS.kind === 'task' ? [plan, box(0), box(1), box(2), exit, timer] : [plan, exit, timer];
+  const box = (k) => ({ ic: BARS, name: 'Let’s Name It', html: `Let’s <span class="pill on">Name It${SHINES}</span>`, kind: 'text', i: k, flow: k,
+    desc: () => (stage(k) === 3 || stage(k) === 5 ? taskText(k) : stage(k) === 6 ? 'Not now' : 'What’s the Task?'), hide: () => stage(k) === 0 || stage(k) === 4,
+    tap: () => flowTap(k), opt: (o) => flowOpt(k, o), confirm: () => flowLock(k), focus: () => flowFocus(k) });
+  const ex = pref('exit', ICON.clock, 'Plan an Exit', stopWords), mins = pref('mins', ICON.clock, 'How long', () => `${PREFS.mins} min`);
+  const exit = { ...ex, flow: 'exit', hide: () => !FLOW.exit, prime: () => FLOW.box.includes(1),   // beside the lone plus the exit is primed in blue
+    set: (v) => { ex.set(v); FLOW.sub = v === 'timer'; }, lvl: { ...mins, clock: true }, sub: () => FLOW.sub && PREFS.exit === 'timer',   // Set: the row becomes its own slider
+    words: () => { if (FLOW.sub) { FLOW.sub = false; syncCard(); } } };   // touch the words: Set or Free again
+  return PREFS.kind === 'task' ? [plan, box(0), box(1), box(2), exit] : [plan, exit];
 }
 // What a box looks like: from its stage and its ceremony, all as classes, so a card rebuilt mid-way still draws the same.
 function flowSync(el, r) {
   if (typeof r.flow !== 'number') return;
   const k = r.flow, st = stage(k), c = FLOW.cer[k], b = c.beat, on = (n, b) => el.classList.toggle(n, !!b), tx = el.querySelector('.tx'), ds = el.querySelector('.ds'), ic = el.querySelector(':scope > .ic');
   el.classList.add('box'); el.dataset.k = k;
-  on('lead', st === 1); on('golden', b >= 1); on('gold2', b >= 2); on('locked', st === 3); on('preok', b >= 1 && b <= 3); on('glow', c.hide === 1); on('plain', st === 5);
-  if (st === 1 || st === 5) el.classList.remove('lit'); if (st === 3) el.classList.toggle('lit', c.hide < 2);   // gold frame while it locks; gone once the next plus is there (a finished module carries no ring)
-  tx.classList.toggle('wave', b >= 3); tx.classList.toggle('fin', b >= 5); tx.classList.toggle('gone', st === 3 && c.hide > 0 || st === 5);
+  on('lead', st === 1); on('golden', b >= 1); on('gold2', b >= 2); on('locked', st === 3); on('preok', b >= 1 && b <= 3); on('glow', c.hide === 1); on('later', st === 6);
+  on('hint', st === 1 && c.opt === 1); on('open', st === 1 && c.opt === 2); on('two', c.two);
+  if (st === 1 || st === 5 || st === 6) el.classList.remove('lit'); if (st === 3) el.classList.toggle('lit', c.hide < 2);   // gold frame while it locks; gone once the next plus is there (a finished module carries no ring)
+  tx.classList.toggle('wave', b >= 3); tx.classList.toggle('fin', b >= 5); tx.classList.toggle('gone', st === 3 && c.hide > 0 || st === 5 || st === 6);
   ds.classList.toggle('wave', b >= 3); ds.classList.toggle('fin', b >= 5);
-  const want = st === 5 ? 'pen' : st === 1 ? 'plus' : 'x', was = el.dataset.ik;
-  if (was !== want) { el.dataset.ik = want; flowIcon(ic, was, want); }
-  const sv = ic.querySelector('svg'); if (sv && want === 'x') sv.style.transform = b >= 1 ? 'rotate(135deg) scale(0.71)' : 'rotate(0deg)';   // an X turned into a plus is longer by the diagonal: scaled back to the plus's own size
-}
-function flowIcon(ic, was, want) {   // a change of glyph rolls sideways: the plus into an X
-  if (want === 'pen' || was === 'pen' || !ic.querySelector('svg')) {   // only the glyph changes; the shines stay
-    const old = ic.querySelector('svg'), now = svg(want === 'pen' ? ICON.pen : GLYPH[want]);
-    if (old) { old.insertAdjacentHTML('afterend', now); old.remove(); } else ic.insertAdjacentHTML('afterbegin', now);
-    return;
-  }
-  const sv = ic.querySelector('svg'), p = sv.querySelector('path'), roll = { plusx: -135 }[was + want];
-  if (roll != null && !lessMo()) { sv.style.transition = 'none'; sv.style.transform = `rotate(${roll}deg)`; p.setAttribute('d', GLYPH[want]); void sv.getBoundingClientRect(); sv.style.transition = ''; sv.style.transform = 'rotate(0deg)'; }
-  else p.setAttribute('d', GLYPH[want]);
+  const want = st === 5 ? 'pen' : 'bars', was = el.dataset.ik;
+  if (was !== want) { el.dataset.ik = want; const old = ic.querySelector('svg'), now = want === 'pen' ? svg(ICON.pen) : BARS; if (old) { old.insertAdjacentHTML('afterend', now); old.remove(); } else ic.insertAdjacentHTML('afterbegin', now); }
+  el.style.setProperty('--turn', st === 2 && b < 1 ? '45deg' : st === 6 ? '90deg' : st === 1 && c.opt ? '180deg' : '0deg');   // open: an X. Not now: a minus. Otherwise a plus (after the hint's half turn, the same plus)
+  if (st === 1 && c.opt === 0 && !c.hinted) { c.hinted = true; flowAt(() => { c.opt = 1; syncCard(); }, MS.hint, k); flowAt(() => { c.opt = 2; syncCard(); }, MS.fold, k); }   // the options: a turn, then they fold out
+  if (!el.querySelector('.opts')) el.insertAdjacentHTML('beforeend', `<span class="opts"><span class="o1"><button class="ic" data-opt="x" aria-label="No more">${BARS}</button><span class="o2"><button class="ic" data-opt="minus" aria-label="Not now">${BARS}</button></span></span></span>`);   // ✕ and −, folded behind the plus
 }
 function shine(k, sel) {
   const el = $('mcRows').querySelector(`.mrow.box[data-k="${k}"]`); if (!el || lessMo()) return;
@@ -3311,40 +3346,46 @@ function shine(k, sel) {
 // The ceremony.
 function flowFocus(k) {
   const c = FLOW.cer[k]; if (stage(k) !== 2) return; spot(true, k); if (c.beat || c.quiet) return;
-  const q = CUES[k], at = (n, ms, fn) => flowAt(() => { c.beat = n; syncCard(); fn && fn(); }, ms);
+  const q = CUES[k], at = (n, ms, fn) => flowAt(() => { c.beat = n; syncCard(); fn && fn(); }, ms, k);
   c.beat = 1; syncCard(); shine(k, '.ic > .shine'); cue(q.n[0], 2.4, 0.11); hum(q.h[0][0], q.h[0][1], 3.0, 0.07);
   at(2, MS.gold2, () => { shine(k, '.pill > .shine'); cue(q.n[1], 2.8, 0.12); });
   flowAt(() => { c.beat = 3; syncCard(); cue(q.n[2], 4.2, 0.12); hum(q.h[1][0], q.h[1][1], 4.6, 0.07);   // the wash starts; the ring settles, then the check is done
-    at(4, MS.preok); at(5, MS.fin); }, MS.gold2 + MS.wave);
+    at(4, MS.preok); at(5, MS.fin); }, MS.gold2 + MS.wave, k);
 }
-function flowLock(k) {   // Enter, or the check
+function flowLock(k) {   // Enter, or the check: the ceremony runs to its end at once if it hasn't finished, and the box locks
   const c = FLOW.cer[k]; if (stage(k) !== 2 || !taskText(k)) return;
-  document.activeElement.blur(); spot(false);
+  document.activeElement.blur();
   if (c.quiet) { FLOW.box[k] = 5; FLOW.cer[k] = newCer(); syncCard(); return; }
-  if (c.beat < 2) return;
+  if (c.beat < 5) { flowStop(k); const q = CUES[k]; if (c.beat < 3) { cue(q.n[2], 4.2, 0.12); hum(q.h[1][0], q.h[1][1], 4.6, 0.07); } c.beat = 5; }
   FLOW.box[k] = 3; syncCard(); shine(k, '.ok > .shine');
-  flowAt(() => { c.hide = 1; syncCard(); }, MS.hide);
-  flowAt(() => { if (k < 2) { FLOW.box[k + 1] = 1; c.hide = 2; FLOW.exit = FLOW.sub = true; syncCard(); } else flowExit(); }, MS.next);
+  flowAt(() => { c.hide = 1; syncCard(); }, MS.hide, k);
+  flowAt(() => { if (k < 2) { FLOW.box[k + 1] = 1; c.hide = 2; FLOW.exit = true; syncCard(); } else flowExit(); }, MS.next, k);
 }
 function flowExit() {   // on to Plan an Exit: every box goes back to an ordinary row
   FLOW.exit = true; FLOW.box.forEach((s, k) => { if (s === 3 || s === 2) { FLOW.box[k] = taskText(k) ? 5 : 4; FLOW.cer[k] = newCer(); } else if (s === 1) FLOW.box[k] = 0; });
-  flowGo('exit'); flowAt(() => { FLOW.sub = true; syncCard(); }, MS.sub);
+  flowGo('exit');
 }
-function flowTap(k) {   // the icon: a lone plus opens; an ordinary row is written again
+function flowTap(k) {   // the icon: a lone plus opens; a grey minus offers + and ✕ again; an ordinary row is written again
   const st = stage(k);
-  if (st === 1) { FLOW.box[k] = 2; flowGo(k); return; }
+  if (st === 1) { FLOW.box[k] = 2; FLOW.cer[k].opt = 0; flowGo(k); return; }
+  if (st === 6) { FLOW.box[k] = 1; FLOW.cer[k] = { ...newCer(), two: true, hinted: true, opt: 2 }; flowGo(k); return; }
   if (st === 5) { FLOW.cer[k] = newCer(true); FLOW.box[k] = 2; flowGo(k); $('mcRows').querySelector(`.mrow.box[data-k="${k}"] .tx`).focus(); }
 }
+function flowOpt(k, o) {   // the lone plus's other options, then on to Plan an Exit
+  if (stage(k) !== 1) return; flowStop(k);
+  if (o === 'x') { FLOW.box[k] = 4; sound.tick(); } else { FLOW.box[k] = 6; sound.voice({ f: 196, f1: 130.81, glide: 0.5, type: 'triangle', peak: 0.12, attack: 0.05, decay: 1.6, lp: 600, bus: 'game' }); }   // ✕ a click; − a warm fifth, set down
+  FLOW.exit = true; flowGo('exit');
+}
 function flowBack() {   // one step back
-  flowStop(); const live = [0, 1, 2].filter(k => [1, 2, 3, 5].includes(stage(k))), last = live.pop();
+  flowStop(); const live = [0, 1, 2].filter(k => [1, 2, 3, 5, 6].includes(stage(k))), last = live.pop();
   if (FLOW.exit && PREFS.kind === 'task' && last != null) {   // from the exit to the moves, in gold again, with a plus for the next
     FLOW.exit = FLOW.sub = false;
-    for (let k = 0; k <= last; k++) if (stage(k) === 5) { FLOW.box[k] = 3; FLOW.cer[k] = { beat: 5, hide: 2, quiet: false }; }
-    FLOW.cer[last].hide = 1; if (last < 2) FLOW.box[last + 1] = 1;
+    for (let k = 0; k <= last; k++) if (stage(k) === 5) { FLOW.box[k] = 3; FLOW.cer[k] = { ...newCer(), beat: 5, hide: 2 }; }
+    if (stage(last) === 6) { FLOW.box[last] = 1; FLOW.cer[last] = newCer(); } else { FLOW.cer[last].hide = 1; if (last < 2) { FLOW.box[last + 1] = 1; FLOW.cer[last + 1] = newCer(); } }
   } else if (FLOW.exit) FLOW.exit = FLOW.sub = FLOW.plan = false;
   else if (last == null) FLOW.plan = false;
   else if (stage(last) === 1) {   // from a lone plus: the box before it, to write in again
-    FLOW.box[last] = 0; if (last === 0) FLOW.plan = false; else { const p = last - 1; FLOW.box[p] = 2; FLOW.cer[p] = { beat: 5, hide: 0, quiet: false }; }
+    FLOW.box[last] = 0; if (last === 0) FLOW.plan = false; else { const p = last - 1; FLOW.box[p] = 2; FLOW.cer[p] = { ...newCer(), beat: 5 }; }
   } else if (stage(last) === 2) { PREFS.tasks[last] = { text: '' }; savePrefs(); FLOW.box[last] = 1; FLOW.cer[last] = newCer(); }   // an open box: back to its plus
   else if (stage(last) === 3) { FLOW.box[last] = 2; FLOW.cer[last].hide = 0; }
   else { FLOW.box[last] = 2; FLOW.cer[last] = newCer(true); }   // an ordinary row: written again, quietly
@@ -3352,7 +3393,7 @@ function flowBack() {   // one step back
   CARD.i = 0; at == null ? syncCard() : flowGo(at);
 }
 // The spotlight: while a box has the keyboard, everything round it dims. It is fitted to the box when it starts, and again only
-// when the page or the box moves (a resize, the keyboard, a row finishing its rise): never every frame.
+// when the page or the box moves (a resize, the keyboard, a row finishing its rise): never every frame. It goes with the keyboard.
 let spotEl = null, spotK = null;
 function spotFit() {
   const el = spotK != null && $('mcRows').querySelector(`.mrow.box[data-k="${spotK}"]`); if (!el) { spotK = null; spotEl.classList.remove('on'); return; }
@@ -3364,6 +3405,7 @@ function spot(on, k) {
     const refit = () => { if (spotK != null) spotFit(); };
     addEventListener('resize', refit); addEventListener('scroll', refit, true); $('mcRows').addEventListener('animationend', refit);
     if (window.visualViewport) { visualViewport.addEventListener('resize', refit); visualViewport.addEventListener('scroll', refit); }
+    document.addEventListener('focusout', (e) => { if (e.target.matches && e.target.matches('.tx')) spot(false); });
   }
   spotK = on ? k : null; spotEl.classList.toggle('on', !!on); if (on) spotFit();
 }
@@ -3411,6 +3453,7 @@ const LEAVE = '<button class="pill esc" data-act="compoff">Leave Comp</button>';
 // with Cancel. Muting the sound covers the line with Cancel and Sound Settings: the sub menu, there only while muted.
 const LINE = { sub: null };
 const HAZARD = '<svg class="hz" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3 22 20.5H2z"/><path d="M12 9.5v5M12 17.6h.01"/></svg>';   // the hazard sign: a red triangle, the international warning shape
+const NUDGE = [5, 15, 30, 60];   // minutes of play before Task shows a fading blue ring, when no session was planned
 const VERB = { play: 'Playing', relax: 'Relaxing', fidget: 'Fidgeting', rest: 'Resting' };
 function lineHTML() {
   const sp = '<button class="sp" data-card="stats" aria-label="Score and time"><span class="star">★</span><b class="num" id="scoreVal"></b><i class="bar"></i><span class="num" id="clock"></span></button>';
@@ -3422,8 +3465,8 @@ function lineHTML() {
 }
 function syncBars() {
   const top = $('topBar'), bot = $('botBar'), wx = $('wxBar'), fam = CARD.name && CARDS[CARD.name].tile;
-  if (!top.firstChild) { top.innerHTML = topCells(); fitIcons(top); }
-  const pp = S.paused ? 'play' : 'pause'; if (top.dataset.pp !== pp) { top.dataset.pp = pp; const old = top.querySelector('[data-act=pause]'); if (old) { old.outerHTML = pauseCell(); fitIcons(top); } }
+  if (!top.firstChild) top.innerHTML = topCells();
+  const pp = S.paused ? 'play' : 'pause'; if (top.dataset.pp !== pp) { top.dataset.pp = pp; const old = top.querySelector('[data-act=pause]'); if (old) old.outerHTML = pauseCell(); }
   const set = (sel, cls, on) => { const e = top.querySelector(sel); if (e) e.classList.toggle(cls, !!on); };
   set('[data-act=menu]', 'on', fam === 0); set('[data-act=scene]', 'on', fam === 1); set('[data-act=session]', 'on', fam === 2);
   set('[data-act=pause]', 'on', S.paused); set('[data-act=vol]', 'on', !PREFS.sound); set('[data-act=vol]', 'muted', !PREFS.sound);
@@ -3433,8 +3476,7 @@ function syncBars() {
   const wkey = [S.wxOpen, here().key, here().snow].join(); if (BAR.wx !== wkey) { BAR.wx = wkey; wx.innerHTML = wxHTML(); }
   if (document.body.classList.toggle('comp', compOn()) !== BAR.comp) { BAR.comp = compOn(); readPalette(); handles(); }
   for (const [a, on] of [['allwx', ATMO.some(k => PREFS.atmo[k].on)], ['severe', S.severe], ['pacer', PREFS.pacer.on], ['drops', PREFS.pacer.drops]]) for (const b of [bot, wx]) { const e = b.querySelector(`[data-act=${a}]`); if (e) e.classList.toggle('on', !!on); }
-  wx.querySelectorAll('[data-sky]').forEach(b => b.classList.toggle('on', PREFS.atmo[b.dataset.sky].on));   // green is on, severe or not (yellow left with the colour cleanup)
-  const sv = wx.querySelector('[data-act=severe]'); if (sv) { sv.classList.toggle('on', S.severe); }
+  wx.querySelectorAll('[data-sky]').forEach(b => b.classList.toggle('on', PREFS.atmo[b.dataset.sky].on));   // green is on, severe or not
   bot.querySelectorAll('[data-tool]').forEach(b => { const k = b.dataset.tool, armed = (k === 'strike' && S.armed) || (k === 'mystery' && S.wild); b.classList.toggle('on', armed); b.classList.toggle('live', armed); b.classList.toggle('none', !S.tools[k] && !armed); });
   for (const r of [top, bot, wx]) fitIcons(r);
   document.body.classList.toggle('intro-in', !!(S.intro && S.intro.rest)); document.body.classList.toggle('intro-ready', !!(S.intro && S.intro.ready)); document.body.classList.toggle('intro-quick', !!(S.intro && S.intro.quick));
@@ -3443,19 +3485,21 @@ function syncBars() {
 function tickBars() {   // every frame: the score and its glow, your time running down (or the clock)
   const an = $('alertN'), al = compOn() && compAlert(); if ((!!al) !== !!an || (al && $('line').querySelector('.al b').textContent !== al[0])) syncBars();   // Comp: the warning comes, changes and goes
   if (al && $('alertN')) { const n = String(Math.max(0, Math.ceil(al[2]))), sub = $('line').querySelector('.al i'); if ($('alertN').textContent !== n) $('alertN').textContent = n; if (sub.textContent !== al[1]) sub.textContent = al[1]; }
-  const sc = $('scoreVal'); if (!sc) return;
-  const n = PREFS.numbers ? fmt(S.score) : '', g = scoreGlow(); if (sc.textContent !== n) sc.textContent = n;
-  const sh = g > 0.01 ? `0 0 ${(12 * g).toFixed(1)}px rgba(${SG.gold ? GOLD : LIGHT},${(0.8 * g).toFixed(3)})` : ''; if (sc._g !== sh) { sc._g = sh; sc.style.textShadow = sh; }
+  const sc = $('scoreVal'); if (sc) {
+    const n = PREFS.numbers ? fmt(S.score) : '', g = scoreGlow(); if (sc.textContent !== n) sc.textContent = n;
+    const sh = g > 0.01 ? `0 0 ${(12 * g).toFixed(1)}px rgba(${SG.gold ? GOLD : LIGHT},${(0.8 * g).toFixed(3)})` : ''; if (sc._g !== sh) { sc._g = sh; sc.style.textShadow = sh; }
+  }
   const ms = performance.now(); if (ms - (tickBars.t || 0) < 250) return; tickBars.t = ms;
   const t = new Date().toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' }).toLowerCase();
   const c = $('clock'); if (c && c.textContent !== t) c.textContent = t;
   const half = $('topBar').querySelectorAll('[data-act=session] .ic'), run = S.goal && S.goal.total > 0;   // Task: green once written. Timer: while a session runs, a whole green ring that recedes to nothing (timer: counterclockwise, end time: clockwise)
   if (half[0]) { half[0].classList.toggle('on', PREFS.kind === 'task' && tasks().length > 0); half[0].classList.toggle('gold', !!(S.ticks && S.listWon)); }   // gold when the whole list is finished
+  const at = NUDGE[S.nudged]; if (half[0] && at && S.playT >= at * 60 && !S.planned && !tasks().length) { S.nudged++; half[0].classList.remove('nudge'); void half[0].offsetWidth; half[0].classList.add('nudge'); }   // playing with no plan: a blue ring fades from Task, at set minutes, never more
   if (half[1]) { const p = run ? clamp(goalLeft() / S.goal.total, 0, 1) : -1; half[1].classList.toggle('arc', p >= 0); half[1].classList.toggle('cw', !!(run && S.goal.cw)); if (p >= 0) half[1].style.setProperty('--p', p.toFixed(3)); }
 }
 function applySeason() {   // the page takes the place's colours; the ribbons stay gloss black
   const s = here(), root = document.documentElement.style;
-  for (const [v, val] of [['--bg-top', s.bgTop], ['--bg-mid', s.bgMid], ['--bg-bot', s.bgBot], ['--accent', s.accent], ['--accent-soft', s.accentSoft], ['--panel', s.panel], ['--line', s.line]]) root.setProperty(v, val);
+  for (const [v, val] of [['--bg-top', s.bgTop], ['--bg-mid', s.bgMid], ['--bg-bot', s.bgBot], ['--panel', s.panel], ['--line', s.line]]) root.setProperty(v, val);
   BAR.bot = BAR.wx = BAR.line = ''; if ($('topBar').firstChild) syncBars();
 }
 
@@ -3498,7 +3542,7 @@ const PLACE = 'We’ll Help. Write it Here';
 const hhmm = (ms) => { const d = new Date(ms); return `${String(d.getHours()).padStart(2, '0')}:${String(d.getMinutes()).padStart(2, '0')}`; };
 const stopWords = () => (PREFS.exit === 'free' ? 'Stop when you’re ready.' : 'Set a session length.');
 const FAQ = [
-  ['How does a session go?', 'Settle: the circle, then plan your session: up to three things to do, and how it ends. Touch: play. Return: three breaths out, your list, and Go. When you’re back, tick what you did.'],
+  ['How does a session go?', 'Settle: the circle. Then plan your session, up to three things to do, and how it ends. Touch: play. Return: three breaths out, your list, and Go. When you’re back, tick what you did.'],
   ['How do I play?', 'Touch the pool and slide to move the waiting sphere; let go to drop it. Two of a kind merge into the next size up, and the two largest make a Full Bloom.'],
   ['What are the tools?', 'Strike: touch a sphere; it turns red, then the place’s own strike takes it. Mystery: your next sphere becomes whatever it touches first. Storm: the place’s own weather blows in and every sphere lands somewhere new. A chain of three or a Full Bloom earns one, up to three of each.'],
   ['What is Comp?', 'Play with the calm taken off, in Menu › Game. The line creeps down; the wind is real and restless. One sphere at a time carries a countdown: merge it in time and the line lifts or a tool is yours; miss it and the line sinks or a wave rolls in. Strike knocks a sphere down a size; Storm is a gust with a hurricane category. Storms, ice, rain and lightning come on their own, each announced on the bar under the ribbon with its countdown; when lightning heats a sphere red, touch it to cool it (the dropper waits meanwhile). Now and then two or three come at once: Double trouble, Triple threat. Rarely, a tree takes the power out: the pool browns out and the dropper malfunctions (it stutters, jams, drops too fast or drops two) until it comes back. Glass knocked hard enough chips, cracks and shatters. No aim line, no Heritage. Leave Comp, under the pool, ends it at once.'],
@@ -3528,7 +3572,7 @@ const CARDS = {
     bus('game', ICON.note, 'Game', 'Merges and chimes.'), bus('alerts', ICON.clock, 'Alerts', 'Bells and ticks.'),
     bus('breath', ICON.rings, 'Breath', 'With your breath.'), bus('touch', ICON.hand, 'Touch', 'Taps and drops.'),
     bus('drone', ICON.hum, 'Drone', 'The low hum.'), bus('nature', ICON.leaf, 'Nature', 'Birds and crickets.'), bus('weather', ICON.cloud, 'Weather', 'Rain, wind, thunder.'),
-    pref('vibe', ICON.vibe, 'Vibration', canVibrate ? 'A soft buzz with bells.' : 'Android only. iPhone can’t.')] },
+    pref('vibe', ICON.vibe, 'Vibration', NATIVE.haptics ? 'A soft buzz with bells.' : 'Not in this browser.')] },
   pace: { title: 'Pace', bot: 1, keys: ['bpm'], rows: () => [pref('bpm', ICON.hum, 'Pace', DESCS.Pace)] },
   style: { title: 'Style', bot: 2, keys: ['pacer.track', 'pacer.glass', 'pacer.glow', 'pacer.bright', 'pacer.speed'], rows: () => [
     pref('pacer.track', ICON.inf, 'Track', 'The path the light runs.'), pref('pacer.glass', ICON.gem, 'Glass', 'What the light is made of.'),
@@ -3541,7 +3585,7 @@ const CARDS = {
     // Comp: a double opt-in. On asks first (the action in blue: nothing is erased); indoors the row is dim and nothing happens.
     pref('comp', ICON.comp, 'Comp', DESCS.Comp, { dis: () => here().dry, set: (v) => (v ? popup({ title: 'Comp mode?', line: 'The line creeps, the wind is wild, glass can break. Leave any time: nothing is lost.', back: 'Back to Game', act: 'Comp', safe: true, go: () => setPref('comp', true) }) : setPref('comp', false)) }),
     hub(ICON.reset, 'New game', 'Start over. Asks first.', () => popup({ title: 'Start a new game?', line: 'This game ends here.', back: 'Back to Game', act: 'New Game', go: () => { closeSheet(); setMode('play'); startPool(); } })),
-    ...(S.prev ? [hub(ICON.play, 'Continue last game', 'Where you left it.', () => { loadPool(S.prev); S.prev = null; closeSheet(); setMode('play'); setPaused(false); say('Your last game', here().label); })] : [])] },
+    ] },
   sky: { title: 'Sky', tile: 0, keys: ['clouds', 'hour'], rows: () => [
     pref('clouds', ICON.cloud, 'Clouds', () => (here().dry ? 'No sky here.' : 'How the sky looks.'), { dis: () => here().dry }),
     pref('hour', ICON.sun, 'Time of day', () => (here().dry ? 'No sky here.' : 'Live follows your clock.'), { dis: () => here().dry })] },
@@ -3565,7 +3609,7 @@ const SHINES = '<span class="shine"></span><span class="shine r"></span>';   // 
 const okHTML = (more = '') => `<button class="ok" data-ok aria-label="On or off">${icon(ICON.check)}${more}</button>`;
 function ctlHTML(r, i) {
   if (r.kind === 'lvl') return `<input class="lvl" type="range" min="${r.min}" max="${r.max}" step="${r.step}" data-lvl="${i}" aria-label="${r.name}"><span class="pct num"></span>${r.clock ? `<input class="due" type="time" data-stop aria-label="Stop time">` : ''}`;
-  if (r.kind === 'seg') return `<div class="seg${r.onoff ? ' onoff' : ''}${r.opts.length > 2 && !r.onoff ? ' x3' : ''}"><i></i>${r.opts.map(([v, w], j) => `<button data-seg="${i}:${j}">${w}</button>`).join('')}</div>`;
+  if (r.kind === 'seg') return `<div class="seg${r.onoff ? ' onoff' : ''}${r.opts.length > 2 && !r.onoff ? ' x3' : ''}"><i></i>${r.opts.map(([v, w], j) => `<button data-seg="${i}:${j}">${w}</button>`).join('')}</div>${r.lvl ? ctlHTML({ ...r.lvl, name: r.name }, i) : ''}`;   // a choice that becomes its own slider in place
   if (r.kind === 'wheel') return `<div class="wheel" data-wheel="${i}" role="listbox" aria-label="${r.name}"><s class="up"></s><b></b><s class="dn"></s></div>`;
   if (r.kind === 'hub') return `<span class="go">${icon(ICON.right)}</span>`;
   if (r.kind === 'value') return '<b class="big num"></b>';
@@ -3591,13 +3635,9 @@ function syncCard() {   // every row shows its setting as it stands
     const ic = el.querySelector(':scope > .ic'), want = off && r.mute ? 'mute' : 'own';
     if (r.flow == null && ic.dataset.is !== want) { ic.dataset.is = want; ic.innerHTML = want === 'mute' ? MUTED : svg(r.ic); }
     const ds = el.querySelector('.ds'), d = text(r.desc) || ''; if (ds.textContent !== d) ds.textContent = d;
-    if (r.kind === 'lvl') {
-      const inp = el.querySelector('.lvl'), v = off ? r.min : r.get();
-      if (document.activeElement !== inp || off) inp.value = v;
-      inp.style.setProperty('--p', `${((inp.value - r.min) / (r.max - r.min) * 100).toFixed(1)}%`);
-      const due = el.querySelector('.due'); if (due && document.activeElement !== due) due.value = hhmm(Date.now() + r.get() * MIN);   // the end, as a clock
-      el.querySelector('.pct').textContent = off ? (r.fmt === pctOf ? '0%' : r.fmt(r.min)) : r.fmt(r.get());
-    } else if (r.kind === 'seg') {
+    if (r.kind === 'lvl') syncLvl(el, r, off);
+    else if (r.kind === 'seg') {
+      if (r.lvl) { const sub = !!(r.sub && r.sub()); el.classList.toggle('sub', sub); el.classList.toggle('clock', sub); syncLvl(el, r.lvl, off); if (sub) ds.textContent = text(r.lvl.desc); }   // Set: the row is its slider; its words say the time
       const v = String(r.get()), k = Math.max(0, r.opts.findIndex(([o]) => String(o) === v)), seg = el.querySelector('.seg');
       seg.style.setProperty('--k', k); seg.classList.toggle('yes', r.onoff && k === 1);
       seg.querySelectorAll('button').forEach((b, j) => b.classList.toggle('sel', j === k));
@@ -3610,10 +3650,21 @@ function syncCard() {   // every row shows its setting as it stands
   const bk = $('mcFoot').querySelector('[data-foot=back]'); if (bk) bk.classList.toggle('off', !CARDS[CARD.name].canBack());
   const knob = $('mcRail').lastChild; if (knob) { knob.style.top = U(Math.max(0, CARD.i) * ROW); knob.style.opacity = CARD.i < 0 ? 0 : ''; }
   fitIcons($('mc'));
-  if (CARD.i === lastRow() && changed()) { const k = JSON.stringify(PREFS) + JSON.stringify(CARD.pend); if (k !== CARD.bk) { CARD.bk = k; beckon(); } }   // a change on the last row: Done shows itself
+  if (CARD.i === lastRow()) { const k = JSON.stringify(PREFS) + JSON.stringify(CARD.pend); if (CARD.bkRow !== CARD.i) { CARD.bkRow = CARD.i; CARD.bk = k; } else if (k !== CARD.bk && changed()) { CARD.bk = k; finishRow(CARD.i); } }   // a change made on the last row finishes it: the ring goes to Done (arriving there is not a change)
+}
+function syncLvl(el, r, off) {   // a slider shows its setting; a stop time beside it as a clock
+  const inp = el.querySelector('.lvl'), v = off ? r.min : r.get();
+  if (document.activeElement !== inp || off) inp.value = v;
+  inp.style.setProperty('--p', `${((inp.value - r.min) / (r.max - r.min) * 100).toFixed(1)}%`);
+  const due = el.querySelector('.due'); if (due && document.activeElement !== due) due.value = hhmm(Date.now() + r.get() * MIN);   // the end, as a clock
+  el.querySelector('.pct').textContent = off ? (r.fmt === pctOf ? '0%' : r.fmt(r.min)) : r.fmt(r.get());
 }
 const lastRow = () => { for (let i = CARD.rows.length - 1; i >= 0; i--) if (!(CARD.rows[i].hide && CARD.rows[i].hide())) return i; return -1; };
-function beckon() { const d = $('mcFoot').querySelector('[data-foot=done]'); if (!d) return; d.classList.remove('beckon'); void d.offsetWidth; d.classList.add('beckon', 'ready'); }   // Done flares three times, then keeps a steady blue glow
+function recede() {   // the last row is finished: its ring draws off to the right and into Done, which keeps a steady glow; the row goes grey like the rest
+  const el = $('mcRows').children[CARD.i], done = () => { if (CARD.i >= 0 && CARD.i === lastRow()) { CARD.i = -1; syncCard(); } const d = $('mcFoot').querySelector('[data-foot=done]'); if (d) d.classList.add('ready'); };
+  if (!el || lessMo()) { done(); return; }
+  el.classList.add('recede'); el.addEventListener('animationend', () => { el.classList.remove('recede'); done(); }, { once: true });
+}
 function rowShow(el, shown) {   // a row that isn't there yet: kept out of sight, then lowered in; one that goes folds away
   if (el.dataset.vis == null) { el.dataset.vis = shown ? 1 : 0; el.classList.toggle('gone', !shown); return; }
   if (shown === (el.dataset.vis === '1')) return;
@@ -3622,7 +3673,7 @@ function rowShow(el, shown) {   // a row that isn't there yet: kept out of sight
   if (shown) { el.classList.remove('gone'); el.classList.add('rise'); setTimeout(() => el.classList.remove('rise'), ms()); }
   else { el.classList.add('fall'); setTimeout(() => { if (el.dataset.vis === '0') el.classList.add('gone'); el.classList.remove('fall'); }, ms()); }
 }
-function finishRow(i) { if (i === lastRow()) { CARD.i = -1; syncCard(); beckon(); } else engageRow(i + 1); }
+function finishRow(i) { if (i === lastRow()) recede(); else engageRow(i + 1); }
 function engageRow(i) { if (i >= 0 && i < CARD.rows.length && i !== CARD.i && !(CARD.rows[i].hide && CARD.rows[i].hide())) { CARD.i = i; syncCard(); } }
 function fitCard() {   // the card is three zones: the line, the gap, the pool; it ends where the pool ends
   const mc = $('mc'); mc.style.top = `${$('line').offsetTop}px`; mc.style.height = `${$('pool').getBoundingClientRect().bottom - $('line').getBoundingClientRect().top}px`;
@@ -3635,9 +3686,9 @@ function openCard(name, push) {
   if (!CARDS[name]) return;
   if (CARD.name && push) CARD.stack.push({ name: CARD.name, i: CARD.i });
   else if (!CARD.name) CARD.stack = [];
-  CARD.name = name; CARD.i = 0; CARD.pend = {}; CARD.stage = !!CARDS[name].stage; CARD.snap = JSON.stringify(PREFS); CARD.snapFair = S.fair;
+  CARD.name = name; CARD.i = 0; CARD.bkRow = -2; CARD.pend = {}; CARD.stage = !!CARDS[name].stage; CARD.snap = JSON.stringify(PREFS); CARD.snapFair = S.fair;
   S.sheet = name; S.aiming = false; LINE.sub = null;
-  $('mcPill').textContent = `${CARDS[name].title} Settings`;
+  $('mcPill').textContent = CARDS[name].keys.length ? `${CARDS[name].title} Settings` : CARDS[name].title;   // a card with settings says so; Menu, Help and Statistics are just themselves
   $('mcFoot').innerHTML = cell('data-foot="close"', ICON.x, 'Close') + cell('data-foot="help"', ICON.ask, 'Help') + cell('data-foot="reset"', ICON.reset, 'Reset') + (CARDS[name].back ? cell('data-foot="back"', ICON.left, 'Back') : '') + cell('data-foot="done"', ICON.check, 'Done');
   $('mcFoot').querySelectorAll('.cell').forEach(c => c.classList.add(['back', 'done'].includes(c.dataset.foot) ? 'pick' : 'quiet'));
   $('mcFoot').querySelector('[data-foot=reset]').classList.toggle('none', !CARDS[name].keys.length);
@@ -3665,7 +3716,7 @@ function closeSheet() {   // everything away, as it stands (time's up, or Rest, 
   const was = S.sheet; if (!was) return;
   CARD.name = null; CARD.stack = []; CARD.pend = {}; S.sheet = null; $('mc').hidden = true; $('mcPop').hidden = true;
   try { canvas.focus({ preventScroll: true }); } catch (e) {}
-  syncUI(); if (was === 'session') setTimeout(welcome, TIME.beat * 1000);   // into the session: the breeze, once
+  syncUI(); if (was === 'session') welcomeSoon();   // into the session: the breeze, once
 }
 function popup({ title, line, back, act, go, safe }) {   // the one pop-up: a question, a line, ‹ back in blue, › the action in red (blue when nothing is erased: safe)
   const p = $('mcPop');
@@ -3674,16 +3725,21 @@ function popup({ title, line, back, act, go, safe }) {   // the one pop-up: a qu
   POP.go = go; p.hidden = false; fitIcons(p);
 }
 const POP = { go: null };
+function askLeave(then) {   // a card with changes: leave, or discard them and go
+  if (!changed()) { then(); return; }
+  const t = CARDS[CARD.name].title; popup({ title: 'Leave without saving?', line: `Your changes to ${t} will be undone.`, back: `Back to ${t}`, act: 'Discard', go: () => { revert(); then(); } });
+}
+const welcomeSoon = () => setTimeout(welcome, TIME.beat * 1000);   // the breeze, after a beat
 function footAct(k, el) {
   const def = CARDS[CARD.name];
   if (k === 'done') { if (def.done) def.done(); else cardBack(); }
   else if (k === 'back') def.back();
-  else if (k === 'close') { if (!changed()) { cardBack(); return; } popup({ title: 'Leave without saving?', line: `Your changes to ${def.title} will be undone.`, back: `Back to ${def.title}`, act: 'Cancel & Leave', go: () => { revert(); cardBack(); } }); }
+  else if (k === 'close') askLeave(cardBack);
   else if (k === 'help' && CARD.name !== 'help') openCard('help', true);
   else if (k === 'reset' && def.keys.length) popup({ title: `Reset ${def.title}?`, line: 'Every row goes back to how SoRen came.', back: `Back to ${def.title}`, act: 'Reset', go: () => {
     const place = PREFS.where;
     for (const k2 of def.keys) { const d = JSON.parse(JSON.stringify(k2.split('.').reduce((o, p) => o[p], DEFAULTS))); if (CARD.stage) CARD.pend[k2] = d; else if (typeof d === 'object') { setPrefRaw(k2, d); } else setPref(k2, d); }   // through setPref, so every setting's side effect runs, as it does for a live change
-    savePrefs(); sound.init(); if (place !== PREFS.where) newWorld(); if (CARD.name === 'session') { flowReset(); flowOpen(); cardRows(); } syncUI(); } });
+    savePrefs(); sound.init(); if (place !== PREFS.where) newWorld(); if (CARD.name === 'session') { FLOW.fresh = true; flowOpen(); cardRows(); } CARD.i = 0; syncUI(); } });   // and the first row is the one lit again
 }
 // The wheel: drag it up or down, or touch the word above or below. One step per row of words.
 function wheelStep(i, d) { const r = CARD.rows[i], k = clamp(+$('mcRows').children[i].querySelector('.wheel').dataset.k + d, 0, r.opts.length - 1); r.set(r.opts[k][0]); syncCard(); }
@@ -3694,6 +3750,7 @@ function okTouch(i, el) {
   finishRow(i);   // confirmed: on to the next row; on the last, it goes grey like the rest and Done shows itself
 }
 
+const E_ASKED = {};   // which motion switches have asked this launch
 const syncUI = () => { syncBars(); syncCard(); document.body.classList.toggle('rm', lessMo()); };
 function setPref(k, v) {   // a change takes effect everywhere, at once, and is kept
   if (k === 'mode') { setMode(v); return; }
@@ -3703,7 +3760,7 @@ function setPref(k, v) {   // a change takes effect everywhere, at once, and is 
   else if (k === 'overflow') S.fair = S.world.balls.length || S.score ? S.fair && v === 'end' : v === 'end';   // changing the rules mid-game: it no longer counts
   else if (k === 'comp') { if (v) { if (S.mode !== 'play') setMode('play'); compStart(); } else compStop(); }
   else if (k === 'fadeAfter' && S.rest) S.rest.left = v * 60;
-  else if (k.startsWith('beta.') && v && k !== 'beta.heavy') askSensor(k === 'beta.lookup' ? 'tilt' : 'moving', (ok) => { if (!ok) { setPrefRaw(k, false); savePrefs(); syncUI(); say('Not on this device', 'It needs a phone’s motion sensor'); } });   // iPhones ask once
+  else if (k.startsWith('beta.') && v && k !== 'beta.heavy') askSensor(k === 'beta.lookup' ? 'tilt' : 'moving', (ok) => { if (!ok) { setPrefRaw(k, false); savePrefs(); syncUI(); say(E_ASKED[k] ? 'Not allowed' : 'Not on this device', E_ASKED[k] ? 'Motion was refused. Close SoRen fully and open it again to be asked once more' : 'It needs a phone’s motion sensor'); } E_ASKED[k] = true; });   // iPhones ask once a launch: a refusal stays until the next
   syncUI();
 }
 
@@ -3759,8 +3816,7 @@ function bind() {
   const toCard = (name, el) => {
     if (CARD.name === name) return;
     const go = () => { closeSheet(); openCard(name); };
-    if (CARD.name && changed()) popup({ title: 'Leave without saving?', line: `Your changes to ${CARDS[CARD.name].title} will be undone.`, back: `Back to ${CARDS[CARD.name].title}`, act: 'Cancel & Leave', go: () => { revert(); $('mcPop').hidden = true; go(); } });
-    else go();
+    if (CARD.name) askLeave(go); else go();
   };
   const ACTS = {
     menu: (el) => toCard('menu', el), scene: (el) => toCard('scene', el), session: (el) => toCard('session', el),
@@ -3776,13 +3832,13 @@ function bind() {
     severe: () => { S.severe = !S.severe; say(S.severe ? 'Severe weather' : 'Weather', S.severe ? 'Whatever is on runs at full strength' : 'Back to normal'); sound.whoosh(S.severe ? 0.8 : 0.3, 0); syncBars(); },
     deep: () => startSigh(), play: () => setMode('play'),
     pacer: () => setPref('pacer.on', !PREFS.pacer.on), drops: () => setPref('pacer.drops', !PREFS.pacer.drops),
-    introstart: () => { $('introGo').classList.add('on'); S.intro.eng = S.intro.t; introGo(); FLOW.fresh = true; openCard('session'); },   // the box turns green and the circle stops breathing
-    introgo: () => { introGo(); S.prev = null; S.goal = null; setMode('play'); setPaused(false); syncUI(); setTimeout(welcome, TIME.beat * 1000); },   // Skip: the game as it is
-    introplay: () => { introGo(); S.prev = null; S.goal = null; setMode('play'); setPaused(false); Object.assign(S, { zen: true, fair: false }); syncUI(); setTimeout(welcome, TIME.beat * 1000); },   // Play now: the base game, Zen for this game, no timer
+    introstart: () => { $('introGo').classList.add('on'); S.intro.eng = S.intro.t; resumeAsk(() => { introGo(); FLOW.fresh = true; openCard('session'); }); },   // the box turns green and the circle stops breathing; a game waiting is offered first
+    introgo: () => introLeave('play'),   // Skip: a new game as it is, no question
+    introplay: () => resumeAsk(() => introLeave('play', true)),   // Play now: Zen for this game, no timer; a game waiting is offered first
     introcalm: () => setPref('calm', !PREFS.calm),
     compoff: () => setPref('comp', false),   // Leave Comp: one touch, nothing lost
-    introrelax: () => { introGo(); S.prev = null; setMode('relax'); setTimeout(welcome, TIME.beat * 1000); },
-    engage, close: closeSheet
+    introrelax: () => introLeave('relax'),
+    engage
   };
   document.addEventListener('click', (e) => {
     const t = e.target;
@@ -3797,7 +3853,9 @@ function bind() {
       const f = t.closest('[data-foot]'); if (f) { footAct(f.dataset.foot, f); return; }
       const row = t.closest('[data-row]'); if (!row) return;
       const i = +row.dataset.row, r = CARD.rows[i], wasLit = i === CARD.i; engageRow(i);
+      const op = t.closest('[data-opt]'); if (op && r.opt) { r.opt(op.dataset.opt); return; }   // the lone plus's folded-out options
       const tap = t.closest('.mrow > .ic'); if (tap && r.tap) { r.tap(); return; }
+      if (t.closest('.nm') && r.words) { r.words(); return; }   // the words: a row that became its slider offers its choice again
       const sg = t.closest('[data-seg]'); if (sg) { const [, j] = sg.dataset.seg.split(':').map(Number); r.set(r.opts[j][0]); syncCard(); return; }
       const ok = t.closest('[data-ok]'); if (ok) { okTouch(i, ok); return; }
       if (r.kind === 'hub' && (wasLit || t.closest('.go'))) r.go();
@@ -3832,7 +3890,7 @@ function bind() {
   });
   document.addEventListener('pointercancel', () => { drag = null; });
   document.addEventListener('input', (e) => {
-    const lv = e.target.closest('[data-lvl]'); if (lv) { const i = +lv.dataset.lvl; engageRow(i); CARD.rows[i].set(+lv.value); if (CARD.rows[i].flow === 'timer') { PREFS.byClock = false; savePrefs(); } syncCard(); return; }
+    const lv = e.target.closest('[data-lvl]'); if (lv) { const i = +lv.dataset.lvl, r = CARD.rows[i].lvl || CARD.rows[i]; engageRow(i); r.set(+lv.value); if (r.clock) { PREFS.byClock = false; savePrefs(); } syncCard(); return; }
     const tx = e.target.closest('[data-task]'); if (tx) { const i = +tx.dataset.task; PREFS.tasks[i] = { text: tx.value.slice(0, 60) }; savePrefs(); syncCard(); }
   });
   document.addEventListener('change', (e) => {   // a stop time settled: the slider follows it
@@ -3853,7 +3911,7 @@ function bind() {
   document.addEventListener('visibilitychange', () => {
     if (document.visibilityState === 'hidden') { $('veil').classList.add('on'); sound.off(); S.awayAt = Date.now(); if (S.mode !== 'rest' && !S.intro) setPaused(true); flush(); return; }   // everything waits for a tap, your time too; the phone's snapshot is dark
     requestAnimationFrame(() => requestAnimationFrame(() => $('veil').classList.remove('on')));
-    if (S.awayAt && Date.now() - S.awayAt > 300000) setTimeout(welcome, TIME.beat * 1000);   // back after five minutes or more: the breeze again
+    if (S.awayAt && Date.now() - S.awayAt > 300000) welcomeSoon();   // back after five minutes or more: the breeze again
     updateWarmth(); syncBars(); if (S.mode === 'rest') requestWake(true);
   });
   window.addEventListener('pagehide', flush);
@@ -3877,11 +3935,14 @@ function opening() {
   document.body.classList.add('intro'); syncBars();
 }
 function introSkip() { const o = S.intro; if (o && o.go == null && o.t < o.len + 3) { o.t = o.len + 3; o.rest = o.ready = o.quick = true; syncBars(); } }   // a tap anywhere brings it all in at once
+function introLeave(mode, zen = false) {   // out of the opening and into a mode; a new game lets the last one go
+  introGo(); S.prev = null; S.goal = null; setMode(mode); setPaused(false); if (zen) Object.assign(S, { zen: true, fair: false }); syncUI(); welcomeSoon();
+}
 function introGo() { if (S.intro && S.intro.go == null) { S.intro.go = S.intro.t; S.intro.rest = S.intro.ready = false; document.body.classList.remove('intro'); syncBars(); } }
 function start() {
   canvas = $('game'); ctx = canvas.getContext('2d'); S.lastInput = performance.now();
   handles(); bind(); newWorld(true); setupDPI();
-  const prev = loadJSON(SKEY); S.prev = Array.isArray(prev.balls) && prev.balls.length && !prev.gameOver ? prev : null;   // every launch is a new game; the last one waits in Menu › Game
+  const prev = loadJSON(SKEY); S.prev = Array.isArray(prev.balls) && prev.balls.length && !prev.gameOver ? prev : null;   // every launch is a new game; one not lost waits at the door (Play or Start) until the first drop Game
   newPool(); PREFS.mode = 'play'; S.tod = PREFS.hour === 'live' ? clockTod() : HOURS[PREFS.hour];
   updateScene(0); updateWind(0); updateWarmth(); syncUI();
   opening();
