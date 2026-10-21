@@ -176,7 +176,6 @@ body.intro-quick.intro-in .soren, body.intro-quick.intro-in .go-in { transition-
 .mrow.lit .lvl { --fill-c: var(--label); --track-c: var(--edge); }
 .mrow.lit .lvl::-webkit-slider-thumb { width: calc(56 * var(--u)); height: calc(56 * var(--u)); margin-top: calc(-24 * var(--u)); background: var(--handle) center / 100% 100%; }
 .mrow.lit .lvl::-moz-range-thumb { width: calc(56 * var(--u)); height: calc(56 * var(--u)); background: var(--handle) center / 100% 100%; }
-.mrow .lvl.x { }
 .due { position: absolute; top: 50%; left: calc(690 * var(--u)); width: calc(300 * var(--u)); height: calc(60 * var(--u)); transform: translateY(-50%); border: 0; border-bottom: calc(3 * var(--u)) solid rgb(70, 66, 62); background: none; font-size: 16px; color: var(--ink); text-align: right; color-scheme: dark; }
 .due::-webkit-calendar-picker-indicator { display: none; } .due:focus { outline: none; border-bottom-color: rgb(var(--pick)); }
 .mrow.clock .lvl { left: calc(400 * var(--u)); width: calc(290 * var(--u)); } .mrow.clock .pct { display: none; }
@@ -602,7 +601,7 @@ const S = {
   wild: false, zen: false, storm: null, stormQ: [], fx: { rain: 0, wind: 0 }, fid: null, outro: null, gone: false, roundDone: false, pauseT: 0,
   breath: 0.5, sigh: null, space: null, ballFade: 0, rescueAt: 0, life: 0.5, rainMem: 0, wx: 0, wxOpen: false, severe: false, doom: null, cloud: 0, tod: 0,
   pulses: [], rumbles: [], lit: 0, growl: 0, cellA: 0, flash: 0, lastInput: -1e9,
-  sleep: null, wakeLock: null, goal: null, parked: false, paused: false, intro: null, prev: null
+  wakeLock: null, goal: null, parked: false, paused: false, intro: null, prev: null
 };
 // The spheres move only when their layer is on and nothing is asking for you: no card, no guided breath, not paused.
 const awake = () => has('spheres') && !S.sigh && !S.gameOver && !S.card && !S.sheet && !S.paused && !S.parked && !S.intro && !S.outro && !S.gone && !S.look;
@@ -961,8 +960,9 @@ function maybePraise(reason, x, y) {
 
 /* ---------- Icons, the colours of state, the shimmer ---------- */
 // Plain is off, green is on, blue is in hand, gold is you did it right, red is trouble, silver is this, now.
-const cssRGB = (n) => getComputedStyle(document.documentElement).getPropertyValue(n).replace(/\s/g, '');   // state colours live in the CSS :root, once
-const LIGHT = cssRGB('--ink-rgb'), GOLD = cssRGB('--gold'), RED = cssRGB('--red'), GREEN = cssRGB('--on'), BLUE = cssRGB('--pick');
+const cssRGB = (n) => getComputedStyle(document.body).getPropertyValue(n).replace(/\s/g, '');   // state colours live in the CSS :root; body.comp brightens them
+let LIGHT = cssRGB('--ink-rgb'), GOLD = cssRGB('--gold'), RED = cssRGB('--red'), GREEN = cssRGB('--on'), BLUE = cssRGB('--pick');
+function readPalette() { LIGHT = cssRGB('--ink-rgb'); GOLD = cssRGB('--gold'); RED = cssRGB('--red'); GREEN = cssRGB('--on'); BLUE = cssRGB('--pick'); }   // the canvas follows the page's colours: read again when Comp brightens them
 const CLOUD = 'M7.5 14.5h9.5a3.5 3.5 0 0 0 .4-7 5 5 0 0 0-9.6 1.2A3 3 0 0 0 7.5 14.5z', DOT = (x, y, r) => `M${x - r} ${y}a${r} ${r} 0 1 0 ${2 * r} 0a${r} ${r} 0 1 0 ${-2 * r} 0`;
 const ICON = {
   skip: 'M9 5.5l7 6.5-7 6.5', fwd: 'M3.5 6l6 6-6 6M12.5 6l6 6-6 6', last: 'M6 6l6 6-6 6M19 5.5v13',
@@ -2682,7 +2682,7 @@ const WALL_IN = 4.5, FLOOR_IN = 6.5;   // half a px inside the locked Physics bl
 const RHO_AIR = 1.225, RHO_GLASS = 2500, G = 9.81, NU = 1.5e-5, MS_PER = 0.157;   // kg/m³, kg/m³, m/s², m²/s; m/s per px/frame (1 px = 1 mm at 60 fps, on the engine's slower clock)
 const WATER = '90,180,255';
 const COMP = { on: false, step: 0, glow: null, line: DANGER_Y, v: 0, vTo: 0, gap: 0, ball: null, wave: null, good: [], bad: [], wx: null, gust: null, vw: 0, lv: 0, pairs: new Set(), pairs2: new Set(), hits: [], hz: null, hzGap: 0, hzDeck: [], floor: null, cool: null };
-const compOn = () => COMP.on && S.mode === 'play';
+const compOn = () => COMP.on && S.mode === 'play' && !here().dry;   // nowhere without wind
 const rnd = (a, b) => a + Math.random() * (b - a);
 const wait = () => rnd(...CT.wait);
 const gauss = () => Math.sqrt(-2 * Math.log(1 - Math.random())) * Math.cos(TAU * Math.random());
@@ -2729,7 +2729,7 @@ function outcome(good) {
   if (good) { const got = deal(COMP.good, ['lift', 'tool']) === 'tool' && earnTool(); if (!got) lift(); say('In time', got ? `${TOOL_NAMES[got]} earned` : 'The line lifts'); sound.done(); haptic(20); return; }
   COMP.gap = Math.max(COMP.gap, CT.quiet);
   if (deal(COMP.bad, ['sink', 'wave']) === 'sink') { sink(); say('Too late', 'The line sinks'); }
-  else { COMP.wave = { t: 0, len: wait() }; say('Too late', 'A wave rolls in'); sound.whoosh(0.7, 0); }
+  else { if (COMP.wave) COMP.wave.len = COMP.wave.t + wait(); else COMP.wave = { t: 0, len: wait() }; say('Too late', 'A wave rolls in'); sound.whoosh(0.7, 0); }   // a wave on a wave runs on, never snaps
 }
 
 /* Hazards that come on their own, one at a time, from a shuffled deck, each announced on the state bar with its countdown:
@@ -2897,6 +2897,15 @@ function compAfter() {
     if ((a.x <= a.radius + WALL_IN && pa.x > a.radius + WALL_IN) || (a.x >= LW - a.radius - WALL_IN && pa.x < LW - a.radius - WALL_IN)) hits.push([a, null, Math.abs(pa.vx) * MS_PER, a.radius]);
     if (a.y >= LH - a.radius - FLOOR_IN && pa.y < LH - a.radius - FLOOR_IN) hits.push([a, null, Math.abs(pa.vy) * MS_PER, a.radius]);
   }
+  // A knock inside the eight sub-steps can bounce apart before the frame ends and never show as a contact: a sudden change of
+  // velocity beyond gravity and the wind's drift is that knock. The closing speed is the change over (1 + the engine's restitution).
+  for (const a of balls) {
+    const pa = a.pv; if (!pa || hits.some(h => h[0] === a || h[1] === a)) continue;
+    const jolt = Math.hypot(a.vx - pa.vx, a.vy - pa.vy - PHYS.gravity); if (jolt < 2) continue;
+    let near = null, nd = 1e9; for (const b of balls) if (b !== a) { const d = Math.hypot(b.x - a.x, b.y - a.y) - a.radius - b.radius; if (d < nd) { nd = d; near = b; } }
+    const onWall = a.x <= a.radius + 8 || a.x >= LW - a.radius - 8 || a.y >= LH - a.radius - 10, v = jolt / (1 + PHYS.rest) * MS_PER;
+    if (near && nd < 8 && !onWall) hits.push([a, near, v, a.radius * near.radius / (a.radius + near.radius)]); else if (onWall) hits.push([a, null, v, a.radius]);
+  }
   COMP.pairs = now; COMP.pairs2 = was;
   for (const [a, b, v, Rs] of hits) { const x = Math.pow(v / vCrack(Rs), 0.4); damage(a, x); if (b) damage(b, x); }   // both feel the same pressure
 }
@@ -2914,7 +2923,7 @@ function compStrike(b, name) {   // Strike in Comp: down to a random smaller siz
   compForget(b.id); if (!b.tier) { mist([b], name, 'Space opened'); return; }
   const t = Math.floor(Math.random() * b.tier);
   spawnParticles(b.x, b.y, here().tiers[b.tier].c1, 20, 4.5); S.world.balls = S.world.balls.filter(x => x !== b);
-  addBall(S.world, b.x, b.y, t, { vx: b.vx, vy: b.vy, angle: b.angle, omega: b.omega, landed: true, age: 46 }); sound.wash(); say(name, `Down to ${VALUES[t]}`);
+  addBall(S.world, b.x, b.y, t, { vx: b.vx, vy: b.vy, angle: b.angle, omega: b.omega, landed: true, age: 46 }).hot = true; sound.wash(); say(name, `Down to ${VALUES[t]}`);   // hot: the same moment to settle a merged sphere gets
 }
 /* Drawing: the timer sphere's receding red ring and its countdown; a chip or a crack as a fine white line that turns with the glass. */
 function drawTimerBall(c, b, R) {
@@ -3352,7 +3361,7 @@ function spot(on, k) {
 /* ---------- The ribbons ---------- */
 // One mold for every ribbon: six equal cells, an icon over its word. Top: Menu, Scene, your Task and Timer (one tile), Pause /
 // Play, Sound. Under the pool, the weather line: the words Weather Settings, or the weather ribbon. At the bottom, the mode's tools.
-const BAR = { bot: '', wx: '', line: '' };
+const BAR = { bot: '', wx: '', line: '', comp: false };
 const icon = (d, more = '') => `<span class="ic">${d.startsWith('<') ? d : svg(d)}${more}</span>`;
 const cell = (attrs, d, word, extra = '') => `<button class="cell" ${attrs}>${icon(d)}<span class="sub">${word}</span>${extra}</button>`;
 // Six cells, or three or fewer that fill the ribbon as double-wide tiles with no dividers (the top ribbon's Task and Timer tile is the same width).
@@ -3412,7 +3421,7 @@ function syncBars() {
   const key = [S.mode, here().key, S.intro && S.intro.go == null, S.intro && S.intro.rest, JSON.stringify(S.tools), PREFS.calm, PREFS.bpm, PREFS.ambient, PREFS.fadeAfter].join();
   if (BAR.bot !== key) { BAR.bot = key; const cells = botCells(); bot.innerHTML = six(cells); bot.classList.toggle('wide', cells.length > 0 && cells.length <= 3); }
   const wkey = [S.wxOpen, here().key, here().snow, compOn()].join(); if (BAR.wx !== wkey) { BAR.wx = wkey; wx.innerHTML = wxHTML(); }
-  document.body.classList.toggle('comp', compOn());
+  if (document.body.classList.toggle('comp', compOn()) !== BAR.comp) { BAR.comp = compOn(); readPalette(); handles(); }
   for (const [a, on] of [['allwx', ATMO.some(k => PREFS.atmo[k].on)], ['severe', S.severe], ['pacer', PREFS.pacer.on], ['drops', PREFS.pacer.drops]]) for (const b of [bot, wx]) { const e = b.querySelector(`[data-act=${a}]`); if (e) e.classList.toggle('on', !!on); }
   wx.querySelectorAll('[data-sky]').forEach(b => b.classList.toggle('on', PREFS.atmo[b.dataset.sky].on));   // green is on, severe or not (yellow left with the colour cleanup)
   const sv = wx.querySelector('[data-act=severe]'); if (sv) { sv.classList.toggle('on', S.severe); }
@@ -3500,7 +3509,7 @@ const CARDS = {
     hub(ICON.ask, 'How to play', 'Settle. Touch. Return.', () => openCard('help', true)),
     hub(ICON.flask, 'Beta', 'Rough at the edges. Keep what helps.', () => openCard('beta', true))] },
   scene: { title: 'Scene', tile: 1, stage: true, keys: ['mode', 'where'], rows: () => [
-    pref('mode', ICON.grid, 'Mode', DESCS.Mode), { ...pref('where', ICON.pin, 'Place', DESCS.Place), opts: CHOICES.where.filter(v => !(PREFS.comp && v === 'heritage')).map(v => [v, LABELS.where[v]]) }],   // Comp and Heritage never meet: indoors there is no wind
+    pref('mode', ICON.grid, 'Mode', DESCS.Mode), { ...pref('where', ICON.pin, 'Place', DESCS.Place), opts: CHOICES.where.filter(v => !(PREFS.comp && PLACES[v] && (PLACES[v].back === 'tray' || PLACES[v].back === 'space'))).map(v => [v, LABELS.where[v]]) }],   // Comp needs wind: no Heritage (indoors) and no Celestial (space) while it runs
     done: () => { const { mode, where } = CARD.pend; closeSheet(); if (where != null && where !== PREFS.where) setPref('where', where); if (mode != null && mode !== S.mode) setPref('mode', mode); } },
   session: { title: 'Timer and Task', tile: 2, keys: ['kind', 'exit', 'mins', 'tasks'], rows: () => flowRows(), norail: true, open: flowOpen, back: flowBack, canBack: () => FLOW.plan,
     done: () => { closeSheet(); startSession(); } },
@@ -3516,7 +3525,7 @@ const CARDS = {
     pref('pacer.glow', ICON.sun, 'Glow', 'How far it reaches.'), pref('pacer.bright', ICON.sun, 'Brightness', 'How bright it is.'), pref('pacer.speed', ICON.clock, 'Speed', DESCS.Speed)] },
   ambient: { title: 'Ambient', bot: 0, keys: ['ambient', 'ambLv', 'fadeAfter'], rows: () => [
     pref('ambient', ICON.sea, 'Ambient', 'One steady sound under everything.'), pref('ambLv', ICON.sea, 'Level', 'How loud it plays.'), pref('fadeAfter', ICON.clock, 'Fades after', 'When Rest lets the sound go.')] },
-  game: { title: 'Game', tile: 0, keys: ['overflow', 'aim', 'next', 'numbers'], rows: () => [
+  game: { title: 'Game', tile: 0, keys: ['overflow', 'aim', 'next', 'numbers', 'comp'], rows: () => [
     pref('overflow', ICON.flag, 'Rules', DESCS.Rules), pref('aim', ICON.aim, 'Aim', () => (PREFS.comp ? 'No aim line in Comp.' : 'Shows where it will land.'), { dis: () => PREFS.comp }),
     pref('next', ICON.arrow, 'Next', 'Shows the sphere after.'), pref('numbers', ICON.hash, 'Numbers', 'Score and sphere values.'),
     // Comp: a double opt-in. On asks first (the action in blue: nothing is erased); indoors the row is dim and nothing happens.
@@ -3615,7 +3624,7 @@ function openCard(name, push) {
   if (!CARDS[name]) return;
   if (CARD.name && push) CARD.stack.push({ name: CARD.name, i: CARD.i });
   else if (!CARD.name) CARD.stack = [];
-  CARD.name = name; CARD.i = 0; CARD.pend = {}; CARD.stage = !!CARDS[name].stage; CARD.snap = JSON.stringify(PREFS);
+  CARD.name = name; CARD.i = 0; CARD.pend = {}; CARD.stage = !!CARDS[name].stage; CARD.snap = JSON.stringify(PREFS); CARD.snapFair = S.fair;
   S.sheet = name; S.aiming = false; LINE.sub = null;
   $('mcPill').textContent = `${CARDS[name].title} Settings`;
   $('mcFoot').innerHTML = cell('data-foot="close"', ICON.x, 'Close') + cell('data-foot="help"', ICON.ask, 'Help') + cell('data-foot="reset"', ICON.reset, 'Reset') + (CARDS[name].back ? cell('data-foot="back"', ICON.left, 'Back') : '') + cell('data-foot="done"', ICON.check, 'Done');
@@ -3631,7 +3640,9 @@ const changed = () => JSON.stringify(PREFS) !== CARD.snap || Object.keys(CARD.pe
 function revert() {   // Close: everything this card changed goes back
   const old = JSON.parse(CARD.snap), place = old.where !== PREFS.where;
   for (const k in old) if (JSON.stringify(PREFS[k]) !== JSON.stringify(old[k])) PREFS[k] = old[k];
-  CARD.pend = {}; savePrefs(); sound.init(); if (place) newWorld(); if (COMP.on !== !!PREFS.comp) (PREFS.comp ? compStart() : compStop());   // Comp follows the setting, both ways if (S.rest) S.rest.left = Math.min(S.rest.left, PREFS.fadeAfter * 60 || S.rest.left);
+  CARD.pend = {}; savePrefs(); sound.init(); if (place) newWorld(); if (S.rest) S.rest.left = Math.min(S.rest.left, PREFS.fadeAfter * 60 || S.rest.left);
+  if (COMP.on !== !!PREFS.comp) (PREFS.comp ? compStart() : compStop());   // Comp follows the setting, both ways
+  S.fair = CARD.snapFair; if (sound.live && !sound.drone && S.mode === 'play') sound.startDrone();   // what the rules change took, and the drone a long mute closed, come back too
 }
 function cardBack() {   // to the card this one came from, or away
   const prev = CARD.stack.pop();
@@ -3660,8 +3671,8 @@ function footAct(k, el) {
   else if (k === 'help' && CARD.name !== 'help') openCard('help', true);
   else if (k === 'reset' && def.keys.length) popup({ title: `Reset ${def.title}?`, line: 'Every row goes back to how SoRen came.', back: `Back to ${def.title}`, act: 'Reset', go: () => {
     const place = PREFS.where;
-    for (const k2 of def.keys) { const d = JSON.parse(JSON.stringify(k2.split('.').reduce((o, p) => o[p], DEFAULTS))); if (CARD.stage) CARD.pend[k2] = d; else setPrefRaw(k2, d); }
-    savePrefs(); sound.init(); if (place !== PREFS.where) newWorld(); if (CARD.name === 'session') cardRows(); syncUI(); } });
+    for (const k2 of def.keys) { const d = JSON.parse(JSON.stringify(k2.split('.').reduce((o, p) => o[p], DEFAULTS))); if (CARD.stage) CARD.pend[k2] = d; else if (typeof d === 'object') { setPrefRaw(k2, d); } else setPref(k2, d); }   // through setPref, so every setting's side effect runs, as it does for a live change
+    savePrefs(); sound.init(); if (place !== PREFS.where) newWorld(); if (CARD.name === 'session') { flowReset(); flowOpen(); cardRows(); } syncUI(); } });
 }
 // The wheel: drag it up or down, or touch the word above or below. One step per row of words.
 function wheelStep(i, d) { const r = CARD.rows[i], k = clamp(+$('mcRows').children[i].querySelector('.wheel').dataset.k + d, 0, r.opts.length - 1); r.set(r.opts[k][0]); syncCard(); }
@@ -3786,7 +3797,6 @@ function bind() {
     const cd = t.closest('[data-card]'); if (cd && !cd.closest('#poolCard')) { const n = cd.dataset.card; toCard(n, cd.matches('.cell') ? cd : null); return; }
     const tool = t.closest('[data-tool]'); if (tool) { useTool(tool.dataset.tool); return; }
     const sky = t.closest('[data-sky]'); if (sky) { const a = PREFS.atmo[sky.dataset.sky]; a.on = !a.on; savePrefs(); sound.init(); syncBars(); return; }
-    const sw = t.closest('.switch[data-key]'); if (sw) { setPref(sw.dataset.key, !getPref(sw.dataset.key)); return; }
     const tk = t.closest('[data-tick]'); if (tk) { tickLine(+tk.dataset.tick); return; }
     const pc = t.closest('#poolCard [data-card]'); if (pc) { const f = cardActions[+pc.dataset.card]; hideCard(); if (f) f(); }
   });
