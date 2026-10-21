@@ -160,7 +160,7 @@ body.intro-quick.intro-in .soren, body.intro-quick.intro-in .go-in { transition-
 .mrow.lit .ok { display: block; } .mrow.off .ok { color: rgb(var(--ink-rgb)); } .mrow.off .ok .ic { --ring: rgb(var(--ink-rgb)); }
 .mrow .go { position: absolute; left: calc(1030 * var(--u)); top: 50%; width: calc(40 * var(--u)); height: calc(40 * var(--u)); transform: translate(-50%, -50%); }
 /* The controls. A level is a slider; two or three choices are one pill whose highlight slides; four or more, a wheel. */
-.lvl { position: absolute; left: calc(380 * var(--u)); width: calc(520 * var(--u)); top: 50%; height: calc(80 * var(--u)); transform: translateY(-50%); margin: 0; background: transparent; -webkit-appearance: none; appearance: none; --p: 0%; }
+.lvl { position: absolute; left: calc(520 * var(--u)); width: calc(360 * var(--u)); top: 50%;   /* starts past the line of words: nothing runs under it */ height: calc(80 * var(--u)); transform: translateY(-50%); margin: 0; background: transparent; -webkit-appearance: none; appearance: none; --p: 0%; }
 .lvl::-webkit-slider-runnable-track { height: calc(8 * var(--u)); border-radius: calc(4 * var(--u)); background: linear-gradient(to right, var(--fill-c, var(--dim)) var(--p), var(--track-c, var(--edge)) var(--p)); }
 .lvl::-moz-range-track { height: calc(8 * var(--u)); border-radius: calc(4 * var(--u)); background: linear-gradient(to right, var(--fill-c, var(--dim)) var(--p), var(--track-c, var(--edge)) var(--p)); }
 .lvl::-webkit-slider-thumb { -webkit-appearance: none; width: calc(28 * var(--u)); height: calc(28 * var(--u)); margin-top: calc(-10 * var(--u)); border-radius: 50%; border: 0; background: var(--dim); }
@@ -526,9 +526,9 @@ const dayKey = (d = new Date()) => `${d.getFullYear()}-${String(d.getMonth() + 1
 const obj = (v) => (v && typeof v === 'object' && !Array.isArray(v) ? v : {});
 const MODES = {   // one record per mode: its name, what's on in the pool, and the one line that says what it is
   play: { name: 'Play', layers: ['scene', 'weather', 'spheres'], note: 'A soothing merge game.' },
-  relax: { name: 'Relax', layers: ['scene', 'relax'], note: 'Breathe with the light: hold, trace, tap, or just watch.' },
-  fidget: { name: 'Fidget', layers: ['scene', 'weather', 'fidget'], note: 'A light to follow, drops on still water, the weather in your hands.' },
-  rest: { name: 'Rest', layers: ['scene', 'weather'], note: 'The pool fades to dark while sound plays on.' }
+  relax: { name: 'Relax', layers: ['scene', 'relax'], note: 'Breathe with the light.' },
+  fidget: { name: 'Fidget', layers: ['scene', 'weather', 'fidget'], note: 'A light, drops, the weather.' },
+  rest: { name: 'Rest', layers: ['scene', 'weather'], note: 'Dark pool; the sound plays on.' }
 };
 // Every setting, and the one list of words each choice can take. The app opens calm: no weather, and the sound low.
 const ATMO = ['bolt', 'wind', 'rain'];
@@ -3290,9 +3290,9 @@ const FMT = { mins: (v) => `${v} min`, breakMins: (v) => `${v} min`, bpm: (v) =>
 const esc = (t) => String(t).replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' })[c]);
 const text = (t) => (typeof t === 'function' ? t() : t);
 const DESCS = { Mode: () => MODES[CARD.pend.mode || PREFS.mode].note, Rules: () => (PREFS.overflow === 'end' ? 'Classic ends. Zen never does.' : 'Zen never ends. The top dissolves.'),
-  Place: () => ((CARD.pend.where || PREFS.where) === 'stars' ? 'The real sky, as seen from 41° north.' : 'Live is the season where you are.'),   // the stars are drawn for one latitude: said so
-  Comp: () => (here().dry ? 'Not indoors: Comp needs wind.' : PREFS.comp ? 'Leave Comp under the pool, any time.' : 'Edgier. The line creeps, the wind is wild.'),
-  Pace: () => `In for ${(24 / PREFS.bpm).toFixed(1)} s, out for ${(36 / PREFS.bpm).toFixed(1)} s.`, Speed: () => `${Math.round(PREFS.pacer.speed)} laps a minute. Slow is calming.` };
+  Place: () => ((CARD.pend.where || PREFS.where) === 'stars' ? 'The sky from 41° north.' : 'Live is the season where you are.'),   // the stars are drawn for one latitude: said so
+  Comp: () => (here().dry ? 'No wind here: no Comp.' : PREFS.comp ? 'Leave Comp is under the pool.' : 'The line creeps. Wild wind.'),
+  Pace: () => `In ${(24 / PREFS.bpm).toFixed(1)} s, out ${(36 / PREFS.bpm).toFixed(1)} s.`, Speed: () => `${Math.round(PREFS.pacer.speed)} laps a minute.` };
 // A setting's row knows its own control from the setting: on or off is a pill, a few words a pill, many words a wheel, a range a slider.
 function pref(k, ic, name, desc, more = {}) {
   const get = () => (k in CARD.pend ? CARD.pend[k] : getPref(k)), set = (v) => (CARD.stage ? (CARD.pend[k] = v, syncCard()) : setPref(k, v));
@@ -3334,20 +3334,20 @@ const CARDS = {
   session: { title: 'Timer and Task', tile: 2, keys: ['kind', 'exit', 'mins', 'tasks'], rows: () => flowRows(), norail: true, open: flowOpen, back: flowBack, canBack: () => FLOW.plan,
     done: () => { closeSheet(); startSession(); } },
   sound: { title: 'Sound', tile: 5, keys: ['sound', 'vol', 'mix', 'vibe'], rows: () => [
-    { ...pref('vol', ICON.speaker, 'Volume', 'How loud, under your music.'), mute: true, set: (v) => { setPref('vol', v); if (!PREFS.sound) setPref('sound', true); }, on: { get: () => PREFS.sound, set: (v) => setPref('sound', v) } },
-    bus('game', ICON.note, 'Game', 'Merges, chimes and harmony.'), bus('alerts', ICON.clock, 'Alerts', 'Time bell, done chime and tick.'),
-    bus('breath', ICON.rings, 'Breath', 'Rises and falls with your breath.'), bus('touch', ICON.hand, 'Touch', 'Taps, fingertips, drops.'),
-    bus('drone', ICON.hum, 'Drone', 'A low hum that holds it together.'), bus('nature', ICON.leaf, 'Nature', 'Birds, crickets and frogs.'), bus('weather', ICON.cloud, 'Weather', 'Rain, wind and thunder.'),
-    pref('vibe', ICON.vibe, 'Vibration', canVibrate ? 'A soft buzz with thunder and bells.' : 'Android phones only. iPhone can’t vibrate.')] },
+    { ...pref('vol', ICON.speaker, 'Volume', 'Under your music.'), mute: true, set: (v) => { setPref('vol', v); if (!PREFS.sound) setPref('sound', true); }, on: { get: () => PREFS.sound, set: (v) => setPref('sound', v) } },
+    bus('game', ICON.note, 'Game', 'Merges and chimes.'), bus('alerts', ICON.clock, 'Alerts', 'Bells and ticks.'),
+    bus('breath', ICON.rings, 'Breath', 'With your breath.'), bus('touch', ICON.hand, 'Touch', 'Taps and drops.'),
+    bus('drone', ICON.hum, 'Drone', 'The low hum.'), bus('nature', ICON.leaf, 'Nature', 'Birds and crickets.'), bus('weather', ICON.cloud, 'Weather', 'Rain, wind, thunder.'),
+    pref('vibe', ICON.vibe, 'Vibration', canVibrate ? 'A soft buzz with bells.' : 'Android only. iPhone can’t.')] },
   pace: { title: 'Pace', bot: 1, keys: ['bpm'], rows: () => [pref('bpm', ICON.hum, 'Pace', DESCS.Pace)] },
   style: { title: 'Style', bot: 2, keys: ['pacer.track', 'pacer.glass', 'pacer.glow', 'pacer.bright', 'pacer.speed'], rows: () => [
     pref('pacer.track', ICON.inf, 'Track', 'The path the light runs.'), pref('pacer.glass', ICON.gem, 'Glass', 'What the light is made of.'),
-    pref('pacer.glow', ICON.sun, 'Glow', 'How far its light reaches.'), pref('pacer.bright', ICON.sun, 'Brightness', 'How bright the glass is.'), pref('pacer.speed', ICON.clock, 'Speed', DESCS.Speed)] },
+    pref('pacer.glow', ICON.sun, 'Glow', 'How far it reaches.'), pref('pacer.bright', ICON.sun, 'Brightness', 'How bright it is.'), pref('pacer.speed', ICON.clock, 'Speed', DESCS.Speed)] },
   ambient: { title: 'Ambient', bot: 0, keys: ['ambient', 'ambLv', 'fadeAfter'], rows: () => [
     pref('ambient', ICON.sea, 'Ambient', 'One steady sound under everything.'), pref('ambLv', ICON.sea, 'Level', 'How loud it plays.'), pref('fadeAfter', ICON.clock, 'Fades after', 'When Rest lets the sound go.')] },
   game: { title: 'Game', tile: 0, keys: ['overflow', 'aim', 'next', 'numbers'], rows: () => [
-    pref('overflow', ICON.flag, 'Rules', DESCS.Rules), pref('aim', ICON.aim, 'Aim', () => (PREFS.comp ? 'No aim line in Comp.' : 'A faint line shows where it will land.'), { dis: () => PREFS.comp }),
-    pref('next', ICON.arrow, 'Next', 'Shows the sphere that comes after.'), pref('numbers', ICON.hash, 'Numbers', 'Score and sphere values.'),
+    pref('overflow', ICON.flag, 'Rules', DESCS.Rules), pref('aim', ICON.aim, 'Aim', () => (PREFS.comp ? 'No aim line in Comp.' : 'Shows where it will land.'), { dis: () => PREFS.comp }),
+    pref('next', ICON.arrow, 'Next', 'Shows the sphere after.'), pref('numbers', ICON.hash, 'Numbers', 'Score and sphere values.'),
     // Comp: a double opt-in. On asks first (the action in blue: nothing is erased); indoors the row is dim and nothing happens.
     pref('comp', ICON.comp, 'Comp', DESCS.Comp, { dis: () => here().dry, set: (v) => (v ? popup({ title: 'Comp mode?', line: 'The line creeps, the wind is wild, glass can break. Leave any time: nothing is lost.', back: 'Back to Game', act: 'Comp', safe: true, go: () => setPref('comp', true) }) : setPref('comp', false)) }),
     hub(ICON.reset, 'New game', 'Start over. Asks first.', () => popup({ title: 'Start a new game?', line: 'This game ends here.', back: 'Back to Game', act: 'New Game', go: () => { closeSheet(); setMode('play'); startPool(); } })),
@@ -3356,8 +3356,8 @@ const CARDS = {
     pref('clouds', ICON.cloud, 'Clouds', () => (here().dry ? 'No sky here.' : 'How the sky looks.'), { dis: () => here().dry }),
     pref('hour', ICON.sun, 'Time of day', () => (here().dry ? 'No sky here.' : 'Live follows your clock.'), { dis: () => here().dry })] },
   comfort: { title: 'Comfort', tile: 0, keys: ['calm', 'still', 'breathing'], rows: () => [
-    pref('calm', ICON.heart, 'Low stimulation', 'No flashes. Softer sound and words.'), pref('still', ICON.still, 'Reduce motion', 'What moves on its own is stilled.'),
-    pref('breathing', ICON.rings, 'Breathing', 'Edge and spheres breathe with you.')] },
+    pref('calm', ICON.heart, 'Low stimulation', 'No flashes. Softer sound.'), pref('still', ICON.still, 'Reduce motion', 'Nothing moves on its own.'),
+    pref('breathing', ICON.rings, 'Breathing', 'Edge and spheres breathe.')] },
   stats: { title: 'Statistics', tile: 0, keys: [], rows: () => { const j = journalStats(); return [
     ...(PREFS.numbers ? [show(ICON.star, 'Best', 'Your highest score.', () => fmt(j.best))] : []), show(ICON.task, 'Lists finished', 'Tasks you ticked, all of them.', () => fmt(j.lists)),
     show(ICON.bloom, 'Full Blooms', 'The two largest, merged.', () => fmt(j.blooms)), show(ICON.grid, 'Merges this game', '', () => fmt(S.merges)),
@@ -3365,7 +3365,7 @@ const CARDS = {
   help: { title: 'Help', tile: 0, keys: [], rows: () => FAQ.map(([q, a], i) => hub(ICON.ask, q, a, () => popup({ title: q, line: a, back: 'Back to Help' }))) },
   // Beta: the experiments, on the stars. They read the phone's motion sensor, on the phone; nothing is kept or sent. Done is warp.
   beta: { title: 'Beta', tile: 0, keys: ['beta'], stars: true, done: () => engage(), rows: () => [
-    pref('beta.lookup', ICON.star, 'Look Up', 'Lift the phone to see the stars.'), pref('beta.chest', ICON.rings, 'Chest breathing', 'In Relax, phone on chest follows you.'),
+    pref('beta.lookup', ICON.star, 'Look Up', 'Lift the phone: the stars.'), pref('beta.chest', ICON.rings, 'Chest breathing', 'In Relax, on your chest.'),
     pref('beta.heavy', ICON.mystery, 'Heavy glass', 'Big spheres move slowly.')] }
 };
 const CARD = { name: null, stack: [], rows: [], i: 0, snap: '', pend: {}, stage: false };
