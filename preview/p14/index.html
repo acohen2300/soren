@@ -1,4 +1,4 @@
-<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="robots" content="noindex"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><meta name="theme-color" content="#081428"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"><meta name="apple-mobile-web-app-title" content="SoRen"><link rel="manifest" href="../manifest.webmanifest"><link rel="apple-touch-icon" href="../apple-touch-icon.png"><link rel="icon" href="../icon-192.png"><style>html{height:100vh}body{padding-top:calc(8px + env(safe-area-inset-top,0px))!important;padding-bottom:calc(8px + env(safe-area-inset-bottom,0px))!important;overscroll-behavior:none}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body><!-- SoRen v70 · physics locked since v34 (12627fd9) -->
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="robots" content="noindex"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><meta name="theme-color" content="#081428"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"><meta name="apple-mobile-web-app-title" content="SoRen"><link rel="manifest" href="../../manifest.webmanifest"><link rel="apple-touch-icon" href="../../apple-touch-icon.png"><link rel="icon" href="../../icon-192.png"><style>html{height:100vh}body{padding-top:calc(8px + env(safe-area-inset-top,0px))!important;padding-bottom:calc(8px + env(safe-area-inset-bottom,0px))!important;overscroll-behavior:none}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body><!-- SoRen v70 · physics locked since v34 (12627fd9) -->
 <meta charset="utf-8">
 <title>SoRen preview p14</title>
 <meta name="claude:viewport-fit-sides" content="cover">
@@ -22,7 +22,7 @@
   --black: rgb(9, 5, 4); --label-rgb: 179, 180, 182; --label: rgb(var(--label-rgb)); --dim: rgb(122, 124, 126);
   --serif: ui-serif, 'New York', 'Iowan Old Style', Georgia, serif;
   --sans: -apple-system, BlinkMacSystemFont, system-ui, 'Segoe UI', Inter, sans-serif;
-  --r-pill: 999px; --r-card: 16px; --r-key: 12px; --r: calc(34 * var(--u));
+  --r-sm: calc(22 * var(--u)); --r-card: 16px; --r-key: 12px; --r: calc(34 * var(--u));
   --quick: .2s; --sweep: .6s; --settle: 1.2s; --long: 2.4s;   /* the only durations (the opening, the evening warmth and the weather keep their own) */
 }
 * { box-sizing: border-box; }
@@ -59,7 +59,7 @@ button { cursor: pointer; background: none; border: 0; padding: 0; }
 .ic .val { font-weight: 700; font-size: var(--t1); line-height: 1; white-space: nowrap; }
 .sub { position: absolute; left: 0; right: 0; top: calc(104 * var(--u)); transform: translateY(-50%); text-align: center; font-weight: 600; font-size: var(--t2); line-height: 1; color: var(--label); white-space: nowrap; overflow: visible; letter-spacing: -0.01em; }
 .cell.two .half { position: absolute; top: 0; bottom: 0; left: 0; width: 50%; } .cell.two .half + .half { left: 50%; }
-.n { position: absolute; left: calc(50% + 52 * var(--u)); top: calc(10 * var(--u)); min-width: calc(40 * var(--u)); height: calc(40 * var(--u)); padding: 0 calc(8 * var(--u)); border-radius: var(--r-pill); background: var(--label); color: var(--black); font-weight: 700; font-size: var(--t2); line-height: calc(40 * var(--u)); text-align: center; transform: translateX(-50%); }
+.n { position: absolute; left: calc(50% + 52 * var(--u)); top: calc(10 * var(--u)); min-width: calc(40 * var(--u)); height: calc(40 * var(--u)); padding: 0 calc(8 * var(--u)); border-radius: calc(11 * var(--u)); background: var(--label); color: var(--black); font-weight: 700; font-size: var(--t2); line-height: calc(40 * var(--u)); text-align: center; transform: translateX(-50%); }
 /* The ring: a rounded square round the icon only, never the whole tile. Green on, blue under your finger, white quiet, red erasing. */
 .ic::after { content: ''; position: absolute; left: 50%; top: 50%; width: calc(72 * var(--u)); height: calc(72 * var(--u)); transform: translate(-50%, -50%); border-radius: calc(22 * var(--u));
   box-shadow: inset 0 0 0 calc(4 * var(--u)) var(--ring, transparent); background: var(--tint, none); pointer-events: none; transition: box-shadow var(--quick), background var(--quick); }
@@ -75,7 +75,7 @@ button { cursor: pointer; background: none; border: 0; padding: 0; }
 .live > .ic { --ring: rgb(var(--on)); filter: drop-shadow(0 0 calc(10 * var(--u) * var(--b, 0)) rgba(var(--on), 0.7)); }   /* armed: the ring breathes */
 
 /* The pill: one size everywhere (78 high, 22 each side, bold italic 38). */
-.pill { flex: none; display: inline-flex; align-items: center; height: calc(78 * var(--u)); padding: 0 calc(22 * var(--u)); border-radius: var(--r-pill); white-space: nowrap;
+.pill { flex: none; display: inline-flex; align-items: center; height: calc(78 * var(--u)); padding: 0 calc(22 * var(--u)); border-radius: var(--r-sm); white-space: nowrap;
   box-shadow: inset 0 0 0 calc(3 * var(--u)) var(--ring, rgb(var(--pick))); background: var(--black); font-weight: 700; font-style: italic; font-size: var(--t1); color: var(--ink); transition: box-shadow var(--quick); }
 .pill.on { --ring: rgb(var(--on)); } .pill:disabled { --ring: var(--edge); color: var(--dim); }
 #botBar.wide .cell::before { display: none; }   /* three double-wide tiles: no dividers */
@@ -87,8 +87,8 @@ body.comp #game { filter: saturate(1.25) contrast(1.05); }
 /* The sentence line: one height, never wraps. The sentence on the left, the score and the time in their own sunken pill. */
 .line { flex: none; position: relative; height: calc(84 * var(--u)); display: flex; align-items: center; gap: calc(12 * var(--u)); transition: opacity var(--sweep); }
 .say { flex: none; max-width: calc(583 * var(--u)); display: flex; align-items: center; gap: calc(10 * var(--u)); font-weight: 700; font-style: italic; font-size: var(--t1); white-space: nowrap; color: var(--ink); }
-.say .w { height: calc(78 * var(--u)); display: inline-flex; align-items: center; padding: 0 calc(18 * var(--u)); border-radius: var(--r-pill); box-shadow: inset 0 0 0 calc(3 * var(--u)) rgb(var(--on)); background: var(--tint-1); }
-.sp { position: absolute; right: 0; left: calc(777 * var(--u)); height: calc(78 * var(--u)); display: flex; align-items: center; border-radius: var(--r-pill); background: var(--tint-2); box-shadow: inset 0 calc(3 * var(--u)) calc(8 * var(--u)) var(--tint-2), inset 0 0 0 calc(2 * var(--u)) var(--edge); font-weight: 700; font-size: var(--t1); }
+.say .w { height: calc(78 * var(--u)); display: inline-flex; align-items: center; padding: 0 calc(18 * var(--u)); border-radius: var(--r-sm); box-shadow: inset 0 0 0 calc(3 * var(--u)) rgb(var(--on)); background: var(--tint-1); }
+.sp { position: absolute; right: 0; left: calc(777 * var(--u)); height: calc(78 * var(--u)); display: flex; align-items: center; border-radius: var(--r-sm); background: var(--tint-2); box-shadow: inset 0 calc(3 * var(--u)) calc(8 * var(--u)) var(--tint-2), inset 0 0 0 calc(2 * var(--u)) var(--edge); font-weight: 700; font-size: var(--t1); }
 .sp .star { flex: none; width: calc(56 * var(--u)); height: calc(56 * var(--u)); margin-left: calc(11 * var(--u)); display: grid; place-items: center; border-radius: 50%; box-shadow: inset 0 0 0 calc(3 * var(--u)) rgb(var(--pick)); color: rgb(var(--pick)); font-size: var(--t2); }
 .sp #scoreVal { flex: 1; text-align: right; padding-right: calc(14 * var(--u)); }
 .sp .bar { flex: none; width: calc(2 * var(--u)); align-self: stretch; background: var(--edge); }
@@ -101,13 +101,13 @@ body.comp #game { filter: saturate(1.25) contrast(1.05); }
 .hz .al { flex: 1; min-width: 0; display: flex; flex-direction: column; justify-content: center; line-height: 1.2; }
 .hz b, .hz i { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-size: var(--t2); color: rgb(var(--ink-rgb)); } .hz b { font-weight: 700; } .hz i { font-weight: 400; font-style: italic; }
 .hz .cd { flex: none; width: calc(72 * var(--u)); height: calc(72 * var(--u)); display: grid; place-items: center; border-radius: 50%; background: rgb(var(--ink-rgb)); color: rgb(var(--red)); font-weight: 700; font-size: var(--t1); }
-.line.warn { padding-left: calc(12 * var(--u)); } .line.warn::before { content: ''; position: absolute; inset: 0; border-radius: var(--r-pill); box-shadow: inset 0 0 0 calc(3 * var(--u)) rgb(var(--red)); pointer-events: none; }
+.line.warn { padding-left: calc(12 * var(--u)); } .line.warn::before { content: ''; position: absolute; inset: 0; border-radius: var(--r-sm); box-shadow: inset 0 0 0 calc(3 * var(--u)) rgb(var(--red)); pointer-events: none; }
 /* Comp: the overlay. The whole bar red; COMPETITION, the score and the time cut out in white, their words in red. */
-.line.comp { background: rgb(var(--red)); border-radius: var(--r-pill); padding-left: calc(12 * var(--u)); }
-.compw { flex: none; height: calc(60 * var(--u)); padding: 0 calc(18 * var(--u)); display: inline-flex; align-items: center; border-radius: var(--r-pill); background: rgb(var(--ink-rgb)); color: rgb(var(--red)); font-weight: 700; font-style: italic; font-size: var(--t2); white-space: nowrap; }
+.line.comp { background: rgb(var(--red)); border-radius: var(--r-sm); padding-left: calc(12 * var(--u)); }
+.compw { flex: none; height: calc(60 * var(--u)); padding: 0 calc(18 * var(--u)); display: inline-flex; align-items: center; border-radius: var(--r-sm); background: rgb(var(--ink-rgb)); color: rgb(var(--red)); font-weight: 700; font-style: italic; font-size: var(--t2); white-space: nowrap; }
 .line.comp .sp { background: rgb(var(--ink-rgb)); color: rgb(var(--red)); box-shadow: none; } .line.comp .sp .star { box-shadow: inset 0 0 0 calc(3 * var(--u)) rgb(var(--red)); color: rgb(var(--red)); }
 .line.comp .sp #clock { color: rgb(var(--red)); } .line.comp .sp .bar { background: rgba(var(--red), 0.3); }
-.sub-menu { position: absolute; inset: 0; display: flex; align-items: center; justify-content: flex-end; gap: calc(14 * var(--u)); border-radius: var(--r-pill); background: var(--black); }
+.sub-menu { position: absolute; inset: 0; display: flex; align-items: center; justify-content: flex-end; gap: calc(14 * var(--u)); border-radius: var(--r-sm); background: var(--black); }
 
 /* The pool: one fixed outline, as large as the space allows at its own shape. Its glow is drawn on the canvas. */
 .pool { position: relative; width: min(var(--cw), calc((100vh - 16px - env(safe-area-inset-top, 0px) - env(safe-area-inset-bottom, 0px) - 552 * var(--u)) * 380 / 490));
@@ -118,13 +118,16 @@ body.comp #game { filter: saturate(1.25) contrast(1.05); }
 .banner { pointer-events: none; position: absolute; top: 14%; left: 0; right: 0; padding: 0 16px; display: flex; flex-direction: column; align-items: center; gap: 5px; text-align: center; opacity: 0; transform: scale(0.96); transition: opacity var(--sweep), transform var(--sweep); }
 .banner.show { opacity: 1; transform: none; }
 #bannerTitle { font-weight: 700; font-style: italic; font-size: var(--t1); line-height: 1.1; text-shadow: 0 calc(3 * var(--u)) calc(14 * var(--u)) var(--tint-3); text-wrap: balance; }
-#bannerSub { padding: 3px 11px; border-radius: var(--r-pill); background: var(--tint-2); border: 1px solid var(--chip-line); font-size: var(--t2); text-wrap: balance; } #bannerSub:empty { display: none; }
+#bannerSub { padding: 3px 11px; border-radius: 10px; background: var(--tint-2); border: 1px solid var(--chip-line); font-size: var(--t2); text-wrap: balance; } #bannerSub:empty { display: none; }
 /* The opening's name and check box: they wait, then fade in together once the circle is at rest. */
 .soren, .go-in { position: absolute; left: 50%; opacity: 0; pointer-events: none; }
 .soren { top: calc(50% - 72 * var(--u)); transform: translateX(-50%); font: italic 700 calc(64 * var(--u))/1 var(--sans, inherit); color: var(--ink); white-space: nowrap; -webkit-text-stroke: calc(1.2 * var(--u)) rgba(var(--pick), 0.6);
   text-shadow: 0 0 calc(10 * var(--u)) rgba(var(--pick), 0.95), 0 0 calc(26 * var(--u)) rgba(var(--pick), 0.75), 0 0 calc(52 * var(--u)) rgba(var(--pick), 0.45); }
 .go-in { top: calc(50% + 36 * var(--u)); width: calc(88 * var(--u)); height: calc(88 * var(--u)); transform: translate(-50%, -50%); background: none; border: 0; color: var(--ink); }
 .go-in .ic { top: 50%; --ring: rgb(var(--ink-rgb)); } .go-in .ic::after { transition-duration: 1.4s; }
+.go-two { position: absolute; left: 50%; top: calc(50% - 14 * var(--u)); width: calc(388.66 * var(--u)); height: calc(132 * var(--u)); transform: translateX(-50%); display: none; }   /* Start with a game waiting: Resume or New, in the circle, in place of the check */
+body.intro-two .go-in { display: none; } body.intro-two .go-two { display: flex; }
+.go-two .cell { flex: 0 0 calc(194.33 * var(--u)); } .go-two .cell::before { display: none; } .go-two .ic { --ring: rgb(var(--pick)); }
 body.intro-in .soren, body.intro-in .go-in { opacity: 1; transition: opacity 3s cubic-bezier(0.4, 0, 0.2, 1); }
 body.intro-ready .go-in { pointer-events: auto; } body.intro-ready .go-in .ic { --ring: rgb(var(--pick)); }
 .go-in.on > .ic { --ring: rgb(var(--on)); --tint: rgba(var(--on), 0.3); } .go-in.on .ic::after { transition-duration: 0.3s; }
@@ -135,7 +138,7 @@ body.intro-quick.intro-in .soren, body.intro-quick.intro-in .go-in { transition-
    the right moves you between rows. The foot: Close, Help, Reset, and Done, the one blue. */
 .mc { position: absolute; z-index: 30; left: calc(20 * var(--u)); width: var(--cw); border-radius: var(--r); background: var(--black); box-shadow: inset 0 0 0 calc(3 * var(--u)) var(--edge), 0 calc(24 * var(--u)) calc(60 * var(--u)) var(--tint-2); animation: grow var(--quick) ease-out; transform-origin: top center; }
 @keyframes grow { from { opacity: 0; transform: scaleY(0.96); } to { opacity: 1; transform: none; } }
-.mc > .pill { position: absolute; top: calc(8 * var(--u)); --ring: rgb(var(--on)); pointer-events: none; }
+.mc > .pill { position: absolute; top: calc(8 * var(--u)); left: calc((1166 - 496) / 2 * var(--u)); width: calc(496 * var(--u)); padding: 0; justify-content: center; /* the title: centred, one width (the longest title, 495u), only the words change */ --ring: rgb(var(--on)); pointer-events: none; }
 .rows { position: absolute; top: calc(100 * var(--u)); left: 0; right: 0; }
 .mrow { position: relative; height: var(--row); color: var(--dim); }
 .mrow::before { content: ''; position: absolute; inset: 0; border-radius: var(--r); box-shadow: inset 0 0 0 calc(3 * var(--u)) transparent; pointer-events: none; transition: box-shadow var(--quick); }
@@ -166,11 +169,11 @@ body.intro-quick.intro-in .soren, body.intro-quick.intro-in .go-in { transition-
 .mrow .seg ~ .lvl, .mrow .seg ~ .due, .mrow .seg ~ .pct, .mrow.sub .seg { display: none; } .mrow.sub .seg ~ .lvl, .mrow.sub .seg ~ .due { display: block; } .mrow.sub .lvl { left: calc(480 * var(--u)); width: calc(220 * var(--u)); }   /* a choice that became its slider */
 .pct { position: absolute; right: calc(176 * var(--u)); top: 50%; transform: translateY(-50%); font-weight: 500; font-size: var(--t2); }
 .mrow.lit .pct { color: var(--label); }
-.seg { position: absolute; right: calc(186 * var(--u)); top: 50%; height: calc(60 * var(--u)); transform: translateY(-50%); display: flex; border-radius: var(--r-pill); box-shadow: inset 0 0 0 calc(3 * var(--u)) var(--edge); }
+.seg { --win: calc(460 * var(--u)); width: var(--win); position: absolute; right: calc(186 * var(--u)); top: 50%; height: calc(60 * var(--u)); transform: translateY(-50%); display: flex; border-radius: var(--r-sm); box-shadow: inset 0 0 0 calc(3 * var(--u)) var(--edge); }
 .mrow.lit .seg { box-shadow: inset 0 0 0 calc(3 * var(--u)) var(--dim); }
-.seg button { position: relative; z-index: 1; width: calc(150 * var(--u)); font-weight: 600; font-size: var(--t2); color: var(--dim); }
+.seg button { position: relative; z-index: 1; flex: 1 1 0; min-width: 0; font-weight: 600; font-size: var(--t2); color: var(--dim); }
 .mrow.lit .seg button { color: var(--label); } .seg button.sel { color: var(--dim); } .mrow.lit .seg button.sel { color: rgb(var(--ink-rgb)); }
-.seg i { position: absolute; z-index: 0; top: calc(5 * var(--u)); bottom: calc(5 * var(--u)); left: calc(5 * var(--u)); width: calc(140 * var(--u)); border-radius: var(--r-pill); transform: translateX(calc(150 * var(--u) * var(--k, 0)));
+.seg i { position: absolute; z-index: 0; top: calc(5 * var(--u)); bottom: calc(5 * var(--u)); left: calc(5 * var(--u)); width: calc(var(--win) / var(--n, 2) - 10 * var(--u)); border-radius: calc(17 * var(--u)); transform: translateX(calc(var(--win) / var(--n, 2) * var(--k, 0)));
   transition: transform var(--quick) cubic-bezier(.45, 0, .25, 1), background var(--quick), box-shadow var(--quick); --c: 96, 98, 100; background: rgba(var(--c), 0.3); box-shadow: inset 0 0 0 calc(4 * var(--u)) rgb(var(--c)); }
 .mrow.lit .seg i { --c: var(--pick); } .mrow.lit .seg.onoff i { --c: var(--ink-rgb); } .mrow.lit .seg.onoff.yes i { --c: var(--on); } .seg.onoff.yes i { --c: 96, 110, 100; }
 .wheel { position: absolute; left: calc(730 * var(--u)); width: calc(260 * var(--u)); top: 0; height: 100%; overflow: hidden; touch-action: none; text-align: center; }
@@ -190,12 +193,31 @@ body.intro-quick.intro-in .soren, body.intro-quick.intro-in .go-in { transition-
 .tx::placeholder { color: var(--dim); } .mrow.lit .tx { border-bottom-color: var(--edge); } .mrow.lit .tx::placeholder { color: var(--label); }
 .tx:focus { outline: none; border-bottom-color: rgb(var(--pick)); }
 
+/* Groups (v72): a row that names the group, and its tiles under it in ribbons of four on columns two to five, shown while it is
+   the row you're on. One blue ring round both, sharing the line between them. Rows stay 132: three ribbons are three rows. */
+.mrow.grp.lit::before { bottom: calc(-1 * var(--row) * var(--n, 0)); z-index: 1; }
+.mrow.grp.lit::after { content: ''; position: absolute; left: 0; right: 0; bottom: calc(-1.5 * var(--u)); height: calc(3 * var(--u)); background: rgb(var(--pick)); pointer-events: none; z-index: 1; }
+.mrow.grp.lit .big { display: none; }
+.mrow.tiles .rib { background: none; box-shadow: none; } .mrow.tiles .tr.four { width: calc(100% * 4 / 6); margin-left: calc(100% / 6); }
+.mrow.tiles .cell:first-child::before { display: none; }
+.cell.on > .ic { --tint: rgba(var(--on), 0.3); } .cell.dis { opacity: 0.32; pointer-events: none; }
+/* A sound switched off: its slider steps aside for Off · On, the one toggle window; On brings the slider back where it was. */
+.mrow > .seg.sw { display: none; } .mrow.off > .seg.sw { display: flex; } .mrow.off > .lvl, .mrow.off > .pct { display: none; }
+/* Pace: a green line under the slider, the range the studies used. */
+.band { position: absolute; top: calc(50% + 24 * var(--u)); height: calc(4 * var(--u)); border-radius: calc(2 * var(--u)); background: rgba(var(--on), 0.6); pointer-events: none; }
+/* Arranging: the card's grid shows, still lines on the six columns and the rows (no wiggle). Every tile is blue, touch me; the one
+   in hand is filled blue; in All, a tile already in Mine is gold. */
+.mc.edit::after { content: ''; position: absolute; left: 0; right: 0; top: calc(100 * var(--u)); bottom: 0; pointer-events: none; z-index: 2; animation: fadein var(--quick) ease both;
+  background: repeating-linear-gradient(to right, transparent 0 calc(192.83 * var(--u)), rgba(var(--ink-rgb), 0.16) calc(192.83 * var(--u)) calc(194.33 * var(--u))),
+    repeating-linear-gradient(to bottom, transparent 0 calc(130.5 * var(--u)), rgba(var(--ink-rgb), 0.16) calc(130.5 * var(--u)) calc(132 * var(--u))); }
+@keyframes fadein { from { opacity: 0; } to { opacity: 1; } }
+.mc.edit [data-tile] > .ic { --ring: rgb(var(--pick)); } .mc.edit [data-tile].held > .ic { --tint: rgba(var(--pick), 0.3); } .mc.edit [data-tile].mine > .ic { --ring: rgb(var(--gold)); }
+
 /* ---------- The first session: a lone plus, a box to write in, gold and a wash of green ---------- */
 .mrow.gone { display: none; }
 .mrow.rise { animation: rise var(--sweep) ease both; overflow: hidden; } .mrow.fall { animation: fall var(--sweep) ease both; overflow: hidden; }   /* a row comes and goes in a sweep: nothing to wait for */
 @keyframes rise { from { height: 0; opacity: 0; } to { height: var(--row); opacity: 1; } }
 @keyframes fall { from { height: var(--row); opacity: 1; } to { height: 0; opacity: 0; } }
-.seg.x3 button { width: calc(164 * var(--u)); } .seg.x3 i { width: calc(154 * var(--u)); transform: translateX(calc(164 * var(--u) * var(--k, 0))); }
 .mrow .ic { overflow: visible; } .mrow.box > .ic svg { transform: rotate(var(--turn, 0deg)); transition: transform var(--sweep) cubic-bezier(.3, 1.5, .5, 1), color var(--sweep); cursor: pointer; }   /* plus 0°, X 45°, minus 90° with one bar drawn in */
 .mrow.box svg path { transform-box: fill-box; transform-origin: center; transition: transform var(--quick); } .mrow.later > .ic svg .h, .opts .o2 > .ic svg .h { transform: scaleX(0); }
 .mrow.later > .ic { --ring: var(--dim); color: var(--dim); }
@@ -208,7 +230,8 @@ body.intro-quick.intro-in .soren, body.intro-quick.intro-in .go-in { transition-
 .opts .o2 { left: calc(96 * var(--u)); transition-delay: 0s; } .mrow.open .opts .o1 { transform: none; } .mrow.open .opts .o2 { transform: none; transition-delay: var(--quick); } .mrow.open .opts .o1 { transition-delay: 0s; }
 .opts .ic { left: calc(60 * var(--u)); top: 0; cursor: pointer; } .opts .o1 > .ic { --ring: rgb(var(--ink-rgb)); color: rgb(var(--red)); } .opts .o1 > .ic svg { transform: rotate(45deg); }
 .opts .o2 > .ic { --ring: rgb(var(--pick)); color: rgb(var(--ink-rgb)); } .opts .o2 > .ic svg { transform: rotate(90deg); } .mrow.two .opts .o2 { display: none; }
-.mrow.box.lead > .opts { opacity: 1; pointer-events: auto; } .mrow:not(.lead) > .opts { display: none; }
+.mrow.box.lead > .opts, .mrow.box.offer > .opts { opacity: 1; pointer-events: auto; } .mrow:not(.lead):not(.offer) > .opts { display: none; }
+.mrow.offer .opts .o1, .mrow.offer .opts .o2 { transform: none; transition-delay: 0s; } .mrow.offer .nm, .mrow.offer .ds { opacity: 0; }   /* the next move's row, open at the check: + ✕ − beside its icon until the box is touched */
 .mrow.box .nm .pill { height: calc(54 * var(--u)); padding: 0 calc(18 * var(--u)); font-size: var(--t2); font-weight: 700; font-style: italic; margin-left: calc(4 * var(--u)); vertical-align: middle; color: var(--ink); transition: color var(--sweep); }
 .mrow.box .tx { left: calc(462 * var(--u)); width: calc(556 * var(--u)); height: calc(76 * var(--u)); top: 50%; border: calc(3 * var(--u)) solid var(--label); border-radius: calc(22 * var(--u)); padding: 0 calc(8 * var(--u)); font-size: 16px; background-color: rgba(var(--ink-rgb), .04); transition: border-color var(--quick), box-shadow var(--sweep), opacity var(--sweep); }
 .mrow.box .tx:focus { border-color: rgb(var(--ink-rgb)); box-shadow: 0 0 calc(30 * var(--u)) rgba(var(--ink-rgb), .28), inset 0 0 calc(14 * var(--u)) rgba(var(--ink-rgb), .08); }
@@ -221,6 +244,7 @@ body.intro-quick.intro-in .soren, body.intro-quick.intro-in .go-in { transition-
 .mrow.gold2 .pill { color: rgb(var(--gold)); --ring: rgb(var(--gold)); }
 .mrow.locked.lit::before { box-shadow: inset 0 0 0 calc(3 * var(--u)) rgb(var(--gold)); transition: box-shadow var(--sweep); } .mrow.locked > .ic { --ring: rgb(var(--gold)); }
 .mrow.locked .ok { color: rgb(var(--gold)); } .mrow.locked .ok .ic { --ring: rgb(var(--gold)); }
+.mrow.locked::before { inset: calc(3 * var(--u)); border-radius: calc(var(--r) - 3 * var(--u)); background: rgba(var(--gold), .3); }   /* a task locked in: its own gold at 30%, inside the line, never on it */
 .mrow.box .ok { overflow: visible; transition: color var(--settle) ease; } .mrow.box .ok .ic::after { transition-duration: var(--settle); }
 .mrow.preok:not(.locked) .ok { color: rgb(var(--pick)); } .mrow.preok:not(.locked) .ok .ic { --ring: rgb(var(--pick)); }
 .mrow .ds.wave { background: linear-gradient(90deg, rgb(var(--on)) 0%, rgb(var(--on)) 38%, var(--label) 62%, var(--label) 100%); background-size: 260% 100%; background-position: 100% 0; -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent; animation: wash var(--long) cubic-bezier(.45, .05, .55, .95) forwards; }
@@ -233,7 +257,7 @@ body.intro-quick.intro-in .soren, body.intro-quick.intro-in .go-in { transition-
 .pill > .shine, .ok > .shine { left: 50%; top: 50%; } .pill > .shine { width: calc(120 * var(--u)); height: calc(120 * var(--u)); margin: calc(-60 * var(--u)) 0 0 calc(-60 * var(--u)); } .ok > .shine { width: calc(140 * var(--u)); height: calc(140 * var(--u)); margin: calc(-70 * var(--u)) 0 0 calc(-70 * var(--u)); }
 @keyframes shine { 0% { opacity: .95; transform: scale(.5); } 100% { opacity: 0; transform: scale(3.2); } } @keyframes shine2 { 0% { opacity: .9; transform: scale(.7); } 100% { opacity: 0; transform: scale(2.6); } }
 #spot { position: fixed; z-index: 40; pointer-events: none; opacity: 0; transition: opacity var(--settle) ease; box-shadow: 0 0 0 200vmax var(--tint-2); } #spot.on { opacity: 1; }
-#mcFoot [data-foot=back].off { opacity: .35; pointer-events: none; }
+#mcNav [data-foot=back].off { opacity: .35; pointer-events: none; }
 /* A moment (Still waiting, Game complete, Time's up, Go, Welcome back, Did you do it): the same card, its rows to read, its answers in the foot.
    Nothing is lit; a list to tick shows every check, blue to touch and gold once done. */
 .mc.moment .mrow { color: rgb(var(--ink-rgb)); } .mc.moment .ds { color: var(--label); }
@@ -241,16 +265,17 @@ body.intro-quick.intro-in .soren, body.intro-quick.intro-in .go-in { transition-
 .mrow > .ic svg.uni { color: rgb(var(--gold)); } .mrow > .ic svg.uni path { vector-effect: none; stroke-width: 3.6; stroke-dasharray: 1; stroke-dashoffset: 1; animation: draw var(--long) ease-out forwards; }   /* the mythical animal draws itself */
 @keyframes draw { to { stroke-dashoffset: 0; } } body.rm .mrow > .ic svg.uni path { stroke-dashoffset: 0; }
 .mrow.locked .ok { display: block; }   /* a task locked in: no ring round the row, its check stays gold */
-.foot .cell[data-foot=done] > .ic { --ring: rgb(var(--pick)); } .foot .cell.ready > .ic { filter: drop-shadow(0 0 calc(10 * var(--u)) rgba(var(--pick), 0.9)); }
-.foot .cell[data-foot=done] { flex-basis: calc(388.66 * var(--u)); margin-left: auto; } .foot .cell[data-foot=done] > .ic { left: calc(100% - 97.17 * var(--u)); } .foot .cell[data-foot=done] .sub { left: auto; width: calc(194.33 * var(--u)); }   /* Done keeps its own slot, the last; its pill reaches left, the normal gap short of Back's ring */
-.foot .cell[data-foot=done] > .ic::after { left: auto; right: calc(50% - 36 * var(--u)); transform: translateY(-50%); width: calc(266 * var(--u)); transition: width var(--sweep) ease-in, box-shadow var(--sweep); }
-.foot .cell.ready > .ic::after { width: calc(72 * var(--u)); }   /* the last row finished: the pill closes to the ring, the eye lands on the check */
+.foot .cell[data-foot=done] > .ic { --ring: rgb(var(--pick)); } 
+/* the check keeps the last column */   /* Done keeps its own slot, the last; its pill reaches left, the normal gap short of Back's ring */
 .mrow.recede::before { animation: recede var(--sweep) ease-in forwards; } @keyframes recede { to { clip-path: inset(0 0 0 100%); } }   /* the last row is finished: its ring draws off to the right, into Done */
 .rail { position: absolute; left: calc(1136 * var(--u)); width: calc(60 * var(--u)); transform: translateX(-50%); touch-action: none; }
 .rail::before { content: ''; position: absolute; left: 50%; top: 0; bottom: 0; width: calc(8 * var(--u)); transform: translateX(-50%); border-radius: calc(4 * var(--u)); background: var(--edge); }
 .rail i { position: absolute; left: 50%; width: calc(18 * var(--u)); height: calc(18 * var(--u)); transform: translate(-50%, -50%); border-radius: 50%; background: rgb(var(--pick)); }
 .rail b { position: absolute; left: 50%; width: calc(56 * var(--u)); height: calc(56 * var(--u)); transform: translate(-50%, -50%); background: var(--handle-v) center / 100% 100%; transition: top var(--quick); filter: drop-shadow(0 calc(2 * var(--u)) calc(6 * var(--u)) var(--tint-2)); }
-.foot { position: absolute; left: 0; right: 0; bottom: calc(14 * var(--u)); height: var(--row); display: flex; }
+body:has(#mc:not([hidden])) #line { visibility: hidden; }   /* the card covers the status bar on purpose; nothing of it shows at the card's corners */
+.nav { position: absolute; left: 0; right: 0; top: 0; height: calc(84 * var(--u)); display: flex; } .nav .cell { flex: 0 0 calc(194.33 * var(--u)); } .nav .cell::before { display: none; } .nav .ic { top: 50%; }   /* ‹ Back, ? Help, ✕ Close: in the bar, on the ribbon's columns */
+.foot { position: absolute; left: 0; right: 0; bottom: 0; height: var(--row); display: flex; }
+.foot::before { content: ''; position: absolute; inset: 0; border-radius: var(--r); box-shadow: inset 0 0 0 calc(3 * var(--u)) rgb(var(--pick)); pointer-events: none; transition: box-shadow var(--quick); } .foot.ready::before { box-shadow: inset 0 0 0 calc(3 * var(--u)) rgb(var(--pick)), 0 0 calc(10 * var(--u)) rgba(var(--pick), 0.6); }   /* the foot is a ribbon: a blue ring, the check inside; a steady glow once nothing is left lit */
 .foot .cell { flex: 0 0 calc(194.33 * var(--u)); } .foot .cell::before { display: none; }
 /* The one pop-up: the card goes solid black; a question, one grey line, and two tiles: ‹ back in blue, › the action in red. */
 .pop { position: absolute; inset: 0; z-index: 2; border-radius: var(--r); background: var(--black); display: flex; flex-direction: column; justify-content: center; align-items: center; gap: calc(40 * var(--u)); padding: 0 calc(60 * var(--u)); text-align: center; }
@@ -294,14 +319,14 @@ body.rm *, body.rm *::before, body.rm *::after { transition: none !important; an
   <div class="pool-wrap">
     <div class="pool" id="pool">
       <canvas id="game" tabindex="0" aria-label="The pool. Touch and slide to move the waiting sphere, let go to drop it; or the arrow keys and Space. In Relax, hold to breathe in and let go to breathe out."></canvas>
-      <div class="soren" aria-hidden="true">Soren</div><button class="go-in" id="introGo" data-act="introstart" aria-label="Session start"><span class="ic"><svg viewBox="0 0 24 24"><path d="M3 12.5l6 6L21 6"/></svg></span></button>
+      <div class="soren" aria-hidden="true">Soren</div><button class="go-in" id="introGo" data-act="introstart" aria-label="Session start"><span class="ic"><svg viewBox="0 0 24 24"><path d="M3 12.5l6 6L21 6"/></svg></span></button><div class="go-two" id="introTwo"></div>
       <div class="banner" id="banner" aria-live="polite"><div id="bannerTitle"></div><div id="bannerSub"></div></div>
     </div>
   </div>
   <div class="zone4" id="wxBar"></div>
   <nav class="rib" id="botBar" aria-label="What you can do here"></nav>
   <section class="mc" id="mc" hidden role="dialog" aria-modal="true" aria-labelledby="mcPill"><canvas id="warp" aria-hidden="true"></canvas>
-    <span class="pill" id="mcPill"></span>
+    <div class="nav" id="mcNav"></div><span class="pill" id="mcPill"></span>
     <div class="rows" id="mcRows"></div>
     <div class="rail" id="mcRail" aria-hidden="true"></div>
     <div class="foot" id="mcFoot"></div>
@@ -518,7 +543,18 @@ const SKY_KEYS = [
   { top: '#272550', mid: '#9c5270', hor: '#f59c5c', grade: [76, 34, 52, 0.45], light: 0.52, stars: 0.12 }
 ].map(k => ({ ...k, top: hex(k.top), mid: hex(k.mid), hor: hex(k.hor) }));
 const SKY_LOOKS = [0.12, 0.55, 0.85, 1, 0.5];   // clear, some, overcast, dark, clearing
-const DAY = [2, 6.5, 12, 19, 26];   // the hours where night, dawn, day and dusk are at their fullest
+// The hours where night, dawn, day and dusk are at their fullest: the real sun at 41° north (where the stars are drawn), for
+// today's date. Dawn is sunrise, dusk is sunset, day is solar noon, night is twelve hours after (Table 6; NOAA's simple
+// declination; clock noon taken as solar noon, an hour later in summer time; accurate to a few minutes for most of the
+// 41st parallel, more where a time zone is wide).
+const LAT = 41;
+function sunDay(d = new Date()) {
+  const n = Math.floor((d - new Date(d.getFullYear(), 0, 0)) / 864e5), rad = Math.PI / 180, dec = 23.44 * Math.sin(rad * 360 / 365 * (n - 81));
+  const jan = new Date(d.getFullYear(), 0, 1).getTimezoneOffset(), dst = d.getTimezoneOffset() < jan ? 1 : 0, noon = 12 + dst;
+  const H = Math.acos(clamp((Math.sin(-0.833 * rad) - Math.sin(LAT * rad) * Math.sin(dec * rad)) / (Math.cos(LAT * rad) * Math.cos(dec * rad)), -1, 1)) / rad / 15;   // hours from noon to sunset
+  return [noon - 12 + 24 * (noon - 12 < 0), noon - H, noon, noon + H, noon + 12 + 24 * (noon - 12 < 0)].map((h, i, a) => (i && h < a[0] ? h + 24 : h));
+}
+let DAY = sunDay();
 const SKY = { top: [0, 0, 0], mid: [0, 0, 0], hor: [0, 0, 0], grade: [0, 0, 0, 0], light: 1, stars: 0 };
 // blow is the one wind: the wind you make plus its gusts. It moves the scene, and the falling spheres.
 const ENV = { cover: 0, gloom: 0, precip: 0, rain: 0, snow: 0, wind: 0, blow: 0, light: 1, dark: 0,
@@ -527,7 +563,7 @@ const ENV = { cover: 0, gloom: 0, precip: 0, rain: 0, snow: 0, wind: 0, blow: 0,
 const FEEL = { life: 0.45, heave: 0.035, glow: 0.65 };
 
 /* ---------- Storage (guarded: private windows and sandboxes can throw) ---------- */
-const VERSION = 71.2, PHYSICS_ID = '12627fd9';   // the build, and the first eight of the locked Physics block's hash
+const VERSION = 72, PHYSICS_ID = '12627fd9';   // the build, and the first eight of the locked Physics block's hash
 const JKEY = 'soren:journal:p5', JKEY_OLD = 'somatic-resonance:journal:v2', PKEY = 'soren:prefs:p5', SKEY = 'soren:pool:p5';
 function loadJSON(key) { try { const v = JSON.parse(localStorage.getItem(key) || 'null'); return v && typeof v === 'object' ? v : {}; } catch (e) { return {}; } }
 const SAVED = {};   // what each key last held: a save that changes nothing writes nothing
@@ -548,15 +584,18 @@ const CHOICES = {
   ambient: ['off', 'rain', 'wind', 'night', 'fire'], fadeAfter: [15, 30, 60, 120, 0],
   'pacer.track': ['eight', 'circle', 'oval', 'box', 'zigzag'], 'pacer.glass': ['moonstone', 'ember', 'aurora', 'rose', 'lutz', 'amethyst']
 };
+// Breath, from the research (research/SENSORY-SCIENCE.md, Table 1): the measured mean resonance, and the band the studies used.
+const BREATH = { pace: 5.5, band: [4.8, 6.6], ratio: 0.4 };   // breaths a minute; the green zone on Pace; in-breath share of a breath (Design, no validated ratio)
 const DEFAULTS = {
   mode: 'play', overflow: 'end', where: 'live', clouds: 'clear', hour: 'live',
   atmo: { bolt: { on: false, lv: 1 }, wind: { on: false, lv: 0.4 }, rain: { on: false, lv: 1 } },
-  breathing: true, bpm: 6, aim: true, next: false, numbers: true, comp: false,   // comp: Play with the calm taken off; never remembered, a double opt-in every time
+  breathing: true, bpm: 5.5, aim: true, next: false, numbers: true, comp: false,   // comp: Play with the calm taken off; never remembered, a double opt-in every time
   sound: true, vol: 0.85, ambient: 'off', ambLv: 1, fadeAfter: 60, calm: false, still: reduceMotion, vibe: true,
   mix: { game: { on: true, lv: 0.7 }, alerts: { on: true, lv: 0.7 }, breath: { on: true, lv: 0.7 }, touch: { on: true, lv: 0.7 }, drone: { on: true, lv: 0.7 }, nature: { on: true, lv: 0.6 }, weather: { on: true, lv: 0.6 } },   // the Sound card: each kind of sound, its level and whether it plays
   kind: 'break', exit: 'timer', mins: 15, byClock: false, tasks: [],   // tasks: your list, up to three lines, each { text }
   pacer: { on: true, drops: false, track: 'eight', glass: 'moonstone', glow: 0.6, bright: 0.85, speed: 7 },   // Fidget's light: its track, its glass, how it shines, laps a minute
-  beta: { lookup: false, chest: false, heavy: false }   // the experiments: each off until you switch it on
+  beta: { lookup: false, chest: false, heavy: false },   // the experiments: each off until you switch it on
+  mine: [], order: {}   // Mine: your own tiles, by key; order: each group's tiles in the order you set
 };
 const PREFS = (() => {
   const s = loadJSON(PKEY), p = JSON.parse(JSON.stringify(DEFAULTS));
@@ -571,7 +610,9 @@ const PREFS = (() => {
   for (const k in DEFAULTS.mix) { const m = obj(obj(s.mix)[k]); p.mix[k] = { on: m.on !== false, lv: clamp(Number(m.lv ?? DEFAULTS.mix[k].lv) || 0, 0, 1) }; }
   p.ambLv = clamp(+p.ambLv, 0, 1);
   p.beta = Object.fromEntries(Object.keys(DEFAULTS.beta).map(k => [k, obj(s.beta)[k] === true]));
-  p.bpm = clamp(+p.bpm || 6, 4, 8); p.vol = clamp(+p.vol, 0, 1); p.comp = false;
+  p.bpm = clamp(+p.bpm || BREATH.pace, 4, 8); if ((+s.v || 0) < 72 && p.bpm === 6) p.bpm = BREATH.pace;   // 6 was the old default, not a choice: it moves to the measured mean p.vol = clamp(+p.vol, 0, 1); p.comp = false;
+  const keys = (a) => (Array.isArray(a) ? a.filter(k => typeof k === 'string').slice(0, 64) : []);
+  p.mine = keys(s.mine).slice(0, 8); p.order = Object.fromEntries(Object.entries(obj(s.order)).map(([g, a]) => [g, keys(a)]));
   p.tasks = (Array.isArray(s.tasks) ? s.tasks : []).slice(0, 3).map(t => ({ text: String(obj(t).text || '').slice(0, 60) })).filter(t => t.text.trim());
   return p;
 })();
@@ -621,12 +662,6 @@ const TIME = { quick: 0.2, sweep: 0.6, settle: 1.2, long: 2.4 };
 const NATIVE = {
   plugins: () => (window.Capacitor && window.Capacitor.Plugins) || {},
   get haptics() { return !!this.plugins().Haptics || canVibrate; },
-  haptic(pattern) {   // a buzz: light, medium or heavy by its length; a pattern as one longer buzz
-    const H = this.plugins().Haptics;
-    if (!H) { if (canVibrate) navigator.vibrate(pattern); return; }
-    const ms = Array.isArray(pattern) ? pattern.reduce((a, b) => a + b, 0) : pattern;
-    if (Array.isArray(pattern)) H.vibrate({ duration: ms }); else H.impact({ style: ms <= 12 ? 'LIGHT' : ms <= 30 ? 'MEDIUM' : 'HEAVY' });
-  },
   async wake(on) {   // keep the screen on (Rest): the app's own switch, or the browser's wake lock
     const K = this.plugins().KeepAwake; if (K) { await (on ? K.keepAwake() : K.allowSleep()); return; }
     if (on && 'wakeLock' in navigator) S.wakeLock = await navigator.wakeLock.request('screen'); else if (!on && S.wakeLock) { await S.wakeLock.release(); S.wakeLock = null; }
@@ -663,9 +698,9 @@ function updateScene(dt) {
   ENV.aurora = (el.aurora || 0) * byTime([1, 0.1, 0, 0.3]) * (1 - ENV.cover);
   ENV.mist = clamp(0.06 + 0.22 * byTime([0.15, 1, 0.1, 0.35]) + 0.25 * ENV.precip + (w.mist || 0), 0, 0.6);
 }
-function todAt(h) { if (h < 2) h += 24; const i = DAY.findIndex((k, n) => h < DAY[n + 1]); return (i + (h - DAY[i]) / (DAY[i + 1] - DAY[i])) % 4; }   // an hour (0–24) as a place in the loop
+function todAt(h) { if (h < DAY[0]) h += 24; const i = DAY.findIndex((k, n) => h < DAY[n + 1]); return (i + (h - DAY[i]) / (DAY[i + 1] - DAY[i])) % 4; }   // an hour (0–24) as a place in the loop
 function todMinutes(u) { const i = Math.floor(u) % 4, h = DAY[i] + (u - Math.floor(u)) * (DAY[i + 1] - DAY[i]); return Math.round((h % 24) * 60) % 1440; }   // and back
-const clockTod = (d = new Date()) => todAt(d.getHours() + d.getMinutes() / 60);
+const clockTod = (d = new Date()) => { DAY = sunDay(d); return todAt(d.getHours() + d.getMinutes() / 60); };
 function updateLife(dt) { const a = ARCS[here().arc]; if (a) a[1](dt); }   // the season's arc moves at its own pace
 
 /* ---------- Wind ---------- */
@@ -724,7 +759,8 @@ class SoundBath {
     const c = this.ctx, comp = c.createDynamicsCompressor();
     comp.threshold.value = -18; comp.knee.value = 18; comp.ratio.value = 4; comp.attack.value = 0.005; comp.release.value = 0.25;
     this.master = c.createGain(); this.master.gain.value = 0;
-    comp.connect(this.master); this.master.connect(c.destination);
+    this.calmLp = c.createBiquadFilter(); this.calmLp.type = 'lowpass'; this.calmLp.frequency.value = PREFS.calm ? SAFE.calmHz : 20000;   // Low stimulation: nothing bright (Table 5)
+    comp.connect(this.calmLp); this.calmLp.connect(this.master); this.master.connect(c.destination);
     this.bus = {};
     this.echo = {};
     for (const k of BUSES) {   // each bus with its own echo (a delay line with damped feedback), so a level turns its echo down too
@@ -787,12 +823,12 @@ class SoundBath {
   }
   knock(pan, soft) {   // Heritage: a marble set down on wood, a short knock with a click of glass on top
     if (!this.live) return;
-    this.voice({ f: soft ? 150 : 180, f1: 95, glide: 0.08, peak: soft ? 0.07 : 0.12, attack: 0.006, decay: 0.12, pan });
+    this.voice({ f: soft ? 150 : 180, f1: 95, glide: 0.08, peak: soft ? 0.07 : 0.12, attack: 0.006, decay: ringFor('wood', soft ? 150 : 180), pan });
     this.voice({ f: 2900 + Math.random() * 500, peak: soft ? 0.008 : 0.016, attack: 0.002, decay: 0.05, pan });
   }
   clink(freq, pan, peak = 0.06, echo = false, bus = 'game') {   // glass meeting glass: the uneven overtones of a real marble
     if (!this.live) return;
-    [[1, 1, 0.9], [2.76, 0.4, 0.5], [5.4, 0.18, 0.28]].forEach(([m, a, d]) => { if (freq * m <= 5000) this.voice({ f: freq * m, peak: peak * a, attack: 0.004, decay: d, pan, bus, echo: echo && m === 1 }); });   // above 5 kHz a phone speaker turns a ring into a hiss
+    MAT.glass.modes.forEach(([m, a]) => { if (freq * m <= 5000) this.voice({ f: freq * m, peak: peak * a, attack: 0.004, decay: Math.min(1.6, ringFor('glass', freq * m)), pan, bus, echo: echo && m === 1 }); });   // above 5 kHz a phone speaker turns a ring into a hiss
   }
   drop(pan, style) {
     if (!this.live) return;
@@ -824,6 +860,10 @@ class SoundBath {
     [392.0, 523.25, 659.25].forEach((f, i) => { if (here().glass) setTimeout(() => this.clink(f * 2, 0, 0.05, i === 2, 'alerts'), i * 120); else this.voice({ f, peak: 0.07, attack: 0.03, decay: 2.2, at: i * 0.12, pan: (i - 1) * 0.3, echo: true, bus: 'alerts' }); });
   }
   bell(n) { if (this.live) for (let i = 0; i < n; i++) this.voice({ f: 783.99, peak: 0.07, attack: 0.02, decay: 2.4, at: i * 0.7, echo: true, bus: 'alerts' }); }   // your time: one soft bell, or two
+  tok(kind) {   // arranging: a tile lifted (a light wood tok) or set down (a low thock), dark and soft, below 1.5 kHz (Table 3)
+    if (!this.live) return; const f = kind === 'thock' ? 110 : 260;
+    MAT.wood.modes.forEach(([m, a]) => this.voice({ f: f * m, peak: (kind === 'thock' ? 0.1 : 0.05) * a, attack: 0.004, decay: ringFor('wood', f * m), lp: 1500, bus: 'touch' }));
+  }
   tick() { if (this.live) this.voice({ f: 520, peak: 0.012, attack: 0.004, decay: 0.12, bus: 'alerts' }); }
   note(f, pan, peak = 0.06) { if (this.live) this.voice({ f, peak, attack: 0.02, decay: 1.8, pan, echo: true, bus: 'touch' }); }
   wash() { if (this.live) [130.81, 196.0, 220.0, 329.63, 392.0, 523.25].forEach((f, i) => this.voice({ f, peak: 0.09, attack: 0.03, decay: 2.2, at: i * 0.11, pan: Math.sin(i * 1.2) * 0.65 })); }
@@ -860,7 +900,7 @@ class SoundBath {
   crackle(n, k = 1) { for (let i = 0; i < n; i++) setTimeout(() => this.noise1({ type: 'bandpass', f0: 1500 + Math.random() * 2500, f1: 900, q: 2, peak: (0.02 + Math.random() * 0.03) * k, attack: 0.003, dur: 0.04 + Math.random() * 0.06, pan: (Math.random() - 0.5) * 0.6 }), i * (40 + Math.random() * 90)); }
   crack(peak) {   // a close strike: a sharp tearing crack and a deep boom under it
     const pan = (Math.random() - 0.5) * 0.8;
-    this.noise1({ type: 'lowpass', f0: 2600, f1: 120, peak, attack: 0.015, dur: 3.2, pan });
+    this.noise1({ type: 'lowpass', f0: 2600, f1: 120, peak, attack: SAFE.thunderAttack, dur: 3.2, pan });   // never a 0-5 ms crack: a rise of 50 ms softens the startle
     this.noise1({ type: 'lowpass', f0: 320, f1: 60, peak: peak * 0.8, attack: 0.08, dur: 3.8, pan });
   }
   roll(peak) { this.noise1({ type: 'lowpass', f0: 800, f1: 160, peak, attack: 0.5, dur: 5, pan: (Math.random() - 0.5) * 0.8 }); }
@@ -891,7 +931,8 @@ class SoundBath {
     this.master.gain.setTargetAtTime(PREFS.sound && !S.paused ? launchLevel(t) * restFade() * (S.gone ? 0 : 1) : 0, t, PREFS.sound ? 0.6 : 0.005);   // mute is a cut; sound comes back slowly
     if (!PREFS.sound || (rest && restFade() <= 0)) { if ((this.hush = (this.hush || 0) + dt) > 2) this.off(); return; }   // muted or asleep: off, after the fade
     this.hush = 0; if (this.ctx.state === 'suspended') this.ctx.resume().catch(() => {});
-    for (const k of BUSES) this.bus[k].gain.setTargetAtTime(busLevel(k), t, 0.08);   // the Sound card's levels, as you move them
+    for (const k of BUSES) this.bus[k].gain.setTargetAtTime(busLevel(k), t, 0.08);
+    this.calmLp.frequency.setTargetAtTime(PREFS.calm ? SAFE.calmHz : 20000, t, 0.3);   // the Sound card's levels, as you move them
     this.drift = clamp((this.drift || 1) + (Math.random() - 0.5) * 0.06, 0.82, 1.12);   // rain and wind wander, so the ear never settles on a loop
     const drift = 0.75 + 0.25 * Math.sin(t * 0.11), amb = here().amb || {}, wave = 0.5 - 0.5 * Math.cos(t * TAU / 9);
     // Your Ambient sound is a floor under the same rain, wind and fire the sky makes: one set of sounds, whichever wants more.
@@ -943,8 +984,43 @@ const LAUNCH = { low: 0.26, hold: 8, rise: 60 };
 const launchLevel = (t) => { const m = PREFS.vol; return m <= LAUNCH.low ? m : LAUNCH.low + (m - LAUNCH.low) * clamp((t - LAUNCH.hold) / LAUNCH.rise, 0, 1); };
 // How much glass is rolling across the wood right now, 0 to 1: sideways speed, weighted by size. Spinning in place is silent.
 const rolling = () => Math.min(1, S.world.balls.reduce((s, b) => s + (b.landed ? Math.min(3, Math.abs(b.vx)) * b.radius : 0), 0) / 300);
-// The one place a native app would wire real haptics. Safari on iPhone can't vibrate, so today this only works on Android.
-function haptic(pattern) { if (!PREFS.vibe || !NATIVE.haptics) return; try { NATIVE.haptic(pattern); } catch (e) { /* unsupported */ } }
+// Materials, from research/SENSORY-SCIENCE.md, Table 3 (Klatzky, Pai & Krotkov 2000): how long a thing rings is what tells the
+// ear what it is made of, about twice as much as its pitch. Each mode of a struck thing dies with a time constant of tau / f
+// seconds; glass rings long, wood is gone in a blink, steel outlasts both (kept for gold). The overtones of a struck bar sit at
+// 1 : 2.756 : 5.404 (a free bar; textbook ratios, to be confirmed in Rossing). Every knock and ring reads its numbers here.
+const MAT = { glass: { tau: 126, modes: [[1, 1], [2.756, 0.4], [5.404, 0.18]] }, wood: { tau: 3.2, modes: [[1, 1], [2.756, 0.25]] }, steel: { tau: 447, modes: [[1, 1], [2.756, 0.5], [5.404, 0.3]] } };
+const ringFor = (mat, f) => 9.2 * MAT[mat].tau / f;   // seconds from the strike to silence (80 dB down, e^-9.2), for a mode at f Hz
+/* ---------- Touch you can feel: the haptics ---------- */
+// One table, like the hurricane table: every felt event by name, its strength tier, its sharpness, its length, and the sound that
+// follows it. From research/SENSORY-SCIENCE.md, Table 2: three tiers only (0.5, 0.7, 1.0: a fourth can't be told apart, each a
+// 1.4x step or more); the buzz fires first and its sound 0 to 20 ms after (people notice when sound leads by ~90 ms); a detent at
+// most once per 50 ms, so a fast drag never blurs into a hum. Low stimulation takes every tier down one step.
+// Three ways out, chosen by what the phone has, nothing to switch: the native app's own plugin (written, waiting in
+// p14/native-haptics/ for the day SoRen is wrapped: Apple's Core Haptics and Android's effects, the full vocabulary), the stock
+// Capacitor plugin (light, medium, heavy), or the browser's vibrate (Android; an iPhone's browser cannot vibrate at all).
+const TIER = [0.5, 0.7, 1.0];
+const HAPTIC = {   // name: [tier 0-2, sharpness 0-1, web ms or pattern, paired sound or null, Android primitive, iOS kind]
+  tick:   [0, 0.9, 8, null, 'TICK', 'transient'],          // a slider step, a drop on water, a light knock
+  detent: [0, 0.6, 10, 'tok', 'LOW_TICK', 'selection'],    // a tile lifted, a grid cell crossed
+  thock:  [2, 0.2, 25, 'thock', 'THUD', 'transient'],      // a tile set down in its place
+  snap:   [1, 0.5, 15, null, 'CLICK', 'transient'],        // a toggle, a confirm, a tick on your list
+  crack:  [2, 0.7, 30, null, 'CLICK+THUD', 'transient'],   // a strike, a shatter, close thunder: once a flash, never once a stroke
+  bloom:  [1, 0.3, [20, 60, 40], null, 'SLOW_RISE+QUICK_FALL', 'continuous'],   // a Full Bloom, a list finished, a constellation drawn
+  breath: [0, 0.1, 12, null, 'SPIN', 'continuous']         // the breath's turn (native: a swell over the in-breath)
+};
+const HZ = { last: {} };
+function feel(name, k = 1) {   // k: 0 to 1, how hard (a collision's speed); it picks the tier, never more than three
+  const h = HAPTIC[name]; if (!h) return;
+  const now = performance.now(); if (name === 'detent' && now - (HZ.last.detent || 0) < 50) return; HZ.last[name] = now;
+  const [t0, sharp, web, tone, droid, ios] = h, tier = clamp(Math.round(t0 * Math.min(1, k * 1.5)) - (PREFS.calm ? 1 : 0), 0, 2), amp = TIER[tier];
+  if (PREFS.vibe) try {
+    const P = NATIVE.plugins();
+    if (P.SorenHaptics) P.SorenHaptics.play({ name, intensity: amp, sharpness: sharp, android: droid, ios });   // the full vocabulary, native only
+    else if (P.Haptics) { if (ios === 'selection' && P.Haptics.selectionChanged) P.Haptics.selectionChanged(); else P.Haptics.impact({ style: ['LIGHT', 'MEDIUM', 'HEAVY'][tier] }); }
+    else if (canVibrate) navigator.vibrate(Array.isArray(web) ? web : Math.round(web * (0.6 + 0.4 * amp)));
+  } catch (e) { /* unsupported */ }
+  if (tone) setTimeout(() => sound.tok(tone), 10);   // the sound a hair after the touch: felt, then heard
+}
 /* ---------- Messages ---------- */
 // One message channel, over the pool. Low stimulation keeps it quiet, and nothing is said while you rest.
 let bannerQueue = [], bannerUntil = 0;
@@ -964,7 +1040,7 @@ function showCard({ title, rows = [], answers }) {
   if (CARD.name) closeSheet(); openCard('moment'); S.card = true;
 }
 function hideCard() { const was = S.card; S.card = false; CARD.stack = CARD.stack.filter(c => c.name !== 'moment'); if (was && CARD.name === 'moment') closeSheet(); }
-const momentRows = () => { if (CARD.name === 'moment') { $('mcPill').textContent = MOMENT.title; cardRows(); placePill(); } };   // a moment that changes as you tick: rebuilt in place
+const momentRows = () => { if (CARD.name === 'moment') { $('mcPill').textContent = MOMENT.title; cardRows(); } };   // a moment that changes as you tick: rebuilt in place
 // "Well done" is earned and rare: at most once every ten minutes, and never for the same reason twice in a session.
 const PRAISE = ['Well done', 'Lovely', 'That’s it', 'Beautiful'], praise = { last: -1e9, used: new Set() };
 function maybePraise(reason, x, y) {
@@ -1004,7 +1080,14 @@ const ICON = {
   inf: 'M12 12c-2-2.8-3.8-4-5.5-4a4 4 0 0 0 0 8c1.7 0 3.5-1.2 5.5-4s3.8-4 5.5-4a4 4 0 0 1 0 8c-1.7 0-3.5-1.2-5.5-4z', gem: 'M12 3l7.5 9L12 21l-7.5-9z',
   sun: DOT(12, 12, 3.5) + 'M12 2.5V5M12 19v2.5M2.5 12H5M19 12h2.5M5.3 5.3l1.8 1.8M16.9 16.9l1.8 1.8M5.3 18.7l1.8-1.8M16.9 7.1l1.8-1.8',
   sea: 'M3 8c2.2-2 4.3-2 6.5 0s4.3 2 6.5 0 3.7-2 5 0M3 13c2.2-2 4.3-2 6.5 0s4.3 2 6.5 0 3.7-2 5 0M3 18c2.2-2 4.3-2 6.5 0s4.3 2 6.5 0 3.7-2 5 0',
-  bloom: DOT(9, 12, 5) + DOT(15, 12, 5), still: 'M8 5.5v13M16 5.5v13', comp: 'M3 12h4l2.5-6 4 12 2.5-6H21'   // comp: a pulse
+  bloom: DOT(9, 12, 5) + DOT(15, 12, 5), still: 'M8 5.5v13M16 5.5v13', comp: 'M3 12h4l2.5-6 4 12 2.5-6H21',   // comp: a pulse
+  // the tiles: one glyph for every mode, place and sky they pick (placeholders in the same line style until drawn)
+  moon: 'M19.5 14.5A8 8 0 0 1 9.5 4.5a8 8 0 1 0 10 10z', sprout: 'M12 21v-8M12 13c0-4-3-6-7-6 0 4 3 6 7 6zM12 13c0-3 2.5-5 6-5 0 3-2.5 5-6 5z',
+  rise: 'M5 17a7 7 0 0 1 14 0M3 17h18M12 5v2M5.5 8.5l1.4 1.4M18.5 8.5l-1.4 1.4', flake: 'M12 3v18M4.2 7.5l15.6 9M4.2 16.5l15.6-9',
+  tent: 'M3 20L12 5l9 15H3zM12 20l-3-5h6z', pine: 'M12 3l5 7h-3l4 6H6l4-6H7zM12 16v5', planet: 'M7.5 12a4.5 4.5 0 1 0 9 0 4.5 4.5 0 1 0-9 0M3 15.5c2 2 9-.5 15.5-6.5',
+  urn: 'M9 3.5h6M8 7h8l1 6a5 5 0 0 1-10 0zM10 20h4', clear: DOT(12, 12, 4), heavy: 'M6.5 15a4 4 0 0 1 .8-7.9A5.5 5.5 0 0 1 18 8.5a3.3 3.3 0 0 1-.5 6.5zM8 19h8',
+  evolve: 'M4 12a8 8 0 0 1 14-5.3M20 4v4h-4M20 12a8 8 0 0 1-14 5.3M4 20v-4h4', dawn: 'M5 17a7 7 0 0 1 14 0M3 17h18M12 4v6M9.5 6.5L12 4l2.5 2.5',
+  dusk: 'M5 17a7 7 0 0 1 14 0M3 17h18M12 10V4M9.5 7.5L12 10l2.5-2.5', dark: DOT(12, 12, 8) + 'M12 4v16', all: 'M4 5h16M4 9.5h16M4 14h10M4 18.5h7'
 };
 const svg = (d) => `<svg viewBox="0 0 24 24" aria-hidden="true"><path d="${d}"/></svg>`;
 const VOL = `<svg viewBox="0 0 24 24" aria-hidden="true"><path d="${ICON.speaker}"/><path class="waves" d="${ICON.waves}"/><path class="hush" d="${ICON.hush}"/></svg>`;
@@ -1697,6 +1780,12 @@ const WX = Object.fromEntries(Object.entries(POOL_MAX).map(([kind, n]) => [kind,
   x: Math.random() * LW, y: kind === 'butterflies' ? 210 + Math.random() * 110 : Math.random() * LH, d: 0.4 + Math.random() * 0.6, ph: Math.random() * TAU,
   rot: Math.random() * TAU, vr: (Math.random() - 0.5) * 0.08, hue: LEAF[i % 4], wing: i
 }))]));
+// Rain, from Table 6: a drop's size (mm) sets its speed, v = 9.65 - 10.3 e^(-0.6 D) m/s (Atlas's fit to Gunn & Kinzer), and
+// small drops far outnumber big ones (Marshall-Palmer, at a moderate 5 mm/h). Speeds keep their true proportions, scaled so a
+// 2 mm drop falls as fast as SoRen's rain always has. Snow already falls about a seventh as fast as rain, as aggregates do.
+const RAIN = { lambda: 4.1 * 5 ** -0.21, dMin: 0.5, dMax: 4, ref: 2 };
+const fallV = (D) => 9.65 - 10.3 * Math.exp(-0.6 * D);
+for (const m of WX.rain) { m.D = Math.min(RAIN.dMax, RAIN.dMin - Math.log(1 - Math.random()) / RAIN.lambda); m.d = clamp(0.4 + 0.6 * (m.D - RAIN.dMin) / 2.5, 0.4, 1); m.v = 9.6 * fallV(m.D) / fallV(RAIN.ref); }
 const falls = (kind) => kind === 'rain' || kind === 'snow';
 const active = (kind) => Math.round(clamp(ENV[kind] * (falls(kind) ? (lessMo() ? 0.5 : 1) * (S.severe ? 1 : 0.6) : FEEL.life), 0, 1) * POOL_MAX[kind]);   // severe: the full pool
 function updateWeather(k, dt) {
@@ -1705,7 +1794,7 @@ function updateWeather(k, dt) {
     if (kind && boardOn() && m.y > FLOOR - BW[kind === 'snow' ? 'snow' : 'water'][bwCol(m.x)]) { bwLand(kind, m.x, kind === 'snow' ? 0.9 + 2.6 * m.d : 0.8 + 0.8 * m.d); m.y = -12; m.x = Math.random() * LW; }
     if (m.y > LH + 12) { m.y = -12; m.x = Math.random() * LW; } if (m.x < -24) m.x = LW + 12; else if (m.x > LW + 24) m.x = -12;
   };
-  for (let i = 0, n = active('rain'); i < n; i++) { const m = WX.rain[i]; m.y += (6 + 6 * m.d) * kw; m.x += w * 3 * kw; wrap(m, 'rain'); }
+  for (let i = 0, n = active('rain'); i < n; i++) { const m = WX.rain[i]; m.y += m.v * kw; m.x += w * 3 * kw; wrap(m, 'rain'); }
   for (let i = 0, n = active('snow'); i < n; i++) { const m = WX.snow[i]; m.y += (0.5 + m.d * 1.1) * (1 + Math.abs(w)) * kw; m.x += (Math.sin(t * 0.8 + m.ph) * 0.4 * m.d + w * 2.5) * kw; wrap(m, 'snow'); }
   for (let i = 0, n = active('leaves'); i < n; i++) { const m = WX.leaves[i]; m.y += (0.7 + m.d * 0.9) * k; m.x += (Math.sin(t * 1.1 + m.ph) * 0.9 + w * 2.2) * k; m.rot += (m.vr + w * 0.02) * k; wrap(m); }
   for (let i = 0, n = active('fireflies'); i < n; i++) { const m = WX.fireflies[i]; m.x += Math.sin(t * 1.3 + m.ph) * 0.45 * k; m.y += (Math.cos(t * 0.9 + m.ph) * 0.3 - 0.12) * k; if (m.y < 150) m.y = LH - 20; wrap(m); }
@@ -1775,7 +1864,12 @@ function drawBolt(c, paths, a, w) {   // three strokes, from a wide soft glow to
   }
   c.restore();
 }
-const FLASH_GAP = 0.34;
+// Safety, from research/SENSORY-SCIENCE.md, Table 5. Light: at most three flashes in any second (WCAG 2.3.1), counted by the
+// flash, never the stroke: a real flash is 3 to 5 strokes ~60 ms apart (~16 Hz, inside the band that can trigger seizures), so
+// here each flash is one pulse, no flicker inside it. Sound: thunder never cracks in under 50 ms, and it comes 3 s a kilometre
+// after its flash, muffled with distance (a storm you can count is less frightening). Low stimulation keeps the mix under 4 kHz.
+const SAFE = { flashGap: 0.34, thunderAttack: 0.05, sPerKm: 3, km: [0.3, 4], calmHz: 4000 };
+const FLASH_GAP = SAFE.flashGap;
 let flashBusy = -1e9;   // when the last pulse of light ends
 const lightning = () => (PREFS.calm ? 0 : 1);
 const thunder = () => (PREFS.calm ? 0.28 : 0.7);
@@ -1802,7 +1896,8 @@ function strikeSky(close, dark = false) {   // the flash, a bolt if it's close, 
     scene.bolt = makeBolt(x); scene.boltUntil = animTime + 0.25 + 0.45 * close;
     const end = scene.bolt[0][scene.bolt[0].length - 1]; scene.sheetX = end[0];
   }
-  S.rumbles.push({ at: animTime + 0.12 + (1 - close) * 1.8, close, vol: 0.7 });
+  const km = SAFE.km[0] + (1 - close) * (SAFE.km[1] - SAFE.km[0]);   // how far: a close strike is a few hundred metres, a far one 4 km
+  S.rumbles.push({ at: animTime + km * SAFE.sPerKm, close, vol: 0.7 });
   return true;
 }
 function updateStorms(dt) {   // the light and the sound of every strike, played out over time
@@ -1811,7 +1906,7 @@ function updateStorms(dt) {   // the light and the sound of every strike, played
   if (scene.bolt && animTime >= scene.boltUntil) scene.bolt = null;
   for (const r of S.rumbles.filter(r => animTime >= r.at)) {
     const v = r.vol * thunder();
-    if (r.close > 0.45) { sound.crack(v * (0.14 + 0.2 * r.close)); if (r.close > 0.6) haptic(r.close > 0.85 ? [40, 60, 120] : [25, 40, 25]); }
+    if (r.close > 0.45) { sound.crack(v * (0.14 + 0.2 * r.close)); if (r.close > 0.6) feel('crack', r.close); }
     else sound.roll(v * (0.1 + 0.08 * r.close));
   }
   S.rumbles = S.rumbles.filter(r => animTime < r.at);
@@ -2131,7 +2226,7 @@ function splash(d) {   // the crown, three rings, and the plink: a small drop ri
   const pan = panFor(d.x), s = d.size * (0.6 + 0.4 * (d.to - WATER_Y) / (LH - WATER_Y));
   for (let i = 0; i < 3; i++) addRipple(d.x, d.to, 8, 8 + 150 * s, 'rgba(230,242,255,0.55)', { flat: 0.28, wait: i * 0.22, life: 2.6, still: true });   // a drop's rings show even with Reduce motion: they are the answer to your tap
   if (!lessMo()) for (let i = 0; i < 9; i++) { const a = Math.PI + (i / 8) * Math.PI; particles.push({ x: d.x, y: d.to, vx: Math.cos(a) * (1 + Math.random()) * d.size * 1.4, vy: Math.sin(a) * (1.4 + Math.random()) * d.size - 0.6, r: 1.1 + d.size, color: 'rgba(225,240,255,0.9)', alpha: 0.9, decay: 0.03, g: 0.16 }); }
-  sound.plink(d.size, pan); haptic(6);
+  sound.plink(d.size, pan); feel('tick');
   setTimeout(() => { if (S.fid && !lessMo()) { addRipple(d.x, d.to, 6, 6 + 70 * s, 'rgba(230,242,255,0.55)', { flat: 0.28, life: 2.6 }); sound.plink(d.size * 0.5, pan); } }, 520);   // the jet's drop comes back down
 }
 function drawWater(c) {   // still water, under the sky: its colour, a long glint, and what has touched it
@@ -2256,7 +2351,7 @@ function drawWarp(now) {
 }
 function engage() {   // warp, then home
   if (lessMo() || WARP.go) { closeSheet(); return; }
-  WARP.go = performance.now(); sound.whoosh(1, 0); haptic(20);
+  WARP.go = performance.now(); sound.whoosh(1, 0); feel('snap');
   setTimeout(() => { WARP.go = 0; if (S.sheet === 'beta') closeSheet(); }, 1500);   // unless another card came first
 }
 
@@ -2311,7 +2406,7 @@ function updateLook(dt) {
   L.hold = Math.hypot(L.x - ax, L.y - ay) < 26 && steady ? L.hold + dt : Math.max(0, L.hold - dt * 0.5);   // never punished: it waits
   if (L.hold >= 1.2) {
     L.hold = 0; L.k++; inhaling() ? sound.chime(panFor(ax), 'glass') : sound.done();   // the out-breath connects with the fuller sound
-    if (L.k >= L.con.lines.length) { sound.wash(); haptic([20, 50, 30]); say(L.con.name, 'Drawn. You can lower your arms.'); }
+    if (L.k >= L.con.lines.length) { sound.wash(); feel('bloom'); say(L.con.name, 'Drawn. You can lower your arms.'); }
   }
 }
 function enterLook() {
@@ -2382,11 +2477,6 @@ function newPool() {
   if (S.parked) unpark(); else hideCard();
   if (PREFS.comp) compStart();   // a fresh game in Comp starts its line and its clocks again
 }
-function resumeAsk(fresh) {   // Play or Start with a game waiting: one question, only then. Resume skips the plan; the Task tile is a touch away
-  if (!S.prev) { fresh(); return; }
-  showCard({ title: 'Still waiting', rows: [{ ic: ICON.play, name: 'Your last game', desc: `${PREFS.numbers ? fmt(S.prev.score) + ' · ' : ''}where you left it` }],
-    answers: [['Resume', () => { const p = S.prev; introLeave('play'); loadPool(p); syncUI(); }, ICON.left], ['New game', fresh]] });
-}
 function startPool() { S.prev = null; newPool(); savePool(); syncUI(); say('A fresh game', here().label); }
 function keepGoing() { Object.assign(S, { gameOver: false, overT: 0, fair: false, zen: true }); savePool(); syncUI(); say('Keep going', 'Zen for this game · nothing ends'); }
 // Where you are can change any time: the same pool, repainted.
@@ -2402,7 +2492,7 @@ function dropCurrent() {
   if (!awake() || !S.canDrop || compLocked()) return;   // Comp: no drops while lightning waits
   S.prev = null;   // the first drop in a new game: the last one is let go
   const r = S.wild ? WILD_R : RADII[S.current], x = aimX(r), fault = compOn() ? dropFault() : null;   // exactly where the waiting sphere is drawn. Comp, power out: the dropper misbehaves
-  if (fault === 'jam') { sound.tick(); haptic(8); S.canDrop = false; S.cooldown = 30; return; }   // nothing comes out
+  if (fault === 'jam') { sound.tick(); feel('tick'); S.canDrop = false; S.cooldown = 30; return; }   // nothing comes out
   if (fault === 'two') { const r2 = RADII[S.next], x2 = clamp(x + (x < LW / 2 ? 1 : -1) * (r + r2 + 2), r2 + 5, LW - r2 - 5); addBall(S.world, x2, DROP_Y, S.next, { vy: 1.4 }); S.next = pickNextTier(); }   // two at once
   addBall(S.world, x, DROP_Y, S.wild ? 0 : S.current, { wild: S.wild, vy: fault === 'fast' ? 9 : 1.4 });   // too fast: a hard knock, glass and all
   sound.drop(panFor(x), here().synth);
@@ -2436,7 +2526,7 @@ function handleEvents(events) {
     if (e.type === 'bloom') {
       const pts = Math.round(BLOOM_VALUE * mult), got = earnTool();
       addScore(pts); S.blooms++; J.blooms++; journalDirty = true;
-      sound.wash(); haptic([20, 60, 40]); whiteFlash(0.26);
+      sound.wash(); feel('bloom'); whiteFlash(0.26);
       spawnParticles(e.x, e.y, w.accent, 40, 6.5); addRipple(e.x, e.y, 15, 210, w.accent);
       say('Full Bloom · 2048', [PREFS.numbers ? `+${fmt(pts)}` : '', got ? `${TOOL_NAMES[got]} earned` : ''].filter(Boolean).join(' · '));
       maybePraise('big', e.x, e.y);
@@ -2496,7 +2586,7 @@ function useTool(k) {
 // frost in Winter, a wave at the Beach, a meteor under the stars, the lamp flaring in Heritage (each place's record says which).
 function strikeSphere(b) {
   S.armed = false; if (!b || S.doom) { syncBars(); return; }
-  S.tools.strike--; S.doom = { id: b.id, t: 0 }; sound.tick(); haptic(12); syncBars();
+  S.tools.strike--; S.doom = { id: b.id, t: 0 }; sound.tick(); feel('snap'); syncBars();
 }
 function updateDoom(dt) {
   const d = S.doom; if (!d || (d.t += dt) < TIME.sweep) return;
@@ -2507,12 +2597,12 @@ function updateDoom(dt) {
   else if (kind === 'bolt') boltAt(b);
   else { S.zap = { kind, x: b.x, y: b.y, r: b.radius, rgb, until: animTime + TIME.sweep }; ({ ice: () => sound.crackle(6), wave: () => sound.whoosh(0.9, panFor(b.x)), meteor: () => sound.crack(0.18) })[kind](); }
   if (!lessMo()) spawnParticles(b.x, b.y, `rgb(${rgb})`, 26, 6);
-  haptic([30, 30, 60]); if (compOn()) compStrike(b, name); else mist([b], name, 'Space opened'); syncBars();   // Comp: knocked down a size, not taken
+  feel('crack'); if (compOn()) compStrike(b, name); else mist([b], name, 'Space opened'); syncBars();   // Comp: knocked down a size, not taken
 }
 function stirPile() {   // they lift off behind the weather, shuffled, and come back in from the top one at a time; the physics does the fall
   S.stormQ = [...S.world.balls].sort(() => Math.random() - 0.5).map(b => ({ tier: b.tier, wild: b.wild }));
   S.world.balls = []; S.storm = { a: 0 }; S.stormT = 1;
-  say(here().storm[0], 'Everything lands somewhere new'); sound.whoosh(1, 0); haptic([15, 40, 15]);
+  say(here().storm[0], 'Everything lands somewhere new'); sound.whoosh(1, 0); feel('thock');
 }
 function updateStorm(dt) {
   const st = S.storm; if (!st) return;
@@ -2549,7 +2639,7 @@ const overWarn = () => (S.overT > 0 && !S.gameOver ? ['Over the line', rules() =
 function endGame() {
   S.gameOver = true; S.aiming = false; clearAlert();
   const note = !S.fair ? 'This game doesn’t count toward your best' : S.score > 0 && S.score >= J.best ? 'A new best' : `Best ${fmt(J.best)}`;
-  saveJournal(); savePool(); haptic(60); sound.wash();
+  saveJournal(); savePool(); feel('thock'); sound.wash();
   showCard({ title: 'Game complete', rows: [{ ic: ICON.star, name: 'Over the line', desc: [PREFS.numbers ? fmt(S.score) : '', note].filter(Boolean).join(' · ') }],
     answers: [compOn() ? ['Leave Comp', () => { setPref('comp', false); keepGoing(); }, ICON.x] : ['Keep going', keepGoing, ICON.play], ['Play again', startPool]] });   // Comp always ends at the line: keeping going means leaving it
 }
@@ -2653,7 +2743,7 @@ function tickLine(i) {
   S.ticks[i] = !S.ticks[i]; syncCard();
   if (!S.ticks[i]) return;
   const n = S.ticks.length, all = S.ticks.every(Boolean), got = S.ticks.filter(Boolean).length, top = MOMENT.rows[0];
-  haptic(20); if (!all) { tickNote(got); top.name = `${got} of ${n} done`; momentRows(); return; }   // every tick counts: how far you are, in plain words
+  feel('snap'); if (!all) { tickNote(got); top.name = `${got} of ${n} done`; momentRows(); return; }   // every tick counts: how far you are, in plain words
   if (S.listWon) return; S.listWon = true;
   if (n === 1) { const [t, w] = pickWin('one', WIN_ONE); sound.done(); MOMENT.title = t; top.name = w; momentRows(); setTimeout(() => sound.wash(), 700); return; }
   J.lists++; journalDirty = true; saveJournal(); tickNote(got); celebrate();
@@ -2661,13 +2751,13 @@ function tickLine(i) {
 function celebrate() {   // three seconds, a step a beat: two plain lines tick gold, then the unicorn draws, the swell and the words
   const at = (k, fn) => setTimeout(() => { if (S.ticks && S.listWon && CARD.name === 'moment') fn(); }, k * TIME.sweep * 1000), still = lessMo(), a = winRow('Make a To Do List'), b = winRow('Do the To Do List');
   at(1, () => { MOMENT.rows.push(a); momentRows(); });
-  at(2, () => { a.d = true; syncCard(); tickNote(5); haptic(20); });
+  at(2, () => { a.d = true; syncCard(); tickNote(5); feel('snap'); });
   at(3, () => { MOMENT.rows.push(b); momentRows(); });
-  at(4, () => { b.d = true; syncCard(); tickNote(7); haptic(30); });
+  at(4, () => { b.d = true; syncCard(); tickNote(7); feel('snap'); });
   at(5, () => {
     const [t, w] = pickWin('many', WIN_MANY), top = MOMENT.rows[0];
     top.ic = `<svg viewBox="0 0 48 48" class="uni" aria-hidden="true"><path pathLength="1" d="${pickWin('myth', MYTHS.map(m => [m]))[0]}"/></svg>`; top.name = w; MOMENT.title = t; momentRows();
-    sound.done(); haptic([30, 60, 30, 60, 30]); setTimeout(() => sound.wash(), 600); if (!still && !METEOR) meteor(false);
+    sound.done(); feel('bloom'); setTimeout(() => sound.wash(), 600); if (!still && !METEOR) meteor(false);
   });
 }
 function finish() {   // what you did leaves the list; what's left waits for next time. Then Settle again.
@@ -2752,7 +2842,7 @@ function timerPick() {   // a sphere at rest that has a partner on the board, so
   return twins.length ? twins[Math.floor(Math.random() * twins.length)] : null;
 }
 function outcome(good) {
-  if (good) { const got = deal(COMP.good, ['lift', 'tool']) === 'tool' && earnTool(); if (!got) lift(); say('In time', got ? `${TOOL_NAMES[got]} earned` : 'The line lifts'); sound.done(); haptic(20); return; }
+  if (good) { const got = deal(COMP.good, ['lift', 'tool']) === 'tool' && earnTool(); if (!got) lift(); say('In time', got ? `${TOOL_NAMES[got]} earned` : 'The line lifts'); sound.done(); feel('snap'); return; }
   COMP.gap = Math.max(COMP.gap, CT.quiet);
   if (deal(COMP.bad, ['sink', 'wave']) === 'sink') { sink(); say('Too late', 'The line sinks'); }
   else { if (COMP.wave) COMP.wave.len = COMP.wave.t + wait(); else COMP.wave = { t: 0, len: wait() }; say('Too late', 'A wave rolls in'); sound.whoosh(0.7, 0); }   // a wave on a wave runs on, never snaps
@@ -2768,7 +2858,7 @@ function hazTick(dt) {
   const h = COMP.hz;
   if (!h) { if ((COMP.hzGap -= dt) <= 0 && !COMP.ball) hazStart(deal(COMP.hzDeck, HAZ)); return; }   // never over a timer sphere
   h.t += dt;
-  if (h.kind === 'outage') { if (!h.hit && h.t >= 3.6) { h.hit = true; sound.crack(0.2); haptic(25); } if (h.t >= h.len) { hazEnd(); say('Power restored', 'The lights are back'); sound.done(); } return; }
+  if (h.kind === 'outage') { if (!h.hit && h.t >= 3.6) { h.hit = true; sound.crack(0.2); feel('crack'); } if (h.t >= h.len) { hazEnd(); say('Power restored', 'The lights are back'); sound.done(); } return; }
   if (h.kind === 'floor') { const f = COMP.floor; f.lv = h.t < 3 ? h.t / 3 : h.t > h.len ? Math.max(0, 1 - (h.t - h.len) / 2) : 1; if (h.t > h.len + 2) { COMP.floor = null; hazEnd(); } return; }
   const b = h.id && S.world.balls.find(x => x.id === h.id);
   for (const p of h.parts) if (!p.done && (h.t >= p.at || (p.k === 'zap' && !b))) {
@@ -2786,13 +2876,13 @@ function hazStart(kind) {
   const h = { kind, t: 0, cat: rollCat(), parts: PLAN[kind].map(([k, at]) => ({ k, at, done: false })), name: { double: 'Double trouble', triple: 'Triple threat' }[kind] };
   if (h.parts.some(p => p.k === 'zap')) {
     const L = S.world.balls.filter(b => b.landed && !b.wild && (!COMP.ball || b.id !== COMP.ball.id)); if (!L.length) { COMP.hzGap = CT.wait[0]; return; }
-    h.id = L[Math.floor(Math.random() * L.length)].id; S.aiming = false; sound.crackle(4); haptic([10, 30, 10]);
+    h.id = L[Math.floor(Math.random() * L.length)].id; S.aiming = false; sound.crackle(4); feel('tick');
   } else sound.whoosh(0.4, 0);
   COMP.hz = h;
 }
 function hazEnd() { COMP.hz = null; COMP.hzGap = Math.max(wait(), CT.quiet); }
 function zap(b) {   // the bolt: the sphere comes down a size, as a Strike in Comp
-  boltAt(b); haptic([30, 30, 60]); compStrike(b, 'Lightning');
+  boltAt(b); feel('crack'); compStrike(b, 'Lightning');
 }
 const zapPart = () => COMP.hz && COMP.hz.parts && COMP.hz.parts.find(p => p.k === 'zap' && !p.done);
 const compLocked = () => compOn() && !!zapPart();   // the dropper waits while a sphere is hot
@@ -2800,7 +2890,7 @@ const hotId = () => (zapPart() ? COMP.hz.id : 0);
 function compTouch(p) {   // while a sphere is hot a touch only cools: on it (generously), or nothing. The storm may have pushed it: find it
   const h = COMP.hz, b = S.world.balls.find(x => x.id === h.id); if (!b) return;
   if (Math.hypot(p.x - b.x, p.y - b.y) > b.radius * CT.reach[0] + CT.reach[1]) { sound.tick(); return; }
-  zapPart().done = true; COMP.cool = { id: b.id, t: 0 }; sound.done(); haptic(20); say('Cooled', 'Lightning missed');
+  zapPart().done = true; COMP.cool = { id: b.id, t: 0 }; sound.done(); feel('snap'); say('Cooled', 'Lightning missed');
   if (h.parts.every(q => q.done)) hazEnd();
 }
 function compAlert() { if (COMP.alertAt !== animTime) { COMP.alertAt = animTime; COMP.alert = alertNow(); } return COMP.alert; }   // built once a frame
@@ -2906,7 +2996,7 @@ const stormName = (c) => (c === CT.cat[0] ? 'Tropical storm' : `${c[0]} storm`);
 function compGust(c = rollCat()) {   // the Storm tool, or a storm that came on its own: a gust from the left or the right, its category already known
   const dir = Math.random() < 0.5 ? -1 : 1, kmh = Math.round(rnd(c[1], c[2]));
   COMP.gust = { t: 0, v: kmh / 3.6, dir };
-  say(c === CT.cat[0] ? c[0] : `Hurricane? ${c[0]}`, `${kmh} km/h, from the ${dir > 0 ? 'left' : 'right'}`); sound.whoosh(1, -dir * 0.5); haptic([15, 40, 15]);
+  say(c === CT.cat[0] ? c[0] : `Hurricane? ${c[0]}`, `${kmh} km/h, from the ${dir > 0 ? 'left' : 'right'}`); sound.whoosh(1, -dir * 0.5); feel('thock');
 }
 function compBefore() {   // before each physics step: the wind on every sphere as drag against its own speed, then where everything was
   for (const b of S.world.balls) { const rel = COMP.vw - b.vx * MS_PER; b.vx += PHYS.gravity * ratio(rel, b.radius / 1000) * (b.wild ? 0.5 : 1); floorPush(b); const p = b.pv || (b.pv = {}); p.x = b.x; p.y = b.y; p.vx = b.vx; p.vy = b.vy; }   // where it was, kept on the sphere: nothing allocated per step
@@ -2949,9 +3039,9 @@ function damage(b, x) {
   const k = x / d.s;
   if (k >= 2.5 || d.marks.length >= 3) { shatter(b); return; }
   d.s *= k < 1.5 ? 0.6 : 0.3; d.marks.push({ a: Math.random() * TAU, n: k < 1.5 ? 1 : 2 });   // a chip, or a crack: a new flaw, and weaker for it
-  sound.crackle(k < 1.5 ? 2 : 4); if (k >= 1.5) haptic(12);
+  sound.crackle(k < 1.5 ? 2 : 4); if (k >= 1.5) feel('tick');
 }
-function shatter(b) { compForget(b.id); if (!lessMo()) spawnParticles(b.x, b.y, '#ffffff', 14, 5); sound.crack(0.12); haptic([10, 20, 40]); mist([b], 'Shattered', 'Glass breaks'); }
+function shatter(b) { compForget(b.id); if (!lessMo()) spawnParticles(b.x, b.y, '#ffffff', 14, 5); sound.crack(0.12); feel('crack'); mist([b], 'Shattered', 'Glass breaks'); }
 function compStrike(b, name) {   // Strike in Comp: down to a random smaller size, not gone (the smallest goes)
   compForget(b.id); if (!b.tier) { mist([b], name, 'Space opened'); return; }
   const t = Math.floor(Math.random() * b.tier);
@@ -3290,19 +3380,20 @@ function flowOpen() {   // from the intro: the ceremony. From the Timer tile lat
 }
 function flowPlan(quiet) {   // Session Plan confirmed
   FLOW.plan = true;
-  if (PREFS.kind === 'task' && !quiet) { FLOW.box[0] = 1; FLOW.exit = false; }   // Yes replays the ritual; saved tasks stay stored
+  if (PREFS.kind === 'task' && !quiet) { FLOW.box[0] = 2; FLOW.exit = false; }   // Yes replays the ritual; saved tasks stay stored
   else if (PREFS.kind === 'task') { let n = 0; while (n < 3 && taskText(n)) FLOW.box[n++] = 5; if (n < 3) FLOW.box[n] = 1; FLOW.exit = quiet || n > 0; }
   else FLOW.exit = true;
   FLOW.sub = FLOW.exit && PREFS.exit === 'timer'; if (!quiet) flowGo(FLOW.exit ? 'exit' : 0); else syncCard();
 }
+// Session Plan's choice opens the next row itself (flowPlan), at that touch; `opens` keeps it from counting as a change on a last row.
 function flowRows() {
-  const kind = pref('kind', ICON.task, 'Session Plan', 'Have something to do soon?'), set = kind.set;
-  const plan = { ...kind, flow: 'plan', set: (v) => { flowReset(); set(v); }, confirm: () => { if (!FLOW.plan) flowPlan(); else finishRow(CARD.i); } };
+  const kind = pref('kind', ICON.task, 'Session Plan', 'Thing to Do After?'), set = kind.set;
+  const plan = { ...kind, flow: 'plan', set: (v) => { if (FLOW.plan && v === kind.get()) return; flowReset(); set(v); flowPlan(); }, opens: () => -1, confirm: () => { if (!FLOW.plan) flowPlan(); else finishRow(CARD.i); } };
   const box = (k) => ({ ic: BARS, name: 'Let’s Name It', html: `Let’s <span class="pill on">Name It${SHINES}</span>`, kind: 'text', i: k, flow: k,
     desc: () => (stage(k) === 3 || stage(k) === 5 ? taskText(k) : stage(k) === 6 ? 'Not now' : 'What’s the Task?'), hide: () => stage(k) === 0 || stage(k) === 4,
     tap: () => flowTap(k), opt: (o) => flowOpt(k, o), confirm: () => flowLock(k), focus: () => flowFocus(k), typed: () => flowType(k) });
   const ex = pref('exit', ICON.clock, 'Plan an Exit', stopWords), mins = pref('mins', ICON.clock, 'How long', () => `${PREFS.mins} min`);
-  const exit = { ...ex, flow: 'exit', hide: () => !FLOW.exit, prime: () => FLOW.box.includes(1),   // beside the lone plus the exit is primed in blue
+  const exit = { ...ex, flow: 'exit', hide: () => !FLOW.exit, prime: () => FLOW.box.includes(1) || FLOW.box.includes(2),   // beside the lone plus the exit is primed in blue
     set: (v) => { ex.set(v); FLOW.sub = v === 'timer'; }, lvl: { ...mins, clock: true }, sub: () => FLOW.sub && PREFS.exit === 'timer',   // Set: the row becomes its own slider
     words: () => { if (FLOW.sub) { FLOW.sub = false; syncCard(); } } };   // touch the words: Set or Free again
   return PREFS.kind === 'task' ? [plan, box(0), box(1), box(2), exit] : [plan, exit];
@@ -3313,14 +3404,14 @@ function flowSync(el, r) {
   const k = r.flow, st = stage(k), c = FLOW.cer[k], b = c.beat, on = (n, b) => el.classList.toggle(n, !!b), tx = el.querySelector('.tx'), ds = el.querySelector('.ds'), ic = el.querySelector(':scope > .ic');
   el.classList.add('box'); el.dataset.k = k;
   on('lead', st === 1); on('golden', b >= 1); on('gold2', b >= 2); on('locked', st === 3); on('preok', b >= 1); on('later', st === 6);
-  on('hint', st === 1 && c.opt === 1); on('open', st === 1 && c.opt === 2); on('two', c.two);
+  on('hint', st === 1 && c.opt === 1); on('open', st === 1 && c.opt === 2); on('offer', st === 2 && k > 0 && b < 1 && !c.quiet); on('two', c.two);
   if (st === 1 || st === 3 || st === 5 || st === 6) el.classList.remove('lit');   // locked: a finished module carries no ring; its icon and check stay gold
   tx.classList.toggle('wave', b >= 2); tx.classList.toggle('fin', c.fin); tx.classList.toggle('gone', st === 3 || st === 5 || st === 6);
   ds.classList.toggle('wave', b >= 2); ds.classList.toggle('fin', c.fin);
   if (b >= 2 && !c.fin) ds.onanimationend = () => { c.fin = true; syncCard(); };   // the wash has run its length: green from here on, rebuilt or not
   const want = st === 5 ? 'pen' : 'bars', was = el.dataset.ik;
   if (was !== want) { el.dataset.ik = want; const old = ic.querySelector('svg'), now = want === 'pen' ? svg(ICON.pen) : BARS; if (old) { old.insertAdjacentHTML('afterend', now); old.remove(); } else ic.insertAdjacentHTML('afterbegin', now); }
-  el.style.setProperty('--turn', st === 2 && b < 1 ? '45deg' : st === 6 ? '90deg' : st === 1 && c.opt ? '180deg' : '0deg');   // open: an X. Not now: a minus. Otherwise a plus (after the hint's half turn, the same plus)
+  el.style.setProperty('--turn', st === 2 && b < 1 && !(k > 0 && !c.quiet) ? '45deg' : st === 6 ? '90deg' : st === 1 && c.opt ? '180deg' : '0deg');   // open: an X. Not now: a minus. Otherwise a plus (after the hint's half turn, the same plus)
   if (st === 1 && c.opt === 0 && !c.hinted) { c.hinted = true; flowAt(() => { c.opt = 1; syncCard(); }, TIME.settle * 1000, k); flowAt(() => { c.opt = 2; syncCard(); }, TIME.settle * 2000, k); }   // a timed hint (named as one): the turn, then they fold out
   if (!el.querySelector('.opts')) el.insertAdjacentHTML('beforeend', `<span class="opts"><span class="o1"><button class="ic" data-opt="x" aria-label="No more">${BARS}</button><span class="o2"><button class="ic" data-opt="minus" aria-label="Not now">${BARS}</button></span></span></span>`);   // ✕ and −, folded behind the plus
 }
@@ -3343,7 +3434,7 @@ function flowLock(k) {   // Enter, or the check: locked in gold, tone three, and
   if (c.quiet) { FLOW.box[k] = 5; FLOW.cer[k] = newCer(); syncCard(); return; }
   if (c.beat < 2) c.beat = 2; c.fin = true; cue(CUES[k].n[2], 4.2, 0.12);   // words written before the box was touched: it is all gold now
   FLOW.box[k] = 3;
-  if (k < 2) { FLOW.box[k + 1] = 1; FLOW.exit = true; syncCard(); shine(k, '.ok > .shine'); } else flowExit();
+  if (k < 2) { FLOW.box[k + 1] = 2; FLOW.exit = true; flowGo(k + 1); shine(k, '.ok > .shine'); } else flowExit();
 }
 function flowExit() {   // on to Plan an Exit: every box goes back to an ordinary row
   FLOW.exit = true; FLOW.box.forEach((s, k) => { if (s === 3 || s === 2) { FLOW.box[k] = taskText(k) ? 5 : 4; FLOW.cer[k] = newCer(); } else if (s === 1) FLOW.box[k] = 0; });
@@ -3355,8 +3446,8 @@ function flowTap(k) {   // the icon: a lone plus opens; a grey minus offers + an
   if (st === 6) { FLOW.box[k] = 1; FLOW.cer[k] = { ...newCer(), two: true, hinted: true, opt: 2 }; flowGo(k); return; }
   if (st === 5) { FLOW.cer[k] = newCer(true); FLOW.box[k] = 2; flowGo(k); $('mcRows').querySelector(`.mrow.box[data-k="${k}"] .tx`).focus(); }
 }
-function flowOpt(k, o) {   // the lone plus's other options, then on to Plan an Exit
-  if (stage(k) !== 1) return; flowStop(k);
+function flowOpt(k, o) {   // the other options, then on to Plan an Exit
+  if (stage(k) !== 1 && !(stage(k) === 2 && FLOW.cer[k].beat < 1)) return; flowStop(k);
   if (o === 'x') { FLOW.box[k] = 4; sound.tick(); } else { FLOW.box[k] = 6; sound.voice({ f: 196, f1: 130.81, glide: 0.5, type: 'triangle', peak: 0.12, attack: 0.05, decay: 1.6, lp: 600, bus: 'game' }); }   // ✕ a click; − a warm fifth, set down
   FLOW.exit = true; flowGo('exit');
 }
@@ -3365,13 +3456,12 @@ function flowBack() {   // one step back
   if (FLOW.exit && PREFS.kind === 'task' && last != null) {   // from the exit to the moves, in gold again, with a plus for the next
     FLOW.exit = FLOW.sub = false;
     for (let k = 0; k <= last; k++) if (stage(k) === 5) { FLOW.box[k] = 3; FLOW.cer[k] = { ...newCer(), beat: 2, fin: true }; }
-    if (stage(last) === 6) { FLOW.box[last] = 1; FLOW.cer[last] = newCer(); } else if (last < 2) { FLOW.box[last + 1] = 1; FLOW.cer[last + 1] = newCer(); }
+    if (stage(last) === 6) { FLOW.box[last] = 1; FLOW.cer[last] = newCer(); } else if (last < 2) { FLOW.box[last + 1] = 2; FLOW.cer[last + 1] = newCer(); }
   } else if (FLOW.exit) FLOW.exit = FLOW.sub = FLOW.plan = false;
   else if (last == null) FLOW.plan = false;
-  else if (stage(last) === 1) {   // from a lone plus: the box before it, to write in again
-    FLOW.box[last] = 0; if (last === 0) FLOW.plan = false; else { const p = last - 1; FLOW.box[p] = 2; FLOW.cer[p] = { ...newCer(), beat: 2, fin: true }; }
-  } else if (stage(last) === 2) { PREFS.tasks[last] = { text: '' }; savePrefs(); FLOW.box[last] = 1; FLOW.cer[last] = newCer(); }   // an open box: back to its plus
-  else if (stage(last) === 3) FLOW.box[last] = 2;
+  else if (stage(last) === 1 || stage(last) === 2) {   // from a lone plus or an open box: the box before it, to write in again
+    PREFS.tasks[last] = { text: '' }; savePrefs(); FLOW.box[last] = 0; FLOW.cer[last] = newCer(); if (last === 0) FLOW.plan = false; else { const p = last - 1; FLOW.box[p] = 2; FLOW.cer[p] = { ...newCer(), beat: 2, fin: true }; }
+  } else if (stage(last) === 3) FLOW.box[last] = 2;
   else { FLOW.box[last] = 2; FLOW.cer[last] = newCer(true); }   // an ordinary row: written again, quietly
   const at = FLOW.exit ? 'exit' : [0, 1, 2].filter(k => [1, 2, 3, 5].includes(stage(k))).pop();
   CARD.i = 0; at == null ? syncCard() : flowGo(at);
@@ -3511,16 +3601,30 @@ const pctOf = (v) => `${Math.round(v * 100)}%`;
 const FMT = { mins: (v) => `${v} min`, bpm: (v) => (+v).toFixed(1), 'pacer.speed': (v) => `${Math.round(v)} /min` };
 const esc = (t) => String(t).replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' })[c]);
 const text = (t) => (typeof t === 'function' ? t() : t);
-const DESCS = { Mode: () => MODES[CARD.pend.mode || PREFS.mode].note, Rules: () => (PREFS.overflow === 'end' ? 'Classic ends. Zen never does.' : 'Zen never ends. The top dissolves.'),
+const DESCS = { Mode: () => MODES[CARD.pend.mode || PREFS.mode].note, Rules: () => 'Zen Relaxes Rules.',
   Place: () => ((CARD.pend.where || PREFS.where) === 'stars' ? 'The sky from 41° north.' : 'Live is the season where you are.'),   // the stars are drawn for one latitude: said so
-  Comp: () => (here().dry ? 'No wind here: no Comp.' : PREFS.comp ? 'Touch COMPETITION to leave.' : 'The line creeps. Wild wind.'),
+  Comp: () => (here().dry ? 'No wind here: no Comp.' : PREFS.comp ? 'Touch COMPETITION.' : 'Wild Line & Wind.'),
   Pace: () => `In ${(24 / PREFS.bpm).toFixed(1)} s, out ${(36 / PREFS.bpm).toFixed(1)} s.`, Speed: () => `${Math.round(PREFS.pacer.speed)} laps a minute.` };
 // A setting's row knows its own control from the setting: on or off is a pill, a few words a pill, many words a wheel, a range a slider.
 function pref(k, ic, name, desc, more = {}) {
-  const get = () => (k in CARD.pend ? CARD.pend[k] : getPref(k)), set = (v) => (CARD.stage ? (CARD.pend[k] = v, syncCard()) : setPref(k, v));
+  const get = () => (k in CARD.pend ? CARD.pend[k] : getPref(k)), set = (v) => (staged(k) ? (CARD.pend[k] = v, syncCard()) : setPref(k, v));
   if (typeof DEFAULTS[k] === 'boolean' || typeof getPref(k) === 'boolean') return { ic, name, desc, kind: 'seg', onoff: true, opts: [[false, 'Off'], [true, 'On']], get, set, ...more };
   if (CHOICES[k]) { const opts = CHOICES[k].map(v => [v, LABELS[k][v]]); return { ic, name, desc, kind: opts.length <= 3 ? 'seg' : 'wheel', opts, get, set, ...more }; }
   const [min, max, step = 'any'] = RANGES[k]; return { ic, name, desc, kind: 'lvl', min, max, step, fmt: FMT[k] || pctOf, get, set, ...more };
+}
+// The Sky card: two choices, each opening its second row at the touch. Clouds On or Off (Off is a clear sky), then Light, Heavy or Evolving.
+// Time of day Live Yes or No, then Dawn, Day, Dusk or Dark. A row's `opens` says which row its choice opens.
+function skyRows() {
+  const dry = () => here().dry, line = (s) => () => (dry() ? 'No sky here.' : s);
+  const cl = () => PREFS.clouds, hr = () => PREFS.hour;
+  const onoff = [[false, 'Off'], [true, 'On']];
+  return [
+    { ic: ICON.cloud, name: 'Clouds', desc: line('How the sky looks.'), kind: 'seg', onoff: true, opts: onoff, dis: dry, get: () => cl() !== 'clear', set: (v) => setPref('clouds', v ? 'some' : 'clear'), opens: (v) => (v ? rowOf('Cloud Cover') : -1) },
+    { ic: ICON.cloud, name: 'Cloud Cover', desc: line('How they look.'), kind: 'seg', opts: [['some', 'Light'], ['dark', 'Heavy'], ['changing', 'Evolving']], hide: () => dry() || cl() === 'clear',
+      get: () => (cl() === 'changing' || cl() === 'dark' ? cl() : 'some'), set: (v) => { setPref('clouds', v); syncCard(); } },
+    { ic: ICON.sun, name: 'Time of day', desc: line('Your Actual Time.'), kind: 'seg', onoff: true, opts: [[false, 'No'], [true, 'Yes']], dis: dry, get: () => hr() === 'live', set: (v) => setPref('hour', v ? 'live' : 'day'), opens: (v) => (v ? -1 : rowOf('Set Time')) },
+    { ic: ICON.sun, name: 'Set Time', desc: line('Pick the light.'), kind: 'seg', opts: [['dawn', 'Dawn'], ['day', 'Day'], ['dusk', 'Dusk'], ['night', 'Dark']], hide: () => dry() || hr() === 'live',
+      get: () => hr(), set: (v) => { setPref('hour', v); syncCard(); } }];
 }
 // The Sound card's rows: a level, and on or off kept apart, so a row switched off comes back where you left it.
 const bus = (k, ic, name, desc) => ({ ic, name, desc, kind: 'lvl', min: 0, max: 1, step: 'any', fmt: pctOf, mute: true, get: () => PREFS.mix[k].lv,
@@ -3529,7 +3633,7 @@ const hub = (ic, name, desc, go) => ({ ic, name, desc, kind: 'hub', go });
 const show = (ic, name, desc, v) => ({ ic, name, desc, kind: 'value', get: v });
 const PLACE = 'We’ll Help. Write it Here';
 const hhmm = (ms) => { const d = new Date(ms); return `${String(d.getHours()).padStart(2, '0')}:${String(d.getMinutes()).padStart(2, '0')}`; };
-const stopWords = () => (PREFS.exit === 'free' ? 'Stop when you’re ready.' : 'Set a session length.');
+const stopWords = () => (PREFS.exit === 'free' ? 'Stop When Ready.' : 'Set Length of Game.');
 const FAQ = [
   ['How does a session go?', 'Settle: the circle. Then plan your session, up to three things to do, and how it ends. Touch: play. Return: three breaths out, your list, and Go. When you’re back, tick what you did.'],
   ['How do I play?', 'Touch the pool and slide to move the waiting sphere; let go to drop it. Two of a kind merge into the next size up, and the two largest make a Full Bloom.'],
@@ -3538,50 +3642,87 @@ const FAQ = [
   ['What do the colours mean?', 'Green is on. Blue is under your finger, or yours to touch. White is quiet, or off. Red erases. Gold means you did something right.'],
   ['How do I get around?', 'The top ribbon: Menu, Scene, your Task and Timer, Pause, and Sound. Touch the words in the line under it to change what you’re doing or where. Under the pool, Weather Settings opens the weather; the tools sit below it. Every card closes with Close or Done at its foot.'],
   ['What are the modes?', 'Play: the merge game. Relax: hold to breathe in, let go to breathe out. Fidget: a light to follow, drops on still water, the weather in your hands. Rest: the pool fades to dark while sound plays on. Phones stop sound when they lock, so Rest keeps the screen awake; plug in for long sessions.'],
+  ['How do I arrange the tiles?', 'Hold any tile: the grid shows. Touch a tile to pick it up, then touch another in the same group: it moves there. In Menu › All, touch a tile to add it to Mine, your own group at the top of Menu; touch it again to take it out. Done puts the grid away.'],
+  ['Why does it feel this way?', 'Real science, kept simple. Relax starts at five and a half breaths a minute, near where breath and heartbeat fall into step for most people; the green line on Pace is the range the studies used. Glass rings long and wood stops short, because that is how each really sounds. Rain falls at its true speeds, thunder comes three seconds a kilometre after its flash so you can count it, and the sky follows the real sun at 41° north. Lightning never flashes more than three times a second. Nature sound stays soft: quiet matters as much as the sound. None of it is treatment. It is somewhere to settle.'],
   ['Does SoRen collect anything?', 'No. Everything stays on this phone: no accounts, no ads, no tracking, no notifications, nothing to buy. Leaving costs you nothing.'],
   ['Is this a medical tool?', 'No. It is somewhere to settle. If you are struggling, talk to someone you trust or a professional.'],
   ['Which version is this?', `Version ${VERSION}. The physics has been locked since version 34 (${PHYSICS_ID}).`]
 ];
+// The elements: every thing a tile turns on or picks, once, by key. A tile is one of these anywhere it appears: in its group,
+// in the Library (A to Z), in Mine. Green means it is so right now; a touch makes it so (or, for an on/off, flips it).
+const staged = (k) => !!(CARD.stage && CARD.stage.includes(k));   // Scene keeps Mode and Place until Done; everything else is live
+const cur = (k) => (k in CARD.pend ? CARD.pend[k] : getPref(k));
+const put = (k, v) => { if (staged(k)) { CARD.pend[k] = v; syncCard(); } else setPref(k, v); };
+const askComp = () => popup({ title: 'Comp mode?', line: 'The line creeps, the wind is wild, glass can break. Leave any time: nothing is lost.', back: `Back to ${CARD.name ? CARDS[CARD.name].title : 'SoRen'}`, act: 'Comp', safe: true, go: () => setPref('comp', true) });
+const flip = (k, ic, word, more = {}) => ({ ic, word, on: () => !!cur(k), act: () => put(k, !cur(k)), ...more });
+const pick = (k, v, ic, word, more = {}) => ({ ic, word, on: () => String(cur(k)) === String(v), act: () => put(k, v), ...more });
+const mute = (b, ic, word) => ({ ic, word, on: () => PREFS.mix[b].on, act: () => { PREFS.mix[b].on = !PREFS.mix[b].on; savePrefs(); syncUI(); } });
+const PLACE_IC = { live: ICON.pin, spring: ICON.sprout, summer: ICON.rise, autumn: ICON.leaf, winter: ICON.flake, rainforest: ICON.rain, camp: ICON.tent, woods: ICON.pine, beach: ICON.sea, stars: ICON.star, celestial: ICON.planet, heritage: ICON.urn };
+const MODE_IC = { play: ICON.bloom, relax: ICON.breathe, fidget: ICON.touch, rest: ICON.moon };
+const EL = {
+  ...Object.fromEntries(CHOICES.mode.map(m => [`mode.${m}`, pick('mode', m, MODE_IC[m] || ICON.grid, MODES[m].name)])),
+  ...Object.fromEntries(CHOICES.where.map(w => [`where.${w}`, pick('where', w, PLACE_IC[w] || ICON.pin, LABELS.where[w], { dis: () => !!(PREFS.comp && PLACES[w] && (PLACES[w].back === 'tray' || PLACES[w].back === 'space')) })])),   // Comp needs wind: Heritage and Celestial wait
+  'clouds.clear': pick('clouds', 'clear', ICON.clear, 'Clear'), 'clouds.some': pick('clouds', 'some', ICON.cloud, 'Light'), 'clouds.dark': pick('clouds', 'dark', ICON.heavy, 'Heavy'), 'clouds.changing': pick('clouds', 'changing', ICON.evolve, 'Evolving'),
+  'hour.live': pick('hour', 'live', ICON.clock, 'Live time'), 'hour.dawn': pick('hour', 'dawn', ICON.dawn, 'Dawn'), 'hour.day': pick('hour', 'day', ICON.sun, 'Day'), 'hour.dusk': pick('hour', 'dusk', ICON.dusk, 'Dusk'), 'hour.night': pick('hour', 'night', ICON.dark, 'Dark'),
+  aim: flip('aim', ICON.aim, 'Aim', { dis: () => !!PREFS.comp }), next: flip('next', ICON.arrow, 'Next'), numbers: flip('numbers', ICON.hash, 'Numbers'),
+  comp: { ic: ICON.comp, word: 'Comp', on: () => !!PREFS.comp, dis: () => here().dry, act: () => (PREFS.comp ? setPref('comp', false) : askComp()) },
+  zen: { ic: ICON.flag, word: 'Zen', on: () => PREFS.overflow === 'zen', act: () => setPref('overflow', PREFS.overflow === 'zen' ? 'end' : 'zen') },
+  calm: flip('calm', ICON.heart, 'Low stim'), still: flip('still', ICON.still, 'Still'), breathing: flip('breathing', ICON.rings, 'Breathing'),
+  sound: { ic: ICON.speaker, word: 'Sound', on: () => !!PREFS.sound, act: () => setPref('sound', !PREFS.sound) }, vibe: flip('vibe', ICON.vibe, 'Buzz'),
+  'mix.game': mute('game', ICON.note, 'Game sound'), 'mix.alerts': mute('alerts', ICON.clock, 'Alerts'), 'mix.breath': mute('breath', ICON.rings, 'Breath'), 'mix.touch': mute('touch', ICON.hand, 'Touch'),
+  'mix.drone': mute('drone', ICON.hum, 'Drone'), 'mix.nature': mute('nature', ICON.leaf, 'Nature'), 'mix.weather': mute('weather', ICON.cloud, 'Weather'),
+  'beta.lookup': flip('beta.lookup', ICON.star, 'Look Up'), 'beta.chest': flip('beta.chest', ICON.rings, 'Chest'), 'beta.heavy': flip('beta.heavy', ICON.mystery, 'Slow glass')
+};
+const ORDER = (g, keys) => { const o = (PREFS.order || {})[g]; return o ? [...o.filter(k => keys.includes(k)), ...keys.filter(k => !o.includes(k))] : keys; };   // your order, if you set one; anything new keeps its place at the end
+const tileCell = (k) => { const e = EL[k]; return e ? cell(`data-tile="${k}"`, e.ic, e.word) : '<span class="cell blank"></span>'; };
+// A group: a row that names it, and under it ribbons of four tiles, open while it is the row you're on (touch the row to open it;
+// its check closes it and opens the next). Rows stay 132: three ribbons of tiles are three rows, never one taller row.
+function group(g, ic, name, desc, keys, folded) {
+  const head = { ic, name, desc, kind: 'group', g, get: folded }, all = ORDER(g, keys), parts = [];
+  for (let i = 0; i < all.length; i += 4) parts.push({ kind: 'tiles', part: head, g, keys: all.slice(i, i + 4), hide: () => CARD.rows[CARD.i] !== head });
+  head.n = parts.length; return [head, ...parts];
+}
+const pickedWord = (k) => () => (EL[`${k}.${cur(k)}`] || {}).word || '';
+const countOn = (keys) => () => { const n = keys.filter(k => EL[k].on()).length; return n === keys.length ? 'All on' : n ? `${n} on` : 'Off'; };
+// Mine: up to eight tiles of your own, from anywhere, first in Menu and in All. All: every tile, A to Z, six to a ribbon.
+const mineRows = () => group('mine', ICON.star, 'Mine', 'Hold a tile in All to add it.', PREFS.mine.filter(k => EL[k]), countOn(PREFS.mine.filter(k => EL[k])));
+function libRows() {
+  const all = Object.keys(EL).sort((a, b) => EL[a].word.localeCompare(EL[b].word)), out = [];
+  for (let i = 0; i < all.length; i += 6) out.push({ kind: 'tiles', part: true, six: true, g: 'library', keys: all.slice(i, i + 6) });
+  return out;
+}
+const rowOf = (name) => CARD.rows.findIndex(r => r.name === name);
 // Each card: its name, the tile it belongs to (top ribbon 0–5, or a bottom tile), the settings it holds, and its rows.
 const CARDS = {
   moment: { get title() { return MOMENT.title; }, keys: [], norail: true, moment: true, rows: () => MOMENT.rows.map(r => ({ ...r, kind: r.tick ? 'tick' : 'note' })) },   // see showCard
-  menu: { title: 'Menu', tile: 0, keys: [], rows: () => [
-    hub(ICON.bloom, 'Game', 'Rules, aim, next and numbers.', () => openCard('game', true)),
-    hub(ICON.cloud, 'Sky', 'Clouds and time of day.', () => openCard('sky', true)),
-    hub(ICON.heart, 'Comfort', 'Low stimulation, reduce motion, breathing.', () => openCard('comfort', true)),
+  menu: { title: 'Menu', tile: 0, keys: ['overflow', 'calm', 'aim', 'next', 'numbers'], rows: () => [
+    ...(PREFS.mine.length ? mineRows() : []), pref('overflow', ICON.flag, 'Rules', DESCS.Rules), pref('calm', ICON.heart, 'Low stimulation', 'Less Lights & Sounds.'),
+    ...group('game', ICON.bloom, 'Game', () => (PREFS.comp ? 'No aim line in Comp.' : 'Aim, next, numbers, Comp.'), ['aim', 'next', 'numbers', 'comp'], countOn(['aim', 'next', 'numbers', 'comp'])),
+    hub(ICON.all, 'All', 'Everything, A to Z.', () => openCard('library', true)),
     hub(ICON.bars, 'Statistics', 'What you’ve done. Kept on this phone.', () => openCard('stats', true)),
     hub(ICON.ask, 'How to play', 'Settle. Touch. Return.', () => openCard('help', true)),
-    hub(ICON.flask, 'Beta', 'Rough at the edges. Keep what helps.', () => openCard('beta', true))] },
-  scene: { title: 'Scene', tile: 1, stage: true, keys: ['mode', 'where'], rows: () => [
-    pref('mode', ICON.grid, 'Mode', DESCS.Mode), { ...pref('where', ICON.pin, 'Place', DESCS.Place), opts: CHOICES.where.filter(v => !(PREFS.comp && PLACES[v] && (PLACES[v].back === 'tray' || PLACES[v].back === 'space'))).map(v => [v, LABELS.where[v]]) }],   // Comp needs wind: no Heritage (indoors) and no Celestial (space) while it runs
+    hub(ICON.flask, 'Beta', 'Rough at the edges. Keep what helps.', () => openCard('beta', true)),
+    hub(ICON.reset, 'New game', 'Start over. Asks first.', () => popup({ title: 'Start a new game?', line: 'This game ends here.', back: 'Back to Menu', act: 'New Game', go: () => { closeSheet(); setMode('play'); startPool(); } }))] },
+  scene: { title: 'Scene', tile: 1, stage: ['mode', 'where'], keys: ['mode', 'where', 'clouds', 'hour', 'still', 'breathing'], rows: () => [
+    ...group('mode', ICON.grid, 'Mode', DESCS.Mode, CHOICES.mode.map(m => `mode.${m}`), pickedWord('mode')),
+    ...group('where', ICON.pin, 'Place', DESCS.Place, CHOICES.where.map(w => `where.${w}`), pickedWord('where')),
+    ...skyRows(), pref('still', ICON.still, 'Reduce motion', 'Limit Movements.'), pref('breathing', ICON.rings, 'Breathing', 'Display Breathes.')],
     done: () => { const { mode, where } = CARD.pend; closeSheet(); if (where != null && where !== PREFS.where) setPref('where', where); if (mode != null && mode !== S.mode) setPref('mode', mode); } },
-  session: { title: 'Timer and Task', tile: 2, keys: ['kind', 'exit', 'mins', 'tasks'], rows: () => flowRows(), norail: true, open: flowOpen, back: flowBack, canBack: () => FLOW.plan,
+  session: { title: 'Timer & Task', tile: 2, keys: ['kind', 'exit', 'mins', 'tasks'], rows: () => flowRows(), norail: true, open: flowOpen, back: flowBack, canBack: () => FLOW.plan,
     done: () => { closeSheet(); startSession(); } },
   sound: { title: 'Sound', tile: 5, keys: ['sound', 'vol', 'mix', 'vibe'], rows: () => [
     { ...pref('vol', ICON.speaker, 'Volume', 'Under your music.'), mute: true, set: (v) => { setPref('vol', v); if (!PREFS.sound) setPref('sound', true); }, on: { get: () => PREFS.sound, set: (v) => setPref('sound', v) } },
     bus('game', ICON.note, 'Game', 'Merges and chimes.'), bus('alerts', ICON.clock, 'Alerts', 'Bells and ticks.'),
     bus('breath', ICON.rings, 'Breath', 'With your breath.'), bus('touch', ICON.hand, 'Touch', 'Taps and drops.'),
     bus('drone', ICON.hum, 'Drone', 'The low hum.'), bus('nature', ICON.leaf, 'Nature', 'Birds and crickets.'), bus('weather', ICON.cloud, 'Weather', 'Rain, wind, thunder.'),
-    pref('vibe', ICON.vibe, 'Vibration', NATIVE.haptics ? 'A soft buzz with bells.' : 'Not in this browser.')] },
-  pace: { title: 'Pace', bot: 1, keys: ['bpm'], rows: () => [pref('bpm', ICON.hum, 'Pace', DESCS.Pace)] },
+    pref('vibe', ICON.vibe, 'Vibration', NATIVE.haptics ? 'Low Buzz & Bells.' : 'Not in this browser.')] },
+  pace: { title: 'Pace', bot: 1, keys: ['bpm'], rows: () => [pref('bpm', ICON.hum, 'Pace', DESCS.Pace, { band: BREATH.band })] },   // the green line under the slider: the range the studies used
   style: { title: 'Style', bot: 2, keys: ['pacer.track', 'pacer.glass', 'pacer.glow', 'pacer.bright', 'pacer.speed'], rows: () => [
     pref('pacer.track', ICON.inf, 'Track', 'The path the light runs.'), pref('pacer.glass', ICON.gem, 'Glass', 'What the light is made of.'),
     pref('pacer.glow', ICON.sun, 'Glow', 'How far it reaches.'), pref('pacer.bright', ICON.sun, 'Brightness', 'How bright it is.'), pref('pacer.speed', ICON.clock, 'Speed', DESCS.Speed)] },
   ambient: { title: 'Ambient', bot: 0, keys: ['ambient', 'ambLv', 'fadeAfter'], rows: () => [
     pref('ambient', ICON.sea, 'Ambient', 'One steady sound under everything.'), pref('ambLv', ICON.sea, 'Level', 'How loud it plays.'), pref('fadeAfter', ICON.clock, 'Fades after', 'When Rest lets the sound go.')] },
-  game: { title: 'Game', tile: 0, keys: ['overflow', 'aim', 'next', 'numbers', 'comp'], rows: () => [
-    pref('overflow', ICON.flag, 'Rules', DESCS.Rules), pref('aim', ICON.aim, 'Aim', () => (PREFS.comp ? 'No aim line in Comp.' : 'Shows where it will land.'), { dis: () => PREFS.comp }),
-    pref('next', ICON.arrow, 'Next', 'Shows the sphere after.'), pref('numbers', ICON.hash, 'Numbers', 'Score and sphere values.'),
-    // Comp: a double opt-in. On asks first (the action in blue: nothing is erased); indoors the row is dim and nothing happens.
-    pref('comp', ICON.comp, 'Comp', DESCS.Comp, { dis: () => here().dry, set: (v) => (v ? popup({ title: 'Comp mode?', line: 'The line creeps, the wind is wild, glass can break. Leave any time: nothing is lost.', back: 'Back to Game', act: 'Comp', safe: true, go: () => setPref('comp', true) }) : setPref('comp', false)) }),
-    hub(ICON.reset, 'New game', 'Start over. Asks first.', () => popup({ title: 'Start a new game?', line: 'This game ends here.', back: 'Back to Game', act: 'New Game', go: () => { closeSheet(); setMode('play'); startPool(); } })),
-    ] },
-  sky: { title: 'Sky', tile: 0, keys: ['clouds', 'hour'], rows: () => [
-    pref('clouds', ICON.cloud, 'Clouds', () => (here().dry ? 'No sky here.' : 'How the sky looks.'), { dis: () => here().dry }),
-    pref('hour', ICON.sun, 'Time of day', () => (here().dry ? 'No sky here.' : 'Live follows your clock.'), { dis: () => here().dry })] },
-  comfort: { title: 'Comfort', tile: 0, keys: ['calm', 'still', 'breathing'], rows: () => [
-    pref('calm', ICON.heart, 'Low stimulation', 'No flashes. Softer sound.'), pref('still', ICON.still, 'Reduce motion', 'Nothing moves on its own.'),
-    pref('breathing', ICON.rings, 'Breathing', 'Edge and spheres breathe.')] },
+  library: { title: 'All', tile: 0, keys: [], rows: () => [...mineRows(), ...libRows()] },
   stats: { title: 'Statistics', tile: 0, keys: [], rows: () => { const j = journalStats(); return [
     ...(PREFS.numbers ? [show(ICON.star, 'Best', 'Your highest score.', () => fmt(j.best))] : []), show(ICON.task, 'Lists finished', 'Tasks you ticked, all of them.', () => fmt(j.lists)),
     show(ICON.bloom, 'Full Blooms', 'The two largest, merged.', () => fmt(j.blooms)), show(ICON.grid, 'Merges this game', '', () => fmt(S.merges)),
@@ -3589,8 +3730,8 @@ const CARDS = {
   help: { title: 'Help', tile: 0, keys: [], rows: () => FAQ.map(([q, a], i) => hub(ICON.ask, q, a, () => popup({ title: q, line: a, back: 'Back to Help' }))) },
   // Beta: the experiments, on the stars. They read the phone's motion sensor, on the phone; nothing is kept or sent. Done is warp.
   beta: { title: 'Beta', tile: 0, keys: ['beta'], stars: true, done: () => engage(), rows: () => [
-    pref('beta.lookup', ICON.star, 'Look Up', 'Lift the phone: the stars.'), pref('beta.chest', ICON.rings, 'Chest breathing', 'In Relax, on your chest.'),
-    pref('beta.heavy', ICON.mystery, 'Heavy glass', 'Big spheres move slowly.')] }
+    pref('beta.lookup', ICON.star, 'Look Up', 'Lift Phone to Sky.'), pref('beta.chest', ICON.rings, 'Chest breathing', 'Lay Phone on Chest.'),
+    pref('beta.heavy', ICON.mystery, 'Heavy glass', 'Slow Big Spheres.')] }
 };
 const CARD = { name: null, stack: [], rows: [], i: 0, snap: '', pend: {}, stage: false };
 const U = (n) => `calc(${n} * var(--u))`;
@@ -3598,9 +3739,14 @@ const ROW = 132, CARD_W = 1166, RAIL_TOP = 166;   // the card grid, in u: same n
 const SHINES = '<span class="shine"></span><span class="shine r"></span>';   // the gold flash of the flow ceremony, part of every box row
 const okHTML = (more = '') => `<button class="ok" data-ok aria-label="On or off">${icon(ICON.check)}${more}</button>`;
 function ctlHTML(r, i) {
-  if (r.kind === 'lvl') return `<input class="lvl" type="range" min="${r.min}" max="${r.max}" step="${r.step}" data-lvl="${i}" aria-label="${r.name}"><span class="pct num"></span>${r.clock ? `<input class="due" type="time" data-stop aria-label="Stop time">` : ''}`;
-  if (r.kind === 'seg') return `<div class="seg${r.onoff ? ' onoff' : ''}${r.opts.length > 2 && !r.onoff ? ' x3' : ''}"><i></i>${r.opts.map(([v, w], j) => `<button data-seg="${i}:${j}">${w}</button>`).join('')}</div>${r.lvl ? ctlHTML({ ...r.lvl, name: r.name }, i) : ''}`;   // a choice that becomes its own slider in place
+  if (r.kind === 'lvl') { const at = (v) => ((v - r.min) / (r.max - r.min) * 360).toFixed(1);
+    return `<input class="lvl" type="range" min="${r.min}" max="${r.max}" step="${r.step}" data-lvl="${i}" aria-label="${r.name}"><span class="pct num"></span>${r.clock ? `<input class="due" type="time" data-stop aria-label="Stop time">` : ''}`
+      + (r.band ? `<span class="band" style="left:${U(520 + +at(r.band[0]))};width:${U(at(r.band[1]) - at(r.band[0]))}"></span>` : '')
+      + (r.mute ? `<div class="seg onoff sw" style="--n:2;--k:0"><i></i><button class="sel" data-sw="${i}:0">Off</button><button data-sw="${i}:1">On</button></div>` : ''); }   // off: the slider steps aside for Off · On, and comes back where you left it
+  if (r.kind === 'seg') return `<div class="seg${r.onoff ? ' onoff' : ''}" style="--n:${r.opts.length}"><i></i>${r.opts.map(([v, w], j) => `<button data-seg="${i}:${j}">${w}</button>`).join('')}</div>${r.lvl ? ctlHTML({ ...r.lvl, name: r.name }, i) : ''}`;   // a choice that becomes its own slider in place
   if (r.kind === 'wheel') return `<div class="wheel" data-wheel="${i}" role="listbox" aria-label="${r.name}"><s class="up"></s><b></b><s class="dn"></s></div>`;
+  if (r.kind === 'group') return '<b class="big"></b>';
+  if (r.kind === 'tiles') return `<nav class="rib tr${r.six ? '' : ' four'}">${r.keys.map(tileCell).join('')}${r.six ? '' : '<span class="cell blank"></span>'.repeat(4 - r.keys.length)}${r.six ? '<span class="cell blank"></span>'.repeat(6 - r.keys.length) : ''}</nav>`;
   if (r.kind === 'hub') return `<span class="go">${icon(ICON.right)}</span>`;
   if (r.kind === 'value') return '<b class="big num"></b>';
   if (r.kind === 'text') return `<input class="tx" type="text" maxlength="60" enterkeyhint="done" autocomplete="off" placeholder="${PLACE}" data-task="${r.i}" value="${esc((PREFS.tasks[r.i] || {}).text || '')}">`;
@@ -3608,10 +3754,8 @@ function ctlHTML(r, i) {
 }
 function cardRows() {   // the rows, built once per card (or when what it asks changes); everything after is synced in place
   const def = CARDS[CARD.name]; CARD.rows = def.rows(); CARD.i = Math.min(CARD.i, CARD.rows.length - 1);
-  $('mcRows').innerHTML = CARD.rows.map((r, i) => `<div class="mrow" data-row="${i}">${icon(r.ic, typeof r.flow === 'number' ? SHINES : '')}<span class="nm">${r.html || esc(r.name)}</span><span class="ds"></span>${ctlHTML(r, i)}${['hub', 'value', 'note'].includes(r.kind) ? '' : okHTML(typeof r.flow === 'number' ? SHINES : '')}</div>`).join('');
-  const n = CARD.rows.length, rail = $('mcRail'); rail.hidden = !!def.norail;
-  rail.style.top = U(RAIL_TOP); rail.style.height = U(Math.max(0, n - 1) * ROW);
-  rail.innerHTML = CARD.rows.map((r, i) => `<i style="top:${U(i * ROW)}"></i>`).join('') + '<b></b>';
+  $('mcRows').innerHTML = CARD.rows.map((r, i) => r.kind === 'tiles' ? `<div class="mrow tiles" data-row="${i}">${ctlHTML(r, i)}</div>` : `<div class="mrow${r.kind === 'group' ? ' grp' : ''}" data-row="${i}"${r.kind === 'group' ? ` style="--n:${r.n}"` : ''}>${icon(r.ic, typeof r.flow === 'number' ? SHINES : '')}<span class="nm">${r.html || esc(r.name)}</span><span class="ds"></span>${ctlHTML(r, i)}${['hub', 'value', 'note'].includes(r.kind) ? '' : okHTML(typeof r.flow === 'number' ? SHINES : '')}</div>`).join('');
+  $('mcRail').hidden = !!def.norail;
   syncCard();
 }
 function syncCard() {   // every row shows its setting as it stands
@@ -3619,6 +3763,7 @@ function syncCard() {   // every row shows its setting as it stands
   const rows = $('mcRows').children;
   CARD.rows.forEach((r, i) => {
     const el = rows[i]; if (!el) return;
+    if (r.kind === 'tiles') { rowShow(el, !(r.hide && r.hide())); el.querySelectorAll('[data-tile]').forEach(c => { const e = EL[c.dataset.tile]; c.classList.toggle('on', e.on()); c.classList.toggle('dis', !!(e.dis && e.dis())); c.classList.toggle('held', !!(EDIT.held && EDIT.held.k === c.dataset.tile && EDIT.held.g === r.g)); c.classList.toggle('mine', PREFS.mine.includes(c.dataset.tile)); }); return; }
     const off = !!(r.on && !r.on.get()), shown = !(r.hide && r.hide()), lit = i === CARD.i && shown, dis = !!(r.dis && r.dis());
     rowShow(el, shown);
     el.classList.toggle('lit', lit); el.classList.toggle('off', off); el.classList.toggle('dis', dis); el.classList.toggle('clock', !!r.clock); el.classList.toggle('prime', !!(r.prime && r.prime() && !lit)); el.classList.toggle('tick', r.kind === 'tick'); el.classList.toggle('done', !!(r.done && r.done()));
@@ -3626,6 +3771,7 @@ function syncCard() {   // every row shows its setting as it stands
     if (r.flow == null && ic.dataset.is !== want) { ic.dataset.is = want; ic.innerHTML = want === 'mute' ? MUTED : r.ic.startsWith('<') ? r.ic : svg(r.ic); }
     const ds = el.querySelector('.ds'), d = text(r.desc) || ''; if (ds.textContent !== d) ds.textContent = d;
     if (r.kind === 'lvl') syncLvl(el, r, off);
+    else if (r.kind === 'group') { const b = el.querySelector('.big'), t = r.get(); if (b.textContent !== t) b.textContent = t; }
     else if (r.kind === 'seg') {
       if (r.lvl) { const sub = !!(r.sub && r.sub()); el.classList.toggle('sub', sub); el.classList.toggle('clock', sub); syncLvl(el, r.lvl, off); if (sub) ds.textContent = text(r.lvl.desc); }   // Set: the row is its slider; its words say the time
       const v = String(r.get()), k = Math.max(0, r.opts.findIndex(([o]) => String(o) === v)), seg = el.querySelector('.seg');
@@ -3637,10 +3783,10 @@ function syncCard() {   // every row shows its setting as it stands
     } else if (r.kind === 'value') { const b = el.querySelector('.big'), t = r.get(); if (b.textContent !== t) b.textContent = t; }
     if (r.flow != null) flowSync(el, r);
   });
-  const bk = $('mcFoot').querySelector('[data-foot=back]'); if (bk) bk.classList.toggle('off', !CARDS[CARD.name].canBack());
-  const knob = $('mcRail').lastChild; if (knob) { knob.style.top = U(Math.max(0, CARD.i) * ROW); knob.style.opacity = CARD.i < 0 ? 0 : ''; }
+  const bk = $('mcNav').querySelector('[data-foot=back]'); if (bk) bk.classList.toggle('off', !CARDS[CARD.name].canBack());
+  railSync();
   fitIcons($('mc'));
-  const dn = $('mcFoot').querySelector('[data-foot=done]'); if (dn) dn.classList.toggle('ready', CARD.i < 0);   // Done's pill closes to its ring only while nothing is left lit
+  $('mcFoot').classList.toggle('ready', CARD.i < 0);   // nothing left lit: the foot's ring keeps a steady glow
   if (CARD.i === lastRow() && CARD.rows[CARD.i].kind !== 'text') { const k = JSON.stringify(PREFS) + JSON.stringify(CARD.pend); if (CARD.bkRow !== CARD.i) { CARD.bkRow = CARD.i; CARD.bk = k; } else if (k !== CARD.bk && changed()) { CARD.bk = k; finishRow(CARD.i); } }   // a change made on the last row finishes it: the ring goes to Done (arriving there is not a change; typing is not a finish, the check is)
 }
 function syncLvl(el, r, off) {   // a slider shows its setting; a stop time beside it as a clock
@@ -3650,7 +3796,20 @@ function syncLvl(el, r, off) {   // a slider shows its setting; a stop time besi
   const due = el.querySelector('.due'); if (due && document.activeElement !== due) due.value = hhmm(Date.now() + r.get() * MIN);   // the end, as a clock
   el.querySelector('.pct').textContent = off ? (r.fmt === pctOf ? '0%' : r.fmt(r.min)) : r.fmt(r.get());
 }
-const lastRow = () => { for (let i = CARD.rows.length - 1; i >= 0; i--) if (!(CARD.rows[i].hide && CARD.rows[i].hide())) return i; return -1; };
+const seen = (j) => !CARD.rows[j].part && !(CARD.rows[j].hide && CARD.rows[j].hide());   // a row you can be on: shown, and not a group's tiles
+const lastRow = () => { for (let i = CARD.rows.length - 1; i >= 0; i--) if (seen(i)) return i; return -1; };
+const nextRow = (i, d = 1) => { for (let j = i + d; j >= 0 && j < CARD.rows.length; j += d) if (seen(j)) return j; return i; };
+// The rail: a mark for every row you can be on, where that row stands (a group's tiles push the rows under them down).
+function railSync() {
+  const rail = $('mcRail'); if (rail.hidden) return; const rows = $('mcRows').children, top = $('mcRows').offsetTop, at = [];
+  CARD.rows.forEach((r, j) => { if (seen(j) && rows[j]) at.push([j, rows[j].offsetTop]); });
+  const y0 = at.length ? at[0][1] : 0, y1 = at.length ? at[at.length - 1][1] : 0, key = at.map(a => a.join(':')).join(',');
+  rail.style.top = `${top + y0 + rows[0].offsetHeight / 2}px`; rail.style.height = `${y1 - y0}px`;
+  if (rail.dataset.at !== key) { rail.dataset.at = key; rail.innerHTML = at.map(([, y]) => `<i style="top:${y - y0}px"></i>`).join('') + '<b></b>'; }
+  const me = at.find(([j]) => j === CARD.i), knob = rail.lastChild; knob.style.top = `${me ? me[1] - y0 : 0}px`; knob.style.opacity = me ? '' : 0;
+  RAIL.at = at.map(([j, y]) => [j, y - y0]);
+}
+const RAIL = { at: [] };
 function recede() {   // the last row is finished: its ring draws off to the right and into Done, which keeps a steady glow; the row goes grey like the rest
   const el = $('mcRows').children[CARD.i], done = () => { if (CARD.i >= 0 && CARD.i === lastRow()) CARD.i = -1; syncCard(); };
   if (!el || lessMo()) { done(); return; }
@@ -3661,41 +3820,48 @@ function rowShow(el, shown) {   // a row that isn't there yet: kept out of sight
   if (shown === (el.dataset.vis === '1')) return;
   el.dataset.vis = shown ? 1 : 0; el.classList.remove('rise', 'fall');
   const ms = () => parseFloat(getComputedStyle(el).animationDuration) * 1000 + 50;   // the CSS owns the duration
-  if (shown) { el.classList.remove('gone'); el.classList.add('rise'); setTimeout(() => el.classList.remove('rise'), ms()); }
-  else { el.classList.add('fall'); setTimeout(() => { if (el.dataset.vis === '0') el.classList.add('gone'); el.classList.remove('fall'); }, ms()); }
+  if (shown) { el.classList.remove('gone'); el.classList.add('rise'); setTimeout(() => { el.classList.remove('rise'); railSync(); }, ms()); }
+  else { el.classList.add('fall'); setTimeout(() => { if (el.dataset.vis === '0') el.classList.add('gone'); el.classList.remove('fall'); railSync(); }, ms()); }
 }
-function finishRow(i) { if (i === lastRow()) recede(); else engageRow(i + 1); }
-function engageRow(i) { if (CARDS[CARD.name] && CARDS[CARD.name].moment) return; if (i >= 0 && i < CARD.rows.length && i !== CARD.i && !(CARD.rows[i].hide && CARD.rows[i].hide())) { CARD.i = i; syncCard(); } }
-function fitCard() {   // the card is three zones: the line, the gap, the pool; it ends where the pool ends
-  const mc = $('mc'); mc.style.top = `${$('line').offsetTop}px`; mc.style.height = `${$('pool').getBoundingClientRect().bottom - $('line').getBoundingClientRect().top}px`;
+function chooseSeg(i, v) {   // a choice made on a row. A row that opens another (opens: the index it opens, or -1 for none) shows it at that touch: the choice is not "a change on the last row", so nothing recedes
+  const r = CARD.rows[i];
+  if (!r.opens) { r.set(v); syncCard(); return; }
+  CARD.bkRow = -2; r.set(v); const n = r.opens(v); n >= 0 ? engageRow(n) : syncCard();
 }
-function placePill() {   // the title sits over the tile that opened it: left tiles flush left (20u in), Timer and Task and a moment centred, the right tile flush right
-  const mc = $('mc'), pill = $('mcPill'), m = mc.getBoundingClientRect(), u = m.width / CARD_W, def = CARDS[CARD.name], w = pill.offsetWidth;
-  const side = CARD.name === 'session' || def.moment || def.bot === 1 ? 'c' : def.tile === 5 || def.bot === 2 ? 'r' : 'l';
-  pill.style.left = `${side === 'c' ? (m.width - w) / 2 : side === 'r' ? m.width - w - 20 * u : 20 * u}px`;
+function finishRow(i) { if (i === lastRow()) recede(); else engageRow(nextRow(i)); }
+function engageRow(i) { if (CARDS[CARD.name] && CARDS[CARD.name].moment) return; const p = CARD.rows[i] && CARD.rows[i].part; if (p) { if (p === true) return; i = CARD.rows.indexOf(p); }   // a group's tiles: you are on the group
+  if (i >= 0 && i < CARD.rows.length && i !== CARD.i && !(CARD.rows[i].hide && CARD.rows[i].hide())) { CARD.i = i; syncCard(); } }
+function fitCard() {   // the card runs from the line down to where the weather row ends, just above the tools
+  const mc = $('mc'); mc.style.top = `${$('line').offsetTop}px`; mc.style.height = `${$('wxBar').getBoundingClientRect().bottom - $('line').getBoundingClientRect().top}px`;
 }
-// The foot: six columns that never move. Close, Help, Reset, Back, and Done two wide at the right; one a card doesn't have
-// leaves its column empty. A moment has no Close or Help: its answers are the way out, the way on in Done's place.
+// The bar and the foot (v71.5). The bar over the card: ‹ Back in the first column, ✕ Close in the last, the title between them: centred, one fixed width, only its words change (CSS).
+// The foot, a ringed ribbon at the card's bottom: Reset in the first column, the check at the far right (touch it at any time).
+// A column a card doesn't use stays empty. A moment has no bar: its answers are the way out, the way on in the check's place.
+const COL = CARD_W / 6;   // one of the six equal columns, in u
+function navHTML(name) {
+  const def = CARDS[name], blank = '<span class="cell blank"></span>', btn = (k, d, w) => `<button class="cell" data-foot="${k}" aria-label="${w}">${icon(d)}</button>`;
+  if (def.moment) return '';
+  return (def.back ? btn('back', ICON.left, 'Back') : blank) + blank + blank + blank + blank + btn('close', ICON.x, 'Close');
+}
 function footHTML(name) {
   const def = CARDS[name], blank = '<span class="cell blank"></span>';
   if (def.moment) { const a = MOMENT.answers, n = a.length, ans = (j) => (n - j >= 0 && j > 1 ? cell(`data-foot="ans" data-ans="${n - j}"`, a[n - j][2] || ICON.right, esc(a[n - j][0])) : blank);
-    return blank + blank + ans(3) + ans(2) + cell(`data-foot="done" data-ans="${n - 1}"`, ICON.check, esc(a[n - 1][0])); }
-  return cell('data-foot="close"', ICON.x, 'Close') + (name === 'help' ? blank : cell('data-foot="help"', ICON.ask, 'Help')) + (def.keys.length ? cell('data-foot="reset"', ICON.reset, 'Reset') : blank)
-    + (def.back ? cell('data-foot="back"', ICON.left, 'Back') : blank) + cell('data-foot="done"', ICON.check, 'Done');
+    return blank + blank + ans(3) + ans(2) + blank + cell(`data-foot="done" data-ans="${n - 1}"`, ICON.check, esc(a[n - 1][0])); }
+  return (def.keys.length ? cell('data-foot="reset"', ICON.reset, 'Reset') : blank) + blank + blank + blank + blank + cell('data-foot="done"', ICON.check, 'Done');
 }
 function openCard(name, push) {
   if (!CARDS[name]) return;
   if (CARD.name && push) CARD.stack.push({ name: CARD.name, i: CARD.i });
   else if (!CARD.name) CARD.stack = [];
-  CARD.name = name; CARD.i = CARDS[name].moment ? -1 : 0; CARD.bkRow = -2; CARD.pend = {}; CARD.stage = !!CARDS[name].stage; CARD.snap = JSON.stringify(PREFS); CARD.snapFair = S.fair;
+  CARD.name = name; CARD.i = CARDS[name].moment ? -1 : 0; CARD.bkRow = -2; CARD.pend = {}; CARD.stage = CARDS[name].stage || null; editEnd(); CARD.snap = JSON.stringify(PREFS); CARD.snapFair = S.fair;
   S.sheet = name; S.aiming = false; LINE.sub = null;
   $('mcPill').textContent = CARDS[name].keys.length ? `${CARDS[name].title} Settings` : CARDS[name].title;   // a card with settings says so; Menu, Help, Statistics and the moments are just themselves
-  $('mcFoot').innerHTML = footHTML(name);
-  $('mcFoot').querySelectorAll('button.cell').forEach(c => c.classList.add(['close', 'help', 'reset'].includes(c.dataset.foot) ? 'quiet' : 'pick'));
+  $('mcNav').innerHTML = navHTML(name); $('mcFoot').innerHTML = footHTML(name);
+  $('mc').querySelectorAll('#mcNav button.cell, #mcFoot button.cell').forEach(c => c.classList.add(['close', 'reset'].includes(c.dataset.foot) ? 'quiet' : 'pick'));   // Back and the check are blue: where to go; the rest are white
   $('mcPop').hidden = true; $('mc').classList.toggle('moment', !!CARDS[name].moment);
   if (CARDS[name].open) CARDS[name].open();
   const mc = $('mc'); mc.hidden = false; fitCard(); mc.classList.toggle('stars', !!CARDS[name].stars);   // Beta opens on the stars
-  cardRows(); placePill(); syncBars();
+  cardRows(); syncBars();
 }
 const changed = () => JSON.stringify(PREFS) !== CARD.snap || Object.keys(CARD.pend).some(k => CARD.pend[k] !== getPref(k));
 function revert() {   // Close: everything this card changed goes back
@@ -3711,7 +3877,7 @@ function cardBack() {   // to the card this one came from, or away
   openCard(prev.name, false); CARD.i = prev.i; syncCard();
 }
 function closeSheet() {   // everything away, as it stands (time's up, or Rest, closes the card too)
-  flowStop();
+  flowStop(); editEnd();
   const was = S.sheet; if (!was) return;
   CARD.name = null; CARD.stack = []; CARD.pend = {}; S.sheet = null; $('mc').hidden = true; $('mcPop').hidden = true; if (was === 'moment') S.card = false;
   try { canvas.focus({ preventScroll: true }); } catch (e) {}
@@ -3732,13 +3898,13 @@ const welcomeSoon = () => setTimeout(welcome, TIME.sweep * 1000);   // the breez
 function footAct(k, el) {
   const def = CARDS[CARD.name];
   if (def.moment) { if (k === 'done' || k === 'ans') { const a = MOMENT.answers[+el.dataset.ans]; hideCard(); if (a && a[1]) a[1](); } return; }   // a moment: only its answers
+  if (k === 'done' && EDIT.on) { editEnd(); return; }   // arranging: Done puts the grid away first
   if (k === 'done') { if (def.done) def.done(); else cardBack(); }
   else if (k === 'back') def.back();
   else if (k === 'close') askLeave(cardBack);
-  else if (k === 'help' && CARD.name !== 'help') openCard('help', true);
   else if (k === 'reset' && def.keys.length) popup({ title: `Reset ${def.title}?`, line: 'Every row goes back to how SoRen came.', back: `Back to ${def.title}`, act: 'Reset', go: () => {
     const place = PREFS.where;
-    for (const k2 of def.keys) { const d = JSON.parse(JSON.stringify(k2.split('.').reduce((o, p) => o[p], DEFAULTS))); if (CARD.stage) CARD.pend[k2] = d; else if (typeof d === 'object') { setPrefRaw(k2, d); } else setPref(k2, d); }   // through setPref, so every setting's side effect runs, as it does for a live change
+    for (const k2 of def.keys) { const d = JSON.parse(JSON.stringify(k2.split('.').reduce((o, p) => o[p], DEFAULTS))); if (staged(k2)) CARD.pend[k2] = d; else if (typeof d === 'object') { setPrefRaw(k2, d); } else setPref(k2, d); }   // through setPref, so every setting's side effect runs, as it does for a live change
     savePrefs(); sound.init(); if (place !== PREFS.where) newWorld(); if (CARD.name === 'session') { FLOW.fresh = true; flowOpen(); cardRows(); } CARD.i = 0; syncUI(); } });   // and the first row is the one lit again
 }
 // The wheel: drag it up or down, or touch the word above or below. One step per row of words.
@@ -3765,12 +3931,29 @@ function setPref(k, v) {   // a change takes effect everywhere, at once, and is 
   syncUI();
 }
 
+// Arranging (edit mode). Hold any tile: the card's grid shows (the six columns and the rows, no wiggle) and every tile can be
+// touched to pick it up. Touch another tile in the same group: the one in hand moves to its place. In All, a touch adds the
+// tile to Mine, or takes it out (gold: it is in Mine). Done, or holding again, puts the grid away. The top ribbon, the bar and the
+// foot, and the rows themselves are fixed. Each step is felt and heard: a detent as a tile lifts, a thock as it lands.
+const EDIT = { on: false, held: null };
+function editStart() { if (!CARD.name || CARDS[CARD.name].moment) return; EDIT.on = true; EDIT.held = null; $('mc').classList.add('edit'); feel('snap'); syncCard(); }
+function editEnd() { if (!EDIT.on) return; EDIT.on = false; EDIT.held = null; $('mc').classList.remove('edit'); syncCard(); }
+function editTap(g, k) {
+  if (g === 'library') { const m = PREFS.mine, j = m.indexOf(k); if (j >= 0) m.splice(j, 1); else if (m.length < 8) m.push(k); else { say('Mine is full', 'Eight is the most: take one out first'); return; } savePrefs(); feel(j >= 0 ? 'snap' : 'thock'); cardRows(); return; }
+  const h = EDIT.held;
+  if (!h || h.g !== g) { EDIT.held = { g, k }; feel('detent'); syncCard(); return; }   // picked up
+  EDIT.held = null; if (h.k === k) { syncCard(); return; }   // put back where it was
+  const r = CARD.rows.find(x => x.g === g && x.kind === 'tiles'), keys = g === 'mine' ? PREFS.mine : CARD.rows.filter(x => x.g === g && x.kind === 'tiles').flatMap(x => x.keys);
+  const list = keys.filter(x => x !== h.k); list.splice(list.indexOf(k) + (keys.indexOf(h.k) < keys.indexOf(k) ? 1 : 0), 0, h.k);   // it lands where you touched: before it moving up, after it moving down
+  if (g === 'mine') PREFS.mine = list; else { PREFS.order = { ...PREFS.order, [g]: list }; }
+  savePrefs(); feel('thock'); if (r) cardRows();
+}
 /* ---------- Touch ---------- */
 function logical(clientX, clientY) {   // screen to board: spheres breathe in place, so a tap lands where it looks
   const r = canvas.getBoundingClientRect();
   return { x: (clientX - r.left) * (LW / r.width), y: (clientY - r.top) * (LH / r.height), inside: clientX >= r.left - 18 && clientX <= r.right + 18 && clientY >= r.top - 18 && clientY <= r.bottom + 18 };
 }
-const allWx = { was: null };   // the Weather tile: all of it off, or back as it was
+const allWx = { was: null }, PRESS = { t: 0, x: 0, y: 0, fired: false };   // the Weather tile: all of it off, or back as it was
 function bind() {
   let pointerId = null, grab = 0;   // the dropper moves with your finger like a trackpad: by how far it slides, not to where it lands
   document.addEventListener('pointerdown', () => { sound.init(); S.lastInput = performance.now(); endWelcome(); if (S.intro) introSkip(); }, true);   // a tap anywhere finishes the opening, and the breeze
@@ -3834,9 +4017,11 @@ function bind() {
     severe: () => { S.severe = !S.severe; say(S.severe ? 'Severe weather' : 'Weather', S.severe ? 'Whatever is on runs at full strength' : 'Back to normal'); sound.whoosh(S.severe ? 0.8 : 0.3, 0); syncBars(); },
     deep: () => startSigh(), play: () => setMode('play'),
     pacer: () => setPref('pacer.on', !PREFS.pacer.on), drops: () => setPref('pacer.drops', !PREFS.pacer.drops),
-    introstart: () => { $('introGo').classList.add('on'); S.intro.eng = S.intro.t; resumeAsk(() => { introGo(); FLOW.fresh = true; openCard('session'); }); },   // the box turns green and the circle stops breathing; a game waiting is offered first
+    introstart: () => { $('introGo').classList.add('on'); S.intro.eng = S.intro.t; if (S.prev) { $('introTwo').innerHTML = cell('data-act="introresume"', ICON.play, 'Resume') + cell('data-act="intronew"', ICON.fwd, 'New'); document.body.classList.add('intro-two'); return; } introGo(); FLOW.fresh = true; openCard('session'); },
+    introresume: () => { const p = S.prev; document.body.classList.remove('intro-two'); introLeave('play'); loadPool(p); syncUI(); },   // Start, then the last game: Resume skips the plan
+    intronew: () => { document.body.classList.remove('intro-two'); introGo(); FLOW.fresh = true; openCard('session'); },   // the box turns green and the circle stops breathing; a game waiting is offered first
     introgo: () => introLeave('play'),   // Skip: a new game as it is, no question
-    introplay: () => resumeAsk(() => introLeave('play', true)),   // Play now: Zen for this game, no timer; a game waiting is offered first
+    introplay: () => introLeave('play', true),   // Play now: Zen for this game, no timer, a new game
     introcalm: () => setPref('calm', !PREFS.calm),
     compmenu: () => { LINE.sub = 'comp'; syncBars(); }, compoff: () => { LINE.sub = null; setPref('comp', false); },   // COMPETITION offers Leave Comp, with Cancel: nothing lost
     introrelax: () => introLeave('relax'),
@@ -3855,10 +4040,13 @@ function bind() {
       const f = t.closest('[data-foot]'); if (f) { footAct(f.dataset.foot, f); return; }
       const row = t.closest('[data-row]'); if (!row) return;
       const i = +row.dataset.row, r = CARD.rows[i], wasLit = i === CARD.i; engageRow(i);
+      const tl = t.closest('[data-tile]'); if (tl) { if (PRESS.fired) { PRESS.fired = false; return; } const k = tl.dataset.tile, e = EL[k];   // a tile: its element, made so (arranging: picked up, put down, added to Mine)
+        if (EDIT.on) editTap(r.g, k); else if (e && !(e.dis && e.dis())) { e.act(); feel('snap'); syncCard(); } return; }
+      const sw = t.closest('[data-sw]'); if (sw && r.on) { r.on.set(sw.dataset.sw.endsWith(':1')); feel('snap'); syncCard(); return; }   // a sound that's off: On brings its slider back at its level
       const op = t.closest('[data-opt]'); if (op && r.opt) { r.opt(op.dataset.opt); return; }   // the lone plus's folded-out options
       const tap = t.closest('.mrow > .ic'); if (tap && r.tap) { r.tap(); return; }
       if (t.closest('.nm') && r.words) { r.words(); return; }   // the words: a row that became its slider offers its choice again
-      const sg = t.closest('[data-seg]'); if (sg) { const [, j] = sg.dataset.seg.split(':').map(Number); r.set(r.opts[j][0]); syncCard(); return; }
+      const sg = t.closest('[data-seg]'); if (sg) { const [, j] = sg.dataset.seg.split(':').map(Number); chooseSeg(i, r.opts[j][0]); return; }
       const ok = t.closest('[data-ok]'); if (ok) { okTouch(i, ok); return; }
       if (r.kind === 'hub' && (wasLit || t.closest('.go'))) r.go();
       return;
@@ -3869,6 +4057,11 @@ function bind() {
     const tool = t.closest('[data-tool]'); if (tool) { useTool(tool.dataset.tool); return; }
     const sky = t.closest('[data-sky]'); if (sky) { const a = PREFS.atmo[sky.dataset.sky]; a.on = !a.on; savePrefs(); sound.init(); syncBars(); return; }
   });
+  // Hold a tile (0.6 s, the sweep) to arrange; a hold that moves more than a finger's width is a scroll or a slip, not a hold.
+  document.addEventListener('pointerdown', (e) => { const tl = e.target.closest && e.target.closest('#mc [data-tile]'); clearTimeout(PRESS.t); if (!tl) return; PRESS.x = e.clientX; PRESS.y = e.clientY; PRESS.fired = false;
+    PRESS.t = setTimeout(() => { PRESS.fired = true; EDIT.on ? editEnd() : editStart(); }, TIME.sweep * 1000); });
+  document.addEventListener('pointermove', (e) => { if (PRESS.t && Math.hypot(e.clientX - PRESS.x, e.clientY - PRESS.y) > 12) { clearTimeout(PRESS.t); PRESS.t = 0; } });
+  ['pointerup', 'pointercancel'].forEach(ev => document.addEventListener(ev, () => { clearTimeout(PRESS.t); PRESS.t = 0; }));
   // The rail: slide its handle up or down to move between rows. The wheel: drag through its words.
   let drag = null;
   document.addEventListener('pointerdown', (e) => {
@@ -3876,7 +4069,7 @@ function bind() {
     if (rail && CARD.rows.length > 1) { drag = { rail: rail.getBoundingClientRect() }; try { rail.setPointerCapture(e.pointerId); } catch (err) {} railTo(e.clientY); e.preventDefault(); }
     else if (wh) { const i = +wh.dataset.wheel; engageRow(i); drag = { wheel: i, y: e.clientY, k: +wh.dataset.k, moved: false, step: wh.offsetHeight / 2.6, top: wh.getBoundingClientRect() }; try { wh.setPointerCapture(e.pointerId); } catch (err) {} e.preventDefault(); }
   });
-  const railTo = (y) => { const r = drag.rail; engageRow(clamp(Math.round((y - r.top) / (r.height / Math.max(1, CARD.rows.length - 1))), 0, CARD.rows.length - 1)); };
+  const railTo = (y) => { const yy = y - drag.rail.top; let best = null; for (const [j, py] of RAIL.at) if (!best || Math.abs(py - yy) < Math.abs(best[1] - yy)) best = [j, py]; if (best) engageRow(best[0]); };   // the nearest row you can be on
   document.addEventListener('pointermove', (e) => {
     if (!drag) return;
     if (drag.rail) { railTo(e.clientY); return; }
@@ -3904,7 +4097,7 @@ function bind() {
     if (!CARD.name) return;
     if (e.key === 'Escape') footAct('close');
     else if (e.target.matches && e.target.matches('input')) return;
-    else if (e.key === 'ArrowDown' || e.key === 'ArrowUp') { e.preventDefault(); engageRow(clamp(CARD.i + (e.key === 'ArrowDown' ? 1 : -1), 0, CARD.rows.length - 1)); }
+    else if (e.key === 'ArrowDown' || e.key === 'ArrowUp') { e.preventDefault(); engageRow(nextRow(CARD.i, e.key === 'ArrowDown' ? 1 : -1)); }
     else if ((e.key === 'ArrowLeft' || e.key === 'ArrowRight') && CARD.rows[CARD.i] && CARD.rows[CARD.i].opts) { e.preventDefault(); const r = CARD.rows[CARD.i], k = r.opts.findIndex(([o]) => String(o) === String(r.get())); r.set(r.opts[clamp(k + (e.key === 'ArrowLeft' ? -1 : 1), 0, r.opts.length - 1)][0]); syncCard(); }
   });
   const flush = () => { savePrefs(); saveJournal(); savePool(); };
@@ -3915,7 +4108,7 @@ function bind() {
     updateWarmth(); syncBars(); if (S.mode === 'rest') requestWake(true);
   });
   window.addEventListener('pagehide', flush);
-  window.addEventListener('resize', () => { setupDPI(); if (CARD.name) { fitCard(); placePill(); } });
+  window.addEventListener('resize', () => { setupDPI(); if (CARD.name) fitCard(); });
 }
 function setupDPI() { const dpr = poolDPR(); canvas.width = Math.round(LW * dpr); canvas.height = Math.round(LH * dpr); ctx.setTransform(dpr, 0, 0, dpr, 0, 0); makeSprites(); }
 // The slider's handle: a blue ring round white, with ‹ › (or, on the rail, up and down).
