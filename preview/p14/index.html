@@ -9,17 +9,19 @@
    quiet, red erases. A ring's fill is its own colour at 30%; black over things comes in three tints, 30, 60 and 90%.
    Three speeds: quick (a state changes), sweep (things move), settle (things come to rest); long, two settles, is the wash. */
 :root {
-  color-scheme: dark;
+  color-scheme: light;
   --u: calc(min(100vw, 460px) / 1206);
   --t1: calc(40 * var(--u)); --t2: calc(30 * var(--u));   /* headers and everything else: the only two sizes */
   --row: calc(132 * var(--u)); --cw: calc(1166 * var(--u));   /* a row, and the card width: named once */
-  --bg-top: #0d1b33; --bg-mid: #071020; --bg-bot: #03070e;
-  --ink: #f2f8fc; --ink-2: rgba(242, 248, 252, 0.72); --ink-3: rgba(242, 248, 252, 0.48);
-  --panel: rgba(12, 24, 46, 0.86); --line: rgba(186, 230, 253, 0.24);
-  --chip: rgba(var(--ink-rgb), 0.07); --chip-2: rgba(var(--ink-rgb), 0.11); --chip-line: rgba(var(--ink-rgb), 0.16);
-  --tint-1: rgba(0, 0, 0, 0.3); --tint-2: rgba(0, 0, 0, 0.6); --tint-3: rgba(0, 0, 0, 0.9);   /* black over things: three tints */
-  --on: 67, 194, 112; --pick: 80, 155, 255; --red: 255, 90, 80; --gold: 255, 200, 90; --ink-rgb: 242, 248, 252; --edge: rgb(56, 50, 46);
-  --black: rgb(9, 5, 4); --label-rgb: 179, 180, 182; --label: rgb(var(--label-rgb)); --dim: rgb(122, 124, 126);
+  /* The palette is the winter painting's (art/ART.md: Hope). Snow is the paper; the deep blue-violet of the evergreens' shade is
+     the ink and the darkest anything goes; sky blue is touch me; evergreen is on; honey is special; a dusk rose erases. */
+  --bg-top: #f3f6fb; --bg-mid: #e9eff7; --bg-bot: #dfe7f2;
+  --ink: #2b3150; --ink-2: rgba(43, 49, 80, 0.72); --ink-3: rgba(43, 49, 80, 0.48);
+  --panel: rgba(248, 250, 253, 0.9); --line: rgba(58, 126, 206, 0.24);
+  --chip: rgba(var(--ink-rgb), 0.06); --chip-2: rgba(var(--ink-rgb), 0.1); --chip-line: rgba(var(--ink-rgb), 0.14);
+  --tint-1: rgba(43, 49, 80, 0.3); --tint-2: rgba(43, 49, 80, 0.6); --tint-3: rgba(43, 49, 80, 0.9);   /* shade over things: three tints of the ink, never black */
+  --on: 38, 122, 100; --pick: 52, 118, 200; --red: 192, 78, 100; --gold: 206, 140, 52; --ink-rgb: 43, 49, 80; --edge: rgb(204, 214, 230);
+  --black: rgb(250, 251, 253); --label-rgb: 84, 92, 122; --label: rgb(var(--label-rgb)); --dim: rgb(126, 136, 160);
   --serif: ui-serif, 'New York', 'Iowan Old Style', Georgia, serif;
   --sans: -apple-system, BlinkMacSystemFont, system-ui, 'Segoe UI', Inter, sans-serif;
   --r-sm: calc(22 * var(--u)); --r-card: 16px; --r-key: 12px; --r: calc(34 * var(--u));
@@ -87,8 +89,8 @@ body.comp #game { filter: saturate(1.25) contrast(1.05); }
 /* The sentence line: one height, never wraps. The sentence on the left, the score and the time in their own sunken pill. */
 .line { flex: none; position: relative; height: calc(84 * var(--u)); display: flex; align-items: center; gap: calc(12 * var(--u)); transition: opacity var(--sweep); }
 .say { flex: none; max-width: calc(583 * var(--u)); display: flex; align-items: center; gap: calc(10 * var(--u)); font-weight: 700; font-style: italic; font-size: var(--t1); white-space: nowrap; color: var(--ink); }
-.say .w { height: calc(78 * var(--u)); display: inline-flex; align-items: center; padding: 0 calc(18 * var(--u)); border-radius: var(--r-sm); box-shadow: inset 0 0 0 calc(3 * var(--u)) rgb(var(--on)); background: var(--tint-1); }
-.sp { position: absolute; right: 0; left: calc(777 * var(--u)); height: calc(78 * var(--u)); display: flex; align-items: center; border-radius: var(--r-sm); background: var(--tint-2); box-shadow: inset 0 calc(3 * var(--u)) calc(8 * var(--u)) var(--tint-2), inset 0 0 0 calc(2 * var(--u)) var(--edge); font-weight: 700; font-size: var(--t1); }
+.say .w { height: calc(78 * var(--u)); display: inline-flex; align-items: center; padding: 0 calc(18 * var(--u)); border-radius: var(--r-sm); box-shadow: inset 0 0 0 calc(3 * var(--u)) rgb(var(--on)); background: rgba(var(--on), 0.12); }
+.sp { position: absolute; right: 0; left: calc(777 * var(--u)); height: calc(78 * var(--u)); display: flex; align-items: center; border-radius: var(--r-sm); background: var(--chip); box-shadow: inset 0 calc(3 * var(--u)) calc(8 * var(--u)) var(--tint-2), inset 0 0 0 calc(2 * var(--u)) var(--edge); font-weight: 700; font-size: var(--t1); }
 .sp .star { flex: none; width: calc(56 * var(--u)); height: calc(56 * var(--u)); margin-left: calc(11 * var(--u)); display: grid; place-items: center; border-radius: 50%; box-shadow: inset 0 0 0 calc(3 * var(--u)) rgb(var(--pick)); color: rgb(var(--pick)); font-size: var(--t2); }
 .sp #scoreVal { flex: 1; text-align: right; padding-right: calc(14 * var(--u)); }
 .sp .bar { flex: none; width: calc(2 * var(--u)); align-self: stretch; background: var(--edge); }
@@ -117,8 +119,8 @@ body.comp #game { filter: saturate(1.25) contrast(1.05); }
 .pool.dark #game { filter: grayscale(1) brightness(0.12); }
 .banner { pointer-events: none; position: absolute; top: 14%; left: 0; right: 0; padding: 0 16px; display: flex; flex-direction: column; align-items: center; gap: 5px; text-align: center; opacity: 0; transform: scale(0.96); transition: opacity var(--sweep), transform var(--sweep); }
 .banner.show { opacity: 1; transform: none; }
-#bannerTitle { font-weight: 700; font-style: italic; font-size: var(--t1); line-height: 1.1; text-shadow: 0 calc(3 * var(--u)) calc(14 * var(--u)) var(--tint-3); text-wrap: balance; }
-#bannerSub { padding: 3px 11px; border-radius: 10px; background: var(--tint-2); border: 1px solid var(--chip-line); font-size: var(--t2); text-wrap: balance; } #bannerSub:empty { display: none; }
+#bannerTitle { font-weight: 700; font-style: italic; font-size: var(--t1); line-height: 1.1; text-shadow: 0 0 calc(14 * var(--u)) rgba(255, 255, 255, 0.9); text-wrap: balance; }
+#bannerSub { padding: 3px 11px; border-radius: 10px; background: var(--panel); border: 1px solid var(--chip-line); font-size: var(--t2); text-wrap: balance; } #bannerSub:empty { display: none; }
 /* The opening's name and check box: they wait, then fade in together once the circle is at rest. */
 .soren, .go-in { position: absolute; left: 50%; opacity: 0; pointer-events: none; }
 .soren { top: calc(50% - 72 * var(--u)); transform: translateX(-50%); font: italic 700 calc(64 * var(--u))/1 var(--sans, inherit); color: var(--ink); white-space: nowrap; -webkit-text-stroke: calc(1.2 * var(--u)) rgba(var(--pick), 0.6);
@@ -518,7 +520,8 @@ for (const [key, p] of Object.entries(PLACES)) {   // what each record works out
   const top = hex(p.color), a = hex(p.accent), [far, cap, mid, near, tree, trunk] = hexes(p.land), el = Object.fromEntries((p.el || '').split(' ').filter(Boolean).map(e => { const [k, v] = e.split(':'); return [k, v ? +v : 1]; }));
   Object.assign(p, { key, far, cap, mid, near, tree, trunk, el, wings: hexes(p.wings), strike: p.strike || STRIKE,
     indoor: p.back === 'tray', space: p.back === 'space', dry: p.back === 'tray' || p.back === 'space', glass: p.back === 'tray', snow: p.ground === 'snow', grass: p.ground === 'meadow' || p.ground === 'field',
-    bgTop: p.color, bgMid: rgba(mix(top, [0, 0, 0], 0.38)), bgBot: rgba(mix(top, [0, 0, 0], 0.7)), accentSoft: rgba(a, 0.22), line: rgba(mix(a, [255, 255, 255], 0.35), 0.24),
+    // the page: snow, with a breath of the place's own colour (bgTop, bgMid, bgBot)
+    bgTop: rgba(mix(top, [247, 249, 252], 0.9)), bgMid: rgba(mix(top, [240, 244, 250], 0.88)), bgBot: rgba(mix(top, [228, 235, 245], 0.84)), accentSoft: rgba(a, 0.22), line: rgba(mix(a, [255, 255, 255], 0.35), 0.24),
     panel: rgba(mix(top, [0, 0, 0], 0.2), 0.87), deepRGB: mix(top, [0, 0, 0], 0.62), edgeRGB: hex(p.edge || p.accent), glow: p.glow || '240,246,255', mist: el.mist || 0,
     live: [p.back === 'sea' ? 'sea' : '', ...['waterfall', 'fire', 'owl', 'stars'].filter(k => el[k])].filter(Boolean),
     amb: { water: el.waterfall ? 1 : 0, exotic: el.canopy ? 1 : 0, fire: el.fire ? 1 : 0, owl: el.owl ? 1 : 0, ocean: p.back === 'sea' ? 1 : 0 } });
@@ -1749,16 +1752,17 @@ function drawScene(c, b, k) {
   c.fillStyle = glow; c.fillRect(0, 0, LW, HORIZON + 80); c.restore();   // the whole sky above the land, so the glow has no edge
   const sw = lessMo() ? 1 : 1 + 0.014 * b * k, cx = LW / 2, cy = HORIZON + 40;   // …and gently swells the land toward you (not with Reduce motion)
   c.save(); c.translate(cx, cy); c.scale(sw, sw); c.translate(-cx, -cy);
-  c.drawImage(scene.layer.far, 0, 0, LW, LH);
-  if (ENV.mist > 0.02) {   // mist lying in the valley between the far hills and the middle ground
+  const staged = SKYP.full && SKYP.cur && SKYP.key && SKYP.key.endsWith('stage') && w.key === 'winter';   // Winter's painted stage is up: the drawn land steps aside
+  if (!staged) c.drawImage(scene.layer.far, 0, 0, LW, LH);
+  if (!staged && ENV.mist > 0.02) {   // mist lying in the valley between the far hills and the middle ground
     const m = c.createLinearGradient(0, 168, 0, 236), col = mix(SKY.hor, [255, 255, 255], 0.3);
     m.addColorStop(0, rgba(col, 0)); m.addColorStop(0.5, rgba(col, ENV.mist)); m.addColorStop(1, rgba(col, 0));
     c.fillStyle = m; c.fillRect(0, 168, LW, 68);
   }
-  c.drawImage(scene.layer.mid, 0, 0, LW, LH);
+  if (!staged) c.drawImage(scene.layer.mid, 0, 0, LW, LH);
   c.save();
   const lean = lessMo() ? 0 : clamp(ENV.blow, -1.2, 1.2) * 0.025 + Math.sin(animTime * 0.7) * 0.003;
-  c.transform(1, 0, lean, 1, -lean * LH, 0); c.drawImage(scene.layer.near, 0, 0, LW, LH);
+  c.transform(1, 0, lean, 1, -lean * LH, 0); if (!staged) c.drawImage(scene.layer.near, 0, 0, LW, LH);
   c.restore();
   if (w.grass && Math.abs(ENV.blow) > 0.05 && !lessMo()) {   // wind moving through the grass in waves
     const a = Math.min(0.13, Math.abs(ENV.blow) * 0.11) * ENV.light, dir = Math.sign(ENV.blow), speed = 50 + 60 * Math.min(1.5, Math.abs(ENV.blow));
@@ -1780,7 +1784,7 @@ function drawScene(c, b, k) {
 // costs nothing. Each key hour has its own brush seed: the same painting every time, like a canvas. When the hour moves on, the
 // next one is painted ahead and the light cross-fades into it. The sun and moon still travel their arc on top; clouds, stars and
 // weather sit over it as before. Not for Stars or Celestial (their night is their own) or indoors.
-const SKYP = { key: null, cur: null, prev: null, fade: 1, job: null, jobKey: null, ms: 0 };
+const SKYP = { full: false, key: null, cur: null, prev: null, fade: 1, job: null, jobKey: null, ms: 0 };
 const HOPE = {   // the four moods of one emotion: overhead sky, the horizon's mint, the peach at the sun; pulls and air
   dawn:   { sky: [0.62, 0.72, 0.88], mint: [0.78, 0.94, 0.86], peach: [1.0, 0.82, 0.70], p: [0.30, 0.55, 0.6, 0.10], mintN: 420 },
   noon:   { sky: [0.50, 0.72, 0.92], mint: [0.80, 0.94, 0.90], peach: [1.0, 0.96, 0.88], p: [0.40, 0.50, 0.4, 0.08], mintN: 90 },
@@ -1815,8 +1819,8 @@ const rnd32 = (seed) => { let s = seed >>> 0; return () => ((s = (s * 1664525 + 
 const ksOf = (v) => { const r = Math.max(0.002, v / 255); return (1 - r) * (1 - r) / (2 * r); }, refOf = (k) => 255 * (1 + k - Math.sqrt(k * k + 2 * k));
 const mixKM = (a, b, t) => a.map((v, i) => refOf(ksOf(v) * (1 - t) + ksOf(b[i]) * t));   // colours mix like pigment, not like light
 // The painting itself: a generator, so it can be done a few strokes a frame.
-function* paintSky(cv, s, seed) {
-  const W = cv.width, H = cv.height, c = cv.getContext('2d'), sun0 = sunFor(s), m = HOPE[sun0.mood], rad = Math.PI / 180, HZ = HORIZON / 262, TOP = 52;
+function* paintSky(cv, s, seed, full) {   // full: the whole pool (Winter's stage, 42-stage.js); else the sky alone
+  const W = cv.width, H = cv.height, c = cv.getContext('2d'), sun0 = sunFor(s), m = HOPE[sun0.mood], rad = Math.PI / 180, HZ = HORIZON / (full ? LH : 262), TOP = 52;
   const e = sun0.e * rad, a = sun0.az * rad, sun = [Math.cos(e) * Math.sin(a), Math.sin(e), -Math.cos(e) * Math.cos(a)];
   // 1 and 2: the light, at a quarter size (a sky is smooth), then Hope over it
   const sw = Math.ceil(W / 4), sh = Math.ceil(H / 4), sm = document.createElement('canvas'); sm.width = sw; sm.height = sh; const sc = sm.getContext('2d'), img = sc.createImageData(sw, sh), [sp, mp, pp, air] = m.p;
@@ -1858,11 +1862,15 @@ function* paintSky(cv, s, seed) {
     [900, () => { const x = r() * W, y = H * (0.55 + r() * 0.45); sweep(x, y, (16 + r() * 22) * S, (4 + r() * 5) * S, loaded(x, y, 0.5), 0.65, 1, 4); }]];       // fine, where the eye goes
   for (const [n, f] of PASS) for (let i = 0; i < n; i++) { f(); if (i % 120 === 119) yield; }
   c.globalAlpha = 1;
-  const wet = document.createElement('canvas'); wet.width = W; wet.height = H; const wx = wet.getContext('2d'); wx.filter = `blur(${6 * S}px)`; wx.drawImage(cv, 0, 0); c.globalAlpha = 0.42; c.drawImage(wet, 0, 0); c.globalAlpha = 1;   // wet on wet
+  const MTN = { base: 0.405, lightLeft: sun0.az < 0, ranges: [{ top: 0.2, color: [150, 160, 196], mix: 0.55, snow: [250, 251, 255], shade: [178, 190, 222], mist: '232,238,246' }, { top: 0.27, color: [96, 108, 150], mix: 0.7, snow: [246, 249, 255], shade: [150, 164, 205], mist: '226,234,244' }] };
+  const pops = () => { for (let i = 0; i < 70; i++) { const x = r() * W, y = (full ? H * 0.36 : H) * (0.25 + r() * 0.75), q = at(x, y), g = (q[0] + q[1] + q[2]) / 3, a = (r() < .5 ? 1 : -1) * (0.5 + r() * 0.3), L = (30 + r() * 30) * S;   // pops of colour, left crisp
+    brush(x - Math.cos(a) * L / 2, y - Math.sin(a) * L / 2, x + Math.cos(a) * L / 2, y + Math.sin(a) * L / 2, x, y, q.map(v => clamp(g + (v - g) * 1.9, 0, 255)), 0.28 + r() * 0.2, (10 + r() * 8) * S, 0.8, 6); } };   // pops of colour belong to the sky: never on the mountains or the ground
+  pops();
+  if (full) { stageClouds(c, hx, r, S, at, W, H, 4); yield; stageMountains(c, hx, r, S, at, W, H, MTN); yield; c.globalAlpha = 1; }   // happy clouds, then the knife mountains into the wet sky
+  const wet = document.createElement('canvas'); wet.width = W; wet.height = H; const wx = wet.getContext('2d'); wx.filter = `blur(${6 * S}px)`; wx.drawImage(cv, 0, 0); c.save(); c.beginPath(); c.rect(0, 0, W, full ? H * 0.42 : H); c.clip(); c.globalAlpha = 0.42; c.drawImage(wet, 0, 0); c.restore(); c.globalAlpha = 1;   // wet on wet (the sky and the mountains, never the near ground)
   wx.filter = `blur(${1.2 * S}px)`; wx.clearRect(0, 0, W, H); wx.drawImage(hc, 0, 0); hx.globalAlpha = 1; hx.drawImage(wet, 0, 0); yield;
-  for (let i = 0; i < 70; i++) { const x = r() * W, y = H * (0.25 + r() * 0.75), q = at(x, y), g = (q[0] + q[1] + q[2]) / 3, a = (r() < .5 ? 1 : -1) * (0.5 + r() * 0.3), L = (30 + r() * 30) * S;   // pops of colour, left crisp
-    brush(x - Math.cos(a) * L / 2, y - Math.sin(a) * L / 2, x + Math.cos(a) * L / 2, y + Math.sin(a) * L / 2, x, y, q.map(v => clamp(g + (v - g) * 1.9, 0, 255)), 0.28 + r() * 0.2, (10 + r() * 8) * S, 0.8, 6); }
   c.globalAlpha = 1;
+  if (full) { yield; winterFore({ horizon: MTN.base, sunLeft: sun0.az < 0, friends: [[0.08, 0.2], [0.17, 0.15], [0.24, 0.11], [0.88, 0.1]], big: [0.8, 0.12, 0.84] })(c, hx, r, S, at, W, H); c.globalAlpha = 1; yield; }   // the tree line, the snow, the lake, the evergreens
   if (sun0.e > -2) { const gr = c.createRadialGradient(sx, sy, 0, sx, sy, sr * 7); gr.addColorStop(0, 'rgba(255,252,240,0.8)'); gr.addColorStop(0.15, 'rgba(255,250,236,0.45)'); gr.addColorStop(0.5, 'rgba(255,246,228,0.12)'); gr.addColorStop(1, 'rgba(255,246,228,0)'); c.fillStyle = gr; c.fillRect(0, 0, W, H); }   // the glow lifted back to the white (the disc itself travels on top)
   if (sun0.e < 6) { const gz = c.createLinearGradient(0, H * 0.45, 0, H); gz.addColorStop(0, 'rgba(255,190,140,0)'); gz.addColorStop(1, 'rgba(255,190,140,0.16)'); c.globalCompositeOperation = 'soft-light'; c.fillStyle = gz; c.fillRect(0, 0, W, H); c.globalCompositeOperation = 'source-over'; }   // a thin warm glaze, low
   yield;
@@ -1879,13 +1887,13 @@ function* paintSky(cv, s, seed) {
   c.putImageData(out, 0, 0);
 }
 // Which painting this moment wants: the sun's place on its arc, to the nearest of 24 steps through the day (night keeps 3).
-function skyKey() { const u = S.tod, s = (u - 0.8) / 2.4, q = s >= 0 && s <= 1 ? Math.round(s * 24) / 24 : s < 0 ? (s < -0.15 ? -0.3 : -0.08) : (s > 1.15 ? 1.3 : 1.08); return { s: q, k: `${q.toFixed(3)}|${poolDPR()}` }; }
+function skyKey() { const u = S.tod, s = (u - 0.8) / 2.4, q = s >= 0 && s <= 1 ? Math.round(s * 24) / 24 : s < 0 ? (s < -0.15 ? -0.3 : -0.08) : (s > 1.15 ? 1.3 : 1.08); const full = here().key === 'winter'; return { s: q, full, k: `${q.toFixed(3)}|${poolDPR()}|${full ? 'stage' : 'sky'}` }; }
 function stepPaint() {   // every frame: a few milliseconds of painting, if a painting is wanted; never more
   const want = skyKey();
-  if (want.k !== SKYP.key && want.k !== SKYP.jobKey) { const cv = document.createElement('canvas'); cv.width = Math.round(LW * poolDPR()); cv.height = Math.round(262 * poolDPR()); SKYP.job = { cv, it: paintSky(cv, want.s, 1000 + Math.round(want.s * 240)) }; SKYP.jobKey = want.k; }
+  if (want.k !== SKYP.key && want.k !== SKYP.jobKey) { const cv = document.createElement('canvas'); cv.width = Math.round(LW * poolDPR()); cv.height = Math.round((want.full ? LH : 262) * poolDPR()); SKYP.job = { cv, full: want.full, it: paintSky(cv, want.s, 1000 + Math.round(want.s * 240), want.full) }; SKYP.jobKey = want.k; }
   if (SKYP.job) {
     const t0 = performance.now();
-    while (performance.now() - t0 < 6) { if (SKYP.job.it.next().done) { SKYP.prev = SKYP.cur; SKYP.cur = SKYP.job.cv; SKYP.key = SKYP.jobKey; SKYP.job = null; SKYP.jobKey = null; SKYP.fade = SKYP.prev ? 0 : 1; break; } }
+    while (performance.now() - t0 < 6) { if (SKYP.job.it.next().done) { SKYP.prev = SKYP.full === SKYP.job.full ? SKYP.cur : null; SKYP.cur = SKYP.job.cv; SKYP.full = SKYP.job.full; SKYP.key = SKYP.jobKey; SKYP.job = null; SKYP.jobKey = null; SKYP.fade = SKYP.prev ? 0 : 1; break; } }
     SKYP.ms += performance.now() - t0;
   }
   if (SKYP.fade < 1) SKYP.fade = Math.min(1, SKYP.fade + 1 / (60 * 6));   // six seconds: light changes slowly
@@ -1893,10 +1901,104 @@ function stepPaint() {   // every frame: a few milliseconds of painting, if a pa
 function drawPainted(c) {   // the painting behind everything, cross-fading from the last one; false while the first is still wet
   const w = here(); if (w.night || w.dry) return false;
   stepPaint(); if (!SKYP.cur) return false;
-  if (SKYP.prev && SKYP.fade < 1) c.drawImage(SKYP.prev, 0, 0, LW, 262);
-  c.globalAlpha = SKYP.fade; c.drawImage(SKYP.cur, 0, 0, LW, 262); c.globalAlpha = 1;
+  const h = SKYP.full ? LH : 262; if (SKYP.prev && SKYP.fade < 1) c.drawImage(SKYP.prev, 0, 0, LW, h);
+  c.globalAlpha = SKYP.fade; c.drawImage(SKYP.cur, 0, 0, LW, h); c.globalAlpha = 1;
   return true;
 }
+/* ---------- The painted stage: Winter ---------- */
+// The rest of the winter painting, after the sky (41-paint.js), in Ross's order and the way art/ART.md records it: happy little
+// clouds; the knife mountains, into the wet sky; then crisp on top a tree line in the mist, the snow ground, a calm half-frozen lake
+// holding the sky upside down, his evergreen friends and the big tall lonely tree. Painted once on the phone, a little each frame.
+function stageClouds(c, hx, r, S, at, w, h, clouds) {
+  for (let k = 0; k < clouds; k++) {   // happy little clouds: the 2-inch brush tapped in little circles, white; then the bottoms blended soft
+    const cx = w * (0.12 + r() * 0.76), cy = h * (0.08 + r() * 0.2), cw = (70 + r() * 90) * S, ch = (16 + r() * 14) * S;
+    for (let d = 0; d < 70; d++) { const t = r(), x = cx + (t - .5) * cw, bump = Math.sin(t * Math.PI) * ch, y = cy - r() * bump + bump * 0.2, rr = (5 + r() * 9) * S * (0.6 + Math.sin(t * Math.PI) * 0.6), q = at(x, y);
+      c.globalAlpha = 0.18 + r() * 0.22; c.fillStyle = `rgb(${Math.min(255, q[0] + 50)},${Math.min(255, q[1] + 48)},${Math.min(255, q[2] + 40)})`; c.beginPath(); c.arc(x, y, rr, 0, 7); c.fill();
+      hx.globalAlpha = 0.25; hx.fillStyle = '#a0a0a0'; hx.beginPath(); hx.arc(x, y, rr * 0.6, 0, 7); hx.fill(); }
+    for (let d = 0; d < 14; d++) { const y = cy + ch * 0.25 + r() * 4 * S, x = cx + (r() - .5) * cw, L = (20 + r() * 40) * S, q = at(x, y + 10 * S);   // the bottom, pulled flat
+      c.globalAlpha = 0.25; c.strokeStyle = `rgb(${q[0]},${q[1]},${q[2]})`; c.lineWidth = 5 * S; c.beginPath(); c.moveTo(x - L / 2, y); c.lineTo(x + L / 2, y); c.stroke(); }
+  }
+}
+function stageMountains(c, hx, r, S, at, w, h, mtn) {
+  if (mtn) {   // Ross's winter mountains, into the wet sky (not on top of it). The knife: a roll of paint, an edge pushed in and scraped
+    // straight down. Snow: the knife again, white with a touch of blue, laid on the sunlit face of each peak following its angle,
+    // the edge broken where the knife skips; the shadow face a soft blue-grey. Pulled down into mist at the base. Far ranges lighter.
+    const base = mtn.base * h, lightLeft = mtn.lightLeft;
+    for (const rng of mtn.ranges) {
+      const top = rng.top * h, n = 64, P = new Array(n + 1);   // the ridge: midpoint displacement, a few big peaks and many small breaks
+      P[0] = base - (base - top) * (0.3 + r() * 0.3); P[n] = base - (base - top) * (0.3 + r() * 0.3);
+      const split = (i, j, amp) => { if (j - i < 2) return; const m = (i + j) >> 1; P[m] = (P[i] + P[j]) / 2 + (r() - .5) * amp; split(i, m, amp * 0.6); split(m, j, amp * 0.6); };
+      const pk = (n * (0.25 + r() * 0.5)) | 0; P[pk] = top + (base - top) * r() * 0.1;   // one big peak where Ross would put it, off centre
+      split(0, pk, (base - top) * 0.9); split(pk, n, (base - top) * 0.9);
+      { const lo = Math.min(...P), hi = Math.max(...P), foot = base - (base - top) * 0.15; for (let i = 0; i <= n; i++) P[i] = top + (P[i] - lo) / (hi - lo || 1) * (foot - top); }   // scaled, never cut: no flat tops
+      const X = (i) => i / n * w, col = mixKM(at(w / 2, top), rng.color, rng.mix);
+      c.globalAlpha = 1; c.beginPath(); c.moveTo(0, base + 4 * S); for (let i = 0; i <= n; i++) c.lineTo(X(i), P[i]); c.lineTo(w, base + 4 * S); c.closePath();   // the knife's edge
+      const g = c.createLinearGradient(0, top, 0, base); g.addColorStop(0, `rgb(${col[0] | 0},${col[1] | 0},${col[2] | 0})`); g.addColorStop(0.7, `rgba(${col[0] | 0},${col[1] | 0},${col[2] | 0},0.85)`); g.addColorStop(1, `rgba(${col[0] | 0},${col[1] | 0},${col[2] | 0},0.2)`);
+      c.fillStyle = g; c.fill(); c.save(); c.clip();
+      for (let x = 0; x < w; x += 3 * S) { const j = (r() - .5) * 14; c.globalAlpha = 0.35; c.fillStyle = `rgb(${col[0] + j | 0},${col[1] + j | 0},${col[2] + j | 0})`; c.fillRect(x, top, 2 * S, (base - top) * (0.4 + r() * 0.6)); }   // scraped straight down
+      for (let i = 1; i < n; i++) {   // each face: snow if it faces the sun, shadow if not
+        const x0 = X(i - 1), x1 = X(i), y0 = P[i - 1], y1 = P[i], downRight = y1 > y0, faceSun = downRight === !lightLeft ? false : true;
+        const sunlit = lightLeft ? !downRight : downRight, colr = sunlit ? rng.snow : rng.shade, depth = (base - Math.min(y0, y1)) * (sunlit ? 0.26 : 0.22) * (0.6 + r() * 0.5);
+        c.globalAlpha = sunlit ? 0.92 : 0.55; c.fillStyle = `rgb(${colr[0]},${colr[1]},${colr[2]})`; c.beginPath(); c.moveTo(x0, y0); c.lineTo(x1, y1);
+        for (let t = 1; t >= 0; t -= 0.2) { const yy = y0 + (y1 - y0) * t; c.lineTo(x0 + (x1 - x0) * t + (r() - .5) * 3 * S, yy + depth * (0.3 + r() * 0.7) * (1 - Math.abs(yy - Math.min(y0, y1)) / (Math.abs(y1 - y0) + 1) * 0.4)); }   // the knife skips: a broken lower edge
+        c.closePath(); c.fill();
+        hx.globalAlpha = sunlit ? 0.55 : 0.3; hx.fillStyle = sunlit ? '#dcdcdc' : '#9c9c9c'; hx.beginPath(); hx.moveTo(x0, y0); hx.lineTo(x1, y1); hx.lineTo(x1, y1 + depth * 0.5); hx.lineTo(x0, y0 + depth * 0.5); hx.closePath(); hx.fill();
+      }
+      c.restore();
+      const mist = c.createLinearGradient(0, base - (base - top) * 0.5, 0, base + 4 * S);   // tap the base: it melts into mist
+      mist.addColorStop(0, 'rgba(255,255,255,0)'); mist.addColorStop(1, `rgba(${rng.mist},0.95)`); c.globalAlpha = 1; c.fillStyle = mist; c.fillRect(0, base - (base - top) * 0.5, w, (base - top) * 0.5 + 6 * S);
+    }
+  }
+}
+const PINE = { dark: [44, 82, 80], mid: [78, 120, 106], lite: [128, 168, 146], snow: [250, 252, 255], snowSh: [196, 210, 232] };
+function evergreen(c, hx, r, S, x, base, H, Wd, sunLeft, k = 1, alpha = 1) {   // Ross's evergreen: the fan brush tapped from the tip down, branch by branch
+  const top = base - H, tap = (px, py, ang, len, col, a, w) => { c.globalAlpha = a * alpha; c.strokeStyle = `rgb(${col[0] | 0},${col[1] | 0},${col[2] | 0})`; c.lineWidth = w; c.lineCap = 'round';
+    c.beginPath(); c.moveTo(px, py); c.lineTo(px + Math.cos(ang) * len, py + Math.sin(ang) * len); c.stroke(); };
+  c.globalAlpha = alpha; c.strokeStyle = 'rgb(74,60,54)'; c.lineWidth = 2.4 * S * k; c.beginPath(); c.moveTo(x, base); c.lineTo(x, base - H * 0.1); c.stroke();   // the trunk's foot
+  const tiers = []; for (let y = top + 2 * S * k, gap = 2.5 * S * k; y < base - H * 0.08; y += gap, gap = Math.min(9 * S * k, gap * 1.06 + 0.25 * S * k)) tiers.push(y);
+  for (const pass of ['dark', 'light', 'snow']) for (const y of tiers) {
+    const t = (y - top) / H, half = Wd / 2 * Math.pow(t, 0.9) * (0.75 + r() * 0.4);
+    for (const dir of [-1, 1]) {
+      const L = half * (0.8 + r() * 0.35), droop = (0.18 + r() * 0.22) * L, sun = (dir < 0) === sunLeft, n = Math.max(4, L / (1.3 * S * k)) | 0;
+      for (let i = 0; i < n; i++) {
+        const u = i / n, px = x + dir * L * u + (r() - .5) * 1.5 * S * k, edge = y + droop * u * u, spread = (2 + 5 * (1 - u)) * S * k;
+        if (pass === 'dark') { const py = edge + r() * spread, j = (r() - .5) * 16; tap(px, py, Math.PI / 2 + dir * (0.3 + r() * 0.5), (2.5 + r() * 3) * S * k, [PINE.dark[0] + j, PINE.dark[1] + j, PINE.dark[2] + j], 0.8, (1.1 + r()) * S * k);
+          hx.globalAlpha = 0.5; hx.fillStyle = r() < 0.5 ? '#c0c0c0' : '#707070'; hx.fillRect(px, py, 1.3 * S * k, 1.3 * S * k); }
+        else if (pass === 'light' && r() < (sun ? 0.55 : 0.2)) { const py = edge + r() * spread * 0.4; tap(px, py, Math.PI / 2 + dir * 0.4, (1.6 + r() * 2.2) * S * k, sun ? PINE.lite : PINE.mid, sun ? 0.7 : 0.45, (1 + r() * 0.6) * S * k); }
+        else if (pass === 'snow' && r() < (sun ? 0.4 : 0.18) && u > 0.15) { const py = edge - 0.6 * S * k; tap(px, py, dir < 0 ? Math.PI - 0.15 : 0.15, (1.8 + r() * 2.6) * S * k, sun ? PINE.snow : PINE.snowSh, 0.9, (1.3 + r() * 0.9) * S * k);
+          hx.globalAlpha = 0.8; hx.fillStyle = '#eeeeee'; hx.fillRect(px, py - S, 2 * S * k, 1.4 * S * k); }
+      }
+    }
+  }
+  c.globalAlpha = 1;
+}
+function winterFore(opts) { return (c, hx, r, S, at, w, h) => {
+  const H0 = opts.horizon * h, sunLeft = opts.sunLeft;
+  for (let i = 0; i < 70; i++) { const x = r() * w, H = (14 + r() * 22) * S; evergreen(c, hx, r, S * 0.5, x, H0 + (6 + r() * 10) * S, H, H * 0.5, sunLeft, 1, 0.45); }   // the tree line in the mist
+  const m = c.createLinearGradient(0, H0 - 10 * S, 0, H0 + 22 * S); m.addColorStop(0, 'rgba(236,241,248,0)'); m.addColorStop(1, 'rgba(236,241,248,0.85)'); c.fillStyle = m; c.fillRect(0, H0 - 10 * S, w, 32 * S);
+  // the snow ground: laid first, white into soft blue, then long level strokes, white in the light, soft blue in the shade
+  const gg = c.createLinearGradient(0, H0 + 8 * S, 0, h); gg.addColorStop(0, 'rgb(232,238,247)'); gg.addColorStop(0.5, 'rgb(244,247,252)'); gg.addColorStop(1, 'rgb(226,234,246)'); c.globalAlpha = 1; c.fillStyle = gg; c.fillRect(0, H0 + 12 * S, w, h);
+  const fm = c.createLinearGradient(0, H0, 0, H0 + 24 * S); fm.addColorStop(0, 'rgba(232,238,247,0)'); fm.addColorStop(1, 'rgba(232,238,247,1)'); c.fillStyle = fm; c.fillRect(0, H0, w, 24 * S);
+  for (let n = 0; n < 260; n++) { const y = H0 + 16 * S + r() * (h - H0), x = r() * w, L = (40 + r() * 120) * S, shade = Math.sin(x / w * 5 + y / h * 9) > 0.35 || r() < 0.15, col = shade ? PINE.snowSh : [242 + r() * 10, 246 + r() * 8, 252];
+    c.globalAlpha = 0.28; c.strokeStyle = `rgb(${col[0] | 0},${col[1] | 0},${col[2] | 0})`; c.lineWidth = (8 + r() * 14) * S; c.lineCap = 'round'; c.beginPath(); c.moveTo(x - L / 2, y); c.quadraticCurveTo(x, y - (r() - .5) * 6 * S, x + L / 2, y + (r() - .5) * 4 * S); c.stroke();
+    hx.globalAlpha = 0.3; hx.strokeStyle = r() < .5 ? '#9a9a9a' : '#b4b4b4'; hx.lineWidth = 2 * S; hx.beginPath(); hx.moveTo(x - L / 2, y); hx.lineTo(x + L / 2, y); hx.stroke(); }
+  // the lake: still water holding the sky and the mountains upside down, pulled down soft; a light line where the water meets the far bank
+  const ly = H0 + 26 * S, lh = 80 * S, lx0 = w * 0.08, lx1 = w * 0.78;
+  c.save(); c.beginPath(); c.moveTo(lx0, ly); c.bezierCurveTo(lx0 + w * 0.15, ly - 6 * S, lx1 - w * 0.1, ly - 4 * S, lx1, ly + 2 * S); c.bezierCurveTo(lx1 + 20 * S, ly + lh * 0.6, lx1 - w * 0.2, ly + lh, w * 0.4, ly + lh * 0.95); c.bezierCurveTo(lx0 + 10 * S, ly + lh * 0.9, lx0 - 20 * S, ly + lh * 0.4, lx0, ly); c.closePath(); c.clip();
+  c.globalAlpha = 0.85; c.translate(0, ly * 2); c.scale(1, -1); c.drawImage(c.canvas, 0, ly - lh * 1.1, w, lh * 1.1, 0, ly - lh * 1.1, w, lh * 1.1); c.setTransform(1, 0, 0, 1, 0, 0);
+  const wb = c.createLinearGradient(0, ly, 0, ly + lh); wb.addColorStop(0, 'rgba(120,160,214,0.22)'); wb.addColorStop(1, 'rgba(88,132,196,0.38)'); c.setTransform(1, 0, 0, 1, 0, 0); c.globalAlpha = 1; c.fillStyle = wb; c.fillRect(0, ly - 8 * S, w, lh + 16 * S);   // a touch of blue in the water
+  for (let n = 0; n < 120; n++) { const x = lx0 + r() * (lx1 - lx0), y = ly + r() * lh, q = at(x, ly - (y - ly)); c.globalAlpha = 0.25; c.strokeStyle = `rgb(${q[0]},${q[1]},${q[2]})`; c.lineWidth = 3 * S; c.beginPath(); c.moveTo(x, y); c.lineTo(x, y + (6 + r() * 12) * S); c.stroke(); }   // pulled straight down: reflections
+  for (let n = 0; n < 40; n++) { const x = lx0 + r() * (lx1 - lx0), y = ly + r() * lh, L = (14 + r() * 50) * S; c.globalAlpha = 0.5; c.strokeStyle = 'rgb(246,250,255)'; c.lineWidth = 1 * S; c.beginPath(); c.moveTo(x - L / 2, y); c.lineTo(x + L / 2, y); c.stroke(); }   // water lines, a light swipe
+  for (let n = 0; n < 60; n++) { const edge = r() < .5, x = edge ? lx0 + r() * (lx1 - lx0) * 0.35 : lx1 - r() * (lx1 - lx0) * 0.3, y = ly + lh * (0.55 + r() * 0.4); c.globalAlpha = 0.55; c.fillStyle = r() < .7 ? 'rgb(240,246,252)' : 'rgb(206,220,238)'; c.beginPath(); c.ellipse(x, y, (10 + r() * 26) * S, (2 + r() * 3) * S, 0, 0, 7); c.fill(); }   // half frozen: ice at the edges
+  c.restore();
+  c.globalAlpha = 0.9; c.strokeStyle = 'rgb(240,245,251)'; c.lineWidth = 2 * S; c.beginPath(); c.moveTo(lx0, ly); c.bezierCurveTo(lx0 + w * 0.15, ly - 6 * S, lx1 - w * 0.1, ly - 4 * S, lx1, ly + 2 * S); c.stroke();   // the far bank's light edge
+  for (let n = 0; n < 160; n++) { const t = r(), x = w * 0.4 + (r() - .5) * w * 0.9, y = ly + lh * (0.9 + r() * 0.25); c.globalAlpha = 0.6; c.strokeStyle = r() < .3 ? `rgb(${PINE.snowSh.join(',')})` : 'rgb(248,250,254)'; c.lineWidth = (4 + r() * 6) * S; c.beginPath(); c.moveTo(x - 20 * S, y); c.lineTo(x + 20 * S, y + (r() - .5) * 4 * S); c.stroke(); }   // the near snow bank
+  // his evergreen friends, then the big tall lonely tree, in front
+  for (const [fx, fh] of opts.friends) evergreen(c, hx, r, S, fx * w, h * (0.6 + fh * 0.08), h * fh, h * fh * 0.42, sunLeft);
+  const [bx, bt, bb] = opts.big; evergreen(c, hx, r, S, bx * w, bb * h, (bb - bt) * h, (bb - bt) * h * 0.36, sunLeft, 1.3);
+  for (let n = 0; n < 9; n++) { const left = n < 5, x = left ? w * (0.02 + r() * 0.2) : w * (0.66 + r() * 0.3), y = h * (0.9 + r() * 0.08), Hh = (26 + r() * 30) * S; evergreen(c, hx, r, S, x, y, Hh, Hh * 0.75, sunLeft, 0.8); }   // little snowy shrubs, near
+  c.globalAlpha = 1;
+}; }
 /* ---------- Weather particles ---------- */
 // One fixed pool per kind; the scene's level for that kind (0–1) sets how many are active. Creatures and leaves are kept a
 // little sparse (FEEL.life). Reduce motion: rain and snow come half as thick and half as fast.
@@ -3702,7 +3804,7 @@ function tickBars() {   // every frame: the score and its glow, your time runnin
   const at = NUDGE[S.nudged]; if (half[0] && at && S.playT >= at * 60 && !S.planned && !tasks().length) { S.nudged++; half[0].classList.remove('nudge'); void half[0].offsetWidth; half[0].classList.add('nudge'); }   // playing with no plan: a blue ring fades from Task, at set minutes, never more
   if (half[1]) { const p = run ? clamp(goalLeft() / S.goal.total, 0, 1) : -1; half[1].classList.toggle('arc', p >= 0); half[1].classList.toggle('cw', !!(run && S.goal.cw)); if (p >= 0) half[1].style.setProperty('--p', p.toFixed(3)); }
 }
-function applySeason() {   // the page takes the place's colours; the ribbons stay gloss black
+function applySeason() {   // the page takes a breath of the place's colour; the ribbons stay snow
   const s = here(), root = document.documentElement.style;
   for (const [v, val] of [['--bg-top', s.bgTop], ['--bg-mid', s.bgMid], ['--bg-bot', s.bgBot], ['--panel', s.panel], ['--line', s.line]]) root.setProperty(v, val);
   BAR.bot = BAR.wx = BAR.line = ''; if ($('topBar').firstChild) syncBars();
