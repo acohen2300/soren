@@ -1623,9 +1623,10 @@ const CLOUDS = Array.from({ length: 10 }, (_, i) => ({ x: (i * 97) % (LW + 160) 
 const flock = { on: false, x: 0, y: 0, dir: 1, t: 20 };
 const skyArc = (s) => [30 + s * 320, HORIZON + 8 - Math.sin(s * Math.PI) * 88];   // the one arc the sun and the moon share
 function drawSky(c, b, k) {
-  const w = here(), g = c.createLinearGradient(0, 0, 0, HORIZON + 30);
-  g.addColorStop(0, rgba(SKY.top)); g.addColorStop(0.6, rgba(SKY.mid)); g.addColorStop(1, rgba(SKY.hor));
-  c.fillStyle = g; c.fillRect(0, 0, LW, 262);   // the land covers everything below
+  const w = here();
+  if (!drawPainted(c)) { const g = c.createLinearGradient(0, 0, 0, HORIZON + 30);   // the painted sky (41-paint.js); until it's dry, the plain one
+    g.addColorStop(0, rgba(SKY.top)); g.addColorStop(0.6, rgba(SKY.mid)); g.addColorStop(1, rgba(SKY.hor));
+    c.fillStyle = g; c.fillRect(0, 0, LW, 262); }   // the land covers everything below
   const open = 1 - ENV.cover;
   if (w.el.stars) drawConstellations(c, open * SKY.stars);
   else if (SKY.stars * open > 0.02) { c.globalAlpha = SKY.stars * open; c.drawImage(SPR.stars, 0, 0, LW, HORIZON); c.globalAlpha = 1; }
@@ -1770,6 +1771,131 @@ function drawScene(c, b, k) {
   c.restore();
   for (const live of w.live) LIVE[live](c);   // what moves in the scene itself: a fire, a waterfall, the waves, an owl, a shooting star
   if (S.lit > 0.01) { c.save(); c.globalCompositeOperation = 'lighter'; c.fillStyle = `rgba(190,205,235,${Math.min(0.2, S.lit * 0.2).toFixed(3)})`; c.fillRect(0, 0, LW, LH); c.restore(); }   // the whole world lights up
+}
+/* ---------- The painted sky ---------- */
+// The sky is painted, the way art/ART.md says: first as it is (sunlight scattering through clean winter air), then as it feels
+// (Hope: a fresh morning, pastel, no black), then in oil the way Bob Ross lays a sky (a lean underpainting on linen, broad to
+// fine strokes, his criss-cross X's, mint scumbled low, wet on wet, a few pops of colour, raking light). It is painted on the
+// phone, a little each frame so play never stutters, once for each key hour; then it hangs behind everything as a picture and
+// costs nothing. Each key hour has its own brush seed: the same painting every time, like a canvas. When the hour moves on, the
+// next one is painted ahead and the light cross-fades into it. The sun and moon still travel their arc on top; clouds, stars and
+// weather sit over it as before. Not for Stars or Celestial (their night is their own) or indoors.
+const SKYP = { key: null, cur: null, prev: null, fade: 1, job: null, jobKey: null, ms: 0 };
+const HOPE = {   // the four moods of one emotion: overhead sky, the horizon's mint, the peach at the sun; pulls and air
+  dawn:   { sky: [0.62, 0.72, 0.88], mint: [0.78, 0.94, 0.86], peach: [1.0, 0.82, 0.70], p: [0.30, 0.55, 0.6, 0.10], mintN: 420 },
+  noon:   { sky: [0.50, 0.72, 0.92], mint: [0.80, 0.94, 0.90], peach: [1.0, 0.96, 0.88], p: [0.40, 0.50, 0.4, 0.08], mintN: 90 },
+  golden: { sky: [0.58, 0.72, 0.88], mint: [0.84, 0.93, 0.82], peach: [1.0, 0.86, 0.62], p: [0.30, 0.45, 0.6, 0.08], mintN: 90 },
+  dusk:   { sky: [0.56, 0.58, 0.82], mint: [0.80, 0.86, 0.90], peach: [0.98, 0.78, 0.80], p: [0.35, 0.35, 0.5, 0.06], mintN: 260 }
+};
+const SKY_FLOOR = [0.30, 0.38, 0.46];   // no black, ever: the darkest the sky goes is this soft blue-violet
+// The sun's place for a key: elevation from its arc (the arc's top is a winter noon at 41° N, ~25°), across the view by its x.
+function sunFor(s) {
+  const e = s >= 0 && s <= 1 ? 26.5 * Math.sin(s * Math.PI) - 1.5 : -1.5 - 14 * Math.min(1, (s < 0 ? -s : s - 1) * 3), x = 30 + clamp(s, -0.1, 1.1) * 320;
+  const mood = e > 12 ? 'noon' : s < 0.5 ? 'dawn' : e > 1 ? 'golden' : 'dusk';
+  const ex = e > 20 ? 1.6 : e > 6 ? 1.6 + (20 - e) / 14 * 0.6 : e > 0 ? 2.2 + (6 - e) / 6 * 1.8 : 4 * Math.pow(10, Math.min(1.6, -e / 4));   // the eye adjusting: brighter as the light goes
+  return { e, az: (x / LW - 0.5) * 70, mood, ex };
+}
+// 1 As it is: Nishita single scattering (Rayleigh, Mie, ozone).
+const AIR = { RE: 6360e3, RA: 6420e3, HR: 7994, HM: 1200, BR: [5.8e-6, 13.5e-6, 33.1e-6], BM: 4e-6, G: 0.8, BO: [0.65e-6, 1.881e-6, 0.085e-6] };
+function rayHit(o, d, r) { const b = 2 * (o[0] * d[0] + o[1] * d[1] + o[2] * d[2]), c = o[0] * o[0] + o[1] * o[1] + o[2] * o[2] - r * r, D = b * b - 4 * c; if (D < 0) return null; const q = Math.sqrt(D); return [(-b - q) / 2, (-b + q) / 2]; }
+function scatter(d, sun) {
+  const A = AIR, o = [0, A.RE + 2, 0], t = rayHit(o, d, A.RA), g = rayHit(o, d, A.RE), tMax = g && g[0] > 0 ? g[0] : t[1], N = 14, ds = tMax / N;
+  const mu = d[0] * sun[0] + d[1] * sun[1] + d[2] * sun[2], pR = 3 / (16 * Math.PI) * (1 + mu * mu), pM = 3 / (8 * Math.PI) * ((1 - A.G * A.G) * (1 + mu * mu)) / ((2 + A.G * A.G) * Math.pow(1 + A.G * A.G - 2 * A.G * mu, 1.5));
+  let oR = 0, oM = 0; const sR = [0, 0, 0], sM = [0, 0, 0];
+  for (let i = 0; i < N; i++) {
+    const p = [o[0] + d[0] * ds * (i + .5), o[1] + d[1] * ds * (i + .5), o[2] + d[2] * ds * (i + .5)], h = Math.hypot(p[0], p[1], p[2]) - A.RE, hr = Math.exp(-h / A.HR) * ds, hm = Math.exp(-h / A.HM) * ds; oR += hr; oM += hm;
+    const tl = rayHit(p, sun, A.RA); if (!tl) continue; const M = 6, dl = tl[1] / M; let lR = 0, lM = 0, lit = true;
+    for (let j = 0; j < M; j++) { const q = [p[0] + sun[0] * dl * (j + .5), p[1] + sun[1] * dl * (j + .5), p[2] + sun[2] * dl * (j + .5)], hl = Math.hypot(q[0], q[1], q[2]) - A.RE; if (hl < 0) { lit = false; break; } lR += Math.exp(-hl / A.HR) * dl; lM += Math.exp(-hl / A.HM) * dl; }
+    if (!lit) continue;   // in the Earth's shadow: twilight is what's left
+    for (let k = 0; k < 3; k++) { const a = Math.exp(-((A.BR[k] + A.BO[k] * 6) * (oR + lR) + A.BM * 1.1 * (oM + lM))); sR[k] += a * hr; sM[k] += a * hm; }
+  }
+  return [0, 1, 2].map(k => 22 * (sR[k] * A.BR[k] * pR + sM[k] * A.BM * pM));
+}
+const rnd32 = (seed) => { let s = seed >>> 0; return () => ((s = (s * 1664525 + 1013904223) >>> 0) / 4294967296); };
+const ksOf = (v) => { const r = Math.max(0.002, v / 255); return (1 - r) * (1 - r) / (2 * r); }, refOf = (k) => 255 * (1 + k - Math.sqrt(k * k + 2 * k));
+const mixKM = (a, b, t) => a.map((v, i) => refOf(ksOf(v) * (1 - t) + ksOf(b[i]) * t));   // colours mix like pigment, not like light
+// The painting itself: a generator, so it can be done a few strokes a frame.
+function* paintSky(cv, s, seed) {
+  const W = cv.width, H = cv.height, c = cv.getContext('2d'), sun0 = sunFor(s), m = HOPE[sun0.mood], rad = Math.PI / 180, HZ = HORIZON / 262, TOP = 52;
+  const e = sun0.e * rad, a = sun0.az * rad, sun = [Math.cos(e) * Math.sin(a), Math.sin(e), -Math.cos(e) * Math.cos(a)];
+  // 1 and 2: the light, at a quarter size (a sky is smooth), then Hope over it
+  const sw = Math.ceil(W / 4), sh = Math.ceil(H / 4), sm = document.createElement('canvas'); sm.width = sw; sm.height = sh; const sc = sm.getContext('2d'), img = sc.createImageData(sw, sh), [sp, mp, pp, air] = m.p;
+  for (let y = 0; y < sh; y++) {
+    for (let x = 0; x < sw; x++) {
+      const el = Math.max(0.3, TOP * (1 - (y + .5) / (sh * HZ))) * rad, az = ((x + .5) / sw - .5) * 70 * rad, d = [Math.cos(el) * Math.sin(az), Math.sin(el), -Math.cos(el) * Math.cos(az)];
+      const L = scatter(d, sun), mu = d[0] * sun[0] + d[1] * sun[1] + d[2] * sun[2], low = Math.exp(-el / rad / 12), near = Math.exp((mu - 1) / 0.12), i = (y * sw + x) * 4;
+      for (let k = 0; k < 3; k++) {
+        const v = sun0.ex * L[k] * 0.6; let o = Math.pow(Math.min(1, (v * (2.51 * v + 0.03)) / (v * (2.43 * v + 0.59) + 0.14)), 1 / 2.2);   // ACES film curve
+        o = SKY_FLOOR[k] + (1 - SKY_FLOOR[k]) * o; o += (m.sky[k] - o) * sp * (1 - low); o += (m.mint[k] - o) * mp * low; o += (m.peach[k] - o) * pp * near; o += (1 - o) * air;
+        img.data[i + k] = 255 * Math.min(1, o);
+      }
+      img.data[i + 3] = 255;
+    }
+    if (y % 6 === 5) yield;
+  }
+  sc.putImageData(img, 0, 0); c.imageSmoothingQuality = 'high'; c.drawImage(sm, 0, 0, W, H); yield;
+  // 3 the oil, in the painter's order (art/ART.md: the signature, ross-v4)
+  const base = c.getImageData(0, 0, W, H).data, r = rnd32(seed), S = W / 800, at = (x, y) => { const i = ((Math.min(H - 1, Math.max(0, y | 0))) * W + Math.min(W - 1, Math.max(0, x | 0))) * 4; return [base[i], base[i + 1], base[i + 2]]; };
+  const hc = document.createElement('canvas'); hc.width = W; hc.height = H; const hx = hc.getContext('2d');
+  hx.fillStyle = '#7a7a7a'; hx.fillRect(0, 0, W, H); hx.globalAlpha = 0.5;   // the linen
+  for (let y = 0; y < H; y += 3) { hx.fillStyle = y % 6 ? '#868686' : '#6c6c6c'; hx.fillRect(0, y, W, 1.4); }
+  for (let x = 0; x < W; x += 3) { hx.fillStyle = x % 6 ? '#848484' : '#707070'; hx.fillRect(x, 0, 1.4, H); }
+  const sx = W * (.5 + sun0.az / 70), sy = H * HZ * (1 - sun0.e / TOP), sr = W * 0.022, flow = (x, y) => { const dx = x - sx, dy = y - sy, t = 0.3 * Math.max(0, 1 - Math.hypot(dx, dy) / (sr * 4)); return (Math.atan2(dy, dx) + Math.PI / 2) * t + Math.sin(y / H * 3 + x / W) * 0.08 * (1 - t); };
+  const loaded = (x, y, k = 0.4) => { const nb = at(x + (r() - .5) * 140, y + (r() - .5) * 100), j = (r() - .5) * 12; return mixKM(at(x, y), nb, r() * k).map(v => v + j); };
+  const brush = (x0, y0, x1, y1, mx, my, col, alpha, width, ridge, n) => {
+    c.globalAlpha = alpha; c.lineCap = 'round'; c.strokeStyle = `rgb(${col[0] | 0},${col[1] | 0},${col[2] | 0})`; c.lineWidth = width; c.beginPath(); c.moveTo(x0, y0); c.quadraticCurveTo(mx, my, x1, y1); c.stroke();
+    const L = Math.hypot(x1 - x0, y1 - y0) || 1, ux = (x1 - x0) / L, uy = (y1 - y0) / L;
+    for (let b = 0; b < n; b++) { const off = (b / Math.max(1, n - 1) - .5) * width * .85, ox = -uy * off, oy = ux * off, g = 128 + ridge * (r() - .35) * 160;
+      hx.globalAlpha = 0.5; hx.strokeStyle = `rgb(${g | 0},${g | 0},${g | 0})`; hx.lineWidth = (0.8 + r() * 1.6 * ridge + 0.4) * S; hx.lineCap = 'round'; hx.beginPath(); hx.moveTo(x0 + ox, y0 + oy); hx.quadraticCurveTo(mx + ox, my + oy, x1 + ox, y1 + oy); hx.stroke(); }
+  };
+  const sweep = (x, y, L, w, col, alpha, ridge, n) => { const a = flow(x, y) + (r() - .5) * 0.18, cx = Math.cos(a), sy2 = Math.sin(a), bend = (r() - .5) * 0.5;
+    brush(x - cx * L / 2, y - sy2 * L / 2, x + cx * L / 2, y + sy2 * L / 2, x - sy2 * L * bend * .3, y + cx * L * bend * .3, col, alpha, w, ridge, n); };
+  const PASS = [[380, () => { const x = r() * W, y = r() * H; sweep(x, y, (90 + r() * 90) * S, (24 + r() * 14) * S, loaded(x, y, 0.2), 0.42, 0.35, 7); }],   // lean underpainting
+    [1500, () => { const x = r() * W, y = r() * H; sweep(x, y, (36 + r() * 46) * S, (10 + r() * 8) * S, loaded(x, y), 0.55, 0.7, 5); }],                      // body
+    [420, () => { const x = r() * W, y = r() * H, up = 1 - y / H, L = (46 + r() * 40) * S, w = (24 + r() * 12) * S, a = (r() < .5 ? 1 : -1) * (0.5 + r() * 0.3), col = loaded(x, y, 0.3), dk = up * 8 * r();   // Ross's criss-cross X's
+      const cx = Math.cos(a), sy2 = Math.sin(a); brush(x - cx * L / 2, y - sy2 * L / 2, x + cx * L / 2, y + sy2 * L / 2, x, y, [col[0] - dk, col[1] - dk, col[2] - dk * 0.5], 0.34 + 0.16 * up, w, 0.45, 10); }],
+    [m.mintN, () => { const x = r() * W, y = H * (0.62 + r() * 0.36); sweep(x, y, (28 + r() * 40) * S, (5 + r() * 7) * S, mixKM(at(x, y), m.mint.map(v => v * 255), 0.55 + r() * 0.25), 0.32 + r() * 0.2, 0.8, 3); }],   // mint scumbled low
+    [900, () => { const x = r() * W, y = H * (0.55 + r() * 0.45); sweep(x, y, (16 + r() * 22) * S, (4 + r() * 5) * S, loaded(x, y, 0.5), 0.65, 1, 4); }]];       // fine, where the eye goes
+  for (const [n, f] of PASS) for (let i = 0; i < n; i++) { f(); if (i % 120 === 119) yield; }
+  c.globalAlpha = 1;
+  const wet = document.createElement('canvas'); wet.width = W; wet.height = H; const wx = wet.getContext('2d'); wx.filter = `blur(${6 * S}px)`; wx.drawImage(cv, 0, 0); c.globalAlpha = 0.42; c.drawImage(wet, 0, 0); c.globalAlpha = 1;   // wet on wet
+  wx.filter = `blur(${1.2 * S}px)`; wx.clearRect(0, 0, W, H); wx.drawImage(hc, 0, 0); hx.globalAlpha = 1; hx.drawImage(wet, 0, 0); yield;
+  for (let i = 0; i < 70; i++) { const x = r() * W, y = H * (0.25 + r() * 0.75), q = at(x, y), g = (q[0] + q[1] + q[2]) / 3, a = (r() < .5 ? 1 : -1) * (0.5 + r() * 0.3), L = (30 + r() * 30) * S;   // pops of colour, left crisp
+    brush(x - Math.cos(a) * L / 2, y - Math.sin(a) * L / 2, x + Math.cos(a) * L / 2, y + Math.sin(a) * L / 2, x, y, q.map(v => clamp(g + (v - g) * 1.9, 0, 255)), 0.28 + r() * 0.2, (10 + r() * 8) * S, 0.8, 6); }
+  c.globalAlpha = 1;
+  if (sun0.e > -2) { const gr = c.createRadialGradient(sx, sy, 0, sx, sy, sr * 7); gr.addColorStop(0, 'rgba(255,252,240,0.8)'); gr.addColorStop(0.15, 'rgba(255,250,236,0.45)'); gr.addColorStop(0.5, 'rgba(255,246,228,0.12)'); gr.addColorStop(1, 'rgba(255,246,228,0)'); c.fillStyle = gr; c.fillRect(0, 0, W, H); }   // the glow lifted back to the white (the disc itself travels on top)
+  if (sun0.e < 6) { const gz = c.createLinearGradient(0, H * 0.45, 0, H); gz.addColorStop(0, 'rgba(255,190,140,0)'); gz.addColorStop(1, 'rgba(255,190,140,0.16)'); c.globalCompositeOperation = 'soft-light'; c.fillStyle = gz; c.fillRect(0, 0, W, H); c.globalCompositeOperation = 'source-over'; }   // a thin warm glaze, low
+  yield;
+  // 4 raking light from the upper left across the paint, a wet sheen on the ridges
+  const Hd = hx.getImageData(0, 0, W, H).data, out = c.getImageData(0, 0, W, H), d = out.data;
+  for (let y = 1; y < H - 1; y++) {
+    for (let x = 1; x < W - 1; x++) {
+      const i = (y * W + x) * 4, dx = (Hd[i + 4] - Hd[i - 4]) / 255, dy = (Hd[i + W * 4] - Hd[i - W * 4]) / 255, nz = 1 / Math.hypot(dx * 3, dy * 3, 1), lit = (-dx * 3 * -0.6 + -dy * 3 * -0.6) * nz + nz * 0.53;
+      const shade = 1 + 0.13 * (lit - 0.53), spec = Math.pow(Math.max(0, lit), 28) * 0.25 * 255;
+      for (let k = 0; k < 3; k++) d[i + k] = Math.min(255, d[i + k] * shade + spec);
+    }
+    if (y % 40 === 39) yield;
+  }
+  c.putImageData(out, 0, 0);
+}
+// Which painting this moment wants: the sun's place on its arc, to the nearest of 24 steps through the day (night keeps 3).
+function skyKey() { const u = S.tod, s = (u - 0.8) / 2.4, q = s >= 0 && s <= 1 ? Math.round(s * 24) / 24 : s < 0 ? (s < -0.15 ? -0.3 : -0.08) : (s > 1.15 ? 1.3 : 1.08); return { s: q, k: `${q.toFixed(3)}|${poolDPR()}` }; }
+function stepPaint() {   // every frame: a few milliseconds of painting, if a painting is wanted; never more
+  const want = skyKey();
+  if (want.k !== SKYP.key && want.k !== SKYP.jobKey) { const cv = document.createElement('canvas'); cv.width = Math.round(LW * poolDPR()); cv.height = Math.round(262 * poolDPR()); SKYP.job = { cv, it: paintSky(cv, want.s, 1000 + Math.round(want.s * 240)) }; SKYP.jobKey = want.k; }
+  if (SKYP.job) {
+    const t0 = performance.now();
+    while (performance.now() - t0 < 6) { if (SKYP.job.it.next().done) { SKYP.prev = SKYP.cur; SKYP.cur = SKYP.job.cv; SKYP.key = SKYP.jobKey; SKYP.job = null; SKYP.jobKey = null; SKYP.fade = SKYP.prev ? 0 : 1; break; } }
+    SKYP.ms += performance.now() - t0;
+  }
+  if (SKYP.fade < 1) SKYP.fade = Math.min(1, SKYP.fade + 1 / (60 * 6));   // six seconds: light changes slowly
+}
+function drawPainted(c) {   // the painting behind everything, cross-fading from the last one; false while the first is still wet
+  const w = here(); if (w.night || w.dry) return false;
+  stepPaint(); if (!SKYP.cur) return false;
+  if (SKYP.prev && SKYP.fade < 1) c.drawImage(SKYP.prev, 0, 0, LW, 262);
+  c.globalAlpha = SKYP.fade; c.drawImage(SKYP.cur, 0, 0, LW, 262); c.globalAlpha = 1;
+  return true;
 }
 /* ---------- Weather particles ---------- */
 // One fixed pool per kind; the scene's level for that kind (0–1) sets how many are active. Creatures and leaves are kept a
