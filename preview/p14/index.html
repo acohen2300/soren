@@ -9,19 +9,17 @@
    quiet, red erases. A ring's fill is its own colour at 30%; black over things comes in three tints, 30, 60 and 90%.
    Three speeds: quick (a state changes), sweep (things move), settle (things come to rest); long, two settles, is the wash. */
 :root {
-  color-scheme: light;
+  color-scheme: dark;
   --u: calc(min(100vw, 460px) / 1206);
   --t1: calc(40 * var(--u)); --t2: calc(30 * var(--u));   /* headers and everything else: the only two sizes */
   --row: calc(132 * var(--u)); --cw: calc(1166 * var(--u));   /* a row, and the card width: named once */
-  /* The palette is the winter painting's (art/ART.md: Hope). Snow is the paper; the deep blue-violet of the evergreens' shade is
-     the ink and the darkest anything goes; sky blue is touch me; evergreen is on; honey is special; a dusk rose erases. */
-  --bg-top: #f3f6fb; --bg-mid: #e9eff7; --bg-bot: #dfe7f2;
-  --ink: #2b3150; --ink-2: rgba(43, 49, 80, 0.72); --ink-3: rgba(43, 49, 80, 0.48);
-  --panel: rgba(248, 250, 253, 0.9); --line: rgba(58, 126, 206, 0.24);
-  --chip: rgba(var(--ink-rgb), 0.06); --chip-2: rgba(var(--ink-rgb), 0.1); --chip-line: rgba(var(--ink-rgb), 0.14);
-  --tint-1: rgba(43, 49, 80, 0.3); --tint-2: rgba(43, 49, 80, 0.6); --tint-3: rgba(43, 49, 80, 0.9);   /* shade over things: three tints of the ink, never black */
-  --on: 38, 122, 100; --pick: 52, 118, 200; --red: 192, 78, 100; --gold: 206, 140, 52; --ink-rgb: 43, 49, 80; --edge: rgb(204, 214, 230);
-  --black: rgb(250, 251, 253); --label-rgb: 84, 92, 122; --label: rgb(var(--label-rgb)); --dim: rgb(126, 136, 160);
+  --bg-top: #0d1b33; --bg-mid: #071020; --bg-bot: #03070e;
+  --ink: #f2f8fc; --ink-2: rgba(242, 248, 252, 0.72); --ink-3: rgba(242, 248, 252, 0.48);
+  --panel: rgba(12, 24, 46, 0.86); --line: rgba(186, 230, 253, 0.24);
+  --chip: rgba(var(--ink-rgb), 0.07); --chip-2: rgba(var(--ink-rgb), 0.11); --chip-line: rgba(var(--ink-rgb), 0.16);
+  --tint-1: rgba(0, 0, 0, 0.3); --tint-2: rgba(0, 0, 0, 0.6); --tint-3: rgba(0, 0, 0, 0.9);   /* black over things: three tints */
+  --on: 67, 194, 112; --pick: 80, 155, 255; --red: 255, 90, 80; --gold: 255, 200, 90; --ink-rgb: 242, 248, 252; --edge: rgb(56, 50, 46);
+  --black: rgb(9, 5, 4); --label-rgb: 179, 180, 182; --label: rgb(var(--label-rgb)); --dim: rgb(122, 124, 126);
   --serif: ui-serif, 'New York', 'Iowan Old Style', Georgia, serif;
   --sans: -apple-system, BlinkMacSystemFont, system-ui, 'Segoe UI', Inter, sans-serif;
   --r-sm: calc(22 * var(--u)); --r-card: 16px; --r-key: 12px; --r: calc(34 * var(--u));
@@ -89,8 +87,8 @@ body.comp #game { filter: saturate(1.25) contrast(1.05); }
 /* The sentence line: one height, never wraps. The sentence on the left, the score and the time in their own sunken pill. */
 .line { flex: none; position: relative; height: calc(84 * var(--u)); display: flex; align-items: center; gap: calc(12 * var(--u)); transition: opacity var(--sweep); }
 .say { flex: none; max-width: calc(583 * var(--u)); display: flex; align-items: center; gap: calc(10 * var(--u)); font-weight: 700; font-style: italic; font-size: var(--t1); white-space: nowrap; color: var(--ink); }
-.say .w { height: calc(78 * var(--u)); display: inline-flex; align-items: center; padding: 0 calc(18 * var(--u)); border-radius: var(--r-sm); box-shadow: inset 0 0 0 calc(3 * var(--u)) rgb(var(--on)); background: rgba(var(--on), 0.12); }
-.sp { position: absolute; right: 0; left: calc(777 * var(--u)); height: calc(78 * var(--u)); display: flex; align-items: center; border-radius: var(--r-sm); background: var(--chip); box-shadow: inset 0 calc(3 * var(--u)) calc(8 * var(--u)) var(--tint-2), inset 0 0 0 calc(2 * var(--u)) var(--edge); font-weight: 700; font-size: var(--t1); }
+.say .w { height: calc(78 * var(--u)); display: inline-flex; align-items: center; padding: 0 calc(18 * var(--u)); border-radius: var(--r-sm); box-shadow: inset 0 0 0 calc(3 * var(--u)) rgb(var(--on)); background: var(--tint-1); }
+.sp { position: absolute; right: 0; left: calc(777 * var(--u)); height: calc(78 * var(--u)); display: flex; align-items: center; border-radius: var(--r-sm); background: var(--tint-2); box-shadow: inset 0 calc(3 * var(--u)) calc(8 * var(--u)) var(--tint-2), inset 0 0 0 calc(2 * var(--u)) var(--edge); font-weight: 700; font-size: var(--t1); }
 .sp .star { flex: none; width: calc(56 * var(--u)); height: calc(56 * var(--u)); margin-left: calc(11 * var(--u)); display: grid; place-items: center; border-radius: 50%; box-shadow: inset 0 0 0 calc(3 * var(--u)) rgb(var(--pick)); color: rgb(var(--pick)); font-size: var(--t2); }
 .sp #scoreVal { flex: 1; text-align: right; padding-right: calc(14 * var(--u)); }
 .sp .bar { flex: none; width: calc(2 * var(--u)); align-self: stretch; background: var(--edge); }
@@ -119,8 +117,8 @@ body.comp #game { filter: saturate(1.25) contrast(1.05); }
 .pool.dark #game { filter: grayscale(1) brightness(0.12); }
 .banner { pointer-events: none; position: absolute; top: 14%; left: 0; right: 0; padding: 0 16px; display: flex; flex-direction: column; align-items: center; gap: 5px; text-align: center; opacity: 0; transform: scale(0.96); transition: opacity var(--sweep), transform var(--sweep); }
 .banner.show { opacity: 1; transform: none; }
-#bannerTitle { font-weight: 700; font-style: italic; font-size: var(--t1); line-height: 1.1; text-shadow: 0 0 calc(14 * var(--u)) rgba(255, 255, 255, 0.9); text-wrap: balance; }
-#bannerSub { padding: 3px 11px; border-radius: 10px; background: var(--panel); border: 1px solid var(--chip-line); font-size: var(--t2); text-wrap: balance; } #bannerSub:empty { display: none; }
+#bannerTitle { font-weight: 700; font-style: italic; font-size: var(--t1); line-height: 1.1; text-shadow: 0 calc(3 * var(--u)) calc(14 * var(--u)) var(--tint-3); text-wrap: balance; }
+#bannerSub { padding: 3px 11px; border-radius: 10px; background: var(--tint-2); border: 1px solid var(--chip-line); font-size: var(--t2); text-wrap: balance; } #bannerSub:empty { display: none; }
 /* The opening's name and check box: they wait, then fade in together once the circle is at rest. */
 .soren, .go-in { position: absolute; left: 50%; opacity: 0; pointer-events: none; }
 .soren { top: calc(50% - 72 * var(--u)); transform: translateX(-50%); font: italic 700 calc(64 * var(--u))/1 var(--sans, inherit); color: var(--ink); white-space: nowrap; -webkit-text-stroke: calc(1.2 * var(--u)) rgba(var(--pick), 0.6);
@@ -520,8 +518,7 @@ for (const [key, p] of Object.entries(PLACES)) {   // what each record works out
   const top = hex(p.color), a = hex(p.accent), [far, cap, mid, near, tree, trunk] = hexes(p.land), el = Object.fromEntries((p.el || '').split(' ').filter(Boolean).map(e => { const [k, v] = e.split(':'); return [k, v ? +v : 1]; }));
   Object.assign(p, { key, far, cap, mid, near, tree, trunk, el, wings: hexes(p.wings), strike: p.strike || STRIKE,
     indoor: p.back === 'tray', space: p.back === 'space', dry: p.back === 'tray' || p.back === 'space', glass: p.back === 'tray', snow: p.ground === 'snow', grass: p.ground === 'meadow' || p.ground === 'field',
-    // the page: snow, with a breath of the place's own colour (bgTop, bgMid, bgBot)
-    bgTop: rgba(mix(top, [247, 249, 252], 0.9)), bgMid: rgba(mix(top, [240, 244, 250], 0.88)), bgBot: rgba(mix(top, [228, 235, 245], 0.84)), accentSoft: rgba(a, 0.22), line: rgba(mix(a, [255, 255, 255], 0.35), 0.24),
+    bgTop: p.color, bgMid: rgba(mix(top, [0, 0, 0], 0.38)), bgBot: rgba(mix(top, [0, 0, 0], 0.7)), accentSoft: rgba(a, 0.22), line: rgba(mix(a, [255, 255, 255], 0.35), 0.24),
     panel: rgba(mix(top, [0, 0, 0], 0.2), 0.87), deepRGB: mix(top, [0, 0, 0], 0.62), edgeRGB: hex(p.edge || p.accent), glow: p.glow || '240,246,255', mist: el.mist || 0,
     live: [p.back === 'sea' ? 'sea' : '', ...['waterfall', 'fire', 'owl', 'stars'].filter(k => el[k])].filter(Boolean),
     amb: { water: el.waterfall ? 1 : 0, exotic: el.canopy ? 1 : 0, fire: el.fire ? 1 : 0, owl: el.owl ? 1 : 0, ocean: p.back === 'sea' ? 1 : 0 } });
@@ -1887,7 +1884,7 @@ function* paintSky(cv, s, seed, full) {   // full: the whole pool (Winter's stag
   c.putImageData(out, 0, 0);
 }
 // Which painting this moment wants: the sun's place on its arc, to the nearest of 24 steps through the day (night keeps 3).
-function skyKey() { const u = S.tod, s = (u - 0.8) / 2.4, q = s >= 0 && s <= 1 ? Math.round(s * 24) / 24 : s < 0 ? (s < -0.15 ? -0.3 : -0.08) : (s > 1.15 ? 1.3 : 1.08); const full = here().key === 'winter'; return { s: q, full, k: `${q.toFixed(3)}|${poolDPR()}|${full ? 'stage' : 'sky'}` }; }
+function skyKey() { const u = S.tod, s = (u - 0.8) / 2.4, q = s >= 0 && s <= 1 ? Math.round(s * 24) / 24 : s < 0 ? (s < -0.15 ? -0.3 : -0.08) : (s > 1.15 ? 1.3 : 1.08); const full = false && here().key === 'winter'; return { s: q, full, k: `${q.toFixed(3)}|${poolDPR()}|${full ? 'stage' : 'sky'}` }; }
 function stepPaint() {   // every frame: a few milliseconds of painting, if a painting is wanted; never more
   const want = skyKey();
   if (want.k !== SKYP.key && want.k !== SKYP.jobKey) { const cv = document.createElement('canvas'); cv.width = Math.round(LW * poolDPR()); cv.height = Math.round((want.full ? LH : 262) * poolDPR()); SKYP.job = { cv, full: want.full, it: paintSky(cv, want.s, 1000 + Math.round(want.s * 240), want.full) }; SKYP.jobKey = want.k; }
@@ -3804,7 +3801,7 @@ function tickBars() {   // every frame: the score and its glow, your time runnin
   const at = NUDGE[S.nudged]; if (half[0] && at && S.playT >= at * 60 && !S.planned && !tasks().length) { S.nudged++; half[0].classList.remove('nudge'); void half[0].offsetWidth; half[0].classList.add('nudge'); }   // playing with no plan: a blue ring fades from Task, at set minutes, never more
   if (half[1]) { const p = run ? clamp(goalLeft() / S.goal.total, 0, 1) : -1; half[1].classList.toggle('arc', p >= 0); half[1].classList.toggle('cw', !!(run && S.goal.cw)); if (p >= 0) half[1].style.setProperty('--p', p.toFixed(3)); }
 }
-function applySeason() {   // the page takes a breath of the place's colour; the ribbons stay snow
+function applySeason() {   // the page takes the place's colours; the ribbons stay gloss black
   const s = here(), root = document.documentElement.style;
   for (const [v, val] of [['--bg-top', s.bgTop], ['--bg-mid', s.bgMid], ['--bg-bot', s.bgBot], ['--panel', s.panel], ['--line', s.line]]) root.setProperty(v, val);
   BAR.bot = BAR.wx = BAR.line = ''; if ($('topBar').firstChild) syncBars();
