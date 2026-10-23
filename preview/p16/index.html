@@ -15,13 +15,13 @@
    Three speeds: quick (a state changes), sweep (things move), settle (things come to rest); long, two settles, is the wash.
    Type: two sizes, 56 (headers, bold) and 45 (everything else): 14 px and up on the smallest phone, the floor the autism guidance
    sets, 17 px for the headers (Apple's body size). Reading text is upright; italic is kept for the status pills and titles.
-   Chrome: #121212-class grey, faintly tinted toward the place's sky; text off-white; every text pair 7:1 or better, every ring 3:1. */
+   Chrome: #121212-class grey; the page behind it is the sky (four, by the hour: 72-sky.js); text off-white; every text pair 7:1 or better, every ring 3:1. */
 :root {
   color-scheme: dark;
   --u: calc(min(100vw, 460px) / 1206);
   --t1: calc(56 * var(--u)); --t2: calc(45 * var(--u));   /* headers and everything else: the only two sizes */
   --row: calc(132 * var(--u)); --cw: calc(1166 * var(--u)); --line-h: calc(96 * var(--u));   /* a row, the card width, the status line: named once */
-  --bg-top: #1b1d21; --bg-mid: #161718; --bg-bot: #121212;
+  --bg-bot: #0a0e1e;   /* the page's foot colour: the sky's, set as it changes (the overscroll, the home bar) */
   --ink: rgb(var(--ink-rgb)); --ink-2: rgba(var(--ink-rgb), 0.78);
   --chip: rgba(var(--ink-rgb), 0.07); --chip-line: rgba(var(--ink-rgb), 0.16);
   --tint-1: rgba(0, 0, 0, 0.3); --tint-2: rgba(0, 0, 0, 0.6); --tint-3: rgba(0, 0, 0, 0.9);   /* black over things: three tints */
@@ -37,7 +37,7 @@ html, body { height: 100%; overflow: hidden; overscroll-behavior: none; }
 html { background: var(--bg-bot); }
 body {
   margin: 0; color: var(--ink); font: var(--t2) var(--sans);
-  background: var(--bg-bot) radial-gradient(circle at 50% 0%, var(--bg-top) 0%, var(--bg-mid) 55%, var(--bg-bot) 100%) fixed;
+  background: none;   /* the sky is the page: layer one, #sky */
   padding: calc(8px + env(safe-area-inset-top, 0px)) env(safe-area-inset-right, 0px) calc(8px + env(safe-area-inset-bottom, 0px)) env(safe-area-inset-left, 0px);   /* the notch, the island and the home bar: nothing sits under them */
   -webkit-tap-highlight-color: transparent; -webkit-user-select: none; user-select: none; -webkit-touch-callout: none; -webkit-text-size-adjust: 100%;
 }
@@ -49,7 +49,8 @@ button.cell:active:not(:disabled), .pill:active, .cancel:active { transform: sca
 .num { font-variant-numeric: tabular-nums; }
 
 /* The five zones. The weather line always keeps a full ribbon's height, open or folded, so the pool never changes size. */
-.app { position: relative; height: 100%; width: calc(1206 * var(--u)); margin: 0 auto; padding: 0 calc(20 * var(--u)); display: flex; flex-direction: column; justify-content: center; gap: calc(18 * var(--u)); }
+#sky { position: fixed; inset: 0; z-index: 0; pointer-events: none; overflow: hidden; background: #0a0e1e; } #sky canvas { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }   /* layer one: the page's one background (72-sky.js) */
+.app { z-index: 1; position: relative; height: 100%; width: calc(1206 * var(--u)); margin: 0 auto; padding: 0 calc(20 * var(--u)); display: flex; flex-direction: column; justify-content: center; gap: calc(18 * var(--u)); }
 .pool-wrap { flex: none; display: grid; place-items: center; }
 body.rm button, body.rm .pill, body.rm .cancel { transition: none; }
 
@@ -114,7 +115,6 @@ body.comp #game { filter: saturate(1.25) contrast(1.05); }
 .compw { flex: none; height: calc(60 * var(--u)); padding: 0 calc(18 * var(--u)); display: inline-flex; align-items: center; border-radius: var(--r-sm); background: rgb(var(--ink-rgb)); color: rgb(var(--red-deep)); font-weight: 700; font-style: italic; font-size: var(--t2); white-space: nowrap; }
 .line.comp .sp { background: rgb(var(--ink-rgb)); color: rgb(var(--red-deep)); box-shadow: none; } .line.comp .sp .star { box-shadow: inset 0 0 0 calc(3 * var(--u)) rgb(var(--red-deep)); color: rgb(var(--red-deep)); }
 .line.comp .sp #clock { color: rgb(var(--red-deep)); } .line.comp .sp .bar { background: rgba(var(--red-deep), 0.3); }
-.sub-menu { position: absolute; inset: 0; display: flex; align-items: center; justify-content: flex-end; gap: calc(14 * var(--u)); border-radius: var(--r-sm); background: var(--black); }
 
 /* The pool: one fixed outline, as large as the space allows at its own shape. Its glow is drawn on the canvas. */
 .pool { position: relative; width: min(var(--cw), calc((100vh - 16px - env(safe-area-inset-top, 0px) - env(safe-area-inset-bottom, 0px) - var(--chrome, calc(700 * var(--u)))) * 380 / 490));
@@ -127,18 +127,14 @@ body.comp #game { filter: saturate(1.25) contrast(1.05); }
 #bannerTitle { font-weight: 700; font-style: italic; font-size: var(--t1); line-height: 1.1; text-shadow: 0 calc(3 * var(--u)) calc(14 * var(--u)) var(--tint-3); text-wrap: balance; }
 #bannerSub { padding: 3px 11px; border-radius: 10px; background: var(--tint-2); border: 1px solid var(--chip-line); font-size: var(--t2); text-wrap: balance; } #bannerSub:empty { display: none; }
 /* The opening's name and check box: they wait, then fade in together once the circle is at rest. */
-.soren, .go-in { position: absolute; left: 50%; opacity: 0; pointer-events: none; }
+.soren { position: absolute; left: 50%; opacity: 0; pointer-events: none; }
 .soren { top: calc(50% - 72 * var(--u)); transform: translateX(-50%); font: italic 700 calc(88 * var(--u))/1 var(--sans, inherit); color: var(--ink); white-space: nowrap; -webkit-text-stroke: calc(1.2 * var(--u)) rgba(var(--pick), 0.6);
   text-shadow: 0 0 calc(10 * var(--u)) rgba(var(--pick), 0.95), 0 0 calc(26 * var(--u)) rgba(var(--pick), 0.75), 0 0 calc(52 * var(--u)) rgba(var(--pick), 0.45); }
-.go-in { top: calc(50% + 36 * var(--u)); width: calc(88 * var(--u)); height: calc(88 * var(--u)); transform: translate(-50%, -50%); background: none; border: 0; color: var(--ink); }
-.go-in .ic { top: 50%; --ring: rgb(var(--ink-rgb)); } .go-in .ic::after { transition-duration: 1.4s; }
 .go-two { position: absolute; left: 50%; top: calc(50% - 14 * var(--u)); width: calc(388.66 * var(--u)); height: calc(132 * var(--u)); transform: translateX(-50%); display: none; }   /* Start with a game waiting: Resume or New, in the circle, in place of the check */
-body.intro-two .go-in { display: none; } body.intro-two .go-two { display: flex; }
+body.intro-two .go-two { display: flex; }
 .go-two .cell { flex: 0 0 calc(194.33 * var(--u)); } .go-two .cell::before { display: none; } .go-two .ic { --ring: rgb(var(--pick)); }
-body.intro-in .soren, body.intro-in .go-in { opacity: 1; transition: opacity 3s cubic-bezier(0.4, 0, 0.2, 1); }
-body.intro-ready .go-in { pointer-events: auto; } body.intro-ready .go-in .ic { --ring: rgb(var(--pick)); }
-.go-in.on > .ic { --ring: rgb(var(--on)); --tint: rgba(var(--on), 0.3); } .go-in.on .ic::after { transition-duration: 0.3s; }
-body.intro-quick.intro-in .soren, body.intro-quick.intro-in .go-in { transition-duration: 0.4s; }
+body.intro-in .soren { opacity: 1; transition: opacity 3s cubic-bezier(0.4, 0, 0.2, 1); }
+body.intro-quick.intro-in .soren { transition-duration: 0.4s; }
 
 /* The card: every menu is this one frame, at one size, grown from the sentence line. Its pill names it, under the tile
    that opened it. Rows of 132: icon, name, one line on what it does, the control, the ✓ on the row you're on. The rail on
@@ -249,7 +245,6 @@ body.intro-quick.intro-in .soren, body.intro-quick.intro-in .go-in { transition-
 .shine.r { background: none; border: calc(3 * var(--u)) solid rgba(var(--gold), .8); } .shine.fire { animation: shine var(--settle) ease-out; } .shine.r.fire { animation: shine2 var(--settle) ease-out; }
 .pill > .shine, .ok > .shine { left: 50%; top: 50%; } .pill > .shine { width: calc(120 * var(--u)); height: calc(120 * var(--u)); margin: calc(-60 * var(--u)) 0 0 calc(-60 * var(--u)); } .ok > .shine { width: calc(140 * var(--u)); height: calc(140 * var(--u)); margin: calc(-70 * var(--u)) 0 0 calc(-70 * var(--u)); }
 @keyframes shine { 0% { opacity: .95; transform: scale(.5); } 100% { opacity: 0; transform: scale(3.2); } } @keyframes shine2 { 0% { opacity: .9; transform: scale(.7); } 100% { opacity: 0; transform: scale(2.6); } }
-#spot { position: fixed; z-index: 40; pointer-events: none; opacity: 0; transition: opacity var(--settle) ease; box-shadow: 0 0 0 200vmax var(--tint-2); } #spot.on { opacity: 1; }
 #mcNav [data-foot=back].off { opacity: .35; pointer-events: none; }
 /* A moment (Still waiting, Game complete, Time's up, Go, Welcome back, Did you do it): the same card, its rows to read, its answers in the foot.
    Nothing is lit; a list to tick shows every check, blue to touch and gold once done. */
@@ -290,19 +285,15 @@ body:has(#mc:not([hidden])) #line { visibility: hidden; }   /* the card covers t
 #warp { position: absolute; inset: 0; width: 100%; height: 100%; border-radius: var(--r); display: none; } .mc.stars #warp { display: block; }
 
 /* The opening: the ribbons wait until the circle is at rest. Rest: the ribbons sink. Relax: the page dims. */
-body.intro { background: var(--black); } body.intro #topPanel, body.intro #tileBar, body.intro #ctlBar { opacity: 0; pointer-events: none; } body.intro .pool { box-shadow: none; background: transparent; }
+body.intro #topPanel, body.intro #tileBar, body.intro #ctlBar { opacity: 0; pointer-events: none; } body.intro .pool { box-shadow: none; background: transparent; }
 body.intro #botPanel { background: none; box-shadow: none; } body.intro:not(.intro-in) #jrAct { opacity: 0; pointer-events: none; } body.intro-in #jrAct { transition: opacity 3s cubic-bezier(0.4, 0, 0.2, 1); }
-.sky { position: fixed; inset: 0; z-index: 0; pointer-events: none; background: radial-gradient(75% 55% at 50% 45%, #232a36 0%, #1a1f28 35%, #141618 70%, #121212 100%); display: none; animation: skyin 2.4s ease-out; }   /* the opening: the chrome's grey, a breath of the night sky in it */
-body.intro .sky { display: block; } @keyframes skyin { from { opacity: 0; } }
-body.rest { background: var(--black); } body.rest .panel { opacity: 0.22; transition: opacity var(--sweep); } body.rest .panel:active, body.rest .panel:focus-within, body.rest.framed .panel { opacity: 0.8; } body.rest .pool { box-shadow: none; }
+body.rest .panel { opacity: 0.22; transition: opacity var(--sweep); } body.rest .panel:active, body.rest .panel:focus-within, body.rest.framed .panel { opacity: 0.8; } body.rest .pool { box-shadow: none; }
 body.rest.carded .panel { opacity: 1; }
-body::before { content: ""; position: fixed; inset: 0; background: var(--tint-1); opacity: 0; transition: opacity var(--settle); pointer-events: none; }
-body.relax::before { opacity: 1; }
 .warm { position: fixed; inset: 0; z-index: 100; pointer-events: none; background: rgb(255, 150, 60); mix-blend-mode: multiply; opacity: 0; transition: opacity 6s; }
 .veil { position: fixed; inset: 0; z-index: 1000; background: #121212; opacity: 0; pointer-events: none; transition: opacity var(--sweep); } .veil.on { opacity: 1; transition: none; }
 /* ---------- The frame (v74): the upper row selects, the lower row adjusts ---------- */
-/* Two panels around the pool. Each is a tray: the scene's own sky mixed into the chrome (the look's Sky mix), darkest at the
-   foot. Its tiles are drawn from the look's numbers (79-skin.js): height, gap, corners, the glass (a black scrim under a
+/* Two panels around the pool. Each is a tray (unless the look is Sky-lit, the default, which has none): the page's sky mixed into the
+   chrome (the look's Sky mix), darkest at the foot. Its tiles are drawn from the look's numbers (79-skin.js): height, gap, corners, the glass (a black scrim under a
    white wash, blurred), shine, shadow, the icon's line and size, the words' weight and size. Green is on and has a tick;
    blue is what you are on and has a dot: colour is never the only sign. The status bar and the control bar sit on the chrome. */
 .panel { flex: none; position: relative; display: flex; flex-direction: column; gap: calc(10 * var(--u)); padding: calc(10 * var(--u)) calc(8 * var(--u));
@@ -332,6 +323,14 @@ body.bare .frow .cell { background: none; box-shadow: none; backdrop-filter: non
 body.bare .frow .cell.on, body.bare .frow .cell.on .sub { color: rgb(var(--sk-on)); } body.bare .frow .cell.sel:not(.on), body.bare .frow .cell.sel:not(.on) .sub { color: rgb(var(--sk-pick)); }
 body.liq .frow .cell:not(.on):not(.sel):not(.blank) { backdrop-filter: blur(var(--sk-bl)) saturate(1.8); -webkit-backdrop-filter: blur(var(--sk-bl)) saturate(1.8);
   box-shadow: inset 0 calc(6 * var(--u)) calc(3 * var(--u)) rgba(255, 255, 255, 0.75), inset 0 calc(-6 * var(--u)) calc(6 * var(--u)) rgba(255, 255, 255, 0.25), inset 0 0 0 calc(3 * var(--u)) rgba(255, 255, 255, 0.3), 0 calc(var(--sk-d) * 24 * var(--u)) calc(var(--sk-d) * 48 * var(--u)) rgba(0, 0, 0, calc(var(--sk-d) * 0.5)); }
+/* Sky-lit (the default look, 79-skin.js LIT): no tray; a tile is the page's sky at its top fading to the chrome's black at its words, with a
+   bright rim from above. The status bar and the control bar keep the chrome's black, with the same rim as a line round them. */
+body.lit .panel { background: none; box-shadow: none; }
+body.lit .frow .cell:not(.blank) { backdrop-filter: none; -webkit-backdrop-filter: none; background: linear-gradient(180deg, color-mix(in srgb, var(--sk-sky) 62%, #0000), rgba(18, 18, 18, 0.96) 78%);
+  box-shadow: inset 0 calc(4.5 * var(--u)) 0 rgba(255, 255, 255, 0.5); }
+body.lit .frow .cell.on { background: linear-gradient(180deg, rgba(126, 196, 158, 0.65), rgba(30, 48, 40, 0.96) 80%); box-shadow: inset 0 calc(4.5 * var(--u)) 0 rgba(190, 240, 214, 0.7); }
+body.lit .frow .cell.sel:not(.on) { background: linear-gradient(180deg, rgba(142, 169, 232, 0.65), rgba(28, 34, 52, 0.96) 80%); box-shadow: inset 0 calc(4.5 * var(--u)) 0 rgba(200, 215, 255, 0.7); }
+body.lit .panel > .line:not(.comp):not(.warn), body.lit #ctlBar { box-shadow: inset 0 0 0 calc(4.5 * var(--u)) rgba(255, 255, 255, 0.4); }
 .frow .cell.hiding { outline: calc(4 * var(--u)) dashed rgba(var(--ink-rgb), 0.6); outline-offset: calc(-10 * var(--u)); }
 .frow .ic.on::after, .frow .ic.gold::after, .frow .ic.arc::after, .frow .ic.nudge::after { display: block; width: calc(100% + 30 * var(--u)); height: calc(100% + 30 * var(--u)); border-radius: calc(22 * var(--u)); }   /* Journey: the ring keeps its meanings (green written, gold done, the timer receding) */
 .frow .n { left: auto; right: calc(14 * var(--u)); }
@@ -345,10 +344,10 @@ body.ly-list #tileBar .ic, body.ly-cards #tileBar .cell:not(.arrow) .ic { positi
 body.ly-list #tileBar .sub, body.ly-cards #tileBar .cell:not(.arrow) .sub { position: static; transform: none; text-align: left; font-size: calc(var(--sk-f) * var(--sk-k)); }
 body.ly-cards #tileBar .arrow { flex: 1 1 0; } body.ly-cards #tileBar .arrow .sub { font-size: var(--t2); font-weight: 500; color: var(--label); }
 /* The status bar, on the chrome: what you're doing and where; where you are in the frame; the Journey's three steps. */
-.panel > .line { background: var(--black); border-radius: var(--r-sm); padding: 0 calc(14 * var(--u)); } .panel > .line .sp { left: auto; width: calc(400 * var(--u)); } .panel > .line #clock { width: calc(200 * var(--u)); white-space: nowrap; }
-.line .path { flex: 1; min-width: 0; margin-right: calc(400 * var(--u)); display: flex; align-items: center; gap: calc(12 * var(--u)); font-weight: 700; font-style: italic; font-size: var(--t1); white-space: nowrap; overflow: hidden; color: var(--ink); }
+.panel > .line { background: var(--black); border-radius: var(--r-sm); padding: 0 calc(14 * var(--u)); } .panel > .line .sp { left: auto; width: calc(416 * var(--u)); } .panel > .line #clock { width: calc(216 * var(--u)); white-space: nowrap; }
+.line .path { flex: 1; min-width: 0; margin-right: calc(416 * var(--u)); display: flex; align-items: center; gap: calc(12 * var(--u)); font-weight: 700; font-style: italic; font-size: var(--t1); white-space: nowrap; overflow: hidden; color: var(--ink); }
 .path .w { flex: none; } .path .dot { flex: none; color: var(--label); font-style: normal; } .path .v { min-width: 0; overflow: hidden; text-overflow: ellipsis; color: rgb(var(--on)); font-style: normal; }
-.jbar { flex: 1; min-width: 0; margin-right: calc(400 * var(--u)); display: flex; align-items: center; gap: calc(16 * var(--u)); font-weight: 700; font-style: italic; font-size: var(--t1); color: var(--ink); white-space: nowrap; }
+.jbar { flex: 1; min-width: 0; margin-right: calc(416 * var(--u)); display: flex; align-items: center; gap: calc(16 * var(--u)); font-weight: 700; font-style: italic; font-size: var(--t1); color: var(--ink); white-space: nowrap; }
 .jbar .steps { flex: none; display: inline-flex; align-items: center; gap: calc(8 * var(--u)); } .jbar .steps i { width: calc(40 * var(--u)); height: calc(12 * var(--u)); border-radius: calc(6 * var(--u)); background: var(--edge); }
 .jbar .steps i.done { background: rgb(var(--gold)); } .jbar .steps i.now { width: calc(70 * var(--u)); background: rgb(var(--ink-rgb)); }   /* done, gold; where you are, white and longer; to come, grey */
 .jbar .v { min-width: 0; overflow: hidden; text-overflow: ellipsis; font-weight: 500; font-style: normal; font-size: var(--t2); color: var(--label); }
@@ -383,21 +382,20 @@ body.ly-cards #tileBar .arrow { flex: 1 1 0; } body.ly-cards #tileBar .arrow .su
 /* The Journey: the frame steps back to the top ribbon, the bar, the pool and one clear action. */
 .jract { position: absolute; inset: calc(12 * var(--u)) calc(10 * var(--u)); display: flex; align-items: center; justify-content: center; }
 .jract .cell { flex: 0 0 calc(388 * var(--u)); height: calc(150 * var(--u)); border-radius: var(--r-sm); background: var(--black); } .jract .cell::before { display: none; } .jract .ic { top: calc(54 * var(--u)); } .jract .sub { top: calc(120 * var(--u)); color: var(--ink); }
-body.intro .jract { justify-content: flex-end; } body.intro .jract .cell { flex-basis: calc(194 * var(--u)); background: none; }
+body.intro .jract { justify-content: flex-end; } body.intro .jract .cell { flex-basis: calc(194 * var(--u)); }
 body.journey:not(.intro) #tileBar, body.journey:not(.intro) #ctlBar { visibility: hidden; }
 /* The door: two buttons in the circle. */
-.go-in { display: none !important; }
 .go-two { width: calc(620 * var(--u)); height: calc(150 * var(--u)); top: calc(50% + 250 * var(--u)); gap: calc(20 * var(--u)); }   /* under the circle, never over it */
-.go-two .cell { flex: 1 1 0; border-radius: var(--r-sm); background: var(--tint-2); } .go-two .sub { color: var(--ink); top: calc(118 * var(--u)); } .go-two .ic { top: calc(52 * var(--u)); }
+.go-two .cell { flex: 1 1 0; border-radius: var(--r-sm); background: var(--black); } .go-two .sub { color: var(--ink); top: calc(118 * var(--u)); } .go-two .ic { top: calc(52 * var(--u)); }
 .mc.alone > :not(.pop) { display: none; } .mc.alone { background: none; box-shadow: none; }
 body.rm *, body.rm *::before, body.rm *::after { transition: none !important; animation: none !important; }
 @media (prefers-contrast: more) { :root { --label-rgb: 240, 240, 234; --dim: rgb(170, 172, 174); --edge: rgb(120, 122, 126); } }   /* the phone's Increase Contrast: the quiet text becomes ink, the grey and the lines step up */
 </style>
-<meta name="robots" content="noindex"><meta name="theme-color" content="#121212"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"><meta name="apple-mobile-web-app-title" content="SoRen"><link rel="manifest" href="../../manifest.webmanifest"><link rel="apple-touch-icon" href="../../apple-touch-icon.png"><link rel="icon" href="../../icon-192.png">
+<meta name="robots" content="noindex"><meta name="theme-color" content="#0a0e1e"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"><meta name="apple-mobile-web-app-title" content="SoRen"><link rel="manifest" href="../../manifest.webmanifest"><link rel="apple-touch-icon" href="../../apple-touch-icon.png"><link rel="icon" href="../../icon-192.png">
 </head>
 <body>
 
-<div class="sky"></div><script>document.body.classList.add('intro')</script>
+<div id="sky" aria-hidden="true"></div><script>document.body.classList.add('intro')</script>
 <div class="app" id="app">
   <div class="panel" id="topPanel">
     <nav class="rib frow" id="topBar" aria-label="Always here"></nav>
@@ -577,7 +575,7 @@ const lawHex = (h, layer) => '#' + law(hex(h), layer).map(v => v.toString(16).pa
 const STRIKE = ['Lightning', '210,228,255', 'bolt'];   // [name, colour, kind]: the strike everywhere but where it's said
 const PLACES = {
   spring: { label: 'Spring', color: '#0f292f', accent: '#5eead4', synth: 'water', land: '6f9c84 e8f0ec 457358 2a5240 3c684f 2b4636', wings: 'fbcfe8 fef08a e0e7ff', arc: 'bloom',
-    back: 'hills', ground: 'meadow', el: 'trees flowers birds butterflies:0.8 insects:0.35 fireflies:0.25', storm: ['Spring shower', 'petals', '252,224,236'], creature: 'hare',
+    back: 'hills', ground: 'meadow', el: 'trees flowers birds butterflies:0.8 insects:0.35 fireflies:0.25', storm: ['Spring shower', 'petals', '252,224,236'], creature: 'deer',
     tiers: 'Mist Drop:5eead4|River Pebble:64748b|Moss Stone:34d399|Brook Glass:38bdf8|Fern Bud:84cc16|Jade Pool:14b8a6|Water Lily:f472b6|Iris Pearl:818cf8|Moonstone:a855f7|Lotus Bloom:2dd4bf' },
   summer: { label: 'Summer', color: '#1e1b38', accent: '#fcd34d', synth: 'marimba', land: '87a07a eef2e6 a99b45 6f6a2c 56723a 3b2f1d', wings: 'fdba74 fde047 f9fafb', warm: true,
     back: 'hills', ground: 'field', el: 'trees birds:0.8 insects fireflies butterflies', storm: ['Summer squall', 'rain', '200,214,226'], creature: 'hawk',
@@ -586,7 +584,7 @@ const PLACES = {
     back: 'hills', ground: 'forest', el: 'trees leaves birds:0.5 insects:0.55 butterflies:0.15', storm: ['Fall flurry', 'leaves', '214,170,120'], creature: 'deer',
     tiers: 'Wood Seed:d97706|Acorn Cap:b45309|Moss Bark:65a30d|Maple Amber:ea580c|Chestnut:dc2626|Cinnamon:ca8a04|Crimson Leaf:e11d48|Copper Bell:f97316|Golden Bough:eab308|Hearth Sun:f59e0b' },
   winter: { label: 'Winter', color: '#0d1b33', accent: '#bae6fd', synth: 'crystal', land: '94a8c4 f4f8fc c3d1e0 b9c7d6 2d4656 223a4b', wings: 'ffffff', arc: 'snow',
-    back: 'mountains', ground: 'snow', el: 'pines aurora birds:0.25', storm: ['Winter whiteout', 'snow', '244,248,255'], strike: ['Frost', '200,230,255', 'ice'], creature: 'hare',
+    back: 'mountains', ground: 'snow', el: 'pines aurora birds:0.25', storm: ['Winter whiteout', 'snow', '244,248,255'], strike: ['Frost', '200,230,255', 'ice'], creature: 'deer',
     tiers: 'Rime Frost:94a3b8|Snow Pearl:7dd3fc|Glacial Glass:22d3ee|Pine Needle:10b981|Ice Quartz:60a5fa|Aurora Teal:2dd4bf|Star Sapphire:818cf8|Amethyst Ice:c084fc|Polar Crown:f472b6|Aurora Crown:38bdf8' },
   rainforest: { label: 'Jungle', color: '#0c2a22', accent: '#6ee7b7', synth: 'water', land: '4f8a70 d6efe4 28553f 173a2c 24503b 1d3a2d', wings: '38bdf8 f472b6 fde047', warm: true,
     back: 'hills', ground: 'forest', el: 'canopy waterfall mist:0.14 birds insects:0.65 fireflies:0.4 butterflies:0.9', storm: ['Rainforest rush', 'rain', '196,226,212'], creature: 'toucan',
@@ -619,7 +617,7 @@ for (const [key, p] of Object.entries(PLACES)) {   // what each record works out
   const L = (h, layer) => (h ? lawHex(h, layer) : h), far = L(far0, 'far'), mid = L(mid0, 'mid'), near = L(near0, 'near'), tree = L(tree0, 'tree'), trunk = L(trunk0, 'tree');   // each layer's colour brought inside the law: lighter far, darker near, never saturated (indoors and in orbit there is no land)
   Object.assign(p, { key, far, cap, mid, near, tree, trunk, el, wings: hexes(p.wings).map(h => lawHex(h, 'accent')), strike: p.strike || STRIKE,
     indoor: p.back === 'tray', space: p.back === 'space', dry: p.back === 'tray' || p.back === 'space', glass: p.back === 'tray', snow: p.ground === 'snow', grass: p.ground === 'meadow' || p.ground === 'field',
-    bgTop: rgba(mix([18, 18, 18], top, 0.12)), bgMid: rgba(mix([18, 18, 18], top, 0.06)), bgBot: 'rgb(18,18,18)', chrome: rgba(mix([18, 18, 18], top, 0.06)), accentSoft: rgba(a, 0.22),   // the chrome: #121212-class grey, faintly tinted toward this place's sky
+    accentSoft: rgba(a, 0.22),
     deepRGB: near0 ? law(mix(law(hex(near0), 'near'), [0, 0, 0], 0.3), 'near') : mix(top, [0, 0, 0], 0.4), edgeRGB: hex(p.edge || p.accent), glow: p.glow || '240,246,255', mist: el.mist || 0,
     live: [p.back === 'sea' ? 'sea' : '', ...['waterfall', 'fire', 'owl', 'stars'].filter(k => el[k])].filter(Boolean),
     amb: { water: el.waterfall ? 1 : 0, exotic: el.canopy ? 1 : 0, fire: el.fire ? 1 : 0, owl: el.owl ? 1 : 0, ocean: p.back === 'sea' ? 1 : 0 } });
@@ -665,8 +663,10 @@ function sunDay(d = new Date()) {
 }
 let DAY = sunDay();
 const SKY = { top: [0, 0, 0], mid: [0, 0, 0], hor: [0, 0, 0], light: 1, stars: 0, alt: 0 };
-// blow is the one wind: the wind you make plus its gusts. It moves the scene, and the falling spheres.
-const ENV = { cover: 0, gloom: 0, precip: 0, rain: 0, snow: 0, wind: 0, blow: 0, light: 1, dark: 0,
+// What the scene and the weather share, each field written by one owner. updateCover (the weather): cover, gloom, precip, rain,
+// snow, light, dark. updateWind: wind, blow, the one wind (the wind you make plus its gusts; it moves the scene and the falling
+// spheres). updateAmbience (the scene): birds, crickets, fireflies, leaves, aurora, butterflies, mist.
+const ENV = { cover: 0, gloom: 0, precip: 0, rain: 0, snow: 0, light: 1, dark: 0, wind: 0, blow: 0,
   birds: 0, crickets: 0, fireflies: 0, leaves: 0, aurora: 0, butterflies: 0, mist: 0 };
 // How alive the world is, and the breath: how far the spheres swell and how much the edge glows.
 const FEEL = { life: 0.45, heave: 0.035, glow: 0.65 };
@@ -752,7 +752,7 @@ const S = {
   dropX: LW / 2, targetX: LW / 2, sway: 0, aiming: false, aimCancelled: false, canDrop: true, cooldown: 0,
   overT: 0, offender: 0, gameOver: false, card: false, sheet: null, playT: 0, nudged: 0, planned: false, combo: 0, comboT: 0, tools: { strike: 0, mystery: 0, storm: 0 }, armed: false, zap: null,
   wild: false, zen: false, storm: null, stormQ: [], fx: { rain: 0, wind: 0 }, fid: null, outro: null, gone: false, roundDone: false, pauseT: 0,
-  breath: 0.5, sigh: null, ballFade: 0, rescueAt: 0, life: 0.5, rainMem: 0, wx: 0, wxOpen: false, severe: false, doom: null, cloud: 0, tod: 0,
+  breath: 0.5, sigh: null, ballFade: 0, rescueAt: 0, life: 0.5, rainMem: 0, wx: 0, wxOpen: false, doom: null, cloud: 0, tod: 0,
   pulses: [], rumbles: [], lit: 0, growl: 0, cellA: 0, flash: 0, lastInput: -1e9,
   wakeLock: null, goal: null, parked: false, paused: false, intro: null, prev: null,
   jr: null, stageHour: null, depthA: 3   // the Journey (its stage, 1 Settle, 2 Go, 3 Return), the stage's sky, and the scene's depth as drawn (it glides)
@@ -784,24 +784,30 @@ let particles = [], ripples = [], floaters = [], animTime = 0, canvas, ctx;
 
 const HOURS = { night: 0, dawn: 1, day: 2, dusk: 3 };
 const CLOUD_AT = { clear: 0, some: 1, overcast: 2, dark: 3 };
-function updateScene(dt) {
-  const hr = S.stageHour || (S.mode === 'rest' ? 'night' : PREFS.hour), want = hr === 'live' ? clockTod() : HOURS[hr], /* the Journey's stages have their own sky: dusk, morning, dawn */ d = ((want - S.tod) % 4 + 6) % 4 - 2;
+// The scene, in three steps in this order: the sun (the hour, and the pool's sky at the sun's height), the cover (the clouds, the
+// storm cells, and what falls), and the ambience (what lives in the scene by the hour: birds, crickets, fireflies, mist).
+function updateScene(dt) { updateHour(dt); updateCover(dt); updateAmbience(); }
+function updateHour(dt) {
+  const hr = S.stageHour || (S.mode === 'rest' ? 'night' : PREFS.hour), want = hr === 'live' ? clockTod() : HOURS[hr], d = ((want - S.tod) % 4 + 6) % 4 - 2;
   S.tod = Math.abs(d) < 0.002 ? want : (S.tod + d * Math.min(1, dt * 0.5) + 4) % 4;   // the sky glides to the hour over a couple of seconds, never jumps
+  const w = here(), u = w.night ? 0.05 : S.tod, e = w.night ? -30 : sunAlt(u);   // Stars is always night
+  let r = 1; while (r < RAMP.length - 1 && RAMP[r].e < e) r++; const a = RAMP[r - 1], b = RAMP[r], ga = clamp((e - a.e) / (b.e - a.e), 0, 1);   // the ramp, by the sun's height
+  SKY.top = law(mix(a.top, b.top, ga), 'sky'); SKY.mid = law(mix(a.mid, b.mid, ga), 'sky'); SKY.hor = law(mix(a.hor, b.hor, ga), 'sky');
+  SKY.light = a.light + (b.light - a.light) * ga; SKY.stars = a.stars + (b.stars - a.stars) * ga; SKY.alt = e;
+}
+function updateCover(dt) {
   const quiet = !has('weather'), w = here();
   if (PREFS.clouds === 'changing') S.wx = (S.wx + dt / 600) % 5;   // Changing: about ten minutes a look
   const x = PREFS.clouds === 'changing' ? S.wx : CLOUD_AT[PREFS.clouds], j = Math.floor(x) % 5, g = smooth(x - Math.floor(x));
   S.cloud += ((quiet ? 0 : SKY_LOOKS[j] + (SKY_LOOKS[(j + 1) % 5] - SKY_LOOKS[j]) * g) - S.cloud) * Math.min(1, dt / 25);   // weather changes over tens of seconds, never cut (the law's 20 to 60 s)
-  const u = w.night ? 0.05 : S.tod, e = w.night ? -30 : sunAlt(u), i = Math.floor(u) % 4, f = smooth(u - Math.floor(u));   // Stars is always night
-  let r = 1; while (r < RAMP.length - 1 && RAMP[r].e < e) r++; const a = RAMP[r - 1], b = RAMP[r], ga = clamp((e - a.e) / (b.e - a.e), 0, 1);   // the ramp, by the sun's height
-  SKY.top = law(mix(a.top, b.top, ga), 'sky'); SKY.mid = law(mix(a.mid, b.mid, ga), 'sky'); SKY.hor = law(mix(a.hor, b.hor, ga), 'sky');
-  stageSky(dt);
-  SKY.light = a.light + (b.light - a.light) * ga; SKY.stars = a.stars + (b.stars - a.stars) * ga; SKY.alt = e;
-  const byTime = (v) => v[i] + (v[(i + 1) % 4] - v[i]) * f, el = w.el;   // night, dawn, day, dusk: the creatures keep the day's four quarters
   S.cellA += (stormYouMake() - S.cellA) * Math.min(1, dt * (stormYouMake() > S.cellA ? 1.8 : 0.35));   // in fast, away slowly
   ENV.cover = Math.max(S.cloud * 0.93, S.cellA, RN.level * 0.85);
-  ENV.gloom = Math.max(ENV.cover * ENV.cover * 0.66, S.cellA * 0.75, RN.level * (S.severe ? 0.7 : 0.35));   // severe: the sky goes dark under it
+  ENV.gloom = Math.max(ENV.cover * ENV.cover * 0.66, S.cellA * 0.75, RN.level * 0.35);
   ENV.precip = RN.level; ENV.rain = w.snow ? 0 : ENV.precip; ENV.snow = w.snow ? ENV.precip : 0;
   ENV.light = SKY.light * (1 - ENV.gloom * 0.6); ENV.dark = 1 - SKY.light;
+}
+function updateAmbience() {
+  const w = here(), u = w.night ? 0.05 : S.tod, i = Math.floor(u) % 4, f = smooth(u - Math.floor(u)), byTime = (v) => v[i] + (v[(i + 1) % 4] - v[i]) * f, el = w.el;   // night, dawn, day, dusk: the creatures keep the day's four quarters
   const calm = 1 - clamp(ENV.precip * 1.5 + ENV.gloom, 0, 1), still = 1 - clamp(Math.abs(ENV.blow) * 0.5, 0, 0.8), insects = el.insects || 0;
   ENV.birds = (el.birds || 0) * byTime([0, 1, 0.45, 0.2]) * calm;              // loudest at dawn
   ENV.crickets = insects * byTime([1, 0.1, 0, 0.7]) * (1 - ENV.precip);
@@ -810,23 +816,6 @@ function updateScene(dt) {
   ENV.leaves = (el.leaves || 0) * clamp(0.3 + 0.6 * S.life + 0.6 * Math.abs(ENV.blow), 0, 1);
   ENV.aurora = (el.aurora || 0) * byTime([1, 0.1, 0, 0.3]) * (1 - ENV.cover);
   ENV.mist = clamp(0.06 + 0.22 * byTime([0.15, 1, 0.1, 0.35]) + 0.25 * ENV.precip + (w.mist || 0), 0, 0.6);
-}
-// The Journey's skies (agreed Oct 22, from the layout demo): Settle dusk, Go a clear morning, Return dawn. Mood, not clock. After
-// dark the same three are dimmed (a brightness cap, about 60%) and Return becomes a pre-dawn: a dark sky, a warm band low. They
-// cross-fade slowly at a step and never mid-step; they obey the sky's law like every other sky. Free Play is the person's own sky.
-const STAGE_SKY = { dusk: ['#29324e', '#665a70', '#ad8a6c'], day: ['#587a94', '#8aa4b4', '#c2ccc6'], dawn: ['#3b4560', '#a98a82', '#d9b890'] };
-const STG = { a: 0, top: [0, 0, 0], mid: [0, 0, 0], hor: [0, 0, 0] };
-const afterDark = (d = new Date()) => { const h = d.getHours(); return h >= 20 || h < 5; };
-function stageTarget(k, dark = afterDark()) {   // a stage's three colours, inside the law, dimmed after dark
-  const [t, m, h] = STAGE_SKY[k].map(c => law(hex(c), 'sky')), dim = (c, f) => c.map(v => v * f);
-  if (!dark) return [t, m, h];
-  return k === 'dawn' ? [dim(t, 0.35), dim(m, 0.42), dim(h, 0.7)] : [dim(t, 0.6), dim(m, 0.6), dim(h, 0.6)];
-}
-function stageSky(dt) {
-  const k = S.stageHour, on = !!(k && STAGE_SKY[k]), f = Math.min(1, dt * (lessMo() ? 4 : 0.35));   // a slow cross-fade (a quick one with Reduce motion)
-  if (on) { const [t, m, h] = stageTarget(k); if (STG.a < 0.01) { STG.top = t; STG.mid = m; STG.hor = h; } else { STG.top = mix(STG.top, t, f); STG.mid = mix(STG.mid, m, f); STG.hor = mix(STG.hor, h, f); } }
-  STG.a += ((on ? 1 : 0) - STG.a) * f; if (STG.a < 0.002) { STG.a = 0; return; }
-  SKY.top = mix(SKY.top, STG.top, STG.a); SKY.mid = mix(SKY.mid, STG.mid, STG.a); SKY.hor = mix(SKY.hor, STG.hor, STG.a);
 }
 function todAt(h) { if (h < DAY[0]) h += 24; const i = DAY.findIndex((k, n) => h < DAY[n + 1]); return (i + (h - DAY[i]) / (DAY[i + 1] - DAY[i])) % 4; }   // an hour (0–24) as a place in the loop
 function todMinutes(u) { const i = Math.floor(u) % 4, h = DAY[i] + (u - Math.floor(u)) * (DAY[i + 1] - DAY[i]); return Math.round((h % 24) * 60) % 1440; }   // and back
@@ -1227,7 +1216,6 @@ const ICON = {
   dusk: 'M5 17a7 7 0 0 1 14 0M3 17h18M12 10V4M9.5 7.5L12 10l2.5-2.5', dark: DOT(12, 12, 8) + 'M12 4v16', all: 'M4 5h16M4 9.5h16M4 14h10M4 18.5h7'
 };
 const svg = (d) => `<svg viewBox="0 0 24 24" aria-hidden="true"><path d="${d}"/></svg>`;
-const VOL = `<svg viewBox="0 0 24 24" aria-hidden="true"><path d="${ICON.speaker}"/><path class="waves" d="${ICON.waves}"/><path class="hush" d="${ICON.hush}"/></svg>`;
 // The shimmer: one sweep of silver light across a control, "this, now"; one at a time, a second waits its turn. The welcome:
 // on arriving, and coming back after five minutes away, a breeze of it passes over every key clockwise (the top ribbon left to
 // right, then the bottom ones right to left), each starting while the last still fades. A touch ends it. Not with Reduce motion.
@@ -1934,7 +1922,7 @@ const RAIN = { lambda: 4.1 * 5 ** -0.21, dMin: 0.5, dMax: 4, ref: 2 };
 const fallV = (D) => 9.65 - 10.3 * Math.exp(-0.6 * D);
 for (const m of WX.rain) { m.D = Math.min(RAIN.dMax, RAIN.dMin - Math.log(1 - Math.random()) / RAIN.lambda); m.d = clamp(0.4 + 0.6 * (m.D - RAIN.dMin) / 2.5, 0.4, 1); m.v = 9.6 * fallV(m.D) / fallV(RAIN.ref); }
 const falls = (kind) => kind === 'rain' || kind === 'snow';
-const active = (kind) => Math.round(clamp(ENV[kind] * (falls(kind) ? (lessMo() ? 0 : 1) * (S.severe ? 1 : 0.6) : FEEL.life), 0, 1) * POOL_MAX[kind]);   // severe: the full pool; Still: nothing falls
+const active = (kind) => Math.round(clamp(ENV[kind] * (falls(kind) ? (lessMo() ? 0 : 1) * 0.6 : FEEL.life), 0, 1) * POOL_MAX[kind]);   // Still: nothing falls
 function updateWeather(k, dt) {
   if (lessMo()) { if (flock.on) flock.on = false; return; }   // Still: the drops, the flakes, the leaves, the fireflies and the clouds all hold
   const t = animTime, w = ENV.blow, kw = k;
@@ -2061,9 +2049,7 @@ function updateStorms(dt) {   // the light and the sound of every strike, played
   S.growl = LT.level * 0.13 * thunder();   // the storm's low growl, under the strikes
 }
 // What each is doing right now, 0 to 1: its switch, or a swipe in Fidget. Nothing without weather; no lightning while you rest.
-// Severe: whatever is on runs at full strength, and a hurricane or a blizzard brings its own gale. The physics sees no more
-// wind than the strongest normal setting: severe is louder, darker and thicker, never a different game.
-const made = (k) => { const a = PREFS.atmo[k], gale = k === 'wind' && S.severe && PREFS.atmo.rain.on; return has('weather') && !(k === 'bolt' && S.mode === 'rest') ? Math.max(a.on ? (S.severe ? 1 : a.lv) : 0, gale ? 1 : 0, S.fx[k] || 0) : 0; };   // in Comp the wind is always on: its level rides in on S.fx.wind
+const made = (k) => { const a = PREFS.atmo[k]; return has('weather') && !(k === 'bolt' && S.mode === 'rest') ? Math.max(a.on ? a.lv : 0, S.fx[k] || 0) : 0; };   // in Comp the wind is always on: its level rides in on S.fx.wind
 const LT = { next: 0, tail: 0, level: 0, was: false }, RN = { level: 0 };
 const QUIET_START = 30;   // seconds after launch with no strike, whatever the weather
 const stormYouMake = () => { const L = made('bolt'); return L ? 0.5 + 0.5 * L : LT.tail > 0 ? 0.6 : 0; };
@@ -2076,7 +2062,7 @@ function updateActions(dt, k) {
   if (L && !LT.was) LT.next = Math.max(LT.next, animTime + 0.7);   // however a storm begins, its growl comes first
   if (!L && LT.was && !PREFS.atmo.bolt.on) { LT.tail = 4; LT.next = animTime + 0.8; }   // a storm you stop rolls away
   LT.was = !!L;
-  if (L) { if (animTime >= Math.max(LT.next, QUIET_START) && strikeSky(clamp(0.1 + L * (0.15 + 0.75 * Math.random()) + (S.severe ? 0.2 : 0), 0, 1))) LT.next = animTime + (S.severe ? 0.35 + 1.2 * Math.random() : 0.4 + (0.8 + 3.6 * (1 - L)) * Math.random()); }
+  if (L) { if (animTime >= Math.max(LT.next, QUIET_START) && strikeSky(clamp(0.1 + L * (0.15 + 0.75 * Math.random()), 0, 1))) LT.next = animTime + 0.4 + (0.8 + 3.6 * (1 - L)) * Math.random(); }
   else if (LT.tail > 0) { LT.tail -= dt; if (animTime >= LT.next && LT.tail > 1 && strikeSky(0.1 + 0.2 * Math.random(), true)) LT.next = animTime + 1.2 + Math.random(); }
   const held = S.fid && S.fid.charge ? 0.3 + 0.6 * S.fid.charge : 0;   // Fidget: a held finger gathers the growl
   LT.level += (Math.max(held, L ? 0.4 + 0.45 * L + 0.15 * Math.sin(animTime * 1.3) : LT.tail > 0 ? 0.6 * LT.tail / 4 : 0) - LT.level) * Math.min(1, dt * 3);
@@ -2423,40 +2409,47 @@ function hint(c, words) {   // one line of help, at the top of the pool, in a da
 /* ---------- Creatures, by their traces ---------- */
 // Never a cartoon: an animal is a glimpse, as it is outdoors. A silhouette, eyeshine, footprints, rings on water, a sound.
 // Every place has one that passes now and then, in the middle distance; a tap in Fidget calls one up (not more than once every
-// few seconds). Spring and Winter: a hare. Summer: a hawk circling. Rainforest: a toucan. Beach: dolphins. Autumn and the
-// campsite: a deer at the treeline. The woods: the owl. Under the stars: a meteor; in orbit: a satellite.
-const LIFE = { deer: 5, tracks: 9, hare: 6, hawk: 12, toucan: 5, dolphins: 4, satellite: 14 };
+// few seconds). Spring, Autumn, Winter and the campsite: a deer. Summer: a hawk circling. Rainforest: a toucan. Beach: dolphins. The woods: the owl. Under the stars: a meteor; in orbit: a satellite.
+const LIFE = { deer: 5, hawk: 12, toucan: 5, dolphins: 4, satellite: 14 };
 let CR = [], crT = -9, crNext = 25;
 function creature(x, y, kind = here().creature, tap = true) {
   if (!kind || lessMo() || (tap && animTime - crT < 4)) return;
   if (tap) crT = animTime;
   if (kind === 'owl') { if (OWL.away <= 0) { owlOff(); sound.hoot(); } return; }
   if (kind === 'meteor') { if (!METEOR) meteor(); return; }
-  if (tap && (kind === 'hare' || kind === 'hawk')) { Object.assign(flock, { on: true, dir: x < LW / 2 ? 1 : -1, x, y: Math.min(y, 150) }); sound.chirp(1); }   // a tap also lifts the birds
+  if (tap && kind === 'hawk') { Object.assign(flock, { on: true, dir: x < LW / 2 ? 1 : -1, x, y: Math.min(y, 150) }); sound.chirp(1); }   // a tap also lifts the birds
   if (kind === 'toucan') sound.whistle();
-  if (kind === 'hare' && here().snow) CR.push({ kind: 'tracks', x, t: 0, dir: x < LW / 2 ? 1 : -1 });
   CR.push({ kind, x: clamp(x, 40, LW - 40), y: kind === 'dolphins' ? clamp(y, HORIZON + 10, SHORE - 6) : y, t: 0, dir: x < LW / 2 ? 1 : -1 });
 }
 function updateCreatures(dt) {   // now and then, something passes, whether or not you're watching for it
   if (S.mode === 'rest' || S.intro || (crNext -= dt) > 0) return;
   crNext = 35 + Math.random() * 45; creature(Math.random() < 0.5 ? 30 : LW - 30, 140, here().creature, false);
 }
+// A closed shape through points, its corners rounded: how the animals are drawn (a silhouette, nothing more).
+function smoothShape(c, p) {
+  const n = p.length, m = (i) => [(p[i % n][0] + p[(i + 1) % n][0]) / 2, (p[i % n][1] + p[(i + 1) % n][1]) / 2], s0 = m(n - 1);
+  c.beginPath(); c.moveTo(s0[0], s0[1]); for (let i = 0; i < n; i++) { const e = m(i); c.quadraticCurveTo(p[i][0], p[i][1], e[0], e[1]); } c.closePath(); c.fill();
+}
+// The deer, facing right in its own units (feet on y = 0, 36 tall to the ear), scaled down to the middle distance; the legs swing
+// with `ph` (a negative phase stands still).
+function deerAt(c, x, y, dir, ph) {
+  c.save(); c.translate(x, y); c.scale(0.56 * dir, 0.56); c.lineCap = c.lineJoin = 'round'; c.lineWidth = 1.4;
+  c.save(); c.translate(0, -5);   // the body rides on long legs
+  smoothShape(c, [[-12, -16], [-6, -18], [0, -18.5], [4, -18], [7, -21], [9, -25], [10.5, -27], [12.3, -28], [14.6, -27], [15.8, -26.4], [18, -24.6], [18.6, -23.8], [17, -23.4], [14, -24], [11.6, -22], [9.4, -18], [7.4, -13.6], [4, -11], [-2, -10.4], [-8, -11], [-12, -13.2]]);   // body, neck and head
+  smoothShape(c, [[-11.5, -15.5], [-14, -18.8], [-12.6, -14.2]]);   // the raised tail
+  smoothShape(c, [[12.4, -27.2], [10.8, -31], [14.4, -28]]);   // the ear
+  c.restore();
+  [-9, -7, 4, 6].forEach((hx, i) => { const a = ph < 0 ? 0 : Math.sin(ph * TAU + i * 1.9) * 2.4; c.beginPath(); c.moveTo(hx, -15); c.lineTo(hx + a * 0.4 + (i % 2 ? 0.8 : -0.8), -7); c.lineTo(hx + a, -0.4); c.stroke(); });
+  c.restore();
+}
 function drawCreatures(c, dt) {
-  CR = CR.filter(o => (o.t += dt) < LIFE[o.kind] && o.kind in LIFE && (!['deer', 'hare', 'tracks'].includes(o.kind) || GROUNDS[here().ground]));   // nothing that walks, where there's no ground
+  CR = CR.filter(o => (o.t += dt) < LIFE[o.kind] && o.kind in LIFE && (o.kind !== 'deer' || GROUNDS[here().ground]));   // nothing that walks, where there's no ground
   for (const o of CR) {
     const f = clamp(Math.min(o.t / 0.6, (LIFE[o.kind] - o.t) / 1), 0, 1);
     c.save(); c.fillStyle = c.strokeStyle = '#1a120c'; c.lineWidth = 1.4; c.lineCap = 'round';
-    if (o.kind === 'deer') {   // a doe at the treeline at dusk: still, then gone in two bounds
+    if (o.kind === 'deer') {   // a deer at the treeline: still, head up, then gone in two bounds
       const run = Math.max(0, o.t - 2.5), x = o.x + o.dir * run * 90, y = GROUNDS[here().ground].mid(o.x) + 2 - Math.abs(Math.sin(run * 6)) * 6 * (run > 0);
-      c.globalAlpha = 0.85 * f;
-      c.beginPath(); c.ellipse(x, y - 9, 7, 3.6, 0, 0, TAU); c.fill(); c.beginPath(); c.moveTo(x + o.dir * 5, y - 10); c.lineTo(x + o.dir * 8, y - 17); c.stroke();
-      c.beginPath(); c.ellipse(x + o.dir * 9, y - 18, 2.6, 1.6, o.dir * 0.4, 0, TAU); c.fill();
-      for (const lx of [-5, -3, 3, 5]) { c.beginPath(); c.moveTo(x + lx, y - 7); c.lineTo(x + lx + (run > 0 ? o.dir * 2 : 0), y); c.stroke(); }
-    } else if (o.kind === 'hare') {   // a hare crosses the field in long low hops
-      const x = (o.dir > 0 ? -20 : LW + 20) + o.dir * o.t * 75, ph = (o.t * 2.2) % 1, y = GROUNDS[here().ground].mid(x) + 6 - Math.sin(ph * Math.PI) * 9, col = here().snow ? '#e9eef5' : '#2a2016';
-      c.globalAlpha = 0.85 * f; c.fillStyle = c.strokeStyle = col;
-      c.beginPath(); c.ellipse(x, y - 5, 6, 3.4, -o.dir * 0.2 * Math.sin(ph * TAU), 0, TAU); c.fill(); c.beginPath(); c.arc(x + o.dir * 6, y - 8, 2.4, 0, TAU); c.fill();
-      c.beginPath(); c.moveTo(x + o.dir * 6, y - 10); c.lineTo(x + o.dir * 4, y - 16); c.moveTo(x + o.dir * 7, y - 10); c.lineTo(x + o.dir * 7, y - 16); c.stroke();
+      c.globalAlpha = 0.85 * f; deerAt(c, x, y, o.dir, run > 0 ? run * 2.4 : -1);
     } else if (o.kind === 'hawk') {   // a hawk rides a thermal, high: wide slow circles, wings barely moving
       const a = o.t * 0.7 * o.dir, x = o.x * 0.3 + LW * 0.35 + Math.cos(a) * 60, y = 64 + Math.sin(a) * 18, fl = Math.sin(o.t * 3) * 1.2;
       c.globalAlpha = 0.75 * f; c.lineWidth = 1.8; c.beginPath(); c.moveTo(x - 11, y - 2 + fl); c.quadraticCurveTo(x - 5, y - 4 - fl, x, y); c.quadraticCurveTo(x + 5, y - 4 - fl, x + 11, y - 2 + fl); c.stroke();
@@ -2471,9 +2464,6 @@ function drawCreatures(c, dt) {
       const x = (o.dir > 0 ? -10 : LW + 10) + o.dir * o.t * (LW + 20) / LIFE.satellite, y = 90 + o.t * 6;
       c.globalAlpha = f; c.fillStyle = '#cbd5e1'; c.fillRect(x - 9, y - 1.5, 6, 3); c.fillRect(x + 3, y - 1.5, 6, 3); c.fillStyle = '#fff'; c.beginPath(); c.arc(x, y, 1.8, 0, TAU); c.fill();
       if (Math.sin(o.t * 6) > 0.6) { c.fillStyle = 'rgba(255,90,80,0.9)'; c.beginPath(); c.arc(x + 1, y + 2, 1, 0, TAU); c.fill(); }
-    } else if (o.kind === 'tracks') {   // and in snow, its prints appear one hop at a time, then fade
-      const y0 = GROUNDS.snow.near(o.x) + 30;
-      for (let i = 0; i < Math.min(12, Math.floor(o.t / 0.22)); i++) { const x = o.x + o.dir * i * 20, a = clamp((9 - o.t) / 3, 0, 0.5); c.fillStyle = `rgba(150,170,195,${a.toFixed(3)})`; for (const [dx, dy, r] of [[0, 0, 2.2], [-2, 6, 1.6], [3, 6, 1.6], [o.dir * 8, 2, 2.4]]) { c.beginPath(); c.ellipse(x + dx, y0 + dy + (i % 2) * 4, r, r * 1.4, 0, 0, TAU); c.fill(); } }
     }
     c.restore();
   }
@@ -3249,19 +3239,29 @@ function nextGhost(c, hx, pr, s) {
   const gr = RADII[S.next] * 0.42; GHOST.x += (hx + GHOST.side * (pr + gr + 10) - GHOST.x) * 0.15;
   c.save(); c.globalAlpha *= 0.38; drawOrb(c, GHOST.x, DROP_Y - 2, gr, S.next, 0, { scale: s });   // still: a bob near 0.2 Hz is the sway the guidance warns against c.restore();
 }
+// One frame, in layers, back to front: the scenery (4), the weather over it (5), what the mode puts in the pool (6), and what
+// sits over the pool (a paused card, the breath out, the look, the opening). The sky behind the pool is the page (72-sky.js).
 function render() {
   ctx.clearRect(0, 0, LW, LH);
   ctx.save();
   if (S.mode === 'rest') { drawRest(ctx); ctx.restore(); return; }
-  const w = here(), b = S.breath, focus = S.mode === 'relax' || !!S.sigh, breathe = PREFS.breathing && !focus;
-  const fade = S.ballFade, s = heave(), red = S.offender ? clamp(S.overT / OVERFLOW_SEC, 0.4, 1) : 0, beat = 0.75 + 0.25 * Math.sin(animTime * 6);
+  const focus = S.mode === 'relax' || !!S.sigh, F = { w: here(), b: S.breath, focus, breathe: PREFS.breathing && !focus, fade: S.ballFade, s: heave(),
+    red: S.offender ? clamp(S.overT / OVERFLOW_SEC, 0.4, 1) : 0, beat: 0.75 + 0.25 * Math.sin(animTime * 6) };
+  renderScenery(F); renderWeather(); renderContent(F); renderOver();
+  ctx.restore();
+}
+function renderScenery({ b, focus, breathe }) {   // layer 4: the sky inside the pool, the land, its features and its animals
   drawScene(ctx, b, focus ? 1.5 : breathe ? FEEL.glow : 0);
   drawCreatures(ctx, stepDt);
   for (const p of particles) if (p.bg) { ctx.globalAlpha = Math.max(0, p.alpha); ctx.fillStyle = p.color; ctx.beginPath(); ctx.arc(p.x, p.y, p.r, 0, TAU); ctx.fill(); }
   ctx.globalAlpha = 1;
   if (compOn()) drawOutage(ctx);   // Comp: the fallen tree, behind everything
+}
+function renderWeather() {   // layer 5: in front of the scenery, behind the mode's content
   drawWeather(ctx); drawStreaks(ctx); drawFog(ctx);
   if (S.flash > 0.01) { ctx.fillStyle = `rgba(255,255,255,${S.flash.toFixed(3)})`; ctx.fillRect(0, 0, LW, LH); }
+}
+function renderContent({ w, b, focus, breathe, fade, s, red, beat }) {   // layer 6: the waterline, the pool's edge, the spheres, the board, your hands, the breath
   if (fade > 0.02) {   // the waterline holds still while the pool breathes: a fine inlay in the world's own colour, warming to red
     const end = rules() === 'end', col = mix(w.edgeRGB, RED_RGB, red), la = end ? 0.6 : 0.28, g = ctx.createLinearGradient(12, 0, LW - 12, 0);
     ctx.globalAlpha = fade; g.addColorStop(0, rgba(col, 0)); g.addColorStop(0.12, rgba(col, la)); g.addColorStop(0.88, rgba(col, la)); g.addColorStop(1, rgba(col, 0));
@@ -3331,6 +3331,8 @@ function render() {
   ctx.globalAlpha = 1;
   if (S.mode === 'fidget' && S.fid) drawFidget(ctx);
   if (focus) drawBreathe(ctx, S.mode === 'relax' ? 1 : S.sigh.fade);
+}
+function renderOver() {   // over the pool: a paused card, the breath out, the look, the opening
   if (S.paused && !S.card && !S.sheet && !S.intro) {   // paused: everything waits for a tap
     ctx.fillStyle = 'rgba(2,6,12,0.62)'; ctx.fillRect(0, 0, LW, LH);
     ctx.fillStyle = 'rgba(255,255,255,0.16)'; ctx.strokeStyle = 'rgba(255,255,255,0.85)'; ctx.lineWidth = 1.8; ctx.beginPath(); ctx.arc(CX, 150, 36, 0, TAU); ctx.fill(); ctx.stroke();
@@ -3340,7 +3342,6 @@ function render() {
   if (S.outro) { const u = S.outro.t / (breathLen() / 2); drawCircle(ctx, 1, 0.38 + 0.12 * twice(S.outro.t), 'Breathe out', `${Math.max(1, 3 - Math.floor(u))}`); }   // Return: three breaths out
   if (S.look) drawLook(ctx);
   if (S.intro) drawIntro(ctx, S.intro);
-  ctx.restore();
 }
 function drawZap(c, z, a) {
   if (z.kind === 'bolt') { drawBolt(c, z.path, a, 22); return; }   // intense: wide and bright
@@ -3381,7 +3382,7 @@ function drawRest(c) {
   c.fillStyle = g; c.fillRect(0, 0, LW, LH);
   c.save(); c.globalAlpha = 0.55; words(c, restWords(), '', CY); c.restore();
 }
-// The opening: on black to deep blue the pool's own outline fades in, heaves to its crest, flashes bright once, then falls to a
+// The opening: over the sky the pool's own outline fades in, heaves to its crest, flashes bright once, then falls to a
 // circle that glows and breathes until you touch it. Soren and the check box fade in (in the page) once it has come to rest.
 function drawIntro(c, o) {
   const CREST = 0.4, ph = clamp(o.t / o.len, 0, 1), rest = smooth(clamp((o.t - o.len) / 1.2, 0, 1)), line = smooth(clamp(o.t / 2.4, 0, 1));
@@ -3393,7 +3394,7 @@ function drawIntro(c, o) {
   c.save(); c.globalCompositeOperation = 'destination-out'; c.fillStyle = `rgba(0,0,0,${a})`; c.fillRect(0, 0, LW, LH); c.restore();   // the pool is dark and clear: the sky shows through, and the world fades back in as you go
   c.save(); c.globalAlpha = a; c.translate(CX, CY); c.scale(1 + 0.035 * br, 1 + 0.035 * br); c.translate(-CX, -CY);
   c.beginPath(); shapePath(c, [CX, CY, R + (hw - R) * k, R + (hh - R) * k, R + (CORNER - R) * k]);
-  c.fillStyle = `rgba(242,248,252,${((0.05 + 0.1 * (lv - 0.5) * 2) * line + 0.03 * br).toFixed(3)})`; c.fill();
+  c.fillStyle = `rgba(18,18,18,${(0.94 * line).toFixed(3)})`; c.fill();   // the screen is the chrome's own black: the words in it keep 7:1 over any sky
   const A = 0.9 * glow + (0.35 + 0.3 * br) * rest, dpr = canvas.width / canvas.clientWidth;   // the glow is a canvas shadow, kept modest: a big blur is slow on a phone
   c.shadowColor = `rgba(186,230,253,${Math.min(1, A).toFixed(3)})`; c.shadowBlur = Math.min(60, ((3 + 30 * glow + 12 * fl) + (10 + 10 * br) * rest) * dpr);
   c.lineWidth = 1.8 + 2.2 * glow + 2 * fl; c.strokeStyle = `rgba(${Math.round(186 + 69 * fl)},${Math.round(230 + 25 * fl)},253,${(0.85 * line + 0.15 * fl).toFixed(3)})`; c.stroke();
@@ -3427,14 +3428,24 @@ function predictPath(x0, vy0, r) {
 
 /* ---------- Loop ---------- */
 let lastFrame = performance.now(), audioT = 0, uiT = 0, warmT = 0, physAcc = 0, stepDt = 1 / 60;
+// One tick, in four phases, in this order: the clock, the world (layers 1, 4 and 5: the sky, the scenery, the weather), the
+// mode's content (layer 6: the spheres and their physics, the fidget, the breath) and the chrome (the effects, the sound, the bars).
 function update(k, dt) {
   stepDt = dt; animTime += dt;
+  tickClock(dt); tickWorld(dt, k); tickMode(dt, k); tickChrome(dt, k);
+}
+function tickClock(dt) {
   { const want = S.jr ? 0 : PREFS.depth, d = want - S.depthA; S.depthA = Math.abs(d) < 0.002 ? want : S.depthA + d * Math.min(1, dt * (lessMo() ? 6 : 0.7)); }   // the depth glides over a couple of seconds (a quick fade with Reduce motion)
   if (S.intro && (S.intro.t += dt) && S.intro.go != null && S.intro.t - S.intro.go > TIME.settle) S.intro = null;
   if (S.intro && S.intro.go == null && ((S.intro.t >= S.intro.len && !S.intro.rest) || (S.intro.t >= S.intro.len + 3 && !S.intro.ready))) { S.intro.rest = true; S.intro.ready = S.intro.t >= S.intro.len + 3; syncBars(); }   // at rest the name, the check box and the ribbon fade in; three seconds on, the box can be touched
   if (S.outro && (S.outro.t += dt) >= S.outro.len) parkCard();
   updateGoal();
+}
+function tickWorld(dt, k) {
   updateScene(dt); updateWind(dt); if (compOn()) { compWind(dt); compTick(dt); } updateLife(dt); updateBreath(dt); updateActions(dt, k); updateStorms(dt); updateStorm(dt); updateBoard(dt); updateCreatures(dt);
+  updateSky();
+}
+function tickMode(dt, k) {
   if (awake()) updateDoom(dt);   // a Strike waits while the game waits
   if (S.fid) updateFidget(dt);
   updateLook(dt);
@@ -3459,6 +3470,8 @@ function update(k, dt) {
     }
     checkOverflow(dt);
   }
+}
+function tickChrome(dt, k) {
   updateEffects(k); updateWeather(k, dt);
   if ((audioT += dt) > 0.1) { sound.update(audioT); audioT = 0; }
   if ((uiT += dt) > 0.5) { uiT = 0; syncBars(); }
@@ -3498,6 +3511,64 @@ function updateWarmth() {   // evening warmth: from 7 pm the screen leans a litt
   const h = new Date().getHours() + new Date().getMinutes() / 60, w = h >= 19 ? clamp((h - 19) / 2, 0, 1) : h < 7 ? clamp(7 - h, 0, 1) : 0;
   $('warm').style.opacity = (0.13 * w).toFixed(3);
 }
+/* ---------- The sky (v75): layer one, the page's one background ---------- */
+// Four skies, drawn once at start (Night, Dawn, Morning, Dusk: S.tod's four quarters, in that order), and the page shows the two
+// either side of the hour, cross-faded as S.tod glides. Dawn leads into the day (light blue overhead, a warm glow low on the
+// left); Dusk leads into the night (ink overhead, the glow low on the right). No ground; the sky runs to every edge, notch and
+// home bar included. Every pixel obeys the app's own saturation law (HSL, 0.35). Locked Oct 23: mockups/locked/sky-four/sky.py.
+// The ribbons read their colours from here (PSKY), the pool keeps its own sky inside, and weather never touches this layer.
+const PSKY = (() => {
+  const W = 240, H = 466, CAP = 0.35, NAMES = ['night', 'dawn', 'day', 'dusk'];
+  const LAD = {
+    dawn: [[0, 116, 154, 204], [.18, 132, 160, 204], [.36, 152, 162, 198], [.52, 180, 162, 186], [.66, 210, 168, 172], [.78, 228, 184, 164], [.9, 238, 204, 170], [1, 244, 214, 180]],
+    day: [[0, 112, 148, 194], [.15, 124, 160, 202], [.3, 138, 172, 208], [.45, 154, 184, 212], [.6, 176, 198, 218], [.75, 202, 214, 224], [.88, 224, 226, 226], [1, 238, 232, 216]],
+    dusk: [[0, 14, 18, 36], [.18, 30, 34, 66], [.36, 66, 58, 100], [.52, 116, 80, 116], [.66, 166, 102, 114], [.78, 200, 130, 112], [.9, 220, 160, 124], [1, 232, 184, 142]],
+    night: [[0, 10, 14, 30], [.15, 16, 22, 44], [.3, 24, 32, 58], [.45, 34, 42, 72], [.6, 46, 54, 88], [.75, 62, 68, 104], [.88, 80, 84, 120], [1, 98, 100, 132]]
+  };
+  const SUN = {   // where the light is, its colour, how far its glow reaches, how strong, and how big its core
+    dawn: { x: .12, y: .84, c: [255, 206, 150], r: .60, a: .55, k: .08 }, day: { x: .30, y: .19, c: [255, 246, 222], r: .50, a: .45, k: .05 },
+    dusk: { x: .88, y: .84, c: [255, 176, 120], r: .60, a: .60, k: .09 }, night: { x: .78, y: .16, c: [180, 198, 255], r: .40, a: .30, k: .03 }
+  };
+  const ladder = (L, v) => { let i = 1; while (i < L.length - 1 && L[i][0] < v) i++; const a = L[i - 1], b = L[i], t = clamp((v - a[0]) / (b[0] - a[0]), 0, 1); return [1, 2, 3].map(n => a[n] + (b[n] - a[n]) * t); };
+  const sat = (g) => { const a = g.map(v => v / 255), mx = Math.max(...a), mn = Math.min(...a), l = (mx + mn) / 2, d = mx - mn, s = d ? d / Math.max(1 - Math.abs(2 * l - 1), 1e-6) : 0, k = s > CAP ? CAP / s : 1; return a.map(v => (l + (v - l) * k) * 255); };
+  const holder = $('sky'), cv = [], top = [], mid = [], bot = [];
+  NAMES.forEach((name) => {
+    const L = LAD[name], s = SUN[name], night = name === 'night', cs = document.createElement('canvas'); cs.width = W; cs.height = H;
+    const c = cs.getContext('2d'), im = c.createImageData(W, H), px = im.data, ga = name === 'dawn' || name === 'dusk' ? 0.9 : 0.5;
+    const ex = Array.from({ length: W }, (_, x) => Math.exp(-(((x / (W - 1) - s.x) / .55) ** 2))), far = Array.from({ length: W }, (_, x) => clamp(Math.abs(x / (W - 1) - s.x) / .9, 0, 1));
+    const rows = [[], [], []]; let n = 0;
+    for (let y = 0; y < H; y++) {
+      const v = y / (H - 1), lad = ladder(L, v), ey = Math.exp(-(((v - s.y) / .34) ** 2));
+      for (let x = 0; x < W; x++, n += 4) {
+        const u = x / (W - 1), f = far[x], g = [0, 1, 2].map(i => lad[i] * (1 - .16 * f) + [40, 56, 110][i] * .05 * f * (night ? .5 : 1));
+        const gl = ex[x] * ey * ga, dist = Math.hypot((u - s.x) * W / H, v - s.y), halo = Math.exp(-((dist / s.r) ** 2) * 2.2) * s.a, core = Math.exp(-((dist / s.k) ** 2) * 1.4);
+        const t = clamp(halo * .6 + core, 0, 1), lit = g.map((v2, i) => { const w = v2 + (255 - v2) * (s.c[i] / 255) * (s.a * gl); return w + (255 - w) * (s.c[i] / 255) * t; });
+        const out = sat(lit), ck = clamp(core, 0, 1) * .9;
+        for (let i = 0; i < 3; i++) px[n + i] = out[i] + (255 - out[i]) * ck + Math.random() - 0.5;   // a little noise: no banding on a long soft fade
+        px[n + 3] = 255;
+      }
+    }
+    c.putImageData(im, 0, 0);
+    if (night) {   // the moon and its stars (a fixed scatter)
+      let z = 5; const rnd = () => ((z = (z * 16807) % 2147483647) / 2147483647);
+      for (let i = 0; i < 90; i++) { c.fillStyle = `rgba(255,255,255,${(0.27 + rnd() * 0.58).toFixed(2)})`; c.fillRect(Math.floor(rnd() * W), Math.floor(rnd() * H * 0.7), 1, 1); }
+      c.fillStyle = '#f4f7ff'; c.beginPath(); c.arc(s.x * W, s.y * H, 5.5, 0, TAU); c.fill();
+    }
+    const row = (y) => { const d = c.getImageData(0, y, W, 1).data, o = [0, 0, 0]; for (let x = 0; x < W; x++) for (let i = 0; i < 3; i++) o[i] += d[x * 4 + i] / W; return o; };   // the sky's colour at the top, the middle and the foot, for the ribbons and the notch
+    top.push(row(0)); mid.push(row(H >> 1)); bot.push(row(H - 1));
+    cs.setAttribute('aria-hidden', 'true'); holder.appendChild(cs); cv.push(cs);
+  });
+  return { cv, top, mid, bot, hor: bot[0], mdc: mid[0], tcol: top[0], key: -1 };
+})();
+const rgbCss = (c) => `rgb(${c.map(Math.round).join(',')})`;
+const skyMeta = document.querySelector('meta[name=theme-color]') || document.head.appendChild(Object.assign(document.createElement('meta'), { name: 'theme-color' }));
+function updateSky() {   // the two skies either side of the hour, one over the other: the page, the ribbons' colours, the notch and the home bar
+  const u = S.tod, i = Math.floor(u) % 4, j = (i + 1) % 4, f = u - Math.floor(u), key = i * 1000 + Math.round(f * 500); if (key === PSKY.key) return; PSKY.key = key;
+  PSKY.cv.forEach((c, n) => { c.style.opacity = n === i ? 1 : n === j ? f.toFixed(3) : 0; c.style.zIndex = n === j ? 2 : 1; });
+  const at = (A) => mix(A[i], A[j], f); PSKY.hor = at(PSKY.bot); PSKY.mdc = at(PSKY.mid); PSKY.tcol = at(PSKY.top);
+  document.documentElement.style.setProperty('--bg-bot', rgbCss(PSKY.hor)); skyMeta.content = rgbCss(PSKY.tcol);
+}
+updateSky();
 /* ---------- The first session: a plan, up to three moves, an exit ---------- */
 // The Timer and Task card, walked down one step at a time. Session Plan asks Yes or No. Yes brings a lone plus: touch it and it
 // turns into an X and opens a box to write in. The ritual is an overlay on the card's own rows, gold and sound, and every step
@@ -3524,7 +3595,7 @@ const stage = (k) => FLOW.box[k];
 const taskText = (k) => ((PREFS.tasks[k] || {}).text || '').trim();
 const flowAt = (fn, ms, k = -1) => FLOW.t.push({ id: setTimeout(fn, ms), k });
 const flowGo = (flow) => { const i = CARD.rows.findIndex(r => r.flow === flow); if (i >= 0) { CARD.i = i; syncCard(); } };
-function flowStop(k = -1) { FLOW.t = FLOW.t.filter(t => { if (k >= 0 && t.k !== k) return true; clearTimeout(t.id); return false; }); if (k < 0) spot(false); }   // all of them, or one box's
+function flowStop(k = -1) { FLOW.t = FLOW.t.filter(t => { if (k >= 0 && t.k !== k) return true; clearTimeout(t.id); return false; }); }   // all of them, or one box's
 function flowReset() { flowStop(); Object.assign(FLOW, { plan: false, box: [0, 0, 0], exit: false, sub: false, cer: [newCer(), newCer(), newCer()] }); }
 function flowOpen() {   // from the intro: the ceremony. From the Timer tile later: what you already wrote, as plain rows
   const fresh = FLOW.fresh || (PREFS.kind === 'task' && !tasks().length); FLOW.fresh = false; flowReset();
@@ -3573,7 +3644,7 @@ function shine(k, sel) {
 }
 // The ritual: three touches, three tones, each answered at once.
 function flowFocus(k) {   // the box touched: the X turns to a plus, gold, tone one
-  const c = FLOW.cer[k]; if (stage(k) !== 2) return; spot(true, k); if (c.beat || c.quiet) return;
+  const c = FLOW.cer[k]; if (stage(k) !== 2) return; if (c.beat || c.quiet) return;
   const q = CUES[k]; c.beat = 1; syncCard(); shine(k, '.ic > .shine'); cue(q.n[0], 2.4, 0.11); hum(q.h[0][0], q.h[0][1], 3.0, 0.07);
 }
 function flowType(k) {   // the first letter: "Name It" gold, tone two, and the wash
@@ -3618,23 +3689,6 @@ function flowBack() {   // one step back
   const at = FLOW.exit ? 'exit' : [0, 1, 2].filter(k => [1, 2, 3, 5].includes(stage(k))).pop();
   CARD.i = 0; at == null ? syncCard() : flowGo(at);
 }
-// The spotlight: while a box has the keyboard, everything round it dims. It is fitted to the box when it starts, and again only
-// when the page or the box moves (a resize, the keyboard, a row finishing its rise): never every frame. It goes with the keyboard.
-let spotEl = null, spotK = null;
-function spotFit() {
-  const el = spotK != null && $('mcRows').querySelector(`.mrow.box[data-k="${spotK}"]`); if (!el) { spotK = null; spotEl.classList.remove('on'); return; }
-  const b = el.getBoundingClientRect(); Object.assign(spotEl.style, { left: `${b.left}px`, top: `${b.top}px`, width: `${b.width}px`, height: `${b.height}px`, borderRadius: getComputedStyle(el, '::before').borderRadius });
-}
-function spot(on, k) {
-  if (!spotEl) {
-    spotEl = document.createElement('div'); spotEl.id = 'spot'; document.body.appendChild(spotEl);
-    const refit = () => { if (spotK != null) spotFit(); };
-    addEventListener('resize', refit); addEventListener('scroll', refit, true); $('mcRows').addEventListener('animationend', refit);
-    if (window.visualViewport) { visualViewport.addEventListener('resize', refit); visualViewport.addEventListener('scroll', refit); }
-    document.addEventListener('focusout', (e) => { if (e.target.matches && e.target.matches('.tx')) spot(false); });
-  }
-  spotK = on ? k : null; spotEl.classList.toggle('on', !!on); if (on) spotFit();
-}
 /* ---------- The door and the Journey (v74) ---------- */
 // The door: when the circle is at rest, two buttons in it, Free Play and Journey. Both are actions; neither is a question.
 // Free Play: the game (a game you didn't lose comes back as it was). Journey: three steps, the bar showing where you are,
@@ -3647,8 +3701,7 @@ const DOOR = { key: '' };
 function doorSync() {   // the buttons in the circle
   const o = S.intro, open = !!(o && o.go == null && o.ready), key = open ? (S.jr ? 'settle' : 'door') + (S.prev ? ':prev' : '') : '';
   document.body.classList.toggle('intro-two', open);
-  const sky = document.querySelector('.sky'), k = S.jr && S.intro ? S.stageHour : null;   // Settle's dusk behind the circle (dimmed after dark)
-  if (sky && sky.dataset.k !== String(k)) { sky.dataset.k = k; sky.style.background = k ? `linear-gradient(${stageTarget(k).map(c => rgba(c)).join(',')})` : ''; sky.style.transition = 'background 2.4s'; } if (key === DOOR.key) return; DOOR.key = key; if (!open) return;
+  if (key === DOOR.key) return; DOOR.key = key; if (!open) return;
   const b = (f, d, w, cls) => `<button class="cell ${cls}" data-f="door:${f}">${icon(d)}<span class="sub">${w}</span></button>`;
   $('introTwo').innerHTML = S.jr ? b('ready', ICON.check, 'Ready', 'pick') + b('free', ICON.play, 'Free Play', 'quiet') : b('free', ICON.play, S.prev ? 'Resume' : 'Free Play', 'quiet') + b('journey', ICON.task, 'Journey', 'pick');
   fitIcons($('introTwo'));
@@ -3662,7 +3715,8 @@ function doorTouch(b) {
 function journeyStart() {   // Settle: the circle, at dusk
   if (S.intro && S.intro.go != null) S.intro = null;
   if (!S.intro) { opening(); introSkip(); }
-  S.jr = { stage: 1 }; S.planned = false; S.stageHour = STAGE_HOUR[1];   // a new Journey has no plan yet FR.path = []; FR.hide = false; DOOR.key = ''; syncBars();
+  S.jr = { stage: 1 }; S.planned = false; S.stageHour = STAGE_HOUR[1];   // a new Journey has no plan yet
+  FR.path = []; FR.hide = false; DOOR.key = ''; syncBars();
 }
 function journeyEnd() { S.jr = null; S.stageHour = null; DOOR.key = ''; syncBars(); }
 function journeyTile() {   // the Journey tile: begin one, or see your plan while one runs
@@ -3682,16 +3736,28 @@ function jrAction() {
 const jrReturn = () => { if (S.jr) { S.jr.stage = 3; S.stageHour = STAGE_HOUR[3]; syncBars(); } };   // back from what you came to do: Return, at dawn
 /* ---------- The look (v74): how the ribbons look, one set of numbers ---------- */
 // Every ribbon tile is drawn from one set of twenty numbers and switches (SK_D). A look is a few of them changed. Auto, the
-// default, follows where you are: each place has its own look (Heritage its wooden tray, Orbit its dark), and the weather
-// and Comp lay theirs over it (Clear sky, Rain, Snow, a storm, Competition). The tray behind the tiles is the scene's own
-// sky, mixed into the chrome. Whatever is chosen, text keeps 7:1 at every sky the ramp can paint: the contrast floor is
-// worked out against the whole ramp, not one hour. Only Liquid (asked for by name) and your own sliders may go lower, never
+// default, is the same everywhere: the template reads only the page's sky (72-sky.js) and nothing above it, so no place and no
+// weather restyles it; only Comp lays its own look over it. The tray behind the tiles is the page's sky, mixed into the
+// chrome. Whatever is chosen, text keeps 7:1 at each of the four skies: the contrast floor is worked out against Night, Dawn,
+// Morning and Dusk, not one hour. Only Liquid (asked for by name) and your own sliders may go lower, never
 // under 4.5:1 (WCAG AA), and the status bar says so with a sign you can touch. Colour is never the only sign: on has a tick,
 // picked has a dot. The phone's Increase Contrast and Reduce Transparency win: the glass goes solid.
-const SK_D = { c: 0.85, t: 0.5, h: 168, g: 8, w: 2, z: 38, q: 500, f: 45, r: 48, d: 50, n: 50, b: 10, sc: 100, ly: 'ribbon', gl: 0, ic: 1, wd: 1, bare: 0, p: 0 };
+const SK_D = { c: 0.85, t: 0.5, h: 168, g: 8, w: 2, z: 38, q: 500, f: 45, r: 48, d: 50, n: 50, b: 10, sc: 100, ly: 'ribbon', gl: 4, ic: 1, wd: 1, bare: 0, p: 0 };
 const SK_RANGE = { c: [0, 1, 0.01], t: [0, 1, 0.01], h: [150, 270, 3], g: [6, 36, 3], w: [1.5, 3, 0.1], z: [30, 50, 1], q: [400, 700, 100], f: [45, 57, 3], r: [18, 102, 3], d: [0, 100, 5], n: [0, 100, 5], b: [0, 24, 1], sc: [100, 200, 25] };
 const SK_PAL = [['126,196,158', '142,169,232'], ['232,182,106', '111,195,200'], ['181,217,122', '185,163,236']];   // on, picked: sage and slate; amber and teal; lime and violet
-const SK_GLASS = ['Clear', 'Tinted', 'Solid', 'Liquid'], SK_LAY = ['ribbon', 'list', 'cards'];
+const SK_GLASS = ['Clear', 'Tinted', 'Solid', 'Liquid', 'Sky-lit'], SK_LAY = ['ribbon', 'list', 'cards'];
+// Sky-lit, the default (gl 4): no tray; each tile takes the page's sky at its top and fades to the chrome's black by its words, so the
+// words sit on black (7:1 by construction), the marks sit on the sky's own light (3:1 or better), and a bright rim says it is lit from
+// above. On is green and ticked; the one you are on is blue and dotted. These are the only numbers that draw it (SK_LIT, and the CSS).
+const SK_LIT = { a: 0.62, end: 0.78, k: [18, 18, 18], ka: 0.96, on: [[126, 196, 158], 0.65, [30, 48, 40], 0.96], sel: [[142, 169, 232], 0.65, [28, 34, 52], 0.96] };
+function litAt(sky, f, v) {   // the tile's colour at a fraction f of its height, over the sky behind it
+  const [c0, a0, c1, a1] = v || [sky, SK_LIT.a, SK_LIT.k, SK_LIT.ka], t = clamp(f / SK_LIT.end, 0, 1), a = a0 + (a1 - a0) * t;
+  return [0, 1, 2].map(i => c0[i] * a0 * (1 - t) + c1[i] * a1 * t + sky[i] * (1 - a));
+}
+const SK_WORDS = 0.76, SK_MARKS = 0.4;   // where on a tile its words sit, and its icon
+function litWorst(at) {   // the least contrast of the ink on a tile (words, or marks) over each of the four skies
+  let lo = 99; for (const [, mid] of skSkies()) for (const v of [null, SK_LIT.on, SK_LIT.sel]) lo = Math.min(lo, contrastOf(SK_INK, litAt(mid, at, v))); return lo;
+}
 // The looks you pick by name. Liquid is the real glass: translucent, so it sits under 7:1 and says so.
 const SK_LOOKS = { Liquid: { gl: 3, t: 1, c: 0, b: 18, n: 90, d: 60 }, Calm: { t: 0.4, bare: 1 }, Quiet: { c: 0.8, t: 0.2, wd: 0 }, Pebbles: { t: 0.45, r: 102, h: 180 },
   Amber: { c: 0.8, p: 1 }, Lime: { c: 0.7, p: 2, bare: 1, wd: 0 } };
@@ -3699,22 +3765,12 @@ const SK_LOOKS = { Liquid: { gl: 3, t: 1, c: 0, b: 18, n: 90, d: 60 }, Calm: { t
 // Big: one tile at a time, words at twice the size. Matte: flat, no glass, no shine (light-sensitive). Read: words only, bold, in a list.
 const SK_EYES = { Clear: { c: 1, t: 0.1, d: 0, n: 0, w: 2.5, q: 700, r: 36 }, Large: { h: 270, z: 46, w: 2.5, q: 600 }, Big: { ly: 'cards', sc: 200, w: 2.5, q: 700 },
   Matte: { gl: 2, c: 1, t: 0.3, d: 0 }, Read: { ic: 0, q: 700, f: 57, ly: 'list' } };
-// Auto: each place's own look (the defaults for that place), then the weather's, then Comp's, each laid over the one before.
-const SK_PLACE = {
-  spring: { t: 0.55, r: 48, n: 60, d: 40 }, summer: { t: 0.7, r: 60, n: 70, b: 14 }, autumn: { t: 0.5, r: 36, n: 40, d: 60, gl: 1, w: 2.2 },
-  winter: { t: 0.6, r: 54, n: 80, d: 30, b: 18 }, rainforest: { t: 0.55, r: 66, gl: 1, b: 16 }, camp: { t: 0.45, r: 30, n: 30, d: 70, gl: 1 },
-  woods: { t: 0.4, r: 24, n: 30, d: 60, gl: 2, w: 2.2 }, beach: { t: 0.7, r: 90, n: 70, d: 40 }, stars: { t: 0.35, n: 20, d: 30, gl: 1, q: 500 },
-  celestial: { t: 0.3, r: 102, n: 40, d: 20, gl: 1 }, heritage: { t: 0.5, r: 18, n: 50, d: 70, gl: 2 } };
-const SK_WX = { clear: { n: 65 }, rain: { gl: 1, b: 20, n: 40 }, snow: { n: 85, r: 60, b: 20 }, storm: { gl: 2, d: 80, c: 1 }, comp: { gl: 2, r: 18, d: 90, n: 0, c: 1, w: 2.6, q: 700, p: 0, bare: 0 } };
+const SK_COMP = { gl: 2, r: 18, d: 90, n: 0, c: 1, w: 2.6, q: 700, p: 0, bare: 0 };   // Comp's own look, laid over Auto
 const SK_NAMES = { auto: 'Auto', own: 'Your own' };
 const SK = { eff: { ...SK_D }, key: '', worst: 7, floor: 0, hide: false, ci: 0, phone: false };
 const skP = () => PREFS.skin;
-// What the sky can put behind the tiles: the ramp at every sun height (dawn to noon to deep night), or a place's own backdrop.
-const SK_SKIES = (() => { const out = []; for (let e = -30; e <= 60; e += 5) { let r = 1; while (r < RAMP.length - 1 && RAMP[r].e < e) r++; const a = RAMP[r - 1], b = RAMP[r], g = clamp((e - a.e) / (b.e - a.e), 0, 1);
-  out.push([law(mix(a.hor, b.hor, g), 'sky'), law(mix(a.mid, b.mid, g), 'sky')]); }
-  for (const k in STAGE_SKY) for (const dark of [false, true]) { const [, m, h] = stageTarget(k, dark); out.push([h, m]); }   // and the Journey's three skies, by day and after dark
-  return out; })();
-const skSkies = () => { const w = here(); if (w.indoor) return [[law(hex(w.edge || w.accent), 'sky'), law(hex(w.color), 'sky')]]; return SK_SKIES; };   // every sky, everywhere: a Journey's day and dawn reach Stars and Orbit too
+// What the sky can put behind the tiles: the four skies, each by its foot and its middle.
+const skSkies = () => PSKY.bot.map((h, k) => [h, PSKY.mid[k]]);
 const SK_INK = [240, 240, 234], SK_K = [18, 18, 18];
 // One tile's background, as the eye gets it: the tray (the sky mixed into the chrome), the black scrim, the white wash, the state's tint.
 function skBg(P, hor, mid) {
@@ -3725,6 +3781,7 @@ function skBg(P, hor, mid) {
 }
 const skRgb = (s) => s.split(',').map(Number);
 function skWorst(P, skies = skSkies()) {   // the lowest contrast any text on the tiles can have, at any sky
+  if (P.gl === 4 && !P.bare) return litWorst(SK_WORDS);
   let lo = 99; const [on, sel] = SK_PAL[P.p].map(skRgb);
   for (const [hor, mid] of skies) { const g = skBg(P, hor, mid).g, inks = P.bare ? [SK_INK, on, sel] : [SK_INK];
     for (const bg of P.bare ? [g] : [g, mix(g, on, 0.2), mix(g, sel, 0.22)]) for (const ink of inks) lo = Math.min(lo, contrastOf(ink, bg)); }
@@ -3733,46 +3790,38 @@ function skWorst(P, skies = skSkies()) {   // the lowest contrast any text on th
 const contrastOf = (a, b) => { const L = (c) => c.reduce((s, v, i) => { v /= 255; return s + [0.2126, 0.7152, 0.0722][i] * (v <= 0.04045 ? v / 12.92 : ((v + 0.055) / 1.055) ** 2.4); }, 0), x = L(a), y = L(b); return (Math.max(x, y) + 0.05) / (Math.min(x, y) + 0.05); };
 const SK_FL = new Map();
 function skFloor(P, T) {   // the least contrast setting that keeps T:1 at every sky (1 if nothing can); remembered, it is asked four times a second
-  const key = JSON.stringify([P, T, here().key, here().indoor]); if (SK_FL.has(key)) return SK_FL.get(key); const v = skFloorOf(P, T); if (SK_FL.size > 400) SK_FL.clear(); SK_FL.set(key, v); return v;
+  const key = JSON.stringify([P, T]); if (SK_FL.has(key)) return SK_FL.get(key); const v = skFloorOf(P, T); if (SK_FL.size > 400) SK_FL.clear(); SK_FL.set(key, v); return v;
 }
 function skFloorOf(P, T) {
   if (skWorst({ ...P, c: 1 }) < T) return 1; let a = 0, b = 1;
   for (let i = 0; i < 12; i++) { const m = (a + b) / 2; if (skWorst({ ...P, c: m }) >= T + 0.02) b = m; else a = m; }
   return b;
 }
-// Which weather look lies over the place: Comp first, then a storm, snow, rain, and a clear sky last.
-function skWxKey() {
-  if (compOn()) return 'comp'; const w = here(), a = PREFS.atmo;
-  if (!has('weather')) return w.dry ? '' : 'clear';
-  if (S.severe || (a.bolt.on && a.bolt.lv > 0.5)) return 'storm';
-  if (a.rain.on) return w.snow ? 'snow' : 'rain';
-  return PREFS.clouds === 'clear' && !a.wind.on ? 'clear' : '';
-}
 function skEff() {   // the numbers in force now
   const k = skP().pick; let P;
   if (k === 'own' && skP().own) P = { ...SK_D, ...skP().own };
   else if (SK_LOOKS[k] || SK_EYES[k]) P = { ...SK_D, ...(SK_LOOKS[k] || SK_EYES[k]) };
-  else { const wx = skWxKey(); P = { ...SK_D, ...(SK_PLACE[here().key] || {}), ...(SK_WX[wx] || {}) }; }
+  else P = { ...SK_D, ...(compOn() ? SK_COMP : {}) };
   if (SK.phone && P.gl !== 2) P.gl = 2;   // the phone asked for less glass: solid
   if (P.ly === 'ribbon') { const w = (1150 - 5 * P.g) / 6; P.f = Math.min(P.f, Math.max(45, Math.floor(w / 4.1 / 3) * 3)); if (!P.bare) P.r = Math.min(P.r, Math.max(12, (w - 4.1 * P.f - 8) / 0.7)); }   // six to a row: the longest word (4.1 of its own size) fits inside its tile, clear of the rounded corners (the corners give way)
   const lo = k === 'Liquid' || k === 'own' ? 4.5 : 7;
+  if (P.gl === 4 && !P.bare && (skWorst(P) < lo || litWorst(SK_MARKS) < 3)) P.gl = 2;   // if the sky ever leaves the words or the marks short, the tile goes solid
   for (let i = 0; i < 12 && skWorst({ ...P, c: 1 }) < lo; i++) { if (P.gl === 1) P.gl = 0; else P.t = Math.max(0, +(P.t - 0.1).toFixed(2)); }   // if even the darkest glass can't hold it, the look gives way: the tint goes, then the sky steps back
   P.c = Math.max(P.c, skFloor(P, lo));   // a look named for you always holds 7:1; your own and Liquid hold 4.5:1
   return P;
 }
-const skLabel = () => { const k = skP().pick; return SK_NAMES[k] || k; };
 // The CSS: every number becomes a variable on the page; the tray's colours follow the sky as it changes.
 function skinApply(force) {
-  const P = SK.eff = skEff(), w = here(), sky = w.indoor ? skSkies()[0] : [SKY.hor, SKY.mid], bg = skBg(P, sky[0], sky[1]), [on, sel] = SK_PAL[P.p];
+  const P = SK.eff = skEff(), sky = [PSKY.hor, PSKY.mdc], bg = skBg(P, sky[0], sky[1]), [on, sel] = SK_PAL[P.p];
   const rgb = (c) => c.map(Math.round).join(','), s = 0.1 + 0.85 * P.c;
   const vars = { '--sk-a': `rgb(${rgb(bg.top)})`, '--sk-b': `rgb(${rgb(bg.md)})`, '--sk-at': `rgb(${rgb(P.bare ? mix(bg.at, bg.cr, s) : bg.at)})`, '--sk-cr': rgb(bg.cr), '--sk-s': s.toFixed(3),
     '--sk-h': `calc(${P.h} * var(--u))`, '--sk-g': `calc(${P.g} * var(--u))`, '--sk-i': `calc(${(P.h * P.z / 100).toFixed(1)} * var(--u))`, '--sk-w': P.w, '--sk-q': P.q, '--sk-f': `calc(${P.f} * var(--u))`,
     '--sk-r': `calc(${P.r} * var(--u))`, '--sk-d': (P.d / 100).toFixed(2), '--sk-n': P.gl === 2 ? 0 : (P.n / 100).toFixed(2), '--sk-bl': `${P.gl === 2 ? 0 : P.b}px`, '--sk-k': P.sc / 100,
-    '--sk-w1': P.gl === 2 ? 0 : P.gl === 3 ? 0.3 : 0.16, '--sk-w2': P.gl === 2 ? 0 : P.gl === 3 ? 0.1 : 0.06, '--sk-on': on, '--sk-pick': sel };
+    '--sk-w1': P.gl === 2 ? 0 : P.gl === 3 ? 0.3 : 0.16, '--sk-w2': P.gl === 2 ? 0 : P.gl === 3 ? 0.1 : 0.06, '--sk-on': on, '--sk-pick': sel, '--sk-sky': `rgb(${rgb(PSKY.mdc)})` };
   const key = JSON.stringify(vars) + [P.ic, P.wd, P.bare, P.ly, P.gl].join();
   if (key === SK.key && !force) return; SK.key = key;
   const root = document.documentElement.style; for (const v in vars) root.setProperty(v, vars[v]);
-  const b = document.body.classList; b.toggle('nI', !P.ic); b.toggle('nW', !P.wd); b.toggle('bare', !!P.bare); b.toggle('liq', P.gl === 3); b.toggle('ly-list', P.ly === 'list'); b.toggle('ly-cards', P.ly === 'cards');
+  const b = document.body.classList; b.toggle('nI', !P.ic); b.toggle('nW', !P.wd); b.toggle('bare', !!P.bare); b.toggle('liq', P.gl === 3); b.toggle('lit', P.gl === 4 && !P.bare); b.toggle('ly-list', P.ly === 'list'); b.toggle('ly-cards', P.ly === 'cards');
   SK.worst = skWorst(P); fitPool();
 }
 // Your own: the first slider you move copies the look in force and keeps it as yours.
@@ -3797,7 +3846,7 @@ function skShowAll() { skP().slots[S.mode] = [...SK_TILES[S.mode]]; savePrefs();
 function skSanitize() {
   const s = PREFS.skin = obj(PREFS.skin), ok = (k) => k === 'auto' || k === 'own' || SK_LOOKS[k] || SK_EYES[k];
   if (!ok(s.pick)) s.pick = 'auto';
-  if (s.own) { const o = obj(s.own), c = { ...SK_D }; for (const k in SK_D) { if (SK_RANGE[k]) { const v = Number(o[k]); c[k] = clamp(Number.isFinite(v) ? v : SK_D[k], SK_RANGE[k][0], SK_RANGE[k][1]); } else if (k === 'ly') c.ly = SK_LAY.includes(o.ly) ? o.ly : 'ribbon'; else if (k === 'gl') c.gl = [0, 1, 2, 3].includes(o.gl) ? o.gl : 0; else if (k === 'p') c.p = [0, 1, 2].includes(o.p) ? o.p : 0; else c[k] = o[k] ? 1 : 0; }
+  if (s.own) { const o = obj(s.own), c = { ...SK_D }; for (const k in SK_D) { if (SK_RANGE[k]) { const v = Number(o[k]); c[k] = clamp(Number.isFinite(v) ? v : SK_D[k], SK_RANGE[k][0], SK_RANGE[k][1]); } else if (k === 'ly') c.ly = SK_LAY.includes(o.ly) ? o.ly : 'ribbon'; else if (k === 'gl') c.gl = [0, 1, 2, 3, 4].includes(o.gl) ? o.gl : 0; else if (k === 'p') c.p = [0, 1, 2].includes(o.p) ? o.p : 0; else c[k] = o[k] ? 1 : 0; }
     if (!c.ic && !c.wd) c.ic = 1; s.own = c; } else s.own = null;
   const sl = obj(s.slots); s.slots = {}; for (const m in SK_TILES) { const a = Array.isArray(sl[m]) && sl[m].length === 6 ? sl[m].map(x => (SK_TILES[m].includes(x) ? x : '')) : null; if (a && new Set(a.filter(Boolean)).size === a.filter(Boolean).length) s.slots[m] = a; }
 }
@@ -3849,15 +3898,15 @@ const skBase = () => { const k = skP().pick; return { ...SK_D, ...(SK_LOOKS[k] |
 const LOOK_LIST = ['auto', ...Object.keys(SK_LOOKS)], EYE_LIST = ['off', ...Object.keys(SK_EYES)];
 const fLooks = () => ({ id: 'looks', n: 'Looks', ic: ICON.star, step: { get: () => (LOOK_LIST.includes(skP().pick) ? skP().pick : skP().pick === 'own' ? 'own' : 'auto'), set: (v) => skPick(v), def: () => 'auto', list: LOOK_LIST, label: (v) => SK_NAMES[v] || v } });
 const fEyes = () => ({ id: 'eyes', n: 'Eyes', ic: ICON.rings, step: { get: () => (EYE_LIST.includes(skP().pick) ? skP().pick : 'off'), set: (v) => skPick(v === 'off' ? 'auto' : v), def: () => 'off', list: EYE_LIST, label: (v) => (v === 'off' ? 'Off' : v) } });
-const fGlass = () => ({ id: 'glass', n: 'Glass', ic: ICON.gem, step: { get: () => skGet('gl'), set: (v) => skSet('gl', v), def: () => skBase().gl, list: [0, 1, 2], label: (v) => SK_GLASS[v] } });
+const fGlass = () => ({ id: 'glass', n: 'Glass', ic: ICON.gem, step: { get: () => skGet('gl'), set: (v) => skSet('gl', v), def: () => skBase().gl, list: [4, 0, 1, 2], label: (v) => SK_GLASS[v] } });
 const fLay = () => ({ id: 'layout', n: 'Layout', ic: ICON.grid, step: { get: () => skGet('ly'), set: (v) => { skSet('ly', v); SK.ci = 0; }, def: () => skBase().ly, list: SK_LAY, label: (v) => v[0].toUpperCase() + v.slice(1) } });
 const STAGE_HOUR = [null, 'dusk', 'day', 'dawn'], STAGE_NAME = ['', 'Settle', 'Go', 'Return'];
 // The groups. Each knows its icon, its word, and its choices (some only in some modes).
 const FG = {
-  scene: { n: 'Scene', ic: ICON.scene, opts: () => [fStp('where', 'Place', ICON.pin, 'where'), ...(here().dry && !here().night ? [] : [fStp('clouds', 'Clouds', ICON.cloud, 'clouds'), fStp('hour', 'Hour', ICON.sun, 'hour')]),
+  scene: { n: 'Scene', ic: ICON.scene, opts: () => [fStp('where', 'Place', ICON.pin, 'where'), ...(here().dry && !here().night ? [] : [fStp('hour', 'Hour', ICON.sun, 'hour')]),
     ...(here().indoor || here().space ? [] : [{ id: 'depth', n: 'Depth', ic: ICON.rise, step: { ...fPref('depth'), list: [0, 1, 2, 3], label: (v) => ['Sky only', '+ Far', '+ Near', '+ Feature'][v] } }])] },   // Heritage and Orbit keep their own backdrops: no depth there
   weather: { n: 'Weather', ic: SUNCLOUD, opts: () => [...ATMO.map(k => ({ ...fLvl(k, skyName(k), k === 'rain' && here().snow ? ICON.snow : ICON[k], `atmo.${k}.lv`, 0.05, 1, 0.05, fPct, `atmo.${k}.on`), onSet: () => sound.init() })),
-    { id: 'severe', n: 'Severe', ic: ICON.turn, toggle: { get: () => !!S.severe, set: (v) => { S.severe = v; sound.whoosh(v ? 0.8 : 0.3, 0); syncBars(); }, def: () => false } },
+    fStp('clouds', 'Clouds', ICON.cloud, 'clouds'),
     { id: 'allwx', n: 'All', ic: ICON.cloud, toggle: { get: () => ATMO.some(k => PREFS.atmo[k].on), set: (v) => { if (!!v !== ATMO.some(k => PREFS.atmo[k].on)) allWeather(); }, def: () => false } }] },
   sound: { n: 'Sound', ic: ICON.note, opts: () => ({
     play: [fMix('game', 'Game', ICON.note), fMix('alerts', 'Alerts', ICON.clock), fMix('drone', 'Drone', ICON.hum), fMix('nature', 'Nature', ICON.leaf), fMix('weather', 'Weather', ICON.cloud), fTog('vibe', 'Buzz', ICON.vibe, 'vibe')],
@@ -4034,16 +4083,14 @@ function tickBars() {   // every frame: the score and its glow, your time runnin
   const at = NUDGE[S.nudged]; if (at && S.playT >= at * 60 && !S.planned && !tasks().length && !S.jr) { S.nudged++; j.classList.remove('nudge'); void j.offsetWidth; j.classList.add('nudge'); }   // playing with no plan: a blue ring fades from Journey, at set minutes, never more
   const p = run ? clamp(goalLeft() / S.goal.total, 0, 1) : -1; j.classList.toggle('arc', p >= 0); j.classList.toggle('cw', !!(run && S.goal.cw)); if (p >= 0) j.style.setProperty('--p', p.toFixed(3));
 }
-function applySeason() {   // the page and the chrome take a faint tint of the place's sky; the tiles take the look
-  const s = here(), root = document.documentElement.style;
-  for (const [v, val] of [['--bg-top', s.bgTop], ['--bg-mid', s.bgMid], ['--bg-bot', s.bgBot], ['--black', s.chrome]]) root.setProperty(v, val);
+function applySeason() {   // a new place: the frame is rebuilt for it (the page and the chrome take nothing from it: they read only the sky)
   BAR.line = BAR.top = BAR.tiles = ''; if ($('topBar') && WORLD) syncBars();   // the control bar is not rebuilt: a Place slider being dragged stays under the finger
 }
 // The frame's one pop-up, when no card is open: the card's own pop-up, standing alone over the frame.
 function framePop(o) { if (!CARD.name) { POP.alone = true; const mc = $('mc'); mc.classList.add('alone'); mc.hidden = false; fitCard(); } popup(o); }
 function allWeather() {   // the weather, all of it off, or back as it was
   const on = ATMO.filter(k => PREFS.atmo[k].on);
-  if (on.length || S.severe) { allWx.was = on; for (const k of ATMO) PREFS.atmo[k].on = false; S.severe = false; }
+  if (on.length) { allWx.was = on; for (const k of ATMO) PREFS.atmo[k].on = false; }
   else for (const k of (allWx.was && allWx.was.length ? allWx.was : ['rain'])) PREFS.atmo[k].on = true;
   savePrefs(); sound.init(); syncBars();
 }
@@ -4145,7 +4192,7 @@ const CARDS = {
 };
 const CARD = { name: null, stack: [], rows: [], i: 0, snap: '', pend: {}, stage: false };
 const U = (n) => `calc(${n} * var(--u))`;
-const ROW = 132, CARD_W = 1166, RAIL_TOP = 166;   // the card grid, in u: same numbers as --row and --cw in the CSS
+const CARD_W = 1166, RAIL_TOP = 166;   // the card grid, in u: same numbers as --row and --cw in the CSS
 const SHINES = '<span class="shine"></span><span class="shine r"></span>';   // the gold flash of the flow ceremony, part of every box row
 const okHTML = (more = '') => `<button class="ok" data-ok aria-label="Next">${icon(ICON.check)}${more}</button>`;
 function ctlHTML(r, i) {
@@ -4245,7 +4292,6 @@ function fitCard() {   // the card runs from the status bar down to where the ti
 // The bar and the foot (v71.5). The bar over the card: ‹ Back in the first column, ✕ Close in the last, the title between them: centred, one fixed width, only its words change (CSS).
 // The foot, a ringed ribbon at the card's bottom: Reset in the first column, the check at the far right (touch it at any time).
 // A column a card doesn't use stays empty. A moment has no bar: its answers are the way out, the way on in the check's place.
-const COL = CARD_W / 6;   // one of the six equal columns, in u
 function navHTML(name) {
   const def = CARDS[name], blank = '<span class="cell blank"></span>', btn = (k, d, w) => `<button class="cell" data-foot="${k}" aria-label="${w}">${icon(d)}</button>`;
   if (def.moment) return '';
