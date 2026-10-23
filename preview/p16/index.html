@@ -332,8 +332,13 @@ body.lit .panel > .rib, body.lit .panel > .line:not(.comp):not(.warn), body.lit 
 body.lit .panel > .rib, body.lit #ctlBar { height: var(--sk-h); }
 body.lit .panel > .line:not(.comp):not(.warn) { height: calc(84 * var(--u)); }
 body.lit #ctlBar .ic { top: 40%; width: var(--sk-i); height: var(--sk-i); } body.lit #ctlBar .sub { top: 76%; font-size: var(--sk-f); font-weight: var(--sk-q); } body.lit .ctl .hint { font-size: calc(40 * var(--u)); }
-body.lit #topPanel > .line { margin-top: 0; } body.lit #topPanel > .line::before { display: none; } body.lit .panel > .rib + .rib { margin-top: calc(10 * var(--u)); } body.lit #botPanel > .rib:first-child + .rib::before { display: none; }
-body.lit .panel > .line, body.lit #ctlBar { margin-top: calc(10 * var(--u)); } body.lit .panel > .line::before, body.lit #ctlBar::before { content: ''; position: absolute; left: calc(8 * var(--u)); right: calc(8 * var(--u)); top: calc(-9 * var(--u)); height: 1px; background: rgba(255, 255, 255, 0.14); pointer-events: none; }   /* a hairline between the two halves of a tray */
+body.lit #topPanel > .line { margin-top: 0; } body.lit .line::before, body.lit #ctlBar::before, body.lit #topBar::before { display: none; }
+body.lit #botPanel > .rib, body.lit #botPanel > #ctlBar { margin-top: 0; } body.lit #botPanel > #topBar { margin-top: calc(10 * var(--u)); }
+#tileBar { display: none; } body.rowc #tileBar { display: flex; } body.rowc #ctlBar { display: none; }
+body.lit #topPanel > .line::before, body.lit #botPanel > #ctlBar::before, body.lit #botPanel > #topBar::before { display: none; }
+body.lit #ctlBar .cell:not(.tgc):not(.blank) { box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.28); border-radius: var(--sk-r); } body.intro .jract .ic::after, body.intro .jract .ic::before { display: none; }
+body.lit .glint::after { display: none; } body.lit .go-two .ic::after, body.lit .go-two .ic::before { display: none; }
+body.lit .panel > .line, body.lit #ctlBar { margin-top: 0; } body.lit .panel > .line::before, body.lit #ctlBar::before { content: ''; position: absolute; left: calc(8 * var(--u)); right: calc(8 * var(--u)); top: calc(-9 * var(--u)); height: 1px; background: rgba(255, 255, 255, 0.14); pointer-events: none; }   /* a hairline between the two halves of a tray */
 body.lit .jract .cell { background: rgba(22, 30, 54, 0.8); box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.14); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); border-radius: calc(44 * var(--u)); }
 body.lit .go-two .cell { background: none; box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.5); backdrop-filter: none; -webkit-backdrop-filter: none; border-radius: calc(44 * var(--u)); }
 body.lit .go-two .ic { top: 50%; } body.lit .go-two .sub { display: none; }
@@ -344,7 +349,7 @@ body.lit .panel > .line .sp { background: none; box-shadow: none; } body.lit .pa
 body.lit .panel > .line .sp .star { box-shadow: inset 0 0 0 calc(3 * var(--u)) var(--ink); color: var(--ink); }
 body.lit .say .w { background: none; box-shadow: none; padding: 0; } body.lit .say .v, body.lit .path .v { color: rgb(186, 244, 212); }
 body.lit .path, body.lit .path .w, body.lit .nsl .txt { font-style: normal; font-weight: 500; }   /* the status words and the control's: upright and regular, as in the example */
-body.lit:not(.rest) .panel { transition: opacity 0.4s ease; } body.playing:not(.rest) .panel { opacity: 0.5; }   /* a finger on the pool: the trays blend back, and return a second after it lifts */
+body.lit:not(.rest) .panel { transition: opacity 0.9s ease; } body.playing:not(.rest) .panel { opacity: 0.5; transition-duration: 0.3s; }   /* a finger on the pool: the trays blend back, and return a second after it lifts */
 body.lit .frow .cell.blank { display: none; }   /* the tiles in use share the tray evenly */
 body.lit .panel > .line .say, body.lit .panel > .line .path, body.lit .panel > .line .jbar, body.lit .panel > .line .sp { font-size: calc(40 * var(--u)); } body.lit .panel > .line .sp #clock { font-size: calc(36 * var(--u)); } body.lit .say .w, body.lit .path .w { height: auto; }   /* the status words at the size of the tile labels' neighbours: a line, not a headline */
 body.lit .soren { -webkit-text-stroke: 0; color: rgb(240, 240, 234); text-shadow: 0 0 calc(22 * var(--u)) rgba(120, 220, 170, 0.6), 0 0 calc(60 * var(--u)) rgba(120, 220, 170, 0.35); }   /* the word is its ink alone, as the shrinking line is */
@@ -423,9 +428,9 @@ body.rm *, body.rm *::before, body.rm *::after { transition: none !important; an
     </div>
   </div>
   <div class="panel" id="botPanel">
+    <nav class="rib frow" id="tileBar" aria-label="Choices"></nav>
+    <div class="ctl" id="ctlBar" aria-label="Tools and adjust"></div>
     <nav class="rib frow" id="topBar" aria-label="Always here"></nav>
-    <nav class="rib frow" id="tileBar" aria-label="This mode"></nav>
-    <div class="ctl" id="ctlBar" aria-label="Adjust"></div>
     <div class="jract" id="jrAct" hidden></div>
   </div>
   <section class="mc" id="mc" hidden role="dialog" aria-modal="true" aria-labelledby="mcPill"><canvas id="warp" aria-hidden="true"></canvas>
@@ -3978,17 +3983,25 @@ const FG = {
   rest: { n: 'Rest', ic: ICON.moon, opts: () => [fStp('ambient', 'Ambient', ICON.sea, 'ambient'), fLvl('ambLv', 'Level', ICON.speaker, 'ambLv'), fStp('fade', 'Fades', ICON.clock, 'fadeAfter')] }
 };
 const MODE_IC = { play: ICON.bloom, relax: ICON.breathe, fidget: ICON.touch, rest: ICON.moon };
-const FT = {
-  mode: { n: 'Mode', ic: () => MODE_IC[S.mode], word: () => MODES[S.mode].name, opts: () => CHOICES.mode.map(m => ({ id: m, n: MODES[m].name, ic: MODE_IC[m], on: () => S.mode === m, pick: () => { if (S.jr) journeyEnd(); setPref('mode', m); if (m === 'play') setPaused(false); } })) },
-  menu: { n: 'Menu', ic: () => ICON.menu, opts: () => [{ id: 'stats', n: 'Stats', ic: ICON.bars, act: () => openCard('stats') }, { id: 'help', n: 'Help', ic: ICON.ask, act: () => openCard('help') },
+const EYE = 'M2 12s4-7 10-7 10 7 10 7-4 7-10 7S2 12 2 12zM12 9.2a2.8 2.8 0 1 0 0 5.6 2.8 2.8 0 0 0 0-5.6z';
+const FT = {   // the groups that belong to no tile of their own: they sit inside Touch
+  mode: { n: 'Mode', ic: () => MODE_IC[S.mode], opts: () => CHOICES.mode.map(m => ({ id: m, n: MODES[m].name, ic: MODE_IC[m], on: () => S.mode === m, pick: () => { if (S.jr) journeyEnd(); setPref('mode', m); if (m === 'play') setPaused(false); } })) },
+  more: { n: 'More', opts: () => [{ id: 'stats', n: 'Stats', ic: ICON.bars, act: () => openCard('stats') }, { id: 'help', n: 'Help', ic: ICON.ask, act: () => openCard('help') },
     { id: 'new', n: 'Restart', ic: ICON.reset, act: () => framePop({ title: 'Start a new game?', line: 'This game ends here.', back: 'Back', act: 'New Game', go: () => { closeSheet(); if (S.jr) journeyEnd(); setMode('play'); startPool(); } }) },
     { id: 'beta', n: 'Beta', ic: ICON.flask, group: { n: 'Beta', opts: () => [fTog('lookup', 'Look up', ICON.star, 'beta.lookup'), fTog('chest', 'Chest', ICON.rings, 'beta.chest'), fTog('heavy', 'Heavy', ICON.mystery, 'beta.heavy')] } }] },
-  look: { n: 'Look', ic: () => ICON.tune, opts: () => [
-    { id: 'comfort', n: 'Comfort', ic: ICON.heart, group: { n: 'Comfort', opts: () => [fTog('calm', 'Calm', ICON.heart, 'calm'), fTog('still', 'Still', ICON.still, 'still'), fTog('breathing', 'Breathe', ICON.rings, 'breathing')] } },
-    { id: 'style', n: 'Style', ic: ICON.gem, group: { n: 'Style', opts: () => [fLooks(), fEyes()] } }] },
-  vol: { n: 'Volume', ic: () => (PREFS.sound ? ICON.speaker : MUTED), opts: () => [{ id: 'vol', n: 'Volume', ic: ICON.speaker, toggle: fPref('sound'), slider: { ...fPref('vol'), min: 0, max: 1, step: 0.05, fmt: fPct, set: (v) => { setPref('vol', v); if (!PREFS.sound) setPref('sound', true); } } }] }
+  comfort: { n: 'Comfort', opts: () => [fTog('calm', 'Calm', ICON.heart, 'calm'), fTog('still', 'Still', ICON.still, 'still'), fTog('breathing', 'Breathe', ICON.rings, 'breathing')] },
+  style: { n: 'Look', opts: () => [fLooks(), fEyes()] }
 };
-const TOP = ['mode', 'menu', 'journey', 'look', 'vol', 'pause'];
+// The six tiles of the second ribbon. Everything adjustable is under one of them.
+const fVol = () => ({ id: 'vol', n: 'Volume', ic: ICON.speaker, toggle: fPref('sound'), slider: { ...fPref('vol'), min: 0, max: 1, step: 0.05, fmt: fPct, set: (v) => { setPref('vol', v); if (!PREFS.sound) setPref('sound', true); } } });
+const grp = (g, ic) => ({ id: g.n.toLowerCase(), n: g.n, ic, group: g });
+const TOPG = {
+  see: { n: 'See', ic: () => EYE, opts: () => [grp(FG.scene, ICON.scene), grp(FT.style, ICON.gem), grp(FT.comfort, ICON.heart), ...(S.mode === 'relax' || S.mode === 'fidget' ? [grp(FG.light, ICON.sun)] : [])] },
+  hear: { n: 'Hear', ic: () => (PREFS.sound ? ICON.speaker : MUTED), opts: () => [fVol(), ...FG.sound.opts().filter(o => o.id !== 'vibe'), ...(S.mode === 'rest' ? [grp(FG.rest, ICON.moon)] : [])] },
+  touch: { n: 'Touch', ic: () => ICON.hand, opts: () => [fTog('vibe', 'Buzz', ICON.vibe, 'vibe'), grp(FT.mode, MODE_IC[S.mode]), grp(FG.game, ICON.aim), grp(FT.more, ICON.menu)] },
+  weather: { ...FG.weather, ic: () => SUNCLOUD }
+};
+const TOP = ['see', 'hear', 'touch', 'weather', 'journey', 'pause'];
 const FR = { path: [], hide: false };   // where you are in the frame: the groups opened, and the choice you're on. Hide: tiles to put away
 const frGroup = () => FR.path.length && FR.path[FR.path.length - 1];
 const frOpts = () => { const g = frGroup(); return g ? g.def.opts() : []; };
@@ -4023,33 +4036,26 @@ function topHTML() {
   return TOP.map((id) => {
     if (id === 'pause') return fCell('top:pause', S.paused ? ICON.play : ICON.pause, S.paused ? 'Play' : 'Pause', S.paused ? 'on' : '').html;
     if (id === 'journey') return fCell('top:journey', ICON.task, 'Journey', S.jr ? 'sel' : '').html;
-    const g = FT[id], open = FR.path[0] && FR.path[0].def === g;
-    return fCell(`top:${id}`, g.ic(), g.word ? g.word() : g.n, `${open ? 'sel' : ''}${id === 'vol' && !PREFS.sound ? ' muted' : ''}`).html;
+    const g = TOPG[id], open = FR.path[0] && FR.path[0].def === g, off = id === 'weather' && here().dry;
+    return fCell(`top:${id}`, g.ic(), g.n, off ? 'none' : open ? 'sel' : '').html;
   }).join('');
 }
 function tilesHTML() {
-  if (FR.hide) return frLay(skSlots().map(k => (k ? fCell(`hide:${k}`, FG[k].ic, FG[k].n, 'hiding') : fBlank())), 'tile');
-  if (!FR.path.length) return frLay(skSlots().map(k => {
-    if (!k) return fBlank(); const off = k === 'weather' && here().dry;
-    return fCell(`tile:${k}`, FG[k].ic, FG[k].n, off ? 'none' : FR.path[0] && FR.path[0].def === FG[k] ? 'sel' : '');
-  }), 'tile');
+  if (!FR.path.length) return '';
   const g = frGroup(), os = frOpts(), items = os.map((o, i) => fCell(`opt:${i}`, o.ic, o.n, `${o.dis && o.dis() ? 'dis' : ''}${frOn(o) ? ' on' : ''}${g.o === o.id ? ' sel' : ''}`, '', o.toggle || o.on ? frOn(o) : null));
+  if (FR.path.length > 1) items.unshift(fCell('up:back', ICON.left, 'Back', 'quiet'));   // inside a group of a group: a way up
   while (items.length < 6) items.push(fBlank());
   return frLay(items, 'tile');
 }
 // The control bar: with nothing open, what the mode does. With a choice: Back, its switch, its slider or step, and Reset.
 function ctlParts() {
-  if (FR.hide) { const hid = skHidden();
-    return { key: `hide:${hid.join()}`, html: cell('data-f="ctl:back"', ICON.left, 'Back').replace('class="cell"', 'class="cell quiet"') + cell('data-f="ctl:hideall"', ICON.x, 'Hide all').replace('class="cell"', 'class="cell quiet"')
-      + `<div class="chips${hid.length > 2 ? ' tight' : ''}">${hid.length ? hid.map(k => `<button class="chip" data-f="show:${k}" aria-label="Put ${FG[k].n} back">${icon(FG[k].ic)}<span class="sub">${FG[k].n}</span></button>`).join('') : '<span class="hint">Touch a tile to hide it</span>'}</div>`
-      + cell('data-f="ctl:showall"', ICON.reset, 'Reset').replace('class="cell"', 'class="cell quiet"') }; }
   if (!FR.path.length) { const m = S.mode, c = (k, d, w, cls = '', ex = '') => `<button class="cell two ${cls}" data-f="${k}">${icon(d)}<span class="sub">${w}</span>${ex}</button>`;
     if (m === 'play') return { key: 'play', html: TOOLS.map(k => c(`tool:${k}`, ICON[k], TOOL_NAMES[k], '', '<b class="n"></b>')).join('') };
     if (m === 'relax') return { key: 'relax', html: c('do:sigh', ICON.breathe, 'Sigh') + c('do:play', ICON.play, 'Play') + c('tile:light', ICON.hum, 'Pace') };
     if (m === 'fidget') return { key: 'fidget', html: c('do:pacer', ICON.orb, 'Pacer') + c('do:drops', ICON.drop, 'Drops') + c('tile:light', ICON.tune, 'Style') };
     return { key: 'rest', html: c('tile:rest', ICON.sea, 'Ambient') + c('do:play', ICON.play, 'Wake') }; }
   const o = frSel(), back = cell('data-f="ctl:back"', ICON.left, 'Back').replace('class="cell"', 'class="cell pick"');
-  if (!o) return { key: `pick:${FR.path.length}`, html: back + `<div class="nsl"><span class="txt">Touch one</span></div>` + '<span class="cell blank"></span>' };
+  if (!o) return { key: 'choices', html: '' };
   const sw = o.toggle ? `<button class="cell tgc" data-f="ctl:tog" role="switch" aria-label="${esc(o.n)}"><span class="tg"></span><span class="sub"></span></button>` : '<span class="cell blank"></span>';
   let mid = '<div class="nsl"><span class="txt"></span></div>';
   if (o.slider || o.step) { const sp = o.slider || { min: 0, max: o.step.list.length - 1, step: 1 };
@@ -4101,7 +4107,8 @@ function lineHTML() {
 function syncBars() {
   const top = $('topBar'), tiles = $('tileBar'), ctl = $('ctlBar'), ln = $('line'); if (!top) return;
   skinApply();
-  const root = FR.path[0], tk = root && Object.keys(FG).find(k => FG[k] === root.def); if (tk && !skSlots().includes(tk)) FR.path = [];   // its tile went away (another mode, or hidden): so does its row
+  if (FR.path[0] && FR.path[0].def === TOPG.weather && here().dry) FR.path = [];   // its tile is greyed: so does its row
+  document.body.classList.toggle('rowc', FR.path.length > 0 && !frSel());   // a group's choices take the first row; a choice's control takes it after
   const th = topHTML(); if (th !== BAR.top) { BAR.top = th; top.innerHTML = th; fitIcons(top); }
   const tl = tilesHTML(); if (tl !== BAR.tiles) { BAR.tiles = tl; tiles.innerHTML = tl; fitIcons(tiles); }
   const cp = ctlParts(); if (cp.key !== BAR.ctlKey) { BAR.ctlKey = cp.key; ctl.innerHTML = cp.html; fitIcons(ctl); ctl.classList.toggle('wide', !FR.path.length && !FR.hide); }
@@ -4149,15 +4156,13 @@ function frameTouch(f) {
   const [a, b] = f.split(':'), o = frSel();
   if (S.sheet && a !== 'top' && a !== 'stats' && a !== 'door') return;   // a card is open: only the top ribbon answers (it closes the card first)
   if (a === 'top') {
-    const go = () => { if (b === 'pause') { setPaused(!S.paused); syncBars(); return; } if (b === 'journey') { journeyTile(); return; } FR.hide = false; frOpen(FT[b], 'top'); };
+    const go = () => { if (b === 'pause') { pauseTap(); return; } if (b === 'journey') { journeyTile(); return; } if (b === 'weather' && here().dry) return; frOpen(TOPG[b], 'top'); };
     if (CARD.name && CARD.name !== 'moment') { askLeave(() => { closeSheet(); go(); }); return; } go(); return;
   }
   if (b === 'prev' || b === 'next') { SK.ci += b === 'next' ? 1 : -1; feel('snap'); BAR.tiles = ''; syncBars(); return; }
-  if (a === 'tile' && b === 'weather' && here().dry) return;   // greyed: nothing here to open
-  if (a === 'tile') { FR.hide = false; if (FR.path.length && FR.path[0].def === FG[b]) { FR.path = []; syncBars(); return; } frOpen(FG[b], 'tile'); return; }
+  if (a === 'tile') { frOpen(FG[b], 'tile'); return; }   // Pace, Style and Ambient, in the tool row
+  if (a === 'up') { FR.path.pop(); syncBars(); return; }
   if (a === 'opt') { frChoose(frOpts()[+b]); return; }
-  if (a === 'hide') { skHide(b); feel('snap'); syncBars(); return; }
-  if (a === 'show') { skShow(b); feel('thock'); syncBars(); return; }
   if (a === 'tool') { useTool(b); return; }
   if (a === 'do') { ({ sigh: () => startSigh(), play: () => setMode('play'), pacer: () => setPref('pacer.on', !PREFS.pacer.on), drops: () => setPref('pacer.drops', !PREFS.pacer.drops) })[b](); return; }
   if (a === 'jr') { (b === 'act' ? jrAction()[2] : journeyBar)(); return; }
@@ -4165,8 +4170,6 @@ function frameTouch(f) {
   if (a === 'stats') { if (!S.sheet) openCard('stats'); return; }
   if (a === 'ctl') {
     if (b === 'back') { if (FR.hide) FR.hide = false; else if (frGroup() && frGroup().o && frOpts().length > 1) frGroup().o = null; else FR.path.pop(); syncBars(); return; }
-    if (b === 'hideall') { skHideAll(); feel('snap'); syncBars(); return; }
-    if (b === 'showall') { skShowAll(); feel('thock'); syncBars(); return; }
     if (b === 'tog' && o) { o.toggle.set(!o.toggle.get()); if (o.onSet) o.onSet(); feel('snap'); syncBars(); return; }
     if (b === 'reset' && o) { for (const p of [o.toggle, o.slider, o.step]) if (p && p.def) { const d = p.def(); if (d !== undefined) p.set(d); } if (o.onSet) o.onSet(); syncBars(); return; }
   }
@@ -4177,6 +4180,14 @@ function frameSlide(r) {   // a slider moved: the setting follows at once, the c
   if (o.onSet) o.onSet();
   const sp = o.slider || { min: 0, max: o.step.list.length - 1 }; r.style.setProperty('--p', `${((v - sp.min) / (sp.max - sp.min)) * 100}%`);
   BAR.ctlKey = ctlParts().key; syncBars();
+}
+
+// Pause is pause and mute in one touch; the sound comes back as it was, never louder than you left it.
+const PAUSE = { was: false };
+function pauseTap() {
+  const p = !S.paused;
+  if (p) { PAUSE.was = !!PREFS.sound; if (PREFS.sound) setPref('sound', false); } else { if (PAUSE.was) setPref('sound', true); PAUSE.was = false; }
+  setPaused(p); syncBars();
 }
 /* ---------- The card: one frame, one row ---------- */
 // Every card is this card at this size. Its pill says "<name> Settings", under the tile that opened it. A row is an icon, a
@@ -4334,8 +4345,8 @@ function chooseSeg(i, v) {   // a choice made on a row. A row that opens another
 function finishRow(i) { if (i === lastRow()) recede(); else engageRow(nextRow(i)); }
 function engageRow(i) { if (CARDS[CARD.name] && CARDS[CARD.name].moment) return;
   if (i >= 0 && i < CARD.rows.length && i !== CARD.i && !(CARD.rows[i].hide && CARD.rows[i].hide())) { CARD.i = i; syncCard(); const el = $('mcRows').children[i]; if (el && el.scrollIntoView) el.scrollIntoView({ block: 'nearest' }); } }   // the row you are on is always in view
-function fitCard() {   // the card runs from the status bar down to where the tile row ends, just above the control bar
-  const mc = $('mc'), ln = $('line').getBoundingClientRect(), app = $('app').getBoundingClientRect(); mc.style.top = `${ln.top - app.top}px`; mc.style.height = `${$('tileBar').getBoundingClientRect().bottom - ln.top}px`;
+function fitCard() {   // the card runs from the status bar down to just above the tray
+  const mc = $('mc'), ln = $('line').getBoundingClientRect(), app = $('app').getBoundingClientRect(); mc.style.top = `${ln.top - app.top}px`; mc.style.height = `${$('botPanel').getBoundingClientRect().top - ln.top - 8}px`;
 }
 // The bar and the foot (v71.5). The bar over the card: ‹ Back in the first column, ✕ Close in the last, the title between them: centred, one fixed width, only its words change (CSS).
 // The foot, a ringed ribbon at the card's bottom: Reset in the first column, the check at the far right (touch it at any time).
@@ -4595,7 +4606,7 @@ function start() {
 if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', start); else start();
 let playFadeT = 0;
 function playFade(on) {   // the trays blend back while a finger is on the pool, and return a second after it lifts
-  clearTimeout(playFadeT); if (on) document.body.classList.add('playing'); else playFadeT = setTimeout(() => document.body.classList.remove('playing'), 1000);
+  clearTimeout(playFadeT); if (on) document.body.classList.add('playing'); else playFadeT = setTimeout(() => document.body.classList.remove('playing'), 2500);
 }
 </script>
 </body>
