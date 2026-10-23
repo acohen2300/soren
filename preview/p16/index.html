@@ -285,7 +285,7 @@ body:has(#mc:not([hidden])) #line { visibility: hidden; }   /* the card covers t
 #warp { position: absolute; inset: 0; width: 100%; height: 100%; border-radius: var(--r); display: none; } .mc.stars #warp { display: block; }
 
 /* The opening: the ribbons wait until the circle is at rest. Rest: the ribbons sink. Relax: the page dims. */
-body.intro #topPanel, body.intro #tileBar, body.intro #ctlBar { opacity: 0; pointer-events: none; } body.intro .pool { box-shadow: none; background: transparent; }
+body.intro #topPanel, body.intro #topBar, body.intro #tileBar, body.intro #ctlBar { opacity: 0; pointer-events: none; } body.intro .pool { box-shadow: none; background: transparent; }
 body.intro #botPanel { background: none; box-shadow: none; } body.intro:not(.intro-in) #jrAct { opacity: 0; pointer-events: none; } body.intro-in #jrAct { transition: opacity 3s cubic-bezier(0.4, 0, 0.2, 1); }
 body.rest .panel { opacity: 0.22; transition: opacity var(--sweep); } body.rest .panel:active, body.rest .panel:focus-within, body.rest.framed .panel { opacity: 0.8; } body.rest .pool { box-shadow: none; }
 body.rest.carded .panel { opacity: 1; }
@@ -332,8 +332,11 @@ body.lit .panel > .rib, body.lit .panel > .line:not(.comp):not(.warn), body.lit 
 body.lit .panel > .rib, body.lit #ctlBar { height: var(--sk-h); }
 body.lit .panel > .line:not(.comp):not(.warn) { height: calc(84 * var(--u)); }
 body.lit #ctlBar .ic { top: 40%; width: var(--sk-i); height: var(--sk-i); } body.lit #ctlBar .sub { top: 76%; font-size: var(--sk-f); font-weight: var(--sk-q); } body.lit .ctl .hint { font-size: calc(40 * var(--u)); }
+body.lit #topPanel > .line { margin-top: 0; } body.lit #topPanel > .line::before { display: none; } body.lit .panel > .rib + .rib { margin-top: calc(10 * var(--u)); } body.lit #botPanel > .rib:first-child + .rib::before { display: none; }
 body.lit .panel > .line, body.lit #ctlBar { margin-top: calc(10 * var(--u)); } body.lit .panel > .line::before, body.lit #ctlBar::before { content: ''; position: absolute; left: calc(8 * var(--u)); right: calc(8 * var(--u)); top: calc(-9 * var(--u)); height: 1px; background: rgba(255, 255, 255, 0.14); pointer-events: none; }   /* a hairline between the two halves of a tray */
-body.lit .go-two .cell, body.lit .jract .cell { background: rgba(22, 30, 54, 0.8); box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.14), 0 calc(5 * var(--u)) calc(14 * var(--u)) rgba(0, 0, 0, 0.22); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); border-radius: calc(44 * var(--u)); }
+body.lit .jract .cell { background: rgba(22, 30, 54, 0.8); box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.14); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); border-radius: calc(44 * var(--u)); }
+body.lit .go-two .cell { background: none; box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.5); backdrop-filter: none; -webkit-backdrop-filter: none; border-radius: calc(44 * var(--u)); }
+body.lit .go-two .ic { top: 50%; } body.lit .go-two .sub { display: none; }
 body.lit .frow .cell:not(.blank) { background: none; box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.28); backdrop-filter: none; -webkit-backdrop-filter: none; }
 body.lit .frow .cell.on { background: rgba(28, 86, 60, 0.4); box-shadow: inset 0 0 0 1.5px rgba(120, 220, 170, 0.8); }
 body.lit .frow .cell.sel:not(.on) { background: rgba(36, 62, 150, 0.5); box-shadow: inset 0 0 0 1.5px rgba(150, 185, 255, 0.75); }
@@ -344,7 +347,7 @@ body.lit .path, body.lit .path .w, body.lit .nsl .txt { font-style: normal; font
 body.lit:not(.rest) .panel { transition: opacity 0.4s ease; } body.playing:not(.rest) .panel { opacity: 0.5; }   /* a finger on the pool: the trays blend back, and return a second after it lifts */
 body.lit .frow .cell.blank { display: none; }   /* the tiles in use share the tray evenly */
 body.lit .panel > .line .say, body.lit .panel > .line .path, body.lit .panel > .line .jbar, body.lit .panel > .line .sp { font-size: calc(40 * var(--u)); } body.lit .panel > .line .sp #clock { font-size: calc(36 * var(--u)); } body.lit .say .w, body.lit .path .w { height: auto; }   /* the status words at the size of the tile labels' neighbours: a line, not a headline */
-body.lit .soren { -webkit-text-stroke: 0; text-shadow: none; }   /* the word is its ink alone, as the shrinking line is */
+body.lit .soren { -webkit-text-stroke: 0; color: rgb(240, 240, 234); text-shadow: 0 0 calc(22 * var(--u)) rgba(120, 220, 170, 0.6), 0 0 calc(60 * var(--u)) rgba(120, 220, 170, 0.35); }   /* the word is its ink alone, as the shrinking line is */
 body.lit:not(.intro) .pool { box-shadow: 0 calc(5 * var(--u)) calc(14 * var(--u)) rgba(0, 0, 0, 0.18); border-radius: calc(90 * var(--u)); }
 .frow .cell.hiding { outline: calc(4 * var(--u)) dashed rgba(var(--ink-rgb), 0.6); outline-offset: calc(-10 * var(--u)); }
 .frow .ic.on::after, .frow .ic.gold::after, .frow .ic.arc::after, .frow .ic.nudge::after { display: block; width: calc(100% + 30 * var(--u)); height: calc(100% + 30 * var(--u)); border-radius: calc(22 * var(--u)); }   /* Journey: the ring keeps its meanings (green written, gold done, the timer receding) */
@@ -410,7 +413,6 @@ body.rm *, body.rm *::before, body.rm *::after { transition: none !important; an
 <div id="sky" aria-hidden="true"></div><script>document.body.classList.add('intro')</script>
 <div class="app" id="app">
   <div class="panel" id="topPanel">
-    <nav class="rib frow" id="topBar" aria-label="Always here"></nav>
     <div class="line" id="line"></div>
   </div>
   <div class="pool-wrap">
@@ -421,6 +423,7 @@ body.rm *, body.rm *::before, body.rm *::after { transition: none !important; an
     </div>
   </div>
   <div class="panel" id="botPanel">
+    <nav class="rib frow" id="topBar" aria-label="Always here"></nav>
     <nav class="rib frow" id="tileBar" aria-label="This mode"></nav>
     <div class="ctl" id="ctlBar" aria-label="Adjust"></div>
     <div class="jract" id="jrAct" hidden></div>
@@ -3401,13 +3404,13 @@ function drawIntro(c, o) {
   const lv = ph < CREST ? 0.93 + 0.07 * smooth(ph / CREST) : 1 - 0.5 * smooth((ph - CREST) / (1 - CREST));   // the heave, then the fall to the circle
   const soft = PREFS.calm ? 0.25 : 0.5, glow = soft * (ph < CREST ? (ph / CREST) ** 2 : Math.max(0, 1 - (ph - CREST) / 0.3) ** 2), fl = PREFS.calm ? 0 : 0.5 * Math.max(0, 1 - Math.abs(ph - CREST) / 0.06);   // the flash at half strength, a quarter and no white edge in Low stimulation
   const br = ph >= 1 ? (0.5 - 0.5 * Math.cos((o.t - o.len) * TAU / 6)) * calm : 0;   // a breath every six seconds, until touched
-  const R = 175 * LW / canvas.clientWidth * ($('app').clientWidth / 1206), k = lv < 0.5 ? 0 : (lv - 0.5) / 0.5, hw = LW / 2 - EDGE, hh = LH / 2 - EDGE;
+  const R = 175 * LW / canvas.clientWidth * ($('app').clientWidth / 1206), kg = o.go == null ? 0 : smooth(clamp((o.t - o.go) / TIME.settle, 0, 1)), k = Math.max(kg, lv < 0.5 ? 0 : (lv - 0.5) / 0.5), hw = LW / 2 - EDGE, hh = LH / 2 - EDGE;
   c.save(); c.globalCompositeOperation = 'destination-out'; c.fillStyle = `rgba(0,0,0,${a})`; c.fillRect(0, 0, LW, LH); c.restore();   // the pool is dark and clear: the sky shows through, and the world fades back in as you go
   c.save(); c.globalAlpha = a; c.translate(CX, CY); c.scale(1 + 0.035 * br, 1 + 0.035 * br); c.translate(-CX, -CY);
   c.beginPath(); shapePath(c, [CX, CY, R + (hw - R) * k, R + (hh - R) * k, R + (CORNER - R) * k]);
   const A = 0.9 * glow + (0.35 + 0.3 * br) * rest, dpr = canvas.width / canvas.clientWidth;   // the glow is a canvas shadow, kept modest: a big blur is slow on a phone
-  const LC = PSKY.line.map(Math.round).join(',');   // the line is the ink of the sky it is drawn on: deep on a light sky, pale on a dark one
-  c.shadowColor = `rgba(${LC},${Math.min(1, A).toFixed(3)})`; c.shadowBlur = Math.min(60, ((3 + 30 * glow + 12 * fl) + (10 + 10 * br) * rest) * dpr);
+  const LC = '240,240,234', GC = '120,220,170';   // the line is the ink of the sky it is drawn on: deep on a light sky, pale on a dark one
+  c.shadowColor = `rgba(${GC},${Math.min(1, A).toFixed(3)})`; c.shadowBlur = Math.min(60, ((3 + 30 * glow + 12 * fl) + (10 + 10 * br) * rest) * dpr);
   c.lineWidth = 1.8 + 2.2 * glow + 2 * fl; c.strokeStyle = `rgba(${LC},${(0.85 * line + 0.15 * fl).toFixed(3)})`; c.stroke();
   if (glow > 0.3) { c.shadowBlur = Math.min(90, c.shadowBlur * 1.5); c.stroke(); }
   c.restore();
@@ -3767,7 +3770,7 @@ function doorSync() {   // the buttons in the circle
   const o = S.intro, open = !!(o && o.go == null && o.ready), key = open ? (S.jr ? 'settle' : 'door') + (S.prev ? ':prev' : '') : '';
   document.body.classList.toggle('intro-two', open);
   if (key === DOOR.key) return; DOOR.key = key; if (!open) return;
-  const b = (f, d, w, cls) => `<button class="cell ${cls}" data-f="door:${f}">${icon(d)}<span class="sub">${w}</span></button>`;
+  const b = (f, d, w, cls) => `<button class="cell ${cls}" data-f="door:${f}" aria-label="${w}">${icon(d)}</button>`;
   $('introTwo').innerHTML = S.jr ? b('ready', ICON.check, 'Ready', 'pick') + b('free', ICON.play, 'Free Play', 'quiet') : b('free', ICON.play, S.prev ? 'Resume' : 'Free Play', 'quiet') + b('journey', ICON.task, 'Journey', 'pick');
   fitIcons($('introTwo'));
 }
