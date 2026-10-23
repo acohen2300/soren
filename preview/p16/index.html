@@ -326,7 +326,7 @@ body.liq .frow .cell:not(.on):not(.sel):not(.blank) { backdrop-filter: blur(var(
 /* Sky-lit (the default look, 79-skin.js LIT): no tray; a tile is the page's sky at its top fading to the chrome's black at its words, with a
    bright rim from above. The status bar and the control bar keep the chrome's black, with the same rim as a line round them. */
 body.lit .panel { background: none; box-shadow: none; }
-body.lit .frow .cell:not(.blank) { backdrop-filter: none; -webkit-backdrop-filter: none; background: linear-gradient(180deg, color-mix(in srgb, var(--sk-sky) 62%, #0000), rgba(18, 18, 18, 0.96) 78%);
+body.lit .frow .cell:not(.blank) { backdrop-filter: none; -webkit-backdrop-filter: none; background: linear-gradient(180deg, color-mix(in srgb, var(--sk-sky) 20%, #0000), rgba(18, 18, 18, 0.88) 70%);
   box-shadow: inset 0 calc(4.5 * var(--u)) 0 rgba(255, 255, 255, 0.5); }
 body.lit .frow .cell.on { background: linear-gradient(180deg, rgba(126, 196, 158, 0.65), rgba(30, 48, 40, 0.96) 80%); box-shadow: inset 0 calc(4.5 * var(--u)) 0 rgba(190, 240, 214, 0.7); }
 body.lit .frow .cell.sel:not(.on) { background: linear-gradient(180deg, rgba(142, 169, 232, 0.65), rgba(28, 34, 52, 0.96) 80%); box-shadow: inset 0 calc(4.5 * var(--u)) 0 rgba(200, 215, 255, 0.7); }
@@ -3394,7 +3394,6 @@ function drawIntro(c, o) {
   c.save(); c.globalCompositeOperation = 'destination-out'; c.fillStyle = `rgba(0,0,0,${a})`; c.fillRect(0, 0, LW, LH); c.restore();   // the pool is dark and clear: the sky shows through, and the world fades back in as you go
   c.save(); c.globalAlpha = a; c.translate(CX, CY); c.scale(1 + 0.035 * br, 1 + 0.035 * br); c.translate(-CX, -CY);
   c.beginPath(); shapePath(c, [CX, CY, R + (hw - R) * k, R + (hh - R) * k, R + (CORNER - R) * k]);
-  c.fillStyle = `rgba(18,18,18,${(0.94 * line).toFixed(3)})`; c.fill();   // the screen is the chrome's own black: the words in it keep 7:1 over any sky
   const A = 0.9 * glow + (0.35 + 0.3 * br) * rest, dpr = canvas.width / canvas.clientWidth;   // the glow is a canvas shadow, kept modest: a big blur is slow on a phone
   c.shadowColor = `rgba(186,230,253,${Math.min(1, A).toFixed(3)})`; c.shadowBlur = Math.min(60, ((3 + 30 * glow + 12 * fl) + (10 + 10 * br) * rest) * dpr);
   c.lineWidth = 1.8 + 2.2 * glow + 2 * fl; c.strokeStyle = `rgba(${Math.round(186 + 69 * fl)},${Math.round(230 + 25 * fl)},253,${(0.85 * line + 0.15 * fl).toFixed(3)})`; c.stroke();
@@ -3746,10 +3745,10 @@ const SK_D = { c: 0.85, t: 0.5, h: 168, g: 8, w: 2, z: 38, q: 500, f: 45, r: 48,
 const SK_RANGE = { c: [0, 1, 0.01], t: [0, 1, 0.01], h: [150, 270, 3], g: [6, 36, 3], w: [1.5, 3, 0.1], z: [30, 50, 1], q: [400, 700, 100], f: [45, 57, 3], r: [18, 102, 3], d: [0, 100, 5], n: [0, 100, 5], b: [0, 24, 1], sc: [100, 200, 25] };
 const SK_PAL = [['126,196,158', '142,169,232'], ['232,182,106', '111,195,200'], ['181,217,122', '185,163,236']];   // on, picked: sage and slate; amber and teal; lime and violet
 const SK_GLASS = ['Clear', 'Tinted', 'Solid', 'Liquid', 'Sky-lit'], SK_LAY = ['ribbon', 'list', 'cards'];
-// Sky-lit, the default (gl 4): no tray; each tile takes the page's sky at its top and fades to the chrome's black by its words, so the
+// Sky-lit, the default (gl 4): no tray; each tile takes the page's sky at its top and fades to a dark tint of the same sky by its words, so the
 // words sit on black (7:1 by construction), the marks sit on the sky's own light (3:1 or better), and a bright rim says it is lit from
 // above. On is green and ticked; the one you are on is blue and dotted. These are the only numbers that draw it (SK_LIT, and the CSS).
-const SK_LIT = { a: 0.62, end: 0.78, k: [18, 18, 18], ka: 0.96, on: [[126, 196, 158], 0.65, [30, 48, 40], 0.96], sel: [[142, 169, 232], 0.65, [28, 34, 52], 0.96] };
+const SK_LIT = { a: 0.2, end: 0.7, k: [18, 18, 18], ka: 0.88, on: [[126, 196, 158], 0.65, [30, 48, 40], 0.96], sel: [[142, 169, 232], 0.65, [28, 34, 52], 0.96] };
 function litAt(sky, f, v) {   // the tile's colour at a fraction f of its height, over the sky behind it
   const [c0, a0, c1, a1] = v || [sky, SK_LIT.a, SK_LIT.k, SK_LIT.ka], t = clamp(f / SK_LIT.end, 0, 1), a = a0 + (a1 - a0) * t;
   return [0, 1, 2].map(i => c0[i] * a0 * (1 - t) + c1[i] * a1 * t + sky[i] * (1 - a));
