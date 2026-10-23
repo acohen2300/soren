@@ -323,19 +323,26 @@ body.bare .frow .cell { background: none; box-shadow: none; backdrop-filter: non
 body.bare .frow .cell.on, body.bare .frow .cell.on .sub { color: rgb(var(--sk-on)); } body.bare .frow .cell.sel:not(.on), body.bare .frow .cell.sel:not(.on) .sub { color: rgb(var(--sk-pick)); }
 body.liq .frow .cell:not(.on):not(.sel):not(.blank) { backdrop-filter: blur(var(--sk-bl)) saturate(1.8); -webkit-backdrop-filter: blur(var(--sk-bl)) saturate(1.8);
   box-shadow: inset 0 calc(6 * var(--u)) calc(3 * var(--u)) rgba(255, 255, 255, 0.75), inset 0 calc(-6 * var(--u)) calc(6 * var(--u)) rgba(255, 255, 255, 0.25), inset 0 0 0 calc(3 * var(--u)) rgba(255, 255, 255, 0.3), 0 calc(var(--sk-d) * 24 * var(--u)) calc(var(--sk-d) * 48 * var(--u)) rgba(0, 0, 0, calc(var(--sk-d) * 0.5)); }
-/* Sky-lit (the default look; 72-sky.js, the ink): no tray, no rim. Each tile, the status bar, the control bar and the two doors are a pane of the
-   page's own sky (--tint, a shade lighter or darker, mostly clear) with a soft shadow, and carry the ink the sky gives them (--ink and the rest). */
-body.lit .panel { background: none; box-shadow: none; }
-body.lit .panel > .line .sp { background: rgba(var(--ink-rgb), 0.08); box-shadow: none; } body.lit .panel > .line .sp .star { box-shadow: inset 0 0 0 calc(3 * var(--u)) var(--ink); color: var(--ink); } body.lit .panel > .line .path .w, body.lit .panel > .line .path .v, body.lit .panel > .line .path .dot { color: var(--ink); }
-body.lit .panel > .line .sp, body.lit .panel > .line .sp #clock, body.lit .panel > .line .sp .num, body.lit .say .w, body.lit .say .v { color: var(--ink); } body.lit .say .w { background: rgba(var(--ink-rgb), 0.08); box-shadow: inset 0 0 0 calc(3 * var(--u)) var(--ink); }
+/* Sky-lit (the default look): each row (the top tiles, the status bar, the lower tiles, the control bar) is one tray of navy glass, the page's
+   sky showing through it; a tile is a thin outline inside its tray, blue when you are on it, green when it is on. Light ink, fixed: 8:1 on the navy
+   over every sky (79-skin.js skInk). The two doors are the same glass. The opening's word and line take the sky's own ink (72-sky.js). */
+body.lit { --dim: rgb(182, 188, 202); --label-rgb: 232, 234, 242; --label: rgb(232, 234, 242); --ink-2: rgba(240, 240, 234, 0.92); }   /* the one inactive grey, lifted for the navy (4.5:1 or better on it, over every sky) */
+body.lit .panel { background: none; box-shadow: none; gap: calc(10 * var(--u)); padding: 0 calc(4 * var(--u)); }
+body.lit .panel > .rib, body.lit .panel > .line:not(.comp):not(.warn), body.lit #ctlBar, body.lit .go-two .cell, body.lit .jract .cell {
+  background: rgba(22, 30, 54, 0.8); box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.14), 0 calc(5 * var(--u)) calc(14 * var(--u)) rgba(0, 0, 0, 0.22); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); }
+body.lit .panel > .rib { box-sizing: border-box; border-radius: calc(68 * var(--u)); padding: calc(25 * var(--u)); height: calc(var(--sk-h) + 50 * var(--u)); overflow: visible; }
+body.lit .panel > .line:not(.comp):not(.warn) { height: calc(112 * var(--u)); border-radius: calc(56 * var(--u)); }
+body.lit #ctlBar { box-sizing: border-box; border-radius: calc(68 * var(--u)); padding: 0 calc(25 * var(--u)); height: calc(var(--sk-h) + 50 * var(--u)); }
+body.lit .go-two .cell, body.lit .jract .cell { border-radius: calc(44 * var(--u)); }
+body.lit .frow .cell:not(.blank) { background: none; box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.28); backdrop-filter: none; -webkit-backdrop-filter: none; }
+body.lit .frow .cell.on { background: rgba(28, 86, 60, 0.4); box-shadow: inset 0 0 0 1.5px rgba(120, 220, 170, 0.8); }
+body.lit .frow .cell.sel:not(.on) { background: rgba(36, 62, 150, 0.5); box-shadow: inset 0 0 0 1.5px rgba(150, 185, 255, 0.75); }
+body.lit .panel > .line .sp { background: none; box-shadow: none; } body.lit .panel > .line .sp, body.lit .panel > .line .sp #clock, body.lit .panel > .line .sp .num, body.lit .say, body.lit .say .w { color: var(--ink); }
+body.lit .panel > .line .sp .star { box-shadow: inset 0 0 0 calc(3 * var(--u)) var(--ink); color: var(--ink); }
+body.lit .say .w { background: none; box-shadow: none; padding: 0; } body.lit .say .v, body.lit .path .v { color: rgb(186, 244, 212); }
+body.lit .path, body.lit .path .w, body.lit .nsl .txt { font-style: normal; font-weight: 500; }   /* the status words and the control's: upright and regular, as in the example */
 body.lit .soren { -webkit-text-stroke: 0; text-shadow: none; }   /* the word is its ink alone, as the shrinking line is */
-body.lit .frow .cell:not(.blank), body.lit .panel > .line:not(.comp):not(.warn), body.lit #ctlBar, body.lit .go-two .cell, body.lit .jract .cell {
-  backdrop-filter: blur(calc(var(--sk-bl) * 1px)); -webkit-backdrop-filter: blur(calc(var(--sk-bl) * 1px)); background: var(--pane, var(--black)); box-shadow: 0 calc(5 * var(--u)) calc(14 * var(--u)) rgba(0, 0, 0, 0.22); }
-body.lit .panel > .line:not(.comp):not(.warn) { border-radius: calc(var(--line-h) / 2); } body.lit #ctlBar, body.lit .go-two .cell, body.lit .jract .cell { border-radius: var(--sk-r); }
-body.lit .frow .cell.on { background: var(--pane-on, var(--pane, var(--black))); box-shadow: 0 calc(5 * var(--u)) calc(14 * var(--u)) rgba(0, 0, 0, 0.22); }
-body.lit .frow .cell.sel:not(.on) { background: var(--pane-sel, var(--pane, var(--black))); box-shadow: 0 calc(5 * var(--u)) calc(14 * var(--u)) rgba(0, 0, 0, 0.22); }
-body.lit .frow .cell.sel:not(.on)::before { background: currentColor; }
-body.lit:not(.intro) .pool { box-shadow: 0 calc(5 * var(--u)) calc(14 * var(--u)) rgba(0, 0, 0, 0.18); }
+body.lit:not(.intro) .pool { box-shadow: 0 calc(5 * var(--u)) calc(14 * var(--u)) rgba(0, 0, 0, 0.18); border-radius: calc(90 * var(--u)); }
 .frow .cell.hiding { outline: calc(4 * var(--u)) dashed rgba(var(--ink-rgb), 0.6); outline-offset: calc(-10 * var(--u)); }
 .frow .ic.on::after, .frow .ic.gold::after, .frow .ic.arc::after, .frow .ic.nudge::after { display: block; width: calc(100% + 30 * var(--u)); height: calc(100% + 30 * var(--u)); border-radius: calc(22 * var(--u)); }   /* Journey: the ring keeps its meanings (green written, gold done, the timer receding) */
 .frow .n { left: auto; right: calc(14 * var(--u)); }
@@ -3602,7 +3609,7 @@ function inkFor(c, want) {   // the pane, its On and Selected shades, the ink, t
   let dm = 0.25, dim = mix(best.ink, best.eff, dm); while (inkCr(dim, best.eff) < 4.6 && dm > 0) { dm -= 0.05; dim = mix(best.ink, best.eff, Math.max(dm, 0)); }
   return { ...best, dim };
 }
-const INK_ON = ['.frow .cell:not(.blank)', '.panel > .line:not(.comp):not(.warn)', '#ctlBar', '.go-two .cell', '.jract .cell', '.soren'];
+const INK_ON = ['.soren'];   // the opening's word (the trays carry a fixed light ink on navy, 79-skin.js)
 const INK_VARS = ['--ink', '--ink-rgb', '--ink-2', '--label', '--label-rgb', '--dim', '--edge', '--pane', '--pane-on', '--pane-sel'];
 function inkPass() {   // every piece takes the ink and the pane of the sky behind its middle
   const lit = document.body.classList.contains('lit'), els = document.querySelectorAll(INK_ON.join(','));
@@ -3624,6 +3631,10 @@ function inkWorstAll() {   // the least contrast of any ink over any of the four
   S.tod = keep; return lo;
 }
 updateSky();
+const TRAY = { c: [22, 30, 54], a: 0.8, ink: [238, 240, 246] };   // the navy glass of the Sky-lit trays, and the ink on it
+function trayWorst() {   // the least contrast of that ink over the tray, over every row of all four skies
+  let lo = 99; for (let k = 0; k < 4; k++) for (let y = 0; y < 466; y += 6) lo = Math.min(lo, inkCr(mix(PSKY.RW[k][y], TRAY.c, TRAY.a), TRAY.ink)); return lo;
+}
 /* ---------- The first session: a plan, up to three moves, an exit ---------- */
 // The Timer and Task card, walked down one step at a time. Session Plan asks Yes or No. Yes brings a lone plus: touch it and it
 // turns into an X and opens a box to write in. The ritual is an overlay on the card's own rows, gold and sound, and every step
@@ -3797,20 +3808,20 @@ const jrReturn = () => { if (S.jr) { S.jr.stage = 3; S.stageHour = STAGE_HOUR[3]
 // Morning and Dusk, not one hour. Only Liquid (asked for by name) and your own sliders may go lower, never
 // under 4.5:1 (WCAG AA), and the status bar says so with a sign you can touch. Colour is never the only sign: on has a tick,
 // picked has a dot. The phone's Increase Contrast and Reduce Transparency win: the glass goes solid.
-const SK_D = { c: 0.85, t: 0.5, h: 150, g: 10, w: 1.6, z: 40, q: 500, f: 45, r: 54, d: 50, n: 50, b: 10, sc: 100, ly: 'ribbon', gl: 4, ic: 1, wd: 1, bare: 0, p: 0 };
-const SK_RANGE = { c: [0, 1, 0.01], t: [0, 1, 0.01], h: [150, 270, 3], g: [6, 36, 3], w: [1.5, 3, 0.1], z: [30, 50, 1], q: [400, 700, 100], f: [45, 57, 3], r: [18, 102, 3], d: [0, 100, 5], n: [0, 100, 5], b: [0, 24, 1], sc: [100, 200, 25] };
+const SK_D = { c: 0.85, t: 0.5, h: 150, g: 16, w: 1.5, z: 38, q: 400, f: 36, r: 44, d: 50, n: 50, b: 10, sc: 100, ly: 'ribbon', gl: 4, ic: 1, wd: 1, bare: 0, p: 0 };
+const SK_RANGE = { c: [0, 1, 0.01], t: [0, 1, 0.01], h: [150, 270, 3], g: [6, 36, 3], w: [1.5, 3, 0.1], z: [30, 50, 1], q: [400, 700, 100], f: [33, 57, 3], r: [18, 102, 3], d: [0, 100, 5], n: [0, 100, 5], b: [0, 24, 1], sc: [100, 200, 25] };
 const SK_PAL = [['126,196,158', '142,169,232'], ['232,182,106', '111,195,200'], ['181,217,122', '185,163,236']];   // on, picked: sage and slate; amber and teal; lime and violet
 const SK_GLASS = ['Clear', 'Tinted', 'Solid', 'Liquid', 'Sky-lit'], SK_LAY = ['ribbon', 'list', 'cards'];
 // Sky-lit, the default (gl 4): no tray, no rim; each piece of chrome is a pane of the page's own sky, a shade lighter or darker, with a soft shadow
 // under it, and its words and icons are the opposite shade, drawn from the skies (72-sky.js, the ink). On is a green pane and ticked; the one you are
 // on is a blue pane and dotted. The ink holds 8:1 over every pane at every sky, measured once here (skInk) and again on real pixels by the gate.
-const skInk = (() => { let h = 0, v = 0; return () => { if (h !== innerHeight) { h = innerHeight; v = inkWorstAll(); } return v; }; })();
+const skInk = (() => { let h = 0, v = 0; return () => { if (h !== innerHeight) { h = innerHeight; v = trayWorst(); } return v; }; })();
 // The looks you pick by name. Liquid is the real glass: translucent, so it sits under 7:1 and says so.
 const SK_LOOKS = { Liquid: { gl: 3, t: 1, c: 0, b: 18, n: 90, d: 60 }, Calm: { t: 0.4, bare: 1 }, Quiet: { c: 0.8, t: 0.2, wd: 0 }, Pebbles: { t: 0.45, r: 102, h: 180 },
   Amber: { c: 0.8, p: 1 }, Lime: { c: 0.7, p: 2, bare: 1, wd: 0 } };
 // For your eyes: the same numbers, set for a need. Clear: the most contrast, no gloss. Large: bigger tiles, heavier marks.
 // Big: one tile at a time, words at twice the size. Matte: flat, no glass, no shine (light-sensitive). Read: words only, bold, in a list.
-const SK_EYES = { Clear: { c: 1, t: 0.1, d: 0, n: 0, w: 2.5, q: 700, r: 36 }, Large: { h: 270, z: 46, w: 2.5, q: 600 }, Big: { ly: 'cards', sc: 200, w: 2.5, q: 700 },
+const SK_EYES = { Clear: { c: 1, t: 0.1, d: 0, n: 0, w: 2.5, q: 700, r: 36 }, Large: { h: 270, z: 46, w: 2.5, q: 600, f: 51 }, Big: { ly: 'cards', sc: 200, w: 2.5, q: 700, f: 45 },
   Matte: { gl: 2, c: 1, t: 0.3, d: 0 }, Read: { ic: 0, q: 700, f: 57, ly: 'list' } };
 const SK_COMP = { gl: 2, r: 18, d: 90, n: 0, c: 1, w: 2.6, q: 700, p: 0, bare: 0 };   // Comp's own look, laid over Auto
 const SK_NAMES = { auto: 'Auto', own: 'Your own' };
@@ -3850,7 +3861,7 @@ function skEff() {   // the numbers in force now
   else if (SK_LOOKS[k] || SK_EYES[k]) P = { ...SK_D, ...(SK_LOOKS[k] || SK_EYES[k]) };
   else P = { ...SK_D, ...(compOn() ? SK_COMP : {}) };
   if (SK.phone && P.gl !== 2) P.gl = 2;   // the phone asked for less glass: solid
-  if (P.ly === 'ribbon') { const w = (1150 - 5 * P.g) / 6; P.f = Math.min(P.f, Math.max(45, Math.floor(w / 4.1 / 3) * 3)); if (!P.bare) P.r = Math.min(P.r, P.gl === 4 ? 54 : Math.max(12, (w - 4.1 * P.f - 8) / 0.7)); }   // six to a row: the longest word (4.1 of its own size) fits inside its tile, clear of the rounded corners (the corners give way)
+  if (P.ly === 'ribbon') { const w = (1150 - 5 * P.g) / 6; P.f = Math.min(P.f, Math.max(P.gl === 4 ? 33 : 45, Math.floor(w / 4.1 / 3) * 3)); if (!P.bare) P.r = Math.min(P.r, P.gl === 4 ? 44 : Math.max(12, (w - 4.1 * P.f - 8) / 0.7)); }   // six to a row: the longest word (4.1 of its own size) fits inside its tile, clear of the rounded corners (the corners give way)
   const lo = k === 'Liquid' || k === 'own' ? 4.5 : 7;
   if (P.gl === 4 && !P.bare && skWorst(P) < lo) P.gl = 2;   // if the sky ever leaves the words or the marks short, the tile goes solid
   for (let i = 0; i < 12 && skWorst({ ...P, c: 1 }) < lo; i++) { if (P.gl === 1) P.gl = 0; else P.t = Math.max(0, +(P.t - 0.1).toFixed(2)); }   // if even the darkest glass can't hold it, the look gives way: the tint goes, then the sky steps back
