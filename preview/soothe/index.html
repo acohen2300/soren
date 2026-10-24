@@ -100,12 +100,16 @@ function lvlAt(off) { const ph = (R.phase + off + 1) % 1; return ph < IN ? smoot
 function marble(x, y, r, g, glow, a = 1) {
   if (r < 0.5) return; cx.save(); cx.globalAlpha = a;
   if (glow > 0.02) { const h = cx.createRadialGradient(x, y, r * 0.8, x, y, r * 2.2); h.addColorStop(0, `rgba(${g[0]},${0.45 * glow})`); h.addColorStop(1, `rgba(${g[0]},0)`); cx.fillStyle = h; cx.beginPath(); cx.arc(x, y, r * 2.2, 0, 7); cx.fill(); }
-  const b = cx.createRadialGradient(x - r * 0.35, y - r * 0.4, r * 0.1, x, y, r);
-  b.addColorStop(0, `rgba(${g[0]},0.95)`); b.addColorStop(0.7, `rgba(${g[1]},0.92)`); b.addColorStop(1, `rgba(${g[1]},0.98)`);
+  // clear glass: you see through the middle; the colour gathers at the edge (where light travels through more glass)
+  const b = cx.createRadialGradient(x - r * 0.25, y - r * 0.3, r * 0.05, x, y, r);
+  b.addColorStop(0, `rgba(${g[0]},0.10)`); b.addColorStop(0.65, `rgba(${g[0]},0.22)`); b.addColorStop(0.9, `rgba(${g[1]},0.55)`); b.addColorStop(1, `rgba(${g[1]},0.75)`);
   cx.fillStyle = b; cx.beginPath(); cx.arc(x, y, r, 0, 7); cx.fill();
-  cx.strokeStyle = `rgba(255,255,255,${0.18 + 0.2 * glow})`; cx.lineWidth = 1; cx.stroke();   // the rim of the glass
-  cx.fillStyle = `rgba(255,255,255,${0.5 + 0.3 * glow})`; cx.beginPath(); cx.ellipse(x - r * 0.38, y - r * 0.45, r * 0.22, r * 0.12, -0.6, 0, 7); cx.fill();   // the window highlight
-  cx.fillStyle = 'rgba(255,255,255,0.12)'; cx.beginPath(); cx.ellipse(x + r * 0.3, y + r * 0.5, r * 0.3, r * 0.1, -0.4, 0, 7); cx.fill();   // light through the glass, on its far side
+  cx.strokeStyle = `rgba(255,255,255,${0.55 + 0.3 * glow})`; cx.lineWidth = 1.6; cx.beginPath(); cx.arc(x, y, r - 0.8, 0, 7); cx.stroke();   // the outline: the bright rim of the glass
+  cx.strokeStyle = `rgba(${g[0]},0.35)`; cx.lineWidth = 1; cx.beginPath(); cx.arc(x, y, r * 0.86, Math.PI * 0.15, Math.PI * 0.85); cx.stroke();   // light bent round the inside, low on the far side
+  cx.fillStyle = `rgba(255,255,255,${0.65 + 0.3 * glow})`; cx.beginPath(); cx.ellipse(x - r * 0.4, y - r * 0.46, r * 0.2, r * 0.1, -0.6, 0, 7); cx.fill();   // the window highlight
+  cx.fillStyle = 'rgba(255,255,255,0.4)'; cx.beginPath(); cx.arc(x - r * 0.12, y - r * 0.62, r * 0.045, 0, 7); cx.fill();   // a second, small catch-light
+  const c = cx.createRadialGradient(x + r * 0.3, y + r * 0.45, 0, x + r * 0.3, y + r * 0.45, r * 0.38); c.addColorStop(0, `rgba(${g[0]},0.35)`); c.addColorStop(1, `rgba(${g[0]},0)`);
+  cx.fillStyle = c; cx.beginPath(); cx.arc(x + r * 0.3, y + r * 0.45, r * 0.38, 0, 7); cx.fill();   // the light it focuses, on its far side
   cx.restore();
 }
 function touchStep(dt) {
