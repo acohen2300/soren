@@ -337,6 +337,7 @@ body.lit #botPanel > .rib, body.lit #botPanel > #ctlBar { margin-top: 0; } body.
 #tileBar { display: none; } body.rowc #tileBar { display: flex; } body.rowc #ctlBar { display: none; }
 body.lit #topPanel > .line::before, body.lit #botPanel > #ctlBar::before, body.lit #botPanel > #topBar::before { display: none; }
 body.lit #ctlBar .cell:not(.tgc):not(.blank) { box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.28); border-radius: var(--sk-r); } body.intro .jract .ic::after, body.intro .jract .ic::before { display: none; }
+body.lit.intro .jract .cell { background: none; box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.5); backdrop-filter: none; -webkit-backdrop-filter: none; } body.lit.intro .jract .cell.on { background: rgba(28, 86, 60, 0.4); box-shadow: inset 0 0 0 1.5px rgba(120, 220, 170, 0.8); } body.intro .jract .sub { display: none; } body.intro .jract .ic { top: 50%; }
 body.lit .glint::after { display: none; } body.lit .go-two .ic::after, body.lit .go-two .ic::before { display: none; }
 body.lit .panel > .line, body.lit #ctlBar { margin-top: 0; } body.lit .panel > .line::before, body.lit #ctlBar::before { content: ''; position: absolute; left: calc(8 * var(--u)); right: calc(8 * var(--u)); top: calc(-9 * var(--u)); height: 1px; background: rgba(255, 255, 255, 0.14); pointer-events: none; }   /* a hairline between the two halves of a tray */
 body.lit .jract .cell { background: rgba(22, 30, 54, 0.8); box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.14); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); border-radius: calc(44 * var(--u)); }
@@ -4117,7 +4118,7 @@ function syncBars() {
   ln.classList.toggle('comp', compOn() && !LINE.sub); ln.classList.toggle('warn', !!w && !compOn());
   if (document.body.classList.toggle('comp', compOn()) !== BAR.comp) { BAR.comp = compOn(); readPalette(); handles(); }
   document.body.classList.toggle('journey', !!S.jr); const a = jrAction(), ak = a ? a[0] + a[3] : '';
-  if (ak !== BAR.act) { BAR.act = ak; $('jrAct').innerHTML = a ? `<button class="cell${a[3] ? ' on' : ' pick'}" data-f="jr:act"${a[3] != null ? ` aria-pressed="${!!a[3]}"` : ''}>${icon(a[1])}<span class="sub">${a[0]}</span></button>` : ''; fitIcons($('jrAct')); }
+  if (ak !== BAR.act) { BAR.act = ak; $('jrAct').innerHTML = a ? `<button class="cell${a[3] ? ' on' : ' pick'}" data-f="jr:act" aria-label="${a[0]}"${a[3] != null ? ` aria-pressed="${!!a[3]}"` : ''}>${icon(a[1])}<span class="sub">${a[0]}</span></button>` : ''; fitIcons($('jrAct')); }
   $('jrAct').hidden = !a || !!S.sheet || POP.alone;
   document.body.classList.toggle('intro-in', !!(S.intro && S.intro.rest)); document.body.classList.toggle('intro-ready', !!(S.intro && S.intro.ready)); document.body.classList.toggle('intro-quick', !!(S.intro && S.intro.quick));
   document.body.classList.toggle('carded', !!CARD.name); document.body.classList.toggle('framed', FR.path.length > 0 || FR.hide);
