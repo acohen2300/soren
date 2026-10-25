@@ -1,7 +1,7 @@
 <!doctype html>
 <html lang="en">
 <head>
-<!-- SoRen v78 · physics locked since v34 (12627fd9) -->
+<!-- SoRen v79 · physics locked since v34 (12627fd9) -->
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'self' 'unsafe-inline'; style-src 'unsafe-inline'; img-src 'self' data: blob:; media-src blob: data:; manifest-src 'self'; worker-src 'self'; connect-src 'none'; font-src 'none'; base-uri 'none'; form-action 'none'">
@@ -470,6 +470,127 @@ const ARCS = {
   snow: [0.55, (dt) => { S.life = clamp(S.life + ENV.snow * dt / 240 - (ENV.snow < 0.05 ? SKY.light * dt / 3600 : 0), 0.1, 1); }]
 };
 const compile = (key) => ({ ...PLACES[key], start: ARCS[PLACES[key].arc] ? ARCS[PLACES[key].arc][0] : 0.5 });   // a world is read, never "which place is this?"
+/* ---------- The sky model: where everything is, from the date, the time and where you stand ---------- */
+// One rule for the whole sky (Albert, Oct 24): the sun, the moon, the planets, the stars and the meteor showers are placed by
+// arithmetic from the clock and the place, never by hand. Every formula is from Meeus, Astronomical Algorithms (2nd ed.), or JPL,
+// cited at its line. Positions are good to about a tenth of a degree for the sun and planets and a quarter degree for the moon:
+// what an eye can check against a window. Left out on purpose (they change nothing you can see on a phone): refraction, nutation
+// beyond the mean obliquity, the moon's libration, eclipses. Where you stand: 41° north and the longitude of your time zone until
+// the app is native and may ask for your location (an exception you can switch off). Nothing here reaches the network.
+const OBS = { lat: 41, lon: -new Date(new Date().getFullYear(), 0, 1).getTimezoneOffset() / 4 };   // degrees; the zone's meridian (15° an hour), east positive
+const RAD = Math.PI / 180, AU_KM = 149597870.7;
+const norm360 = (x) => ((x % 360) + 360) % 360;
+const sinD = (x) => Math.sin(x * RAD), cosD = (x) => Math.cos(x * RAD);
+const julian = (d) => d.getTime() / 86400000 + 2440587.5;   // Julian day from the clock (UTC)
+const centuries = (jd) => (jd - 2451545) / 36525;   // T: Julian centuries from J2000.0
+const obliquity = (T) => 23.4392911 - 0.0130042 * T - 1.64e-7 * T * T;   // Meeus 22.2, the mean obliquity of the ecliptic, degrees
+function eclToEq(lon, lat, eps) {   // ecliptic longitude and latitude to right ascension (hours) and declination (degrees): Meeus 13.3, 13.4
+  const ra = Math.atan2(sinD(lon) * cosD(eps) - Math.tan(lat * RAD) * sinD(eps), cosD(lon)) / RAD, dec = Math.asin(sinD(lat) * cosD(eps) + cosD(lat) * sinD(eps) * sinD(lon)) / RAD;
+  return [norm360(ra) / 15, dec];
+}
+const gmst = (jd) => norm360(280.46061837 + 360.98564736629 * (jd - 2451545) + 0.000387933 * centuries(jd) ** 2 - centuries(jd) ** 3 / 38710000) / 15;   // Meeus 12.4, Greenwich mean sidereal time, hours
+const lstOf = (jd) => (((gmst(jd) + OBS.lon / 15) % 24) + 24) % 24;   // local sidereal time, hours
+function altAzOf(ra, dec, lst, lat = OBS.lat) {   // where a thing stands: its height above the horizon and its bearing from north through east, degrees (Meeus 13.5, 13.6)
+  const H = (lst - ra) * 15, alt = Math.asin(clamp(sinD(lat) * sinD(dec) + cosD(lat) * cosD(dec) * cosD(H), -1, 1)) / RAD;
+  const az = norm360(Math.atan2(sinD(H), cosD(H) * sinD(lat) - Math.tan(dec * RAD) * cosD(lat)) / RAD + 180);
+  return [alt, az];
+}
+// The sun: Meeus chapter 25 (the low-accuracy method, to 0.01°). Returns its ecliptic longitude, its distance (AU), its RA and Dec.
+function sunAt(jd) {
+  const T = centuries(jd), L0 = norm360(280.46646 + 36000.76983 * T + 0.0003032 * T * T), M = norm360(357.52911 + 35999.05029 * T - 0.0001537 * T * T);
+  const C = (1.914602 - 0.004817 * T - 0.000014 * T * T) * sinD(M) + (0.019993 - 0.000101 * T) * sinD(2 * M) + 0.000289 * sinD(3 * M);
+  const lon = norm360(L0 + C), nu = M + C, e = 0.016708634 - 0.000042037 * T - 0.0000001267 * T * T, R = 1.000001018 * (1 - e * e) / (1 + e * cosD(nu));
+  const om = 125.04 - 1934.136 * T, lam = lon - 0.00569 - 0.00478 * sinD(om), eps = obliquity(T) + 0.00256 * cosD(om);   // apparent longitude and obliquity (25.8, 25.9)
+  const [ra, dec] = eclToEq(lam, 0, eps);
+  return { lon: lam, R, ra, dec };
+}
+// The moon: Meeus chapter 47, the largest terms of the periodic series (longitude 24, latitude 18, distance 23: about 0.2° and 100 km).
+const MOON_L = [[0, 0, 1, 0, 6288774, -20905355], [2, 0, -1, 0, 1274027, -3699111], [2, 0, 0, 0, 658314, -2955968], [0, 0, 2, 0, 213618, -569925], [0, 1, 0, 0, -185116, 48888], [0, 0, 0, 2, -114332, -3149],
+  [2, 0, -2, 0, 58793, 246158], [2, -1, -1, 0, 57066, -152138], [2, 0, 1, 0, 53322, -170733], [2, -1, 0, 0, 45758, -204586], [0, 1, -1, 0, -40923, -129620], [1, 0, 0, 0, -34720, 108743],
+  [0, 1, 1, 0, -30383, 104755], [2, 0, 0, -2, 15327, 10321], [0, 0, 1, 2, -12528, 0], [0, 0, 1, -2, 10980, 79661], [4, 0, -1, 0, 10675, -34782], [0, 0, 3, 0, 10034, -23210],
+  [4, 0, -2, 0, 8548, -21636], [2, 1, -1, 0, -7888, 24208], [2, 1, 0, 0, -6766, 30824], [1, 0, -1, 0, -5163, -8379], [1, 1, 0, 0, 4987, -16675], [2, -1, 1, 0, 4036, -12831]];   // D M M' F, Σl (1e-6 °), Σr (m)
+const MOON_B = [[0, 0, 0, 1, 5128122], [0, 0, 1, 1, 280602], [0, 0, 1, -1, 277693], [2, 0, 0, -1, 173237], [2, 0, -1, 1, 55413], [2, 0, -1, -1, 46271], [2, 0, 0, 1, 32573], [0, 0, 2, 1, 17198],
+  [2, 0, 1, -1, 9266], [0, 0, 2, -1, 8822], [2, -1, 0, -1, 8216], [2, 0, -2, -1, 4324], [2, 0, 1, 1, 4200], [2, 1, 0, -1, -3359], [2, -1, -1, 1, 2463], [2, -1, 0, 1, 2211], [2, -1, -1, -1, 2065], [0, 1, -1, -1, -1870]];   // D M M' F, Σb (1e-6 °)
+function moonAt(jd) {
+  const T = centuries(jd), L1 = norm360(218.3164477 + 481267.88123421 * T - 0.0015786 * T * T + T ** 3 / 538841), D = norm360(297.8501921 + 445267.1114034 * T - 0.0018819 * T * T + T ** 3 / 545868);
+  const M = norm360(357.5291092 + 35999.0502909 * T - 0.0001536 * T * T), M1 = norm360(134.9633964 + 477198.8675055 * T + 0.0087414 * T * T + T ** 3 / 69699), F = norm360(93.272095 + 483202.0175233 * T - 0.0036539 * T * T - T ** 3 / 3526000);
+  const E = 1 - 0.002516 * T - 0.0000074 * T * T, A1 = 119.75 + 131.849 * T, A2 = 53.09 + 479264.29 * T, A3 = 313.45 + 481266.484 * T;
+  let sl = 0, sr = 0, sb = 0;
+  for (const [d, m, m1, f, l, r] of MOON_L) { const k = Math.abs(m) === 1 ? E : m ? E * E : 1, a = d * D + m * M + m1 * M1 + f * F; sl += l * k * sinD(a); sr += r * k * cosD(a); }
+  for (const [d, m, m1, f, b] of MOON_B) { const k = Math.abs(m) === 1 ? E : m ? E * E : 1; sb += b * k * sinD(d * D + m * M + m1 * M1 + f * F); }
+  sl += 3958 * sinD(A1) + 1962 * sinD(L1 - F) + 318 * sinD(A2);
+  sb += -2235 * sinD(L1) + 382 * sinD(A3) + 175 * sinD(A1 - F) + 175 * sinD(A1 + F) + 127 * sinD(L1 - M1) - 115 * sinD(L1 + M1);
+  const lon = norm360(L1 + sl / 1e6), lat = sb / 1e6, dist = 385000.56 + sr / 1000, [ra, dec] = eclToEq(lon, lat, obliquity(T));   // km
+  return { lon, lat, dist, ra, dec };
+}
+function moonPhase(sun, moon) {   // Meeus 48: the phase angle, the lit fraction, and whether it is waxing
+  const psi = Math.acos(clamp(sinD(sun.dec) * sinD(moon.dec) + cosD(sun.dec) * cosD(moon.dec) * cosD((sun.ra - moon.ra) * 15), -1, 1)), R = sun.R * AU_KM;
+  const i = Math.atan2(R * Math.sin(psi), moon.dist - R * Math.cos(psi)), frac = (1 + Math.cos(i)) / 2, waxing = norm360(moon.lon - sun.lon) < 180;
+  return { frac, waxing, angle: i / RAD };
+}
+// The planets: Keplerian elements at J2000 and their rates a century (JPL, "Approximate Positions of the Planets", valid 1800–2050),
+// a Kepler solve, the rotation into the ecliptic, the Earth taken away; the magnitude from the phase (Meeus 41, Harris's formulas);
+// the colour from the measured colour index B−V (Mallama & Hilton 2018) turned into a temperature and a glow (Ballesteros 2012).
+const PLANETS = [   // name, [a, e, I, L, ϖ, Ω] at J2000, their rates a century, the magnitude terms [V0, c1, c2, c3], B−V
+  ['Mercury', [0.38709927, 0.20563593, 7.00497902, 252.2503235, 77.45779628, 48.33076593], [0.00000037, 0.00001906, -0.00594749, 149472.67411175, 0.16047689, -0.12534081], [-0.42, 0.038, -0.000273, 0.000002], 0.93],
+  ['Venus', [0.72333566, 0.00677672, 3.39467605, 181.9790995, 131.60246718, 76.67984255], [0.0000039, -0.00004107, -0.0007889, 58517.81538729, 0.00268329, -0.27769418], [-4.4, 0.0009, 0.000239, -0.00000065], 0.82],
+  ['Earth', [1.00000261, 0.01671123, -0.00001531, 100.46457166, 102.93768193, 0], [0.00000562, -0.00004392, -0.01294668, 35999.37244981, 0.32327364, 0], null, 0],
+  ['Mars', [1.52371034, 0.0933941, 1.84969142, -4.55343205, -23.94362959, 49.55953891], [0.00001847, 0.00007882, -0.00813131, 19140.30268499, 0.44441088, -0.29257343], [-1.52, 0.016, 0, 0], 1.36],
+  ['Jupiter', [5.202887, 0.04838624, 1.30439695, 34.39644051, 14.72847983, 100.47390909], [-0.00011607, -0.00013253, -0.00183714, 3034.74612775, 0.21252668, 0.20469106], [-9.4, 0.005, 0, 0], 0.83],
+  ['Saturn', [9.53667594, 0.05386179, 2.48599187, 49.95424423, 92.59887831, 113.66242448], [-0.0012506, -0.00050991, 0.00193609, 1222.49362201, -0.41897216, -0.28867794], [-8.88, 0.044, 0, 0], 1.04]
+];
+function helio(el, rate, T) {   // a body's heliocentric place in the ecliptic of J2000, AU, and its distance from the sun
+  const [a, e, I, L, w, O] = el.map((v, i) => v + rate[i] * T), om = w - O, M = norm360(L - w) * RAD;
+  let E = M + e * Math.sin(M); for (let k = 0; k < 8; k++) E -= (E - e * Math.sin(E) - M) / (1 - e * Math.cos(E));   // Kepler's equation, Newton's method
+  const xp = a * (Math.cos(E) - e), yp = a * Math.sqrt(1 - e * e) * Math.sin(E), co = cosD(om), so = sinD(om), cO = cosD(O), sO = sinD(O), cI = cosD(I), sI = sinD(I);
+  return [(co * cO - so * sO * cI) * xp + (-so * cO - co * sO * cI) * yp, (co * sO + so * cO * cI) * xp + (-so * sO + co * cO * cI) * yp, so * sI * xp + co * sI * yp, Math.hypot(xp, yp)];
+}
+function bvRGB(bv) {   // a colour index to a surface temperature (Ballesteros 2012), and the temperature to a colour (a black body, Tanner Helland's fit); normalised so white stays white
+  const t = 4600 * (1 / (0.92 * bv + 1.7) + 1 / (0.92 * bv + 0.62)) / 100;
+  const r = t <= 66 ? 255 : 329.698727446 * (t - 60) ** -0.1332047592, g = t <= 66 ? 99.4708025861 * Math.log(t) - 161.1195681661 : 288.1221695283 * (t - 60) ** -0.0755148492, b = t >= 66 ? 255 : t <= 19 ? 0 : 138.5177312231 * Math.log(t - 10) - 305.0447927307;
+  const m = Math.max(r, g, b); return [r, g, b].map(v => Math.round(clamp(v, 0, 255) * 255 / m));
+}
+function planetsAt(jd) {   // the five you can see: RA, Dec, magnitude, colour
+  const T = centuries(jd), eps = 23.43928, earth = helio(PLANETS[2][1], PLANETS[2][2], T), out = [];
+  for (const [name, el, rate, mag, bv] of PLANETS) {
+    if (!mag) continue;
+    const p = helio(el, rate, T), x = p[0] - earth[0], y = p[1] - earth[1], z = p[2] - earth[2], delta = Math.hypot(x, y, z), r = p[3], R = earth[3];
+    const lon = norm360(Math.atan2(y, x) / RAD), lat = Math.atan2(z, Math.hypot(x, y)) / RAD, [ra, dec] = eclToEq(lon, lat, eps);
+    const i = Math.acos(clamp((r * r + delta * delta - R * R) / (2 * r * delta), -1, 1)) / RAD, m = mag[0] + 5 * Math.log10(r * delta) + mag[1] * i + mag[2] * i * i + mag[3] * i ** 3;
+    out.push({ name, ra, dec, mag: m, rgb: bvRGB(bv) });
+  }
+  return out;
+}
+// The meteor showers: the established annual showers (IAU Meteor Data Center, the working list), each with its peak, the nights it
+// is active, its radiant (where in the sky the meteors stream from, RA/Dec at the peak), its rate at peak over a dark sky (ZHR) and
+// its speed (km/s). Earth crosses the same debris every year, so these need no update.
+const SHOWERS = [   // name, peak [month, day], active [days before, days after], radiant [RA°, Dec°], ZHR, speed
+  ['Quadrantids', [1, 3], [6, 9], [230, 49], 110, 41], ['Lyrids', [4, 22], [8, 8], [271, 34], 18, 49], ['Eta Aquariids', [5, 6], [17, 22], [338, -1], 50, 66],
+  ['Southern delta Aquariids', [7, 30], [18, 24], [340, -16], 25, 41], ['Perseids', [8, 12], [26, 12], [48, 58], 100, 59], ['Draconids', [10, 8], [2, 2], [262, 54], 10, 20],
+  ['Orionids', [10, 21], [19, 17], [95, 16], 20, 66], ['Leonids', [11, 17], [11, 13], [152, 22], 15, 71], ['Geminids', [12, 14], [10, 3], [112, 33], 150, 35], ['Ursids', [12, 22], [5, 4], [217, 76], 10, 33]
+];
+function showerAt(d) {   // the shower active tonight, if any, with its strength (1 at the peak, falling to 0 at the edge of its window) and its radiant
+  const y = d.getFullYear(), day = (d - new Date(y, 0, 0)) / 86400000; let best = null;
+  for (const [name, [mo, dd], [before, after], [ra, dec], zhr, v] of SHOWERS) {
+    const peak = (new Date(y, mo - 1, dd) - new Date(y, 0, 0)) / 86400000; let dt = day - peak; if (dt > 182) dt -= 365; if (dt < -182) dt += 365;
+    if (dt < -before || dt > after) continue;
+    const k = dt < 0 ? 1 + dt / before : 1 - dt / after, s = Math.max(0.1, k * k);   // peaked: most of the rate sits in the two nights round the peak
+    if (!best || s * zhr > best.s * best.zhr) best = { name, ra: ra / 15, dec, zhr, v, s };
+  }
+  return best;
+}
+// Comets and satellites are perishable: their orbits are known only from recent observations, so their tables carry the date they
+// were written and are drawn only while fresh (within the horizon below). Until the app is native, nothing refreshes them; then a
+// refresh is an exception you can switch on, beside location. An empty list is honest; a stale one is not drawn.
+const PERISHABLE = { asOf: '2026-10-24', fresh: 30, comets: [], satellites: [] };   // comets: [name, q (AU), e, i, ω, Ω, T (JD of perihelion), H, n]; satellites need SGP4 and are parked until native (see PARKED.md)
+const perishableFresh = (d = new Date()) => (d - new Date(PERISHABLE.asOf)) / 86400000 <= PERISHABLE.fresh;
+// The sky now: everything placed for one moment, facing south (bearing 180 is straight ahead; east is left, west is right).
+function skyAt(d = new Date()) {
+  const jd = julian(d), lst = lstOf(jd), sun = sunAt(jd), moon = moonAt(jd), phase = moonPhase(sun, moon), ps = planetsAt(jd);
+  const place = (o) => { const [alt, az] = altAzOf(o.ra, o.dec, lst); return { ...o, alt, az }; };
+  const sh = showerAt(d), radiant = sh ? place({ ra: sh.ra, dec: sh.dec }) : null;
+  return { jd, lst, sun: place(sun), moon: { ...place(moon), ...phase }, planets: ps.map(place), shower: sh ? { ...sh, alt: radiant.alt, az: radiant.az } : null };
+}
 /* ---------- The sky model ---------- */
 // Time and weather are two loops. Time: night 0, dawn 1, day 2, dusk 3. Clouds: clear, some, overcast, dark, clearing.
 // The clouds only paint the sky; the rain, the wind and the lightning come only from their switches.
@@ -488,16 +609,16 @@ const RAMP = [   // sun height (degrees): top of the sky, the middle, the horizo
   { e: 90, top: '#7ea1c6', mid: '#b2c8dc', hor: '#e1e8ec', light: 1, stars: 0 }
 ].map(k => ({ ...k, top: hex(k.top), mid: hex(k.mid), hor: hex(k.hor) }));
 const SKY_LOOKS = [0.12, 0.55, 0.85, 1, 0.5];   // clear, some, overcast, dark, clearing
-// The hours where night, dawn, day and dusk are at their fullest: the real sun at 41° north (where the stars are drawn), for
-// today's date. Dawn is sunrise, dusk is sunset, day is solar noon, night is twelve hours after (Table 6; NOAA's simple
-// declination; clock noon taken as solar noon, an hour later in summer time; accurate to a few minutes for most of the
-// 41st parallel, more where a time zone is wide).
-const LAT = 41;
+// The hours where night, dawn, day and dusk are at their fullest, for today's date, from the sky model (25-sky-model.js): dawn is
+// sunrise, dusk is sunset (the sun's centre 0.833° under the horizon, the usual allowance for refraction and the sun's size), day is
+// solar noon (the sun highest), night is twelve hours after. Found by walking the day a minute at a time; kept for the day.
+const SUN_ALT = (d) => altAzOf(sunAt(julian(d)).ra, sunAt(julian(d)).dec, lstOf(julian(d)))[0];
+const SUN_DAYS = {};
 function sunDay(d = new Date()) {
-  const n = Math.floor((d - new Date(d.getFullYear(), 0, 0)) / 864e5), rad = Math.PI / 180, dec = 23.44 * Math.sin(rad * 360 / 365 * (n - 81));
-  const jan = new Date(d.getFullYear(), 0, 1).getTimezoneOffset(), dst = d.getTimezoneOffset() < jan ? 1 : 0, noon = 12 + dst;
-  const H = Math.acos(clamp((Math.sin(-0.833 * rad) - Math.sin(LAT * rad) * Math.sin(dec * rad)) / (Math.cos(LAT * rad) * Math.cos(dec * rad)), -1, 1)) / rad / 15;   // hours from noon to sunset
-  return [noon - 12 + 24 * (noon - 12 < 0), noon - H, noon, noon + H, noon + 12 + 24 * (noon - 12 < 0)].map((h, i, a) => (i && h < a[0] ? h + 24 : h));
+  const k = `${d.getFullYear()}-${d.getMonth()}-${d.getDate()}`; if (SUN_DAYS[k]) return SUN_DAYS[k];
+  const t0 = new Date(d.getFullYear(), d.getMonth(), d.getDate()); let rise = 6, set = 18, noon = 12, top = -99, prev = SUN_ALT(t0);
+  for (let m = 1; m <= 1440; m++) { const t = new Date(t0.getTime() + m * 60000), a = SUN_ALT(t), h = m / 60; if (prev < -0.833 && a >= -0.833) rise = h; if (prev > -0.833 && a <= -0.833) set = h; if (a > top) { top = a; noon = h; } prev = a; }
+  return (SUN_DAYS[k] = [noon - 12 + 24 * (noon - 12 < 0), rise, noon, set, noon + 12 + 24 * (noon - 12 < 0)].map((h, i, a) => (i && h < a[0] ? h + 24 : h)));
 }
 let DAY = sunDay();
 const SKY = { top: [0, 0, 0], mid: [0, 0, 0], hor: [0, 0, 0], light: 1, stars: 0, alt: 0 };
@@ -510,7 +631,7 @@ const ENV = { cover: 0, gloom: 0, precip: 0, rain: 0, snow: 0, light: 1, dark: 0
 const FEEL = { life: 0.45, heave: 0.035, glow: 0.65 };
 
 /* ---------- Storage (guarded: private windows and sandboxes can throw) ---------- */
-const VERSION = 78, PHYSICS_ID = '12627fd9';   // the build, and the first eight of the locked Physics block's hash
+const VERSION = 79, PHYSICS_ID = '12627fd9';   // the build, and the first eight of the locked Physics block's hash
 const JKEY = 'soren:journal:p5', JKEY_OLD = 'somatic-resonance:journal:v2', PKEY = 'soren:prefs:p5', SKEY = 'soren:pool:p5';
 function loadJSON(key) { try { const v = JSON.parse(localStorage.getItem(key) || 'null'); return v && typeof v === 'object' ? v : {}; } catch (e) { return {}; } }
 const SAVED = {};   // what each key last held: a save that changes nothing writes nothing
@@ -658,10 +779,8 @@ function updateAmbience() {
 function todAt(h) { if (h < DAY[0]) h += 24; const i = DAY.findIndex((k, n) => h < DAY[n + 1]); return (i + (h - DAY[i]) / (DAY[i + 1] - DAY[i])) % 4; }   // an hour (0–24) as a place in the loop
 function todMinutes(u) { const i = Math.floor(u) % 4, h = DAY[i] + (u - Math.floor(u)) * (DAY[i + 1] - DAY[i]); return Math.round((h % 24) * 60) % 1440; }   // and back
 const clockTod = (d = new Date()) => { DAY = sunDay(d); return todAt(d.getHours() + d.getMinutes() / 60); };
-function sunAlt(u) {   // the sun's height above the horizon, in degrees, at a place in the loop: the same sun the ramp is keyed to
-  const rad = Math.PI / 180, h = todMinutes(u) / 60, n = Math.floor((new Date() - new Date(new Date().getFullYear(), 0, 0)) / 864e5), dec = 23.44 * Math.sin(rad * 360 / 365 * (n - 81)) * rad;
-  const H = (h - DAY[2]) * 15 * rad, la = LAT * rad;   // DAY[2] is solar noon
-  return Math.asin(clamp(Math.sin(la) * Math.sin(dec) + Math.cos(la) * Math.cos(dec) * Math.cos(H), -1, 1)) / rad;
+function sunAlt(u) {   // the sun's height above the horizon, in degrees, at a place in the loop: the one sun of the sky model
+  const m = todMinutes(u), d = new Date(); d.setHours(Math.floor(m / 60), m % 60, 0, 0); return SUN_ALT(d);
 }
 function updateLife(dt) { const a = ARCS[here().arc]; if (a) a[1](dt); }   // the season's arc moves at its own pace
 
@@ -1407,7 +1526,9 @@ function drawMeteor(c, floor, every, quiet) {
   c.strokeStyle = g; c.lineWidth = 2; c.lineCap = 'round'; c.beginPath(); c.moveTo(m.x, m.y); c.lineTo(m.x - m.vx * 0.18, m.y - m.vy * 0.18); c.stroke();
   if (a <= 0 || m.y > floor) METEOR = null;
 }
-function meteor(quiet) { const left = Math.random() < 0.5; METEOR = { x: left ? 40 + Math.random() * 120 : 220 + Math.random() * 120, y: 20 + Math.random() * 60, vx: (left ? 1 : -1) * (220 + Math.random() * 120), vy: 70 + Math.random() * 50, t: 0 }; if (!quiet) sound.whoosh(0.15, left ? -0.4 : 0.4); }
+function meteor(quiet) {   // on a shower's night it streams from the radiant (where that stands facing south), else from anywhere high
+  const sh = PSKY.now && PSKY.now.shower, left = Math.random() < 0.5; METEOR = { x: left ? 40 + Math.random() * 120 : 220 + Math.random() * 120, y: 20 + Math.random() * 60, vx: (left ? 1 : -1) * (220 + Math.random() * 120), vy: 70 + Math.random() * 50, t: 0 };
+  if (sh && sh.alt > 0) { const rx = (sh.az - 90) / 180 * LW, ry = (0.86 - sh.alt / 70 * 0.86) * HORIZON * 1.3, ang = Math.atan2(METEOR.y - ry, METEOR.x - rx) + (Math.random() - 0.5) * 0.3, sp = 180 + sh.v * 2; METEOR.vx = Math.cos(ang) * sp; METEOR.vy = Math.abs(Math.sin(ang)) * sp + 30; } if (!quiet) sound.whoosh(0.15, left ? -0.4 : 0.4); }
 function embers(n) {   // sparks lift from the fire and drift with the wind
   for (let i = 0; i < n; i++) particles.push({ x: FIRE.x + (Math.random() - 0.5) * 14, y: FIRE.y - 10, vx: (Math.random() - 0.5) * 0.6, vy: -0.6 - Math.random() * 1.4, r: 0.8 + Math.random() * 1.2,
     g: -0.004, color: Math.random() < 0.5 ? '#ffb347' : '#ffd27a', alpha: 0.95, decay: 0.008 + Math.random() * 0.01, drift: true, bg: true });
@@ -1488,16 +1609,12 @@ const CONSTELLATIONS = [
   ['Scorpius', [['Acrab', 'Dschubba'], ['Dschubba', 'Antares']]]
 ].map(([name, lines]) => ({ name, lines, members: [...new Set(lines.flat())] }));
 const FIELD = (() => { const r = seeded(91), out = []; for (let i = 0; i < 280; i++) out.push([r() * 24, Math.asin(r() * 1.25 - 0.25) * 180 / Math.PI, 0.25 + 0.55 * r()]); return out; })();   // faint stars, a fixed scatter
-const SKYVIEW = { lat: 41 * Math.PI / 180, key: -1, pos: null };
-function skyTime() { const d = new Date(); if (PREFS.hour === 'live') return d; const m = todMinutes(S.tod); d.setHours(Math.floor(m / 60), m % 60, 0, 0); return d; }
-function lstHours(d) {   // local sidereal time, from your clock, with your longitude taken from your time zone
-  const jd = d.getTime() / 86400000 + 2440587.5, gmst = 18.697374558 + 24.06570982441908 * (jd - 2451545.0), lon = -new Date(d.getFullYear(), 0, 1).getTimezoneOffset() / 4;
-  return (((gmst + lon / 15) % 24) + 24) % 24;
-}
-function altAz(ra, dec, lst) {   // where a star stands, facing north: its height and its bearing, in radians
-  const H = (lst - ra) * Math.PI / 12, de = dec * Math.PI / 180, la = SKYVIEW.lat;
-  return [Math.asin(clamp(Math.sin(la) * Math.sin(de) + Math.cos(la) * Math.cos(de) * Math.cos(H), -1, 1)),
-    Math.atan2(-Math.cos(de) * Math.sin(H), Math.sin(de) * Math.cos(la) - Math.cos(de) * Math.sin(la) * Math.cos(H))];
+const SKYVIEW = { key: -1, pos: null };
+const skyHour = () => (S.mode === 'rest' ? 'night' : PREFS.hour);   // the hour the sky is painted for: the clock's, the one you hold, or night in Rest
+function skyTime() { const d = new Date(); if (skyHour() === 'live') return d; const m = todMinutes(S.tod); d.setHours(Math.floor(m / 60), m % 60, 0, 0); return d; }
+const lstHours = (d) => lstOf(julian(d));   // local sidereal time, from the sky model
+function altAz(ra, dec, lst) {   // where a star stands, facing north: its height, and its bearing from north (east positive), in radians: the sky model's
+  const [alt, az] = altAzOf(ra, dec, lst); return [alt * RAD, (az > 180 ? az - 360 : az) * RAD];
 }
 function skyXY(ra, dec, lst) {   // facing north: the pole star sits about two fifths of the way up, and the sky wheels round it
   const [alt, az] = altAz(ra, dec, lst);
@@ -1547,11 +1664,8 @@ function cloudSprite(rgb) {
   return cv;
 }
 function makeSprites() {
-  const dpr = poolDPR(), [st, c] = canvasOf(LW, HORIZON, dpr), r = seeded(5);
-  c.fillStyle = '#e0f2fe';
-  for (let i = 0; i < 110; i++) { const y = r() * HORIZON; c.globalAlpha = (0.25 + 0.75 * r()) * (1 - y / (HORIZON * 1.25)); c.fillRect(r() * LW, y, 1.3, 1.3); }
-  SPR.stars = st;
-  SPR.sun = glowImg(SUN, 128); SPR.cool = glowImg('214,228,255', 128); SPR.fly = glowImg('253,224,71', 32);
+  const dpr = poolDPR();
+  SPR.cool = glowImg('214,228,255', 128); SPR.fly = glowImg('253,224,71', 32);
   SPR.cloud = cloudSprite('255,255,255'); SPR.cloudDark = cloudSprite('52,62,78');
   const [gr, gc] = canvasOf(LW, LH), rg = seeded(13), gd = gc.createImageData(LW, LH);   // the grain, once, from a fixed seed: the same every time
   for (let i = 0; i < gd.data.length; i += 4) { const v = 128 + (rg() - 0.5) * 255; gd.data[i] = gd.data[i + 1] = gd.data[i + 2] = v; gd.data[i + 3] = 255; } gc.putImageData(gd, 0, 0); SPR.grain = gr;
@@ -1591,7 +1705,6 @@ function ensureLand() {
 
 const CLOUDS = Array.from({ length: 10 }, (_, i) => ({ x: (i * 97) % (LW + 160) - 80, y: 18 + ((i * 53) % 130), s: 0.7 + ((i * 37) % 10) / 14, v: 0.08 + ((i * 29) % 10) / 70 }));
 const flock = { on: false, x: 0, y: 0, dir: 1, t: 20 };
-const skyArc = (s) => [30 + s * 320, HORIZON + 8 - Math.sin(s * Math.PI) * 88];   // the one arc the sun and the moon share
 function drawSky(c, b, k) {
   const w = here();
   const g = c.createLinearGradient(0, 0, 0, HORIZON + 30);   // the sky: three stops sampled from the ramp
@@ -1601,23 +1714,8 @@ function drawSky(c, b, k) {
   const hz = c.createLinearGradient(0, HORIZON - 34, 0, HORIZON + 8), hc = mix(SKY.hor, [255, 255, 255], 0.08);   // the haze band: one soft band at the horizon, a few percent lighter than the sky it sits on
   hz.addColorStop(0, rgba(hc, 0)); hz.addColorStop(0.7, rgba(hc, 0.55)); hz.addColorStop(1, rgba(hc, 0.55)); c.fillStyle = hz; c.fillRect(0, HORIZON - 34, LW, 42);
   const open = 1 - ENV.cover;
-  if (w.el.stars) drawConstellations(c, open * SKY.stars);
-  else if (SKY.stars * open > 0.02) { c.globalAlpha = SKY.stars * open; c.drawImage(SPR.stars, 0, 0, LW, HORIZON); c.globalAlpha = 1; }
-  // Sun and moon share one arc; the moon is always where the sun will be half a day later, so they sit on opposite sides.
-  const u = S.tod, sunS = w.night ? -1 : (u - 0.8) / 2.4, moonS = w.night ? -1 : (((u + 2) % 4) - 0.8) / 2.4, veil = 1 - ENV.cover * 0.85, moonVis = clamp(ENV.dark * 1.3, 0, 1) * veil;
-  c.globalCompositeOperation = 'lighter';
-  if (sunS > 0 && sunS < 1) { const [x, y] = skyArc(sunS); c.globalAlpha = 0.22 * veil; c.drawImage(SPR.sun, x - 50, y - 50, 100, 100); }   // the sun and the moon are flat discs: one soft halo each, under a tenth of the light, never a bloom
-  if (moonS > 0 && moonS < 1) { const [x, y] = skyArc(moonS); c.globalAlpha = 0.14 * moonVis; c.drawImage(SPR.cool, x - 36, y - 36, 72, 72); }
-  plain(c);
-  if (sunS > 0 && sunS < 1) {
-    const [x, y] = skyArc(sunS), low = 1 - Math.sin(sunS * Math.PI);
-    c.fillStyle = rgba(mix([255, 248, 225], [255, 168, 104], low), veil); c.beginPath(); c.arc(x, y, 17, 0, TAU); c.fill();
-  }
-  if (moonS > 0 && moonS < 1) {
-    const [x, y] = skyArc(moonS);
-    c.fillStyle = rgba([232, 241, 251], 0.2 + 0.8 * moonVis); c.beginPath(); c.arc(x, y, 12, 0, TAU); c.fill();
-    c.fillStyle = `rgba(160,180,210,${(0.35 * moonVis).toFixed(3)})`; c.beginPath(); c.arc(x - 4, y - 3, 3, 0, TAU); c.arc(x + 3, y + 4, 2, 0, TAU); c.fill();
-  }
+  if (w.el.stars) drawConstellations(c, open * SKY.stars);   // the Stars place keeps its own map, facing north (the page's stars face south); the one sun and the one moon are on the page (72-sky.js)
+  if (open > 0.3 && SKY.stars > 0.3 && PSKY.now && PSKY.now.shower && PSKY.now.shower.alt > 0) drawMeteor(c, HORIZON, 3600 / (PSKY.now.shower.zhr * PSKY.now.shower.s * Math.max(0.15, Math.sin(PSKY.now.shower.alt * RAD))), false);   // a shower's night: meteors at its rate, from its radiant
   const aurora = ENV.aurora * FEEL.life, at = lessMo() ? 0 : animTime, ab = lessMo() ? 0 : b;   // Reduce motion: the aurora stands still and only glows
   if (aurora > 0.02) {   // the aurora swells and lifts as you breathe in
     const hues = ['45,212,191', '129,140,248', '110,231,183'];
@@ -2390,7 +2488,7 @@ function updateLook(dt) {
 function enterLook() {
   const lst = lstHours(new Date()), up = (n) => { const [x, y] = lookXY(n, lst); return x > 10 && x < LW - 10 && y > 10 && y < LH - 30; };
   const con = CONSTELLATIONS.find(c => LOOK_SET.includes(c.name) && c.members.every(up)) || CONSTELLATIONS[0];
-  S.look = { con, lst, k: 0, hold: 0, t: 0, x: CX, y: LH * 0.7 }; S.aiming = false; LOOK.down = 0;
+  S.look = { con, lst, k: 0, hold: 0, t: 0, x: CX, y: LH * 0.7, planets: planetsAt(julian(skyTime())) }; S.aiming = false; LOOK.down = 0;
   sound.whoosh(0.3, 0); syncBars();
 }
 function drawLook(c) {
@@ -2405,6 +2503,7 @@ function drawLook(c) {
     c.strokeStyle = L.k >= L.con.lines.length ? `rgba(${GOLD},0.9)` : 'rgba(226,236,255,0.85)'; c.lineWidth = 2; c.beginPath(); c.moveTo(A[0], A[1]); c.lineTo(B[0], B[1]); c.stroke();
   });
   for (const n of L.con.members) { const [x, y] = lookXY(n, L.lst); c.fillStyle = '#f1f5ff'; c.beginPath(); c.arc(x, y, 2.8, 0, TAU); c.fill(); }
+  for (const p of L.planets) { const [x, y] = lookAt(p.ra, p.dec, L.lst); if (y > LH - 20 || y < 0) continue; c.fillStyle = `rgb(${p.rgb})`; c.beginPath(); c.arc(x, y, clamp(3 - 0.5 * p.mag, 1.5, 4), 0, TAU); c.fill(); }   // the planets, in their colours, steady
   if (L.k < L.con.lines.length) {   // the next star, ringed blue; the hold draws a gold arc round it
     const [x, y] = lookXY(L.con.lines[L.k][1], L.lst);
     c.strokeStyle = `rgba(${BLUE},${(0.6 + 0.3 * Math.sin(animTime * 3)).toFixed(3)})`; c.lineWidth = 1.5; c.beginPath(); c.arc(x, y, 14, 0, TAU); c.stroke();
@@ -3252,72 +3351,97 @@ function updateWarmth() {   // evening warmth: from 7 pm the screen leans a litt
   const h = new Date().getHours() + new Date().getMinutes() / 60, w = h >= 19 ? clamp((h - 19) / 2, 0, 1) : h < 7 ? clamp(7 - h, 0, 1) : 0;
   $('warm').style.opacity = (0.13 * w).toFixed(3);
 }
-/* ---------- The sky (v75): layer one, the page's one background ---------- */
-// Four skies, drawn once at start (Night, Dawn, Morning, Dusk: S.tod's four quarters, in that order), and the page shows the two
-// either side of the hour, cross-faded as S.tod glides. Dawn leads into the day (light blue overhead, a warm glow low on the
-// left); Dusk leads into the night (ink overhead, the glow low on the right). No ground; the sky runs to every edge, notch and
-// home bar included. Every pixel obeys the app's own saturation law (HSL, 0.35). Locked Oct 23: mockups/locked/sky-four/sky.py.
-// Every tile is glass over this sky (00-head.html): navy by day, white frost by night, by the sky's own light; the pool is liquid glass
-// over it too (40-scenery.js, drawSky), and weather never touches this layer.
-// The one contrast formula (WCAG): the relative luminance of a colour, and the ratio between two (the gate measures the real pixels).
-const relLum = (c) => c.reduce((s, v, i) => { v /= 255; return s + [0.2126, 0.7152, 0.0722][i] * (v <= 0.04045 ? v / 12.92 : ((v + 0.055) / 1.055) ** 2.4); }, 0);
-const contrast = (a, b) => { const x = relLum(a), y = relLum(b); return (Math.max(x, y) + 0.05) / (Math.min(x, y) + 0.05); };
+/* ---------- The sky (v79): layer one, the page's one background, painted from the sky model ---------- */
+// One sky, facing south, painted every minute (and whenever the hour you hold changes) from where the sun and the moon really
+// stand (25-sky-model.js). The four palettes locked on Oct 23 (mockups/locked/sky-four/sky.py) are the colours: night, dawn, day and
+// dusk, blended by the sun's height (and by whether it is rising or setting), so every minute of the day is its own sky. The sun's
+// glow is painted where the sun is; the moon where the moon is, lit on its true side by its true fraction; at night the real stars
+// and the planets in their colours. No ground; the sky runs to every edge, notch and home bar included. Every pixel obeys the app's
+// own saturation law (HSL, 0.35). Every tile is glass over this sky (00-head.html); the pool is liquid glass over it too, and weather
+// never touches this layer. Two canvases take turns, cross-fading, so a repaint is never seen.
 const PSKY = (() => {
-  const W = 240, H = 466, CAP = 0.35, NAMES = ['night', 'dawn', 'day', 'dusk'];
-  const LAD = {
+  const W = 240, H = 466, CAP = 0.35;
+  const LAD = {   // the four palettes: eight stops down the sky
     dawn: [[0, 116, 154, 204], [.18, 132, 160, 204], [.36, 152, 162, 198], [.52, 180, 162, 186], [.66, 210, 168, 172], [.78, 228, 184, 164], [.9, 238, 204, 170], [1, 244, 214, 180]],
     day: [[0, 112, 148, 194], [.15, 124, 160, 202], [.3, 138, 172, 208], [.45, 154, 184, 212], [.6, 176, 198, 218], [.75, 202, 214, 224], [.88, 224, 226, 226], [1, 238, 232, 216]],
     dusk: [[0, 14, 18, 36], [.18, 30, 34, 66], [.36, 66, 58, 100], [.52, 116, 80, 116], [.66, 166, 102, 114], [.78, 200, 130, 112], [.9, 220, 160, 124], [1, 232, 184, 142]],
     night: [[0, 10, 14, 30], [.15, 16, 22, 44], [.3, 24, 32, 58], [.45, 34, 42, 72], [.6, 46, 54, 88], [.75, 62, 68, 104], [.88, 80, 84, 120], [1, 98, 100, 132]]
   };
-  const SUN = {   // where the light is, its colour, how far its glow reaches, how strong, and how big its core
-    dawn: { x: .12, y: .84, c: [255, 206, 150], r: .60, a: .55, k: .08 }, day: { x: .30, y: .19, c: [255, 246, 222], r: .50, a: .45, k: .05 },
-    dusk: { x: .88, y: .84, c: [255, 176, 120], r: .60, a: .60, k: .09 }, night: { x: .78, y: .16, c: [180, 198, 255], r: .40, a: .30, k: .03 }
+  const GLOW = {   // the light's colour, how far its glow reaches, how strong, and how big its core, in each palette (the sun by day, the moon by night)
+    dawn: { c: [255, 206, 150], r: .60, a: .55, k: .08 }, day: { c: [255, 246, 222], r: .50, a: .45, k: .05 }, dusk: { c: [255, 176, 120], r: .60, a: .60, k: .09 }, night: { c: [180, 198, 255], r: .40, a: .30, k: .03 }
   };
   const ladder = (L, v) => { let i = 1; while (i < L.length - 1 && L[i][0] < v) i++; const a = L[i - 1], b = L[i], t = clamp((v - a[0]) / (b[0] - a[0]), 0, 1); return [1, 2, 3].map(n => a[n] + (b[n] - a[n]) * t); };
   const sat = (g) => { const a = g.map(v => v / 255), mx = Math.max(...a), mn = Math.min(...a), l = (mx + mn) / 2, d = mx - mn, s = d ? d / Math.max(1 - Math.abs(2 * l - 1), 1e-6) : 0, k = s > CAP ? CAP / s : 1; return a.map(v => (l + (v - l) * k) * 255); };
-  const holder = $('sky'), cv = [], top = [], bot = [], RW = [];   // RW: each sky's average colour, row by row
-  NAMES.forEach((name) => {
-    const L = LAD[name], s = SUN[name], night = name === 'night', cs = document.createElement('canvas'); cs.width = W; cs.height = H;
-    const c = cs.getContext('2d'), im = c.createImageData(W, H), px = im.data, ga = name === 'dawn' || name === 'dusk' ? 0.9 : 0.5;
-    const ex = Array.from({ length: W }, (_, x) => Math.exp(-(((x / (W - 1) - s.x) / .55) ** 2))), far = Array.from({ length: W }, (_, x) => clamp(Math.abs(x / (W - 1) - s.x) / .9, 0, 1));
-    const ry = []; RW.push(ry); let n = 0;
-    for (let y = 0; y < H; y++) {
-      let sr = 0, sg = 0, sb = 0;
-      const v = y / (H - 1), lad = ladder(L, v), ey = Math.exp(-(((v - s.y) / .34) ** 2));
-      for (let x = 0; x < W; x++, n += 4) {
-        const u = x / (W - 1), f = far[x], g = [0, 1, 2].map(i => lad[i] * (1 - .16 * f) + [40, 56, 110][i] * .05 * f * (night ? .5 : 1));
-        const gl = ex[x] * ey * ga, dist = Math.hypot((u - s.x) * W / H, v - s.y), halo = Math.exp(-((dist / s.r) ** 2) * 2.2) * s.a, core = Math.exp(-((dist / s.k) ** 2) * 1.4);
-        const t = clamp(halo * .6 + core, 0, 1), lit = g.map((v2, i) => { const w = v2 + (255 - v2) * (s.c[i] / 255) * (s.a * gl); return w + (255 - w) * (s.c[i] / 255) * t; });
-        const out = sat(lit), ck = clamp(core, 0, 1) * .9;
-        for (let i = 0; i < 3; i++) px[n + i] = out[i] + (255 - out[i]) * ck + Math.random() - 0.5;   // a little noise: no banding on a long soft fade
-        px[n + 3] = 255; sr += px[n]; sg += px[n + 1]; sb += px[n + 2];
-      }
-      ry.push([sr / W, sg / W, sb / W]);
-    }
-    c.putImageData(im, 0, 0);
-    if (night) {   // the moon and its stars (a fixed scatter)
-      let z = 5; const rnd = () => ((z = (z * 16807) % 2147483647) / 2147483647);
-      for (let i = 0; i < 90; i++) { c.fillStyle = `rgba(255,255,255,${(0.27 + rnd() * 0.58).toFixed(2)})`; c.fillRect(Math.floor(rnd() * W), Math.floor(rnd() * H * 0.7), 1, 1); }
-      c.fillStyle = '#f4f7ff'; c.beginPath(); c.arc(s.x * W, s.y * H, 5.5, 0, TAU); c.fill();
-    }
-    top.push(ry[0]); bot.push(ry[H - 1]);   // the sky's colour at the top and the foot, for the notch and the home bar
-    cs.setAttribute('aria-hidden', 'true'); holder.appendChild(cs); cv.push(cs);
-  });
-  const lum = RW.map(ry => relLum(ry.reduce((a, c) => a.map((v, i) => v + c[i] / ry.length), [0, 0, 0])));   // each sky's light, for the tiles' glass
-  return { cv, top, bot, RW, lum, hor: bot[0], tcol: top[0], key: -1, dark: null };
+  const holder = $('sky'), cv = [0, 1].map(() => { const c = document.createElement('canvas'); c.width = W; c.height = H; c.setAttribute('aria-hidden', 'true'); c.style.transition = 'opacity 2.4s'; holder.appendChild(c); return c; });
+  return { W, H, LAD, GLOW, ladder, sat, cv, front: 0, key: '', hor: [10, 14, 30], tcol: [10, 14, 30], lum: 0, dark: null, now: null };
 })();
+// Where a thing in the sky lands on the page, facing south: bearing 90 (east) at the left edge, 270 (west) at the right; the
+// horizon at 86% down; 70° up at the top. The sun near noon in summer stands above the frame, as it should.
+const skyXYPage = (alt, az) => [((az - 90) / 180) * PSKY.W, (0.86 - alt / 70 * 0.86) * PSKY.H];
+// The weights of the four palettes for the sun's height: night below −12°, dawn or dusk at the horizon, day above +8°.
+function skyBlend(alt, rising) {
+  const tw = rising ? 'dawn' : 'dusk', w = { night: 0, dawn: 0, day: 0, dusk: 0 };
+  if (alt <= -12) w.night = 1; else if (alt <= -3) { const k = (alt + 12) / 9; w.night = 1 - k; w[tw] = k; } else if (alt <= 8) { const k = (alt + 3) / 11; w[tw] = 1 - k; w.day = k; } else w.day = 1;
+  return w;
+}
+function paintSky(c, sky) {   // one sky for one moment, into one canvas; returns the average colour of each row
+  const { W, H, LAD, GLOW, ladder, sat } = PSKY, w = skyBlend(sky.sun.alt, sky.sun.az < 180), keys = Object.keys(w).filter(k => w[k] > 0.001);
+  const night = w.night, light = night < 0.5 ? sky.sun : sky.moon, lightXY = skyXYPage(light.alt, light.az), gs = keys.reduce((o, k) => { for (const f of ['r', 'a', 'k']) o[f] += GLOW[k][f] * w[k]; for (let i = 0; i < 3; i++) o.c[i] += GLOW[k].c[i] * w[k]; return o; }, { c: [0, 0, 0], r: 0, a: 0, k: 0 });
+  const sx = clamp(lightXY[0] / W, -0.3, 1.3), sy = clamp(lightXY[1] / H, -0.4, 1.1), up = light.alt > -6 ? 1 : clamp(1 + (light.alt + 6) / 6, 0, 1);   // the glow fades as the light sinks under the horizon
+  const im = c.createImageData(W, H), px = im.data, ga = (w.dawn + w.dusk) * 0.9 + (w.day + w.night) * 0.5, rows = [];
+  const ex = Array.from({ length: W }, (_, x) => Math.exp(-(((x / (W - 1) - sx) / .55) ** 2))), far = Array.from({ length: W }, (_, x) => clamp(Math.abs(x / (W - 1) - sx) / .9, 0, 1));
+  let n = 0;
+  for (let y = 0; y < H; y++) {
+    let sr = 0, sg = 0, sb = 0;
+    const v = y / (H - 1), lad = [0, 0, 0]; for (const k of keys) { const l = ladder(LAD[k], v); for (let i = 0; i < 3; i++) lad[i] += l[i] * w[k]; }
+    const ey = Math.exp(-(((v - sy) / .34) ** 2));
+    for (let x = 0; x < W; x++, n += 4) {
+      const u = x / (W - 1), f = far[x], g = [0, 1, 2].map(i => lad[i] * (1 - .16 * f) + [40, 56, 110][i] * .05 * f * (1 - night * .5));
+      const gl = ex[x] * ey * ga * up, dist = Math.hypot((u - sx) * W / H, v - sy), halo = Math.exp(-((dist / gs.r) ** 2) * 2.2) * gs.a * up, core = Math.exp(-((dist / gs.k) ** 2) * 1.4) * up * (night < 0.5 ? 1 : 0);
+      const t = clamp(halo * .6 + core, 0, 1), lit = g.map((v2, i) => { const ww = v2 + (255 - v2) * (gs.c[i] / 255) * (gs.a * gl); return ww + (255 - ww) * (gs.c[i] / 255) * t; });
+      const out = sat(lit), ck = clamp(core, 0, 1) * .9;
+      for (let i = 0; i < 3; i++) px[n + i] = out[i] + (255 - out[i]) * ck + Math.random() - 0.5;   // a little noise: no banding on a long soft fade
+      px[n + 3] = 255; sr += px[n]; sg += px[n + 1]; sb += px[n + 2];
+    }
+    rows.push([sr / W, sg / W, sb / W]);
+  }
+  c.putImageData(im, 0, 0);
+  const dark = clamp((-sky.sun.alt - 6) / 12, 0, 1);   // the stars come out from civil to astronomical twilight
+  if (dark > 0.02) drawPageStars(c, sky, dark);
+  if (sky.moon.alt > -2) drawPageMoon(c, sky.moon, 1 - 0.55 * (1 - dark));   // the moon by day is a pale thing
+  return rows;
+}
+function drawPageStars(c, sky, dark) {   // the real stars overhead facing south, by their brightness and colour; the planets in theirs, steady
+  const { W } = PSKY, lst = sky.lst, on = (p, alt) => alt > 0.5 && p[0] > -2 && p[0] < W + 2;
+  c.save();
+  FIELD.forEach((f) => { const [alt, az] = altAzOf(f[0], f[1], lst), p = skyXYPage(alt, az); if (!on(p, alt)) return; c.fillStyle = `rgba(230,236,255,${(dark * f[2] * 0.8).toFixed(2)})`; c.fillRect(p[0], p[1], 1, 1); });
+  for (const v of Object.values(STAR)) { const [alt, az] = altAzOf(v[0], v[1], lst), p = skyXYPage(alt, az); if (!on(p, alt)) continue; const r = Math.max(0.5, 1.5 - 0.3 * v[2]); c.globalAlpha = dark * clamp(1.1 - 0.16 * v[2], 0.3, 1); c.fillStyle = v[3] || '#eef2ff'; c.beginPath(); c.arc(p[0], p[1], r, 0, TAU); c.fill(); }
+  for (const pl of sky.planets) { if (pl.alt < 0.5) continue; const p = skyXYPage(pl.alt, pl.az); if (!on(p, pl.alt)) continue; const r = clamp(1.9 - 0.35 * pl.mag, 0.8, 2.6); c.globalAlpha = dark * clamp(1.2 - 0.15 * pl.mag, 0.5, 1); c.fillStyle = `rgb(${pl.rgb})`; c.beginPath(); c.arc(p[0], p[1], r, 0, TAU); c.fill(); if (pl.mag < 0) { c.globalAlpha *= 0.25; c.beginPath(); c.arc(p[0], p[1], r * 2.4, 0, TAU); c.fill(); } }
+  c.restore();
+}
+const MOON_CV = (() => { const m = document.createElement('canvas'); m.width = m.height = 16; return m; })();
+function drawPageMoon(c, moon, a) {   // the disc, lit on its true side by its true fraction: facing south the waxing moon is lit on the right (west)
+  const [x, y] = skyXYPage(moon.alt, moon.az), r = 5.5, k = moon.frac, side = moon.waxing ? 1 : -1, m = MOON_CV.getContext('2d'), o = 8;
+  m.clearRect(0, 0, 16, 16); m.globalCompositeOperation = 'source-over'; m.fillStyle = '#f4f7ff'; m.beginPath(); m.arc(o, o, r, 0, TAU); m.fill();
+  m.globalCompositeOperation = 'destination-out'; m.beginPath();   // the dark part: a half-disc on the unlit side, and the terminator's ellipse
+  m.arc(o, o, r, -Math.PI / 2, Math.PI / 2, side > 0); m.fill();   // the unlit half
+  m.globalCompositeOperation = k > 0.5 ? 'source-over' : 'destination-out'; m.beginPath(); m.ellipse(o, o, Math.abs(1 - 2 * k) * r, r, 0, -Math.PI / 2, Math.PI / 2, k > 0.5 ? side > 0 : side < 0); m.fill();   // gibbous: light spills past the middle; crescent: dark does
+  c.save(); c.globalAlpha = a; c.drawImage(MOON_CV, x - o, y - o); c.restore();
+}
 const rgbCss = (c) => `rgb(${c.map(Math.round).join(',')})`;
 const skyMeta = document.querySelector('meta[name=theme-color]') || document.head.appendChild(Object.assign(document.createElement('meta'), { name: 'theme-color' }));
-function updateSky() {   // the two skies either side of the hour, one over the other: the page, the notch and the home bar
-  const u = S.tod, i = Math.floor(u) % 4, j = (i + 1) % 4, f = u - Math.floor(u), key = i * 1000 + Math.round(f * 500); if (key === PSKY.key) return; PSKY.key = key;
-  PSKY.cv.forEach((c, n) => { c.style.opacity = n === i ? 1 : n === j ? f.toFixed(3) : 0; c.style.zIndex = n === j ? 2 : 1; });
-  PSKY.hor = mix(PSKY.bot[i], PSKY.bot[j], f); PSKY.tcol = mix(PSKY.top[i], PSKY.top[j], f);
+// The one contrast formula (WCAG): the relative luminance of a colour, and the ratio between two (the gate measures the real pixels).
+const relLum = (c) => c.reduce((s, v, i) => { v /= 255; return s + [0.2126, 0.7152, 0.0722][i] * (v <= 0.04045 ? v / 12.92 : ((v + 0.055) / 1.055) ** 2.4); }, 0);
+const contrast = (a, b) => { const x = relLum(a), y = relLum(b); return (Math.max(x, y) + 0.05) / (Math.min(x, y) + 0.05); };
+const SKY_DARK = 0.12;   // a sky's light (relative luminance) under this is dark: the tiles go to white frost
+function updateSky() {   // once a minute, or when the hour you hold changes: the sky is painted for that moment into the back canvas, and brought forward
+  const d = skyTime(), key = `${skyHour()}:${Math.floor(d.getTime() / 60000)}`; if (key === PSKY.key || performance.now() - (PSKY.at || -9e9) < 300) return; PSKY.key = key; PSKY.at = performance.now();   // never more than three a second while the hour glides
+  const sky = skyAt(d), back = 1 - PSKY.front, c = PSKY.cv[back].getContext('2d'), rows = paintSky(c, sky);
+  PSKY.now = sky; PSKY.front = back; PSKY.cv[back].style.zIndex = 2; PSKY.cv[1 - back].style.zIndex = 1; PSKY.cv[back].style.opacity = 1; PSKY.cv[1 - back].style.opacity = 0;
+  PSKY.hor = rows[rows.length - 1]; PSKY.tcol = rows[0]; PSKY.lum = relLum(rows.reduce((a, r) => a.map((v, i) => v + r[i] / rows.length), [0, 0, 0]));
   document.documentElement.style.setProperty('--bg-bot', rgbCss(PSKY.hor)); skyMeta.content = rgbCss(PSKY.tcol);
-  const dark = PSKY.lum[i] * (1 - f) + PSKY.lum[j] * f < SKY_DARK; if (dark !== PSKY.dark) { PSKY.dark = dark; document.documentElement.style.setProperty('--tile-rgb', dark ? '255, 255, 255' : '22, 30, 54'); document.body.classList.toggle('dark-sky', dark); }   // the tiles' glass: white frost on a dark sky, navy on a light one
+  const dark = PSKY.lum < SKY_DARK; if (dark !== PSKY.dark) { PSKY.dark = dark; document.documentElement.style.setProperty('--tile-rgb', dark ? '255, 255, 255' : '22, 30, 54'); document.body.classList.toggle('dark-sky', dark); }   // the tiles' glass: white frost on a dark sky, navy on a light one
 }
-const SKY_DARK = 0.12;   // a sky's light (relative luminance) under this is dark: dusk and night
-updateSky();
 /* ---------- Conquer: name it, play first, go, come back, check in (in Labs, until it has a door of its own) ---------- */
 // Five steps, all in the pool, no card. Name it: up to three lines of what you will do (or none: then it is a break). How long
 // first: 15, 30 or 60 minutes of Merge, or Free. Go: you play; one bell at three minutes left, two at one; then three breaths
@@ -3813,8 +3937,9 @@ const FAQ = [
   ['What are the modes?', 'Merge: the game, with three rule sets: Zen (nothing ends), Classic (the line ends it) and Comp (teeth). Rest: the pool fades to dark while sound plays on. Phones stop sound when they lock, so Rest keeps the screen awake; plug in for long sessions. The Journey’s doors are their own: Pacer, Tinker, Studio, Labs. Touch the first word in the bar to switch.'],
   ['What is Soft View?', 'The gear › See › Comfort › Soft View: no bursts, no banners, no lightning, a softer buzz, nothing bright above 4 kHz. Still is Reduce motion, and follows the phone. Breathe is the pool’s own breath; Pace is how fast.'],
   ['What is Labs?', 'The Journey’s Labs door, in beta: the next science, each experiment off until you switch it on under the stars. Look up: lift the phone toward the sky and the real stars overhead fill the pool; hold the light on the ringed star to draw a constellation. Chest: in the Pacer, lay the phone flat on your chest, hands off, and after fifteen seconds the dot follows your breath. Heavy: a big sphere follows your finger slowly, as heavy glass would. They read the phone’s own motion sensor, on the phone; nothing is kept or sent. Conquer lives here too, until it has a door of its own.'],
-  ['Why does it feel this way?', 'Real science, kept simple. The breath starts at five and a half a minute, near where breath and heartbeat fall into step for most people; the green line on Pace is the range the studies used. Glass rings long and wood stops short, because that is how each really sounds. Rain falls at its true speeds, thunder comes three seconds a kilometre after its flash so you can count it, and the sky follows the real sun at 41° north. Lightning never flashes more than three times a second. Nature sound stays soft: quiet matters as much as the sound. None of it is treatment. It is somewhere to settle.'],
-  ['What are the numbers?', 'Breath: 5.5 a minute, the mean where heart rate and breathing fall into step in the research; the green band on Pace is 4.8 to 6.6, the range the studies used. Light: never more than 3 flashes in a second, each flash one glow, never a flicker. Thunder: a rise of at least 50 ms, 3 seconds for every kilometre. Rain: each drop falls at the true speed for its size, and small drops outnumber large ones as they do in the sky. Sound: glass and wood ring for as long as glass and wood do; Tinker’s taps keep a dark timbre, under 1.5 kHz. Haptics: three strengths (0.5, 0.7, 1.0), the buzz first and the sound within 20 ms. Colour: the scene stays low in saturation and lighter than the frame around it; text is meant to be at least 7:1 against its background. Every number is in the code, with its source.'],
+  ['Why does it feel this way?', 'Real science, kept simple. The breath starts at five and a half a minute, near where breath and heartbeat fall into step for most people; the green line on Pace is the range the studies used. Glass rings long and wood stops short, because that is how each really sounds. Rain falls at its true speeds, thunder comes three seconds a kilometre after its flash so you can count it, and the sky is the real one: the sun, the moon with its phase, the planets in their colours and the stars stand where they stand right now over 41° north, worked out from the clock, not fetched. Lightning never flashes more than three times a second. Nature sound stays soft: quiet matters as much as the sound. None of it is treatment. It is somewhere to settle.'],
+  ['What are the numbers?', 'Breath: 5.5 a minute, the mean where heart rate and breathing fall into step in the research; the green band on Pace is 4.8 to 6.6, the range the studies used. Light: never more than 3 flashes in a second, each flash one glow, never a flicker. Thunder: a rise of at least 50 ms, 3 seconds for every kilometre. Rain: each drop falls at the true speed for its size, and small drops outnumber large ones as they do in the sky. Sound: glass and wood ring for as long as glass and wood do; Tinker’s taps keep a dark timbre, under 1.5 kHz. Haptics: three strengths (0.5, 0.7, 1.0), the buzz first and the sound within 20 ms. Colour: the scene stays low in saturation and lighter than the frame around it; text is meant to be at least 7:1 against its background. The sky: the sun and planets to a tenth of a degree, the moon to a quarter (Meeus); the meteor showers on their nights, streaming from where their radiant stands. Every number is in the code, with its source.'],
+  ['Is the sky real?', 'Yes. Where the sun and the moon stand, how much of the moon is lit, which planets and stars are up, and which meteor shower is on tonight are all worked out on the phone from the date and the time, for 41° north and your time zone, the way an almanac does it. Nothing is looked up. Comets and satellites change too fast to know without fresh data, so they are left out for now.'],
   ['Does SoRen collect anything?', 'No. Everything stays on this phone: no accounts, no ads, no tracking, no notifications, nothing to buy. Leaving costs you nothing.'],
   ['Is this a medical tool?', 'No. It is somewhere to settle. If you are struggling, talk to someone you trust or a professional.'],
   ['Which version is this?', `Version ${VERSION}. The physics has been locked since version 34 (${PHYSICS_ID}).`]
@@ -4025,7 +4150,7 @@ function start() {
   handles(); bind(); newWorld(true); setupDPI();
   const prev = loadJSON(SKEY); S.prev = Array.isArray(prev.balls) && prev.balls.length && !prev.gameOver ? prev : null;   // every launch is a new game; one not lost waits at the door (Resume) until the first drop of a new one
   newPool(); PREFS.mode = 'merge'; S.tod = PREFS.hour === 'live' ? clockTod() : HOURS[PREFS.hour];
-  updateScene(0); updateWind(0); updateWarmth(); syncUI(); fitPool();
+  updateScene(0); updateSky(); updateWind(0); updateWarmth(); syncUI(); fitPool();
   opening();
   requestAnimationFrame(frame);
 }
