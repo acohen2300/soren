@@ -1,18 +1,17 @@
 <!doctype html>
 <html lang="en">
 <head>
-<!-- SoRen v81 · physics locked since v34 (12627fd9) -->
+<!-- SoRen v82 · physics locked since v34 (12627fd9) -->
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'self' 'unsafe-inline'; style-src 'unsafe-inline'; img-src 'self' data: blob:; media-src blob: data:; manifest-src 'self'; worker-src 'self'; connect-src https://celestrak.org https://ssd-api.jpl.nasa.gov; font-src 'none'; base-uri 'none'; form-action 'none'">
 <title>SoRen preview p16</title>
 <meta name="claude:viewport-fit-sides" content="cover">
 <style>
-/* One screen that never scrolls, on one sky. The bar above the pool, the pool of liquid glass, and under it the ribbon (at the door
-   Merge and Journey; in Play the tools and Pause; in the Journey its six doors; with the gear on, the setting groups). One row of
-   checks appears above the ribbon only while something is being chosen. Every tile is its own glass:
-   navy at 15% by day, white frost at 15% by night (72-sky.js sets --tile by the sky), 35% for the one you are on; no outlines; the
-   ink is white always. Every size is in mock-up pixels: --u is one of them (the mock-ups are 1206 wide). Green is on (and has a
+/* One screen that never scrolls, on one sky. The bar above the pool (the words, Pause, the score), the pool of liquid glass with
+   the pause strip over its top while paused, and under it one row (at the door Merge and Journey; in Play Weather, the tools and
+   Scene; in the Journey its doors, a door's own row above them; in Studio its toys). The ink is white always: a tile is clear with
+   a white outline where the sky allows, or the least navy that reaches 7.1:1 (73-ink.js, row by row). Every size is in mock-up pixels: --u is one of them (the mock-ups are 1206 wide). Green is on (and has a
    check), blue is under your finger, white is quiet, red erases, gold is special. Three speeds: quick (a state changes), sweep
    (things move), settle (things come to rest); long is the wash. Type: two sizes, 56 (headers) and 45 (everything else): 14 px and up
    on the smallest phone, the floor the autism guidance sets, 17 px for the headers. Reading text is upright; italic is kept for the names. */
@@ -97,15 +96,11 @@ body.comp #game { filter: saturate(1.25) contrast(1.05); }
    touch; in the Journey its word or the door's; while the gear is on, where you are and the value; a warning, with its countdown),
    then the score and the time, unboxed. Comp is an overlay: the word tile red, COMPETITION in it. */
 .bar { flex: none; position: relative; height: var(--bar); display: flex; align-items: stretch; gap: var(--gap-x); }
-.bar .cell { flex: none; width: var(--bar); } .bar .ic { top: 50%; width: calc(48 * var(--u)); height: calc(48 * var(--u)); } .bar .ic::after { display: none; } .bar .ic svg { stroke-width: calc(3.6 * var(--u)); }
+.bar .cell { flex: none; width: var(--bar); border-color: transparent; }   /* Pause floats where the row is clear; by day it keeps the navy */ .bar .ic { top: 50%; width: calc(48 * var(--u)); height: calc(48 * var(--u)); } .bar .ic::after { display: none; } .bar .ic svg { stroke-width: calc(3.6 * var(--u)); }
 .word { flex: 1 1 0; min-width: 0; display: flex; align-items: stretch; overflow: hidden; }
 .word .seg { flex: 1 1 0; min-width: 0; height: 100%; position: relative; display: grid; place-items: center; color: var(--ink); font-size: var(--t2); font-weight: 500; white-space: nowrap; padding: 0 calc(3 * var(--u)); border-radius: 0; }
 .word .seg + .seg::before { content: ''; position: absolute; left: 0; top: 50%; height: calc(44 * var(--u)); width: 1px; transform: translateY(-50%); background: rgba(var(--ink-rgb), 0.5); }   /* thin lines between the three words, never the full height */
-.word .one, .word .path { flex: 1; display: flex; align-items: center; justify-content: center; gap: calc(10 * var(--u)); padding: 0 calc(16 * var(--u)); font-size: var(--t2); font-weight: 500; white-space: nowrap; overflow: hidden; color: var(--ink); }
-.word .one { font-weight: 600; }
-.path .w { flex: none; font-weight: 600; } .path .dot { flex: none; font-weight: 400; color: var(--label); } .path .v { min-width: 0; overflow: hidden; text-overflow: ellipsis; font-weight: 500; }
-.path .v.lv { color: rgb(186, 244, 212); }   /* a value as you move it: the one green word */
-.sp { flex: none; display: flex; align-items: center; justify-content: center; min-width: calc(88 * var(--u)); padding: 0 calc(6 * var(--u)); font-weight: 600; font-size: var(--t2); color: var(--ink); white-space: nowrap; }   /* the score and the time: no box */
+.sp { flex: none; display: grid; place-items: center; width: calc(var(--bar) * 1.9); font-weight: 700; font-size: var(--t2); letter-spacing: -0.02em; color: var(--ink); white-space: nowrap; }   /* the score: a box of its own, its number at the words' size, bold; touch it for Statistics */
 .sp:empty { display: none; } .sp #scoreVal:empty { display: none; }
 .word .hz { flex: 1; min-width: 0; display: flex; align-items: center; gap: calc(12 * var(--u)); padding: 0 calc(12 * var(--u)); }
 .hz .tri { flex: none; width: calc(44 * var(--u)); height: calc(44 * var(--u)); overflow: visible; }   /* the warning sign: a white triangle, its "!" cut out in red */
@@ -183,11 +178,44 @@ body.playing:not(.rest) .rows-wrap, body.playing:not(.rest) .bar { opacity: 0.5;
 .frow .cell.none, .frow .cell.dis, .frow .cell.none .sub, .frow .cell.dis .sub { color: var(--dim); } .frow .cell.dis { pointer-events: none; }
 .frow .cell.two { flex-grow: 2; }
 .frow .cell.pick > .ic::after { display: block; width: calc(100% + 30 * var(--u)); height: calc(100% + 30 * var(--u)); border-radius: var(--r-sm); }   /* the way on, in blue: Next, Go, I'm back, Done, Use this */
-.frow.icons { gap: var(--gap-x); } .frow.icons .sub { display: none; } .frow.icons .ic { top: 50%; width: calc(56 * var(--u)); height: calc(56 * var(--u)); } .frow.icons .ic svg { stroke-width: calc(4 * var(--u)); }   /* the ribbon: icons alone, a touch larger */
+.frow.icons .sub { display: none; } .frow.icons .ic { top: 50%; width: calc(56 * var(--u)); height: calc(56 * var(--u)); } .frow.icons .ic svg { stroke-width: calc(4 * var(--u)); }   /* the ribbon: icons alone, a touch larger */
 .frow.icons .cell.tilt .ic svg { transform: rotate(15deg); }   /* Labs' rocket, leaning into its climb */
-.frow.words .sub { top: 50%; font-weight: 500; }   /* the words' rows: the word alone, in the middle */
-.frow.slide { overflow-x: auto; overflow-y: hidden; scroll-snap-type: x mandatory; scrollbar-width: none; -webkit-overflow-scrolling: touch; } .frow.slide::-webkit-scrollbar { display: none; }
-.frow.slide .cell { flex: 0 0 calc((100% - 4 * var(--gap)) / 5); scroll-snap-align: center; }   /* five to the view; the rest slide in */
+.frow.icons { gap: calc(30 * var(--u)); }   /* the sky between the tiles */
+.frow.icons .cell.end { flex: 0 0 var(--row); }   /* Weather and Scene, ✓ and ›: small tiles at the ends */
+.frow.icons .cell.w .sub { display: block; top: 50%; font-weight: 600; }   /* a word, where a word is the thing (Place, Hour, Live sky, a place) */
+.frow .swipe { flex: 1 1 0; min-width: 0; display: flex; gap: calc(30 * var(--u)); overflow-x: auto; overflow-y: hidden; scroll-snap-type: x proximity; scrollbar-width: none; -webkit-overflow-scrolling: touch;
+  -webkit-mask-image: linear-gradient(90deg, #000 85%, transparent); mask-image: linear-gradient(90deg, #000 85%, transparent); } .frow .swipe::-webkit-scrollbar { display: none; }   /* a list you swipe, the next one fading in at the edge */
+.frow .swipe .cell { flex: 0 0 calc(260 * var(--u)); scroll-snap-align: start; } .frow .swipe.icons .cell { flex: 0 0 calc(var(--row) * 1.15); }
+.tog { display: inline-block; position: relative; width: 44px; height: 26px; border-radius: 13px; background: rgba(255, 255, 255, 0.28); transition: background var(--quick); }
+.tog::after { content: ''; position: absolute; left: 3px; top: 3px; width: 20px; height: 20px; border-radius: 50%; background: #fff; transition: transform var(--quick); } .tog.on { background: rgb(52, 199, 89); } .tog.on::after { transform: translateX(18px); }   /* a switch: green on */
+.frow .sw-cell { flex: 0 0 calc(var(--row) * 1.25); display: grid; place-items: center; }
+.frow .sl-cell, .strip .sl { flex: 1 1 0; min-width: 0; display: flex; align-items: center; gap: 10px; padding: 0 12px; cursor: pointer; }
+input[type=range] { flex: 1; min-width: 0; height: 30px; margin: 0; background: none; -webkit-appearance: none; appearance: none; touch-action: pan-y; }
+input[type=range]::-webkit-slider-runnable-track { height: 4px; border-radius: 2px; background: rgba(255, 255, 255, 0.35); }
+input[type=range]::-webkit-slider-thumb { -webkit-appearance: none; width: 24px; height: 24px; margin-top: -10px; border-radius: 50%; background: #fff; box-shadow: 0 1px 4px rgba(0, 0, 0, 0.4); }
+input[type=range]::-moz-range-track { height: 4px; border-radius: 2px; background: rgba(255, 255, 255, 0.35); } input[type=range]::-moz-range-thumb { width: 24px; height: 24px; border: 0; border-radius: 50%; background: #fff; }
+.pc { flex: none; min-width: 3.2em; text-align: right; font-weight: 700; font-size: var(--t2); color: #fff; }   /* the level, in percent */
+.sl-cell.off input, .sl.off input { opacity: 0.45; }   /* off: the level waits, as it was */
+/* The pause strip, in the middle of the pool (Albert, 15:18), growing both ways as a section opens: white on the least navy the pool behind it allows (73-ink.js inkStrip), blurred. */
+.strip { position: absolute; z-index: 4; left: calc(16 * var(--u)); right: calc(16 * var(--u)); top: 50%; transform: translateY(-50%); padding: 4px 8px; border-radius: calc(54 * var(--u)); color: #fff;
+  background: var(--strip, rgba(22, 30, 54, 0.9)); box-shadow: inset 0 0 0 1.5px var(--strip-line, transparent); -webkit-backdrop-filter: blur(14px); backdrop-filter: blur(14px); }
+.strip .top { display: flex; align-items: center; gap: 4px; height: 48px; }
+.strip .sb { position: relative; flex: none; width: 44px; height: 44px; border-radius: 12px; color: #fff; }
+.strip .sb .ic { top: 50%; width: 24px; height: 24px; } .strip .sb .ic::after { display: none; } .strip .sb .ic svg { stroke-width: 1.8px; }
+.strip .sb.go { border-radius: 50%; box-shadow: inset 0 0 0 2px #fff; } .strip .sb.go .ic { width: 18px; height: 18px; }
+.strip .sb.sel { background: rgba(255, 255, 255, 0.18); }
+.strip .sb.help .ic { width: 26px; height: 26px; }
+.strip .div { width: 1px; height: 26px; margin: 0 4px; background: rgba(255, 255, 255, 0.5); } .strip .gap { flex: 1; }
+.strip .body { border-top: 1px solid rgba(255, 255, 255, 0.35); padding: 2px 2px 8px; }
+.strip .hd { display: flex; align-items: baseline; gap: 8px; margin-top: 8px; font-size: 14px; font-weight: 700; letter-spacing: 0.04em; text-transform: uppercase; }
+.strip .hd i { margin-left: auto; font-style: normal; font-weight: 500; letter-spacing: 0; text-transform: none; }
+.strip .chips { display: flex; gap: 6px; margin-top: 6px; }
+.strip .chip { flex: 1 1 0; min-width: 0; height: 40px; border-radius: 10px; box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.55); font-size: max(14px, var(--t2)); font-weight: 600; color: #fff; white-space: nowrap; }
+.strip .chip.on { box-shadow: inset 0 0 0 1.5px #fff; background: rgba(255, 255, 255, 0.16); } .strip .chip.on::after { content: ' ✓'; color: rgb(74, 222, 128); font-weight: 800; }   /* on, or the one chosen: a green check */
+.strip .chip.next { box-shadow: inset 0 0 0 1.5px rgb(var(--pick)); }   /* from your next game */
+.strip .chip.quiet { flex: 0 1 auto; padding: 0 16px; margin-left: auto; }
+.strip .sl-row { display: flex; align-items: center; gap: 10px; height: 44px; margin-top: 6px; }
+.strip .tog-btn { flex: none; height: 44px; display: grid; place-items: center; }
 #tileBar { display: none; } body.rowc #tileBar { display: flex; }   /* the row of checks: only while there is one */
 /* Tinker's +: in the pool's corner, a tile of its own */
 .poolbtn { position: absolute; z-index: 3; left: calc(28 * var(--u)); top: calc(28 * var(--u)); width: calc(132 * var(--u)); height: calc(132 * var(--u)); min-width: 44px; min-height: 44px; border-radius: var(--r-sm); background: var(--tile); color: var(--ink); font: 300 calc(80 * var(--u)) var(--sans); line-height: 1; display: grid; place-items: center; }
@@ -219,6 +247,7 @@ body.rm *, body.rm *::before, body.rm *::after { transition: none !important; an
     <div class="pool" id="pool">
       <canvas id="game" tabindex="0" aria-label="The pool. Touch and slide to move the waiting sphere, let go to drop it; or the arrow keys and Space. In Tinker, hold a sphere to catch it."></canvas>
       <div class="soren" aria-hidden="true">Soren</div>
+      <div class="strip" id="strip" hidden role="toolbar" aria-label="Paused"></div>
       <div class="jrtext" id="jrText" hidden></div>
       <button class="poolbtn" id="plus" data-f="tk:make" aria-label="Make one" hidden>+</button>
       <form class="maker" id="maker" hidden>
@@ -629,12 +658,20 @@ function solarEclipse(sun, moon, lst) {   // { kind: 'total' | 'annular' | 'part
   const dra = ((tm.ra - sun.ra + 36) % 24 - 12) * 15 * cosD(sun.dec), ddec = tm.dec - sun.dec;
   return { kind, mag: Math.min(mag, 1), ratio: sm / ss, dx: dra / ss, dy: ddec / ss };
 }
+// The moon's tilt (v82): its lit side faces the sun. The bright limb's position angle (Meeus 48.5, from north through east) less the
+// parallactic angle (Meeus 14.1) gives where the lit side points from straight up, turning toward the east (the left, facing south):
+// an evening crescent near the horizon lies on its back, lit from below right.
+function moonTilt(sun, moon, lst, lat = OBS.lat) {   // degrees from the zenith toward the east
+  const da = (sun.ra - moon.ra) * 15, chi = Math.atan2(cosD(sun.dec) * sinD(da), sinD(sun.dec) * cosD(moon.dec) - cosD(sun.dec) * sinD(moon.dec) * cosD(da)) / RAD;
+  const H = (lst - moon.ra) * 15, q = Math.atan2(sinD(H), Math.tan(lat * RAD) * cosD(moon.dec) - sinD(moon.dec) * cosD(H)) / RAD;
+  return norm360(chi - q);
+}
 // The sky now: everything placed for one moment, facing south (bearing 180 is straight ahead; east is left, west is right).
 function skyAt(d = new Date()) {
   const jd = julian(d), lst = lstOf(jd), sun = sunAt(jd), moon = moonAt(jd), phase = moonPhase(sun, moon), ps = planetsAt(jd);
   const place = (o) => { const [alt, az] = altAzOf(o.ra, o.dec, lst); return { ...o, alt, az }; };
   const sh = showerAt(d), radiant = sh ? place({ ra: sh.ra, dec: sh.dec }) : null;
-  return { jd, lst, sun: place(sun), moon: { ...place(moon), ...phase, ...moonSize(moon) }, planets: ps.map(place), shower: sh ? { ...sh, alt: radiant.alt, az: radiant.az } : null, lunar: lunarEclipse(sun, moon), solar: solarEclipse(sun, moon, lst) };
+  return { jd, lst, sun: place(sun), moon: { ...place(moon), ...phase, ...moonSize(moon), tilt: moonTilt(sun, moon, lst) }, planets: ps.map(place), shower: sh ? { ...sh, alt: radiant.alt, az: radiant.az } : null, lunar: lunarEclipse(sun, moon), solar: solarEclipse(sun, moon, lst) };
 }
 /* ---------- Live sky: where you stand, the satellites and the comets, from the phone and two public lists (v81) ---------- */
 // One switch, Live sky (Albert, Oct 25), each part an exception logged in EXCEPTIONS.md:
@@ -812,7 +849,7 @@ const ENV = { cover: 0, gloom: 0, precip: 0, rain: 0, snow: 0, light: 1, dark: 0
 const FEEL = { life: 0.45, heave: 0.035, glow: 0.65 };
 
 /* ---------- Storage (guarded: private windows and sandboxes can throw) ---------- */
-const VERSION = 81, PHYSICS_ID = '12627fd9';   // the build, and the first eight of the locked Physics block's hash
+const VERSION = 82, PHYSICS_ID = '12627fd9';   // the build, and the first eight of the locked Physics block's hash
 const JKEY = 'soren:journal:p5', JKEY_OLD = 'somatic-resonance:journal:v2', PKEY = 'soren:prefs:p5', SKEY = 'soren:pool:p5';
 function loadJSON(key) { try { const v = JSON.parse(localStorage.getItem(key) || 'null'); return v && typeof v === 'object' ? v : {}; } catch (e) { return {}; } }
 const SAVED = {};   // what each key last held: a save that changes nothing writes nothing
@@ -830,13 +867,14 @@ const MODES = {   // one record per mode: its name (the one word on the tile, in
 const ATMO = ['bolt', 'wind', 'rain'];
 const CHOICES = {
   mode: ['merge', 'rest'], overflow: ['end', 'zen'], where: ['live', ...Object.keys(PLACES)], mins: [15, 30, 60, 0],   // the modes the Merge word offers (Pacer, Tinker and Studio are doors); Conquer's play before you go: 0 is Free
-  clouds: ['clear', 'some', 'overcast', 'dark', 'changing'], hour: ['live', 'dawn', 'day', 'dusk', 'night'],
+  hour: ['live', 'dawn', 'day', 'dusk', 'night'],
   ambient: ['off', 'rain', 'wind', 'night', 'fire'], fadeAfter: [60, 0], bpm: [5, 5.5, 6]
 };
 // Breath, from the research (research/SENSORY-SCIENCE.md, Table 1): the measured mean resonance, and the band the studies used.
 const BREATH = { pace: 5.5, band: [4.8, 6.6], ratio: 0.4 };   // breaths a minute; the green zone on Pace; in-breath share of a breath (Design, no validated ratio)
 const DEFAULTS = {
-  mode: 'merge', overflow: 'end', where: 'live', clouds: 'clear', hour: 'live',
+  mode: 'merge', overflow: 'end', where: 'live', cover: { on: false, lv: 0.5 }, hour: 'live',   // cover: the clouds, on or off, and how much of the sky (v82; was five looks)
+ 
   atmo: { bolt: { on: false, lv: 1 }, wind: { on: false, lv: 0.4 }, rain: { on: false, lv: 1 } },
   breathing: true, bpm: 5.5, aim: true, next: false, numbers: true, comp: false,   // comp: Play with the calm taken off; never remembered, a double opt-in every time
   sound: true, vol: 0.85, ambient: 'off', ambLv: 1, fadeAfter: 60, soft: false, still: reduceMotion, vibe: true,   // soft: Soft View, low stimulation, no surprises
@@ -853,6 +891,7 @@ const PREFS = (() => {
   for (const k in DEFAULTS) if (typeof s[k] === typeof DEFAULTS[k] && k !== 'atmo') p[k] = s[k];   // only what still means something
   for (const k in CHOICES) if (!k.includes('.') && !CHOICES[k].includes(p[k])) p[k] = DEFAULTS[k];   // a saved value no longer offered (a timer of 15, a pace of 7) falls to the default
   for (const k of ATMO) { const a = obj(obj(s.atmo)[k]); p.atmo[k] = { on: !!a.on, lv: clamp(Number(a.lv) || DEFAULTS.atmo[k].lv, 0.05, 1) }; }
+  { const c = obj(s.cover), was = { some: 0.33, overcast: 0.66, dark: 1, changing: 0.5 }[s.clouds]; p.cover = s.cover ? { on: !!c.on, lv: clamp(Number(c.lv) || 0.5, 0.05, 1) } : { on: !!was, lv: was || 0.5 }; }   // v81's looks become a level
   for (const k in DEFAULTS.mix) { const m = obj(obj(s.mix)[k]); p.mix[k] = { on: m.on !== false, lv: clamp(Number(m.lv ?? DEFAULTS.mix[k].lv) || 0, 0, 1) }; }
   p.ambLv = clamp(+p.ambLv, 0, 1);
   p.beta = Object.fromEntries(Object.keys(DEFAULTS.beta).map(k => [k, obj(s.beta)[k] === true]));
@@ -863,7 +902,7 @@ const PREFS = (() => {
   p.tasks = (Array.isArray(s.tasks) ? s.tasks : []).slice(0, 3).map(t => ({ text: String(obj(t).text || '').slice(0, 60) })).filter(t => t.text.trim());
   return p;
 })();
-const STUDIO = { on: false, was: null, gear: false };   // Studio: a sandbox. On entry the settings are copied; nothing is saved while it is on; leaving puts the copy back unless you touched Use this
+const STUDIO = { on: false, was: null };   // Studio: a sandbox. On entry the settings are copied; nothing is saved while it is on; leaving puts the copy back unless you touched Use this
 const savePrefs = () => { if (!STUDIO.on) saveJSON(PKEY, { v: VERSION, ...PREFS }); };   // every saved object carries the version it was written by, so a later build can migrate it
 const getPref = (k) => k.split('.').reduce((o, p) => o[p], PREFS);
 function setPrefRaw(k, v) { const ps = k.split('.'), last = ps.pop(); ps.reduce((o, p) => o[p], PREFS)[last] = v; }
@@ -923,7 +962,6 @@ const lessMo = () => PREFS.still;   // Reduce motion: what moves on its own is s
 let particles = [], ripples = [], floaters = [], animTime = 0, canvas, ctx;
 
 const HOURS = { night: 0, dawn: 1, day: 2, dusk: 3 };
-const CLOUD_AT = { clear: 0, some: 1, overcast: 2, dark: 3 };
 // The scene, in three steps in this order: the sun (the hour, and the pool's sky at the sun's height), the cover (the clouds, the
 // storm cells, and what falls), and the ambience (what lives in the scene by the hour: birds, crickets, fireflies, mist).
 function updateScene(dt) { updateHour(dt); updateCover(dt); updateAmbience(); }
@@ -937,8 +975,7 @@ function updateHour(dt) {
 }
 function updateCover(dt) {
   const quiet = !has('weather'), w = here();
-  if (PREFS.clouds === 'changing') S.wx = (S.wx + dt / 600) % 5;   // Changing: about ten minutes a look
-  const x = PREFS.clouds === 'changing' ? S.wx : CLOUD_AT[PREFS.clouds], j = Math.floor(x) % 5, g = smooth(x - Math.floor(x));
+  const x = PREFS.cover.on ? 3 * PREFS.cover.lv : 0, j = Math.floor(x) % 5, g = smooth(x - Math.floor(x));   // the clouds: clear at 0%, some, overcast, dark at 100%
   S.cloud += ((quiet ? 0 : SKY_LOOKS[j] + (SKY_LOOKS[(j + 1) % 5] - SKY_LOOKS[j]) * g) - S.cloud) * Math.min(1, dt / 25);   // weather changes over tens of seconds, never cut (the law's 20 to 60 s)
   S.cellA += (stormYouMake() - S.cellA) * Math.min(1, dt * (stormYouMake() > S.cellA ? 1.8 : 0.35));   // in fast, away slowly
   ENV.cover = Math.max(S.cloud * 0.93, S.cellA, RN.level * 0.85);
@@ -2750,6 +2787,7 @@ function newPool() {
     canDrop: true, cooldown: 0, overT: 0, offender: 0, gameOver: false, combo: 0, comboT: 0, tools: { strike: 0, mystery: 0, storm: 0 }, armed: false, storm: null, stormQ: [], roundDone: false, playT: 0, nudged: 0 });
   if (S.parked) unpark(); else hideCard();
   if (PREFS.comp) compStart();   // a fresh game in Comp starts its line and its clocks again
+  if (S.pendRules) { const v = S.pendRules; S.pendRules = null; if (v === 'comp') setPref('comp', true); else { setPrefRaw('overflow', 'end'); S.fair = true; savePrefs(); } }   // a harder mode chosen mid-game starts here (80-frame.js chooseRules)
 }
 function startPool() { S.prev = null; newPool(); savePool(); syncUI(); say('A fresh game', here().label); }
 function keepGoing() { Object.assign(S, { gameOver: false, overT: 0, fair: false, zen: true }); savePool(); syncUI(); say('Keep going', 'Zen for this game · nothing ends'); }
@@ -3370,12 +3408,7 @@ function renderContent({ w, b, focus, breathe, fade, s, red, beat }) {   // laye
   if (S.mode === 'studio' && animTime - (S.studioAt || 0) < 12) hint(ctx, 'A sandbox · kept only by Use this');
 }
 function renderOver() {   // over the pool: a paused card, the breath out, the look, the opening
-  if (S.paused && !S.card && !S.sheet && !S.intro && !(S.jr && CQ.step !== 'go')) {   // paused: everything waits for a tap (in the Journey the game waits on its own, unsaid)
-    ctx.fillStyle = 'rgba(2,6,12,0.62)'; ctx.fillRect(0, 0, LW, LH);
-    ctx.fillStyle = 'rgba(255,255,255,0.16)'; ctx.strokeStyle = 'rgba(255,255,255,0.85)'; ctx.lineWidth = 1.8; ctx.beginPath(); ctx.arc(CX, 150, 36, 0, TAU); ctx.fill(); ctx.stroke();
-    ctx.fillStyle = 'rgb(240,240,234)'; ctx.beginPath(); ctx.moveTo(CX - 10, 135); ctx.lineTo(CX - 10, 165); ctx.lineTo(CX + 15, 150); ctx.fill();
-    words(ctx, 'Tap to play', 'Paused', 212);
-  }
+  if (S.paused && !S.card && !S.sheet && !S.intro && !(S.jr && CQ.step !== 'go')) { ctx.fillStyle = 'rgba(2,6,12,0.45)'; ctx.fillRect(0, 0, LW, LH); }   // paused: the pool dims and waits; the strip over it holds ▶ (v82; a tap on the pool plays too)
   if (S.jr && !S.jr.door) drawLanding(ctx);   // the Journey's landing: the circle, and the doors' words
   if (S.jr && CQ.step) drawConquer(ctx);   // Conquer's steps, its play and its breaths out, over the game
   if (S.outro) { const u = S.outro.t / (breathLen() / 2); drawCircle(ctx, 1, 0.38 + 0.12 * twice(S.outro.t), 'Breathe out', `${Math.max(1, 3 - Math.floor(u))}`); }   // Conquer: three breaths out before you go
@@ -3641,18 +3674,19 @@ function drawSats() {   // every frame: the bright satellites up and lit, the IS
   for (const s of sats) { const [x, y] = skyXYPage(s.alt, s.az); if (x < -2 || x > PSKY.W + 2 || y < 0) continue; c.fillStyle = s.iss ? 'rgba(255,248,230,0.95)' : 'rgba(230,236,255,0.8)'; c.beginPath(); c.arc(x, y, s.iss ? 1.6 : 0.8, 0, TAU); c.fill(); }
 }
 const MOON_CV = (() => { const m = document.createElement('canvas'); m.width = m.height = 16; return m; })();
-function drawPageMoon(c, moon, a, ecl) {   // the disc, lit on its true side by its true fraction: facing south the waxing moon is lit on the right (west); its size by its true distance (a supermoon is 7% wider than the mean)
-  const [x, y] = skyXYPage(moon.alt, moon.az), r = 5.5 * moon.scale, k = moon.frac, side = moon.waxing ? 1 : -1, m = MOON_CV.getContext('2d'), o = 8;
+function drawPageMoon(c, moon, a, ecl) {   // the disc, lit by its true fraction on the side that faces the sun (its tilt, 25-sky-model.js); its size by its true distance (a supermoon is 7% wider than the mean)
+  const [x, y] = skyXYPage(moon.alt, moon.az), r = 5.5 * moon.scale, k = moon.frac, m = MOON_CV.getContext('2d'), o = 8;
+  const z = moon.tilt * RAD, th = Math.atan2(-Math.cos(z), -Math.sin(z));   // the lit side's direction on the page (x right, y down): up turned toward the east (left) by the tilt
   m.clearRect(0, 0, 16, 16); m.globalCompositeOperation = 'source-over'; m.fillStyle = '#f4f7ff'; m.beginPath(); m.arc(o, o, r, 0, TAU); m.fill();
-  m.globalCompositeOperation = 'destination-out'; m.beginPath();   // the dark part: a half-disc on the unlit side, and the terminator's ellipse
-  m.arc(o, o, r, -Math.PI / 2, Math.PI / 2, side > 0); m.fill();   // the unlit half
-  m.globalCompositeOperation = k > 0.5 ? 'source-over' : 'destination-out'; m.beginPath(); m.ellipse(o, o, Math.abs(1 - 2 * k) * r, r, 0, -Math.PI / 2, Math.PI / 2, k > 0.5 ? side > 0 : side < 0); m.fill();   // gibbous: light spills past the middle; crescent: dark does
-  if (ecl) {   // a lunar eclipse: the Earth's shadow over the lit disc, where it truly falls; the umbra is the red of every sunset on Earth at once
-    const ux = o - ecl.dx * r, uy = o - ecl.dy * r, ur = ecl.umbra * r, pr = ecl.penumbra * r; m.globalCompositeOperation = 'source-atop';
+  m.globalCompositeOperation = 'destination-out'; m.beginPath();   // drawn lit on the right (+x), then turned: the dark half, and the terminator's ellipse
+  m.arc(o, o, r, -Math.PI / 2, Math.PI / 2, true); m.fill();   // the unlit half
+  m.globalCompositeOperation = k > 0.5 ? 'source-over' : 'destination-out'; m.beginPath(); m.ellipse(o, o, Math.abs(1 - 2 * k) * r, r, 0, -Math.PI / 2, Math.PI / 2, k > 0.5); m.fill();   // gibbous: light spills past the middle; crescent: the dark eats in
+  if (ecl) {   // a lunar eclipse: the Earth's shadow over the lit disc, where it truly falls (turned back by the tilt, since the disc is turned); the umbra is the red of every sunset on Earth at once
+    const px = -ecl.dx * r, py = -ecl.dy * r, cs = Math.cos(-th), sn = Math.sin(-th), ux = o + px * cs - py * sn, uy = o + px * sn + py * cs, ur = ecl.umbra * r, pr = ecl.penumbra * r; m.globalCompositeOperation = 'source-atop';
     const pg = m.createRadialGradient(ux, uy, ur, ux, uy, pr); pg.addColorStop(0, 'rgba(0,0,0,0.55)'); pg.addColorStop(1, 'rgba(0,0,0,0)'); m.fillStyle = pg; m.beginPath(); m.arc(ux, uy, pr, 0, TAU); m.fill();
     const ug = m.createRadialGradient(ux, uy, ur * 0.85, ux, uy, ur); ug.addColorStop(0, 'rgba(118,32,22,0.96)'); ug.addColorStop(1, 'rgba(118,32,22,0)'); m.fillStyle = ug; m.beginPath(); m.arc(ux, uy, ur, 0, TAU); m.fill();
   }
-  c.save(); c.globalAlpha = a; c.drawImage(MOON_CV, x - o, y - o); c.restore();
+  c.save(); c.globalAlpha = a; c.translate(x, y); c.rotate(th); c.drawImage(MOON_CV, -o, -o); c.restore();
 }
 function drawEclipse(c, sky) {   // a solar eclipse: the moon's dark disc over the sun's core, where it truly sits, at the drawn scale of the sun
   const e = sky.solar, [x, y] = skyXYPage(sky.sun.alt, sky.sun.az), R = 0.05 * PSKY.H * 0.9, mr = R * e.ratio, mx = x - e.dx * R, my = y - e.dy * R;
@@ -3677,18 +3711,15 @@ function updateSky(now = false) {   // every frame: a slice of a paint in hand, 
   PSKY.dark = PSKY.lum < 0.12;   // a dark sky (the pool's frost reads it)
   if (now) inkApply(); else setTimeout(inkApply, 1200);   // the ink follows, midway through the cross-fade
 }
-/* ---------- The ink: the least that reaches 7.1:1, row by row, from the sky (v81) ---------- */
-// Albert's rule (Oct 25): every word and icon over the sky reads at 7.1:1, with the least done to get there, decided per row
-// (the bar, the ribbon, the row of checks; the circle in the pool) from the sky behind that row, every repaint. In order:
-//   1. Ink alone. White or dark, whichever reaches 7.1:1 against the sky's field behind the row; shaded from the sky's own colour
-//      toward pure white or black only as far as 7.1:1 needs, so the ink belongs to its sky. A clear tile shows its edge as a
-//      hairline in the same ink.
-//   2. Only when neither ink can (the mid-tone band: dawn, golden hour, dusk, twilight, the moon's glow): the least tint behind the
-//      row, navy under white ink or frost under dark ink, whichever is smaller. A tinted tile has no hairline: the tint is its edge.
-// The field is the painted gradient (PSKY.im), measured at its half-percentiles of light across the row, so a star or the
-// moon under a tile does not darken a whole night row. Contrast is WCAG's (relLum, contrast in 72-sky.js); the gate measures the
-// real pixels. Everything else about a tile (the green check, the blue ring, the gold) is unchanged.
-const INK = { goal: 7.1, white: [255, 255, 255], black: [4, 6, 14], navy: [22, 30, 54], rows: ['line', 'ctxBar', 'tileBar'], circle: null, key: '' };
+/* ---------- The ink: white always, and the least navy behind it that reaches 7.1:1, row by row, from the sky (v82) ---------- */
+// Albert's rule (Oct 25, 13:37): every word and icon is white. Per row (the bar, the row under the pool, a door's row; the circle in
+// the pool; the pause strip), from the sky behind it, every repaint:
+//   1. Where white alone reaches 7.1:1 on the sky: a clear tile with a white outline (the bar's icons float, with none).
+//   2. Otherwise the least flat navy behind the row that reaches it, and no outline: the navy is the tile's edge.
+// The field is the painted gradient (PSKY.im), measured at its half-percentiles of light across the row, so a star or the moon
+// under a tile does not darken a whole night row. Contrast is WCAG's (relLum, contrast in 72-sky.js); the gate measures the real
+// pixels. The dark ink of v81 is parked (PARKED.md).
+const INK = { goal: 7.1, white: [255, 255, 255], navy: [22, 30, 54], rows: ['line', 'ctxBar', 'tileBar'], circle: null, key: '' };
 const mixRGB = (a, b, t) => a.map((v, i) => Math.round(v + (b[i] - v) * t));
 function inkField(x0, y0, x1, y1) {   // the sky's field behind a page rectangle: its darkest and lightest, pinpoint lights left out
   const im = PSKY.im; if (!im) return null;
@@ -3699,15 +3730,11 @@ function inkField(x0, y0, x1, y1) {   // the sky's field behind a page rectangle
   if (!px.length) return null;
   px.sort((a, b) => relLum(a) - relLum(b)); return { lo: px[Math.floor(px.length * 0.005)], hi: px[Math.min(px.length - 1, Math.floor(px.length * 0.995))] };   // the half-percent at each end: a star, not the sky
 }
-function inkRule(f) {   // the least ink, hairline and tint that reach the goal against a field
-  const G = INK.goal, W = INK.white, B = INK.black, N = INK.navy, least = (from, to, against) => { for (let t = 0; t <= 100; t++) { const c = mixRGB(from, to, t / 100); if (contrast(c, against) >= G) return c; } return to; };
-  if (contrast(W, f.hi) >= G) return { ink: least(f.hi, W, f.hi), tint: null, a: 0 };
-  if (contrast(B, f.lo) >= G) return { ink: least(f.lo, B, f.lo), tint: null, a: 0 };
-  let an = 1, af = 1;
-  for (let t = 0; t <= 100; t++) if (contrast(W, mixRGB(f.hi, N, t / 100)) >= G) { an = t / 100; break; }
-  for (let t = 0; t <= 100; t++) if (contrast(B, mixRGB(f.lo, W, t / 100)) >= G) { af = t / 100; break; }
-  const floor = (v) => Math.max(0.1, v);   // a tint is the tile's edge: never so faint that the edge is lost
-  return an <= af ? { ink: W, tint: N, a: floor(an) } : { ink: B, tint: W, a: floor(af) };
+function inkRule(f, G = INK.goal) {   // white, on the sky alone where it can be; otherwise on the least navy that reaches the goal (never fainter than 10%)
+  const W = INK.white, N = INK.navy;
+  if (contrast(W, f.hi) >= G) return { ink: W, tint: null, a: 0 };
+  for (let t = 0; t <= 100; t++) if (contrast(W, mixRGB(f.hi, N, t / 100)) >= G) return { ink: W, tint: N, a: Math.max(0.1, t / 100) };
+  return { ink: W, tint: N, a: 1 };
 }
 function inkApply() {   // every repaint, and whenever the rows move: each row's ink, hairline and tint, as style on the row
   if (!PSKY.im) return;
@@ -3720,7 +3747,7 @@ function inkApply() {   // every repaint, and whenever the rows move: each row's
     el.style.setProperty('--tile-sel', k.tint ? `rgba(${k.tint.join(', ')}, ${Math.min(1, k.a + 0.2).toFixed(2)})` : `rgba(${ink}, 0.18)`);   // the one you are on: the same tint, deeper; on a clear tile, a wash of the ink
     el.style.setProperty('--tile-line', k.tint ? 'transparent' : `rgb(${ink})`); el.style.setProperty('--dim', `rgba(${ink}, 0.72)`);   // the one inactive grey: the row's ink, dimmed
   }
-  INK.at = 0;   // the circle reads again at its next draw
+  INK.at = 0; inkStrip();   // the circle reads again at its next draw; the strip reads the pool again
 }
 // The circle in the pool, at the door and the landing: read where it sits, every couple of seconds, just before it is drawn. At the
 // door the pool is clear and the sky's field is behind it; at the landing the pool's glass is, so the pool's own pixels are read.
@@ -3740,6 +3767,23 @@ function inkCircle() {
   }
   INK.circle = f ? inkRule(f) : null;
   const k = INK.circle || { ink: [240, 240, 234] }; document.documentElement.style.setProperty('--ink-circle', `rgb(${k.ink.join(', ')})`);   // the door's own word, Soren, is HTML
+}
+// The pause strip: the pool behind it, as its blur leaves it (the pixels averaged in blocks the blur's size), and the least navy
+// for white on the lightest block, with a margin of 0.15 (the spheres and the weather move under it). Set as --strip on the strip; the gate measures it.
+function inkStrip() {
+  const el = $('strip'); if (!el || el.hidden || !canvas || !canvas.width) return;
+  const p = $('pool').getBoundingClientRect(), r = el.getBoundingClientRect(), d = canvas.width / p.width;
+  const x0 = Math.max(0, Math.floor((r.left - p.left) * d)), y0 = Math.max(0, Math.floor((r.top - p.top) * d)), w = Math.min(canvas.width - x0, Math.ceil(r.width * d)), h = Math.min(canvas.height - y0, Math.ceil(r.height * d));
+  const sky = inkField(r.left, r.top, r.right, r.bottom); if (w < 4 || h < 4 || !sky) return;
+  const im = ctx.getImageData(x0, y0, w, h).data, B = Math.max(4, Math.round(14 * d)), mid = sky.lo.map((v, i) => (v + sky.hi[i]) / 2);
+  let hi = sky.lo, hl = -1;
+  for (let by = 0; by < h; by += B) for (let bx = 0; bx < w; bx += B) {   // each block, averaged, laid over the sky by its alpha
+    const sum = [0, 0, 0]; let n = 0;
+    for (let y = by; y < Math.min(h, by + B); y += 2) for (let x = bx; x < Math.min(w, bx + B); x += 2) { const i = (y * w + x) * 4, a = im[i + 3] / 255; for (let j = 0; j < 3; j++) sum[j] += im[i + j] * a + mid[j] * (1 - a); n++; }
+    const c = sum.map(v => v / n), l = relLum(c); if (l > hl) { hl = l; hi = c; }
+  }
+  const k = matchMedia('(prefers-reduced-transparency: reduce)').matches ? { tint: INK.navy, a: 1 } : inkRule({ lo: hi, hi }, INK.goal + 0.15);   // a margin: the pool moves under the strip between reads
+  el.style.setProperty('--strip', k.tint ? `rgba(${k.tint.join(', ')}, ${k.a.toFixed(2)})` : 'transparent'); el.style.setProperty('--strip-line', k.tint ? 'transparent' : '#fff'); INK.strip = { ...k, hi };
 }
 /* ---------- Conquer: name it, play first, go, come back, check in (its own door in the Journey) ---------- */
 // Five steps, all in the pool, no card. Name it: up to three lines of what you will do (or none: then it is a break). How long
@@ -3947,25 +3991,25 @@ function drawLanding(c) {
 // On entering, the settings are copied and nothing is saved, and the gear opens by itself with Studio's own row: Scene, Weather
 // and Sound (the groups you already know), Depth (the scene's layers, stepping on each touch), Fresh (every toy back to how SoRen
 // came) and Use this (keeps what you made). Leaving without it puts the copy back; nothing carries over.
-function studioEnter() { STUDIO.was = JSON.parse(JSON.stringify(PREFS)); STUDIO.on = true; STUDIO.gear = false; }
+function studioEnter() { STUDIO.was = JSON.parse(JSON.stringify(PREFS)); STUDIO.on = true; }
 function studioLeave() {   // the copy comes back (Use this empties it first)
-  STUDIO.on = false; STUDIO.gear = false; frClose(); const w = STUDIO.was; STUDIO.was = null; if (!w) return;
+  STUDIO.on = false; frClose(); const w = STUDIO.was; STUDIO.was = null; if (!w) return;
   const place = w.where !== PREFS.where; for (const k in w) if (k !== 'mode') PREFS[k] = w[k];
   savePrefs(); sound.init(); if (place) newWorld(); syncUI();
 }
 function studioKeep() { STUDIO.was = null; STUDIO.on = false; savePrefs(); STUDIO.on = true; feel('bloom'); sound.done(); say('Kept', 'Yours, until you change it'); }
-function studioFresh() { for (const k of ['atmo', 'mix', 'clouds', 'hour', 'depth']) setPrefRaw(k, JSON.parse(JSON.stringify(DEFAULTS[k]))); sound.init(); syncUI(); }
-/* ---------- The frame (v80): one bar, one ribbon, one row of checks ---------- */
-// The bar above the pool: home, the gear, the sound, the word tile, the score (in Play) and the time. The ribbon under the pool,
-// always, icons alone: in Play the tools and Pause; in the Journey the mountain and the six doors; with the gear on, the setting groups. Above the
-// ribbon, one row, only while something is being chosen: the checks of the group or the word you touched, or what the door does.
-// Every setting is a tile: touch it and it is on (a green check), or it is the one chosen in its row. Nothing to drag but spheres:
-// no sliders, no switches, no third level. What you see is what applies where you are. Cards are left for what is read.
-const BAR = { line: '', comp: false, tiles: '', tilesCls: '', ctx: '', rows: '' };
+function studioFresh() { for (const k of ['atmo', 'mix', 'cover', 'hour', 'depth']) setPrefRaw(k, JSON.parse(JSON.stringify(DEFAULTS[k]))); sound.init(); syncUI(); }
+/* ---------- The frame (v82): the bar, the pause strip, the row under the pool ---------- */
+// Agreed in mockups on Oct 25 (V82-LIST.md). The bar above the pool: the three words, Pause, the score. Pause opens the strip
+// in the middle of the pool: Resume, New game, then Journey, Game and Sound, each opening in place, and Help. Under the pool, one
+// row: in Play, Weather and Scene at its ends and the tools between; Weather or Scene takes the tools' place while it is open,
+// and an option in it fills the row with its switch, its slider and its percent, ✓ and ›. In the Journey the row is the doors (a
+// door's own row sits above it); in Studio it is Studio's toys, which open the same way. Every change applies when touched.
+// What shapes how you play lives behind Pause; what adds to play lives under the pool (Albert, Oct 25, 14:06).
+const BAR = { line: '', comp: false, tiles: '', tilesCls: '', ctx: '', strip: '', rows: '' };
 const icon = (d, more = '') => `<span class="ic">${d.startsWith('<') ? d : svg(d)}${more}</span>`;
-const cell = (attrs, d, word, extra = '') => `<button class="cell" ${attrs}>${icon(d)}<span class="sub">${word}</span>${extra}</button>`;
-const skyName = (k) => ({ bolt: 'Thunder', wind: 'Wind', rain: here().snow ? 'Snow' : 'Rain' }[k]);
-const MUTED = `<svg viewBox="0 0 24 24" aria-hidden="true"><path d="${ICON.speaker}"/><path class="hush" d="${ICON.hush}"/></svg>`;
+const cell = (attrs, d, word, extra = '') => `<button class="cell" ${attrs}>${icon(d)}<span class="sub">${word}</span>${extra}</button>`;   // the card's bar, foot and pop-up use it
+const skyName = (k) => ({ bolt: 'Lightning', wind: 'Wind', rain: here().snow ? 'Snow' : 'Rain', cover: 'Clouds' }[k]);
 const SUNCLOUD = 'M3.5 11a4 4 0 0 1 6.5-3.1M7 3.2v1.4M2.2 5.2l1 1M11.8 5.2l-1 1M9 20h8.5a3.2 3.2 0 0 0 .4-6.4 4.6 4.6 0 0 0-8.8 1A3 3 0 0 0 9 20z';
 // Every icon is fitted so its longest side is the same, whatever its shape: the drawing's own box becomes its view.
 function fitIcons(root) {
@@ -3981,104 +4025,163 @@ function fitPool() {
   for (const el of app.children) { if (el.classList.contains('pool-wrap') || el.id === 'mc' || getComputedStyle(el).position === 'absolute') continue; used += el.getBoundingClientRect().height; n++; }
   const gap = parseFloat(getComputedStyle(app).rowGap) || 0; document.documentElement.style.setProperty('--chrome', `${Math.round(used + gap * n)}px`);
 }
-// A tile in a row is one of three things: a switch (on or off), a pick (the one chosen in its row), or an act (it does something).
+// A tile in a door's row is a switch (on or off), a pick (the one chosen in its row) or an act (it does something).
 const sw = (id, n, ic, k, after) => ({ id, n, ic, on: () => !!getPref(k), go: () => { setPref(k, !getPref(k)); if (after) after(); } });
 const pk = (id, n, ic, k, v, after) => ({ id, n, ic, on: () => getPref(k) === v, go: () => { setPref(k, v); if (after) after(); } });
 const act = (id, n, ic, go, cls = '') => ({ id, n, ic, act: go, cls });
 const DEPTH_WORDS = ['Sky', 'Far', 'Near', 'Full'];
-// The groups the gear opens. Each is one row of checks. Game shows only in Play; Sound shows what plays where you are.
-const SOUNDS = { merge: ['game', 'alerts', 'drone', 'nature', 'weather'], pacer: ['breath', 'alerts', 'drone', 'nature'], tinker: ['touch', 'drone', 'nature', 'weather'], studio: ['game', 'drone', 'nature', 'weather'], rest: ['drone', 'nature', 'weather', 'alerts'] };
+const SOUND_ALL = ['game', 'alerts', 'breath', 'touch', 'drone', 'nature', 'weather'];
 const SOUND_IC = { game: ICON.note, alerts: ICON.clock, breath: ICON.rings, touch: ICON.hand, drone: ICON.hum, nature: ICON.leaf, weather: ICON.cloud };
 const SOUND_N = { game: 'Game', alerts: 'Alerts', breath: 'Breath', touch: 'Touch', drone: 'Drone', nature: 'Nature', weather: 'Weather' };
-const GROUPS = {
-  scene: { n: 'Scene', ic: ICON.scene, row: () => [...CHOICES.hour.map(h => pk(h, LABELS.hour[h], h === 'live' ? ICON.clock : h === 'night' ? ICON.moon : ICON.sun, 'hour', h)), ...(S.mode === 'studio' ? [] : [sw('live', 'Live sky', ICON.star, 'live')])] },   // Live sky: where you stand, the satellites, the comets (not a Studio toy: it asks the phone)
-  weather: { n: 'Weather', ic: SUNCLOUD, row: () => [...ATMO.map(k => sw(k, skyName(k), k === 'rain' && here().snow ? ICON.snow : ICON[k], `atmo.${k}.on`, () => sound.init())),
-    { id: 'clouds', n: 'Clouds', ic: ICON.cloud, on: () => PREFS.clouds !== 'clear', go: () => setPref('clouds', PREFS.clouds === 'clear' ? 'changing' : 'clear') },   // clouds, or a clear sky; the sky's own changing look
-    { id: 'all', n: 'All', ic: ICON.cloud, on: () => ATMO.some(k => PREFS.atmo[k].on), go: allWeather }], off: () => here().dry },
-  sound: { n: 'Sound', ic: ICON.note, row: () => [...SOUNDS[S.mode].map(k => sw(k, SOUND_N[k], SOUND_IC[k], `mix.${k}.on`)), ...(S.mode === 'studio' ? [] : [sw('vibe', 'Buzz', ICON.vibe, 'vibe')])] },
-  game: { n: 'Game', ic: ICON.aim, row: () => [sw('aim', 'Aim', ICON.aim, 'aim'), sw('next', 'Next', ICON.arrow, 'next'), sw('numbers', 'Score', ICON.hash, 'numbers')], play: true },
-  comfort: { n: 'Comfort', ic: ICON.heart, row: () => [sw('soft', 'Soft View', ICON.heart, 'soft'), sw('still', 'Still', ICON.still, 'still'), sw('breathing', 'Breathe', ICON.rings, 'breathing')] },   // the pace is the Pacer's row (76-journey.js)
-  help: { n: 'Help', ic: ICON.ask, row: () => [act('help', 'Help', ICON.ask, () => openCard('help')), act('stats', 'Stats', ICON.bars, () => openCard('stats')),
-    act('fresh', 'Fresh', ICON.reset, () => framePop({ title: 'Back to how SoRen came?', line: 'Every setting, as it was on day one. Your list and Save It stay.', back: 'Back', act: 'Fresh', go: fresh }))] }
+
+// What is open: a section of the pause strip; a category under the pool (Weather, Scene, or one of Studio's); an option in it.
+const FR = { strip: null, cat: null, item: null };
+function frClose() { FR.strip = FR.cat = FR.item = null; }
+// The options a category holds. lv: on or off, and a level (a slider, in percent). pick: one of a list (a row you swipe). sw: on or off.
+const lv = (id, n, ic, key) => ({ id, n, ic, kind: 'lv', key });
+const pickOf = (id, n, key, list, label) => ({ id, n, kind: 'pick', key, list, label });
+const CATS = {
+  weather: { n: 'Weather', ic: SUNCLOUD, off: () => here().dry, items: () => [lv('wind', skyName('wind'), ICON.wind, 'atmo.wind'), lv('cover', 'Clouds', ICON.cloud, 'cover'), lv('rain', skyName('rain'), here().snow ? ICON.snow : ICON.rain, 'atmo.rain'), lv('bolt', 'Lightning', ICON.bolt, 'atmo.bolt')] },
+  scene: { n: 'Scene', ic: ICON.rise, items: () => [pickOf('where', 'Place', 'where', () => CHOICES.where, (v) => LABELS.where[v]), pickOf('hour', 'Hour', 'hour', () => CHOICES.hour, (v) => LABELS.hour[v]), ...(S.mode === 'studio' ? [] : [{ id: 'live', n: 'Live sky', kind: 'sw', key: 'live' }])] },   // Live sky asks the phone: not a Studio toy
+  sound: { n: 'Sound', ic: ICON.note, items: () => SOUND_ALL.map(k => lv(k, SOUND_N[k], SOUND_IC[k], `mix.${k}`)) }   // Studio's mixer: each sound's level
 };
-const STUDIO_ROW = () => [act('scene', 'Scene', ICON.scene, () => gearGroup('scene')), act('weather', 'Weather', SUNCLOUD, () => gearGroup('weather')), act('sound', 'Sound', ICON.note, () => gearGroup('sound')),
-  act('depth', DEPTH_WORDS[PREFS.depth], ICON.rise, () => setPref('depth', (PREFS.depth + 1) % 4)), act('fresh', 'Fresh', ICON.reset, studioFresh), act('keep', 'Use this', ICON.check, studioKeep, 'pick')];   // Studio: the gear with its toys; Depth steps on each touch
-const gearKeys = () => Object.keys(GROUPS).filter(k => !(GROUPS[k].play && (S.jr || S.mode !== 'merge')));
-// The words' rows: the rules, and the places. Rest's and Labs' rows live with their doors (76-journey.js); Conquer's by step (75-conquer.js).
-const WORDS = {
-  rules: () => [pk('zen', 'Zen', '', 'overflow', 'zen', () => setPref('comp', false)), pk('classic', 'Classic', '', 'overflow', 'end', () => setPref('comp', false)), { id: 'comp', n: 'Comp', ic: '', dis: () => here().dry, on: () => compOn(), go: () => (compOn() ? setPref('comp', false) : askComp()) }],
-  scene: () => CHOICES.where.map(w => pk(w, LABELS.where[w], '', 'where', w))
-};
-const rulesWord = () => (compOn() ? 'Comp' : rules() === 'zen' ? 'Zen' : 'Classic');
-const FR = { gear: false, group: null, word: null };   // what is open: the gear, one of its groups, or one of the bar's words
-function gearTap() { FR.gear = !FR.gear; FR.group = null; FR.word = null; syncBars(); }   // the gear: the groups take the ribbon; again, and the ribbon is back
-function gearGroup(k) { FR.gear = true; FR.word = null; FR.group = FR.group === k ? null : k; syncBars(); }   // a group: its row; the same group again, and the row goes
-function wordTap(k) { FR.word = FR.word === k ? null : k; FR.group = null; syncBars(); }
-function frClose() { FR.gear = false; FR.group = null; FR.word = null; }
-// The row above the ribbon: the word's row, the group's row, or the door's row; nothing otherwise.
-function rowItems() {
-  if (FR.word) return WORDS[FR.word]();
-  if (FR.group) return GROUPS[FR.group].row();
-  if (S.jr && S.jr.door && !FR.gear) return doorRow(S.jr.door);
-  return [];
-}
+const catItem = () => FR.cat && FR.item && CATS[FR.cat].items().find(o => o.id === FR.item);
+const STUDIO_ROW = () => [act('scene', 'Scene', ICON.rise, () => catTap('scene')), act('weather', 'Weather', SUNCLOUD, () => catTap('weather')), act('sound', 'Sound', ICON.note, () => catTap('sound')),
+  act('depth', DEPTH_WORDS[PREFS.depth], ICON.sea, () => setPref('depth', (PREFS.depth + 1) % 4)), act('fresh', 'Fresh', ICON.reset, studioFresh), act('keep', 'Use this', ICON.check, studioKeep, 'pick')];   // Studio's toys; Depth steps on each touch
+function catTap(k) { if (CATS[k].off && CATS[k].off()) return; if (FR.cat === k) { FR.cat = FR.item = null; } else { FR.cat = k; FR.item = null; } FR.strip = null; syncBars(); }   // the same tile again closes it
+
+// The row above the ribbon: what the door you are in does. Nothing otherwise.
+function rowItems() { return S.jr && S.jr.door && S.mode !== 'studio' ? doorRow(S.jr.door) : []; }
 const fCell = (key, d, word, cls = '', extra = '', pressed = null) => `<button class="cell ${cls}" data-f="${key}" aria-label="${esc(word)}"${pressed == null ? '' : ` aria-pressed="${pressed}"`}${/\bsel\b/.test(cls) ? ' aria-current="true"' : ''}${/\bdis\b/.test(cls) ? ' disabled' : ''}>${d ? icon(d) : ''}<span class="sub">${esc(word)}</span>${extra}</button>`;
 function tilesHTML() {
   return rowItems().map((o, i) => fCell(`row:${i}`, o.ic, o.n, `${o.dis && o.dis() ? 'dis ' : ''}${o.cls || ''}${o.on && o.on() ? ' on' : ''}`, '', o.on ? !!o.on() : null)).join('');
 }
-const tilesClass = () => (FR.word ? 'words' + (WORDS[FR.word]().length > 6 ? ' slide' : '') : '');   // the words' rows are words alone; more than six slide sideways
-function ctxHTML() {   // the ribbon, icons alone
+// The row under the pool.
+const pct = (v) => Math.round(v * 100);
+function editHTML(o, left, right) {   // one option: its switch, its level and its percent; ✓ keeps it and goes back, › closes
+  const on = !!getPref(`${o.key}.on`), v = pct(getPref(`${o.key}.lv`));
+  return left + `<button class="cell sw-cell" data-f="ed:on" role="switch" aria-checked="${on}" aria-label="${esc(o.n)}"><span class="tog${on ? ' on' : ''}"></span></button>`
+    + `<label class="cell sl-cell${on ? '' : ' off'}"><input type="range" min="5" max="100" step="1" value="${v}" data-lv="${o.key}.lv" aria-label="${esc(o.n)} level"><b class="pc num">${v}%</b></label>`
+    + fCell('ed:ok', ICON.check, 'Done', 'end') + fCell('ed:close', ICON.right, 'Close', 'end') + right;
+}
+function pickHTML(o, left, right) {   // a list you swipe: the one chosen has the check
+  const cur = getPref(o.key);
+  return left + `<div class="swipe" data-swipe="${o.id}">${o.list().map((v, i) => `<button class="cell w${v === cur ? ' on sel' : ''}" data-f="pick:${i}" aria-label="${esc(o.label(v))}"${v === cur ? ' aria-current="true"' : ''}><span class="sub">${esc(o.label(v))}</span></button>`).join('')}</div>` + right;
+}
+function catRowHTML(left, right) {   // a category's options, in the tools' place; more than five, and they swipe (no tile under 44 px)
+  const its = CATS[FR.cat].items(), cells = its.map(o => o.kind === 'lv' ? fCell(`it:${o.id}`, o.ic, o.n, getPref(`${o.key}.on`) ? 'on' : '', '', !!getPref(`${o.key}.on`))
+    : o.kind === 'sw' ? fCell(`it:${o.id}`, '', o.n, `w${getPref(o.key) ? ' on' : ''}`, '', !!getPref(o.key)) : fCell(`it:${o.id}`, '', o.n, 'w')).join('');
+  return left + (its.length > 5 ? `<div class="swipe icons" data-swipe="">${cells}</div>` : cells) + right;
+}
+function openRowHTML(left, right) {   // Weather, Scene or a Studio toy is open: its options, or the one option being set
+  const o = catItem();
+  if (o && o.kind === 'lv') return editHTML(o, fCell('ed:back', o.ic, o.n, 'end sel'), '');   // editing fills the row: the end tile steps aside
+  if (o && o.kind === 'pick') return pickHTML(o, left, right);
+  return catRowHTML(left, right);
+}
+function ctxHTML() {   // the ribbon, icons alone (words where a word is the thing)
   if (S.intro) return fCell('door:free', ICON.play, S.prev ? 'Resume' : 'Merge') + fCell('door:journey', ICON.mountain, 'Journey');   // the door: two plain tiles, no ring on either
-  if (FR.gear) {
-    if (S.mode === 'studio') return STUDIO_ROW().map((o, i) => fCell(`st:${i}`, o.ic, o.n, `${o.cls || ''}${FR.group === o.id ? ' sel' : ''}`)).join('');
-    return gearKeys().map(k => { const g = GROUPS[k], off = g.off && g.off(); return fCell(`top:${k}`, g.ic, g.n, off ? 'none' : FR.group === k ? 'sel' : ''); }).join('');
+  if (S.mode === 'studio') {
+    if (FR.cat) { const c = CATS[FR.cat]; return openRowHTML(fCell(`cat:${FR.cat}`, c.ic, c.n, 'end sel'), ''); }
+    return STUDIO_ROW().map((o, i) => fCell(`st:${i}`, o.ic, o.n, o.cls || '')).join('');
   }
   if (S.jr && CQ.step !== 'go') return Object.keys(DOORS).map(k => { const inDoor = S.jr.door === k, landing = k === 'journey' && !S.jr.door; return fCell(`door:${k}`, DOORS[k].ic, DOORS[k].n, `${inDoor || landing ? 'on sel' : S.jr.peek === k ? 'sel' : ''}${k === 'labs' ? ' tilt' : ''}`, '', inDoor || landing); }).join('');
-  return TOOLS.map(k => fCell(`tool:${k}`, ICON[k], TOOL_NAMES[k], '', '<b class="n"></b>')).join('') + fCell('top:pause', S.paused ? ICON.play : ICON.pause, S.paused ? 'Play' : 'Pause', S.paused ? 'sel' : '');
+  const end = (k) => { const c = CATS[k], off = c.off && c.off(); return fCell(`cat:${k}`, c.ic, c.n, `end${FR.cat === k ? ' sel' : ''}${off ? ' dis' : ''}`); };
+  if (FR.cat) return openRowHTML(end('weather'), end('scene'));
+  return end('weather') + TOOLS.map(k => fCell(`tool:${k}`, ICON[k], TOOL_NAMES[k], '', '<b class="n"></b>')).join('') + end('scene');
 }
 function ctxSync() {   // the tools' counts, in place
   $('ctxBar').querySelectorAll('[data-f^="tool:"]').forEach(b => { const k = b.dataset.f.slice(5), armed = (k === 'strike' && S.armed) || (k === 'mystery' && S.wild), n = S.tools[k];
     b.classList.toggle('on', armed); b.classList.toggle('live', armed); b.classList.toggle('none', !n && !armed); const nb = b.querySelector('.n'); nb.textContent = n > 0 ? n : ''; nb.hidden = !(n > 0); });   // a badge only when there is one to use
 }
-// The bar. Home, the gear, the sound. The word tile: in Play three words (Merge, the rules, the place), each a touch; in the Journey
-// its word or the door's; a warning with its countdown; COMPETITION. Then the score (in Play) and the time, unboxed.
+
+// The pause strip: Resume, New game | Journey, Game, Sound | Help. A section opens in place under it; touch it again and it closes.
+const STRIP = {
+  journey: { n: 'Journey', ic: ICON.mountain },
+  game: { n: 'Game', ic: ICON.bloom },
+  sound: { n: 'Sound', ic: ICON.note }
+};
+const RULES_ORDER = ['zen', 'classic', 'comp'];   // easiest to hardest: an easier one applies now, a harder one from the next game (Albert, Oct 25, 14:57)
+const rulesNow = () => (compOn() ? 'comp' : rules() === 'zen' ? 'zen' : 'classic');
+const inGame = () => S.world.balls.length > 0 && !S.gameOver;
+function chooseRules(v) {
+  const now = rulesNow(); if (v === now && !S.pendRules) return;
+  if (v === now) { S.pendRules = null; syncBars(); return; }
+  const harder = RULES_ORDER.indexOf(v) > RULES_ORDER.indexOf(now);
+  if (harder && inGame()) { const go = () => { S.pendRules = v; say(v === 'comp' ? 'Comp' : 'Classic', 'From your next game'); syncBars(); }; if (v === 'comp') askComp(go); else go(); return; }
+  S.pendRules = null; applyRules(v);
+}
+function applyRules(v) {   // the rules, now
+  if (v === 'comp') { if (!compOn()) askComp(() => setPref('comp', true)); return; }
+  if (compOn()) setPref('comp', false);
+  S.zen = false; setPref('overflow', v === 'zen' ? 'zen' : 'end');
+}
+const chip = (key, word, on, cls = '') => `<button class="chip${on ? ' on' : ''} ${cls}" data-f="${key}" aria-pressed="${!!on}">${esc(word)}</button>`;
+const chipRow = (items) => `<div class="chips">${items.join('')}</div>`;
+function stripBody(k) {
+  if (k === 'journey') return chipRow([chip('sj:merge', 'Merge', !S.jr), ...Object.keys(DOORS).filter(d => d !== 'journey').slice(0, 2).map(d => chip(`sj:${d}`, DOORS[d].n, S.jr && S.jr.door === d))])
+    + chipRow(Object.keys(DOORS).filter(d => d !== 'journey').slice(2).map(d => chip(`sj:${d}`, DOORS[d].n, S.jr && S.jr.door === d)));
+  if (k === 'game') {
+    const pend = S.pendRules, now = rulesNow(), mode = S.jr ? '' : `<div class="hd">Mode${pend ? `<i>${esc(pend === 'comp' ? 'Compete' : 'Classic')} from your next game</i>` : ''}</div>`
+      + chipRow([['zen', 'Zen'], ['classic', 'Classic'], ['comp', 'Compete']].map(([v, w]) => chip(`sg:${v}`, w, now === v, pend === v ? 'next' : '')));
+    return mode + `<div class="hd">Play</div>` + chipRow([chip('sg:aim', 'Aim', PREFS.aim), chip('sg:next', 'Next', PREFS.next), chip('sg:numbers', 'Numbers', PREFS.numbers)])
+      + `<div class="hd">Access</div>` + chipRow([chip('sg:still', 'Still', PREFS.still), chip('sg:soft', 'Soft', PREFS.soft), chip('sg:breathing', 'Breathe', PREFS.breathing), chip('sg:vibe', 'Haptics', PREFS.vibe)])
+      + chipRow([chip('sg:fresh', 'Start fresh', false, 'quiet')]);
+  }
+  if (k === 'sound') return `<div class="sl-row"><button class="tog-btn" data-f="ss:sound" role="switch" aria-checked="${PREFS.sound}" aria-label="Sound"><span class="tog${PREFS.sound ? ' on' : ''}"></span></button>`
+    + `<label class="sl${PREFS.sound ? '' : ' off'}"><input type="range" min="0" max="100" step="1" value="${pct(PREFS.vol)}" data-lv="vol" aria-label="Volume"><b class="pc num">${pct(PREFS.vol)}%</b></label></div>`
+    + chipRow(SOUND_ALL.slice(0, 4).map(s => chip(`ss:${s}`, SOUND_N[s], PREFS.mix[s].on))) + chipRow(SOUND_ALL.slice(4).map(s => chip(`ss:${s}`, SOUND_N[s], PREFS.mix[s].on)));
+  return '';
+}
+function stripHTML() {
+  const b = (k, d, w, cls = '') => `<button class="sb ${cls}" data-f="${k}" aria-label="${w}">${icon(d)}</button>`;
+  return `<div class="top">${b('top:pause', ICON.play, 'Resume', 'go')}${b('sp:new', ICON.reset, 'New game')}<span class="div"></span>`
+    + Object.keys(STRIP).map(k => b(`sp:${k}`, STRIP[k].ic, STRIP[k].n, FR.strip === k ? 'sel' : '')).join('') + `<span class="gap"></span>${b('sp:help', ICON.ask, 'Help', 'help')}</div>`
+    + (FR.strip ? `<div class="body">${stripBody(FR.strip)}</div>` : '');
+}
+const stripShown = () => S.paused && !S.intro && !S.sheet && S.mode !== 'rest';
+
+// The bar. The word tile: in Play three words (Merge, the rules, the place), each a touch to its setting; in the Journey its word or
+// the door's; a warning with its countdown; COMPETITION. Then Pause, and the score (in Play), a box of its own.
 const LINE = { sub: null };
 const TRI = '<svg class="tri" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3 22 20.5H2z"/><path d="M12 9.5v5M12 17.3v.3"/></svg>';   // the warning sign: the international shape
 const warning = () => !LINE.sub && (overWarn() || (compOn() && compAlert()));   // over the line first: it ends the game
 const hzHTML = (w) => `<div class="hz" role="alert">${TRI}<span class="al"><b>${esc(w[0])}</b><i>${esc(w[1])}</i></span><span class="cd num" id="alertN"></span></div>`;
 const WORD = Object.fromEntries(Object.entries(MODES).map(([k, m]) => [k, m.name]));   // the mode's one word, the same on the tile, in the bar and in the code
+const rulesWord = () => (compOn() ? 'Comp' : rules() === 'zen' ? 'Zen' : 'Classic');
 function wordHTML() {   // what the word tile holds
   if (LINE.sub === 'comp') return `<div class="comp-sub"><button class="pill" data-act="compoff">Leave Comp</button><button class="cancel" data-act="subcancel">Cancel</button></div>`;
   const w = warning();
   if (compOn()) return `<button class="compw" data-act="compmenu">COMPETITION</button>${w ? hzHTML(w) : ''}`;
   if (w) return hzHTML(w);
-  if (FR.group) return `<div class="one">${esc(GROUPS[FR.group].n)}</div>`;
-  const seg = (k, t, sel) => `<button class="seg${sel ? ' sel' : ''}" data-f="word:${k}" aria-label="${esc(t)}"${sel ? ' aria-current="true"' : ''}>${esc(t)}</button>`;
-  if (S.jr) return seg('merge', CQ.step === 'go' ? `Conquer · ${S.goal ? `until ${clockAt(S.goal.end)}` : 'free'}` : jrWord(), false);
-  return seg('merge', WORD[S.mode], false) + seg('rules', rulesWord(), FR.word === 'rules') + seg('scene', here().label, FR.word === 'scene');
+  const seg = (k, t) => `<button class="seg" data-f="word:${k}" aria-label="${esc(t)}">${esc(t)}</button>`;
+  if (S.jr) return seg('merge', CQ.step === 'go' ? `Conquer · ${S.goal ? `until ${clockAt(S.goal.end)}` : 'free'}` : jrWord());
+  return seg('merge', WORD[S.mode]) + seg('rules', rulesWord()) + seg('scene', here().label);
 }
 function lineHTML() {
-  const sq = (k, d, w, cls = '') => `<button class="cell ${cls}" data-f="top:${k}" aria-label="${w}">${icon(d)}</button>`;
   const w = warning(), word = `<div class="word tile${compOn() && !LINE.sub ? ' comp' : w && !compOn() ? ' warn' : ''}" id="word">${wordHTML()}</div>`;
-  const sp = S.jr ? '' : `<button class="sp" data-f="stats" aria-label="Score"><b class="num" id="scoreVal"></b></button>`;   // the score, in Play; the time is the phone's own, top left
-  const heard = PREFS.sound && !S.paused;   // paused, the sound waits: the speaker says so without touching the setting
-  return sq('home', ICON.home, 'Home') + sq('gear', ICON.gear, 'Settings', FR.gear ? 'sel' : '') + sq('mute', heard ? ICON.speaker : MUTED, heard ? 'Sound on' : 'Sound off') + word + sp;
+  const sp = S.jr ? '' : `<button class="sp" data-f="stats" aria-label="Score, and Statistics"><b class="num" id="scoreVal"></b></button>`;   // the score, in Play: touch it for Statistics
+  const pz = S.mode === 'rest' ? '' : `<button class="cell" data-f="top:pause" aria-label="${S.paused ? 'Resume' : 'Pause'}">${icon(S.paused ? ICON.play : ICON.pause)}</button>`;
+  return word + pz + sp;
 }
 // Everything shown is drawn again only when what it shows has changed.
 function syncBars() {
-  const tiles = $('tileBar'), cx = $('ctxBar'), ln = $('line'); if (!cx) return;
-  if (FR.group && !gearKeys().includes(FR.group)) FR.group = null;   // a group that no longer applies here closes
-  if (S.mode === 'studio' && !STUDIO.gear) { STUDIO.gear = true; FR.gear = true; }   // Studio opens the gear by itself
-  const tl = tilesHTML(), cls = tilesClass();
+  const tiles = $('tileBar'), cx = $('ctxBar'), ln = $('line'), st = $('strip'); if (!cx) return;
+  if (FR.cat && !CATS[FR.cat]) FR.cat = null;
+  if (FR.cat && S.jr && S.mode !== 'studio' && CQ.step !== 'go') FR.cat = FR.item = null;   // the doors hold the row in the Journey
+  if (FR.item && !catItem()) FR.item = null;
+  const tl = tilesHTML(), cls = '';
   const rowc = document.body.classList.toggle('rowc', !!tl);
-  if (tl !== BAR.tiles || cls !== BAR.tilesCls) { BAR.tiles = tl; BAR.tilesCls = cls; tiles.className = `frow ${cls}`; tiles.innerHTML = tl; fitIcons(tiles); const on = tiles.querySelector('.cell.on'); if (on && cls.includes('slide')) on.scrollIntoView({ inline: 'center', block: 'nearest' }); }
-  const ch = ctxHTML(); if (ch !== BAR.ctx) { BAR.ctx = ch; cx.innerHTML = ch; fitIcons(cx); }
+  if (tl !== BAR.tiles || cls !== BAR.tilesCls) { BAR.tiles = tl; BAR.tilesCls = cls; tiles.className = 'frow'; tiles.innerHTML = tl; fitIcons(tiles); }
+  const ch = ctxHTML(); if (ch !== BAR.ctx) { const sw = cx.querySelector('.swipe'), keep = sw && sw.dataset.swipe === (FR.item || '') ? sw.scrollLeft : null; BAR.ctx = ch; cx.innerHTML = ch; fitIcons(cx); const ns = cx.querySelector('.swipe'); if (ns) { if (keep != null) ns.scrollLeft = keep; else { const on = ns.querySelector('.cell.on'); if (on) ns.scrollLeft = on.offsetLeft - (ns.clientWidth - on.offsetWidth) / 2; } } }
   ctxSync();
-  const w = warning(), lh = lineHTML(); if (BAR.line !== lh) { BAR.line = lh; ln.innerHTML = lh; fitIcons(ln); tickBars.t = 0; }
+  const showStrip = stripShown(); if (!showStrip) FR.strip = null;
+  const sh = showStrip ? stripHTML() : ''; if (sh !== BAR.strip) { BAR.strip = sh; st.innerHTML = sh; st.hidden = !sh; fitIcons(st); if (sh) inkStrip(); }
+  const lh = lineHTML(); if (BAR.line !== lh) { BAR.line = lh; ln.innerHTML = lh; fitIcons(ln); tickBars.t = 0; }
   if (document.body.classList.toggle('comp', compOn()) !== BAR.comp) { BAR.comp = compOn(); readPalette(); handles(); }
   document.body.classList.toggle('journey', !!S.jr);
   document.body.classList.toggle('intro-in', !!(S.intro && S.intro.rest)); document.body.classList.toggle('intro-quick', !!(S.intro && S.intro.quick));
-  document.body.classList.toggle('carded', !!CARD.name); document.body.classList.toggle('framed', FR.gear || !!FR.word);
+  document.body.classList.toggle('carded', !!CARD.name); document.body.classList.toggle('framed', !!(FR.cat || FR.strip));
   $('plus').hidden = !S.tk || !!S.sheet;   // Tinker's +, in the pool's corner
   if (`${rowc}` !== BAR.rows) { BAR.rows = `${rowc}`; fitPool(); inkApply(); }   // a row came or went: the pool fits, and each row reads its sky again
 }
@@ -4092,36 +4195,50 @@ function tickBars() {   // every frame: the score and its glow, a warning's coun
   const ms = performance.now(); if (ms - (tickBars.t || 0) < 250) return; tickBars.t = ms;
   ctxSync();
 }
-function applySeason() { BAR.line = BAR.tiles = BAR.ctx = ''; if ($('ctxBar') && WORLD) syncBars(); }   // a new place: the frame is rebuilt for it
+function applySeason() { BAR.line = BAR.tiles = BAR.ctx = BAR.strip = ''; if ($('ctxBar') && WORLD) syncBars(); }   // a new place: the frame is rebuilt for it
 // The frame's one pop-up, when no card is open: the card's own pop-up, standing alone over the frame.
 function framePop(o) { if (!CARD.name) { POP.alone = true; S.sheet = 'pop'; const mc = $('mc'); mc.classList.add('alone'); mc.hidden = false; fitCard(); syncBars(); } popup(o); }   // standing alone it is a sheet like any card: the game waits, the ribbon does not answer
-function allWeather() {   // the weather, all of it off, or back as it was
-  const on = ATMO.filter(k => PREFS.atmo[k].on);
-  if (on.length) { allWx.was = on; for (const k of ATMO) PREFS.atmo[k].on = false; }
-  else for (const k of (allWx.was && allWx.was.length ? allWx.was : ['rain'])) PREFS.atmo[k].on = true;
-  savePrefs(); sound.init(); syncBars();
-}
-const allWx = { was: null };
 const FRESH_KEEP = ['tasks', 'saved', 'mins', 'mode'];   // Fresh: every setting back to day one; what you wrote and what you saved stay
-function fresh() { compStop(); for (const k in DEFAULTS) if (!FRESH_KEEP.includes(k)) setPrefRaw(k, JSON.parse(JSON.stringify(DEFAULTS[k]))); savePrefs(); sound.init(); newWorld(); syncUI(); }   // Comp is a state, not a setting: it stops first
-function goHome() {   // Home: the opening's door; the game in hand waits there as Resume
-  closeSheet(); hideCard(); frClose(); LINE.sub = null;
-  if (S.jr) { journeyLeave(); S.jr = null; } if (S.mode !== 'merge') setMode('merge'); if (compOn()) setPref('comp', false);
-  const snap = S.world.balls.length && !S.gameOver ? poolSnap() : null; newPool(); S.prev = snap; S.goal = null; S.outro = null; S.parked = false; S.gone = false;
-  opening();
+function fresh() { compStop(); S.pendRules = null; for (const k in DEFAULTS) if (!FRESH_KEEP.includes(k)) setPrefRaw(k, JSON.parse(JSON.stringify(DEFAULTS[k]))); savePrefs(); sound.init(); newWorld(); syncUI(); }   // Comp is a state, not a setting: it stops first
+function newGameAsk() {   // ↺ in the strip: a game in hand is asked about once; an empty or finished one starts at once
+  const go = () => { setPaused(false); if (S.jr) journeyEnd(); startPool(); };
+  if (inGame()) framePop({ title: 'Start a new game?', line: 'This one ends here. Its score goes in your Statistics.', back: 'Back', act: 'New game', go }); else go();
 }
 // A touch in the frame. Every target says what it is in its data-f.
 function frameTouch(f) {
   const [a, b] = f.split(':');
-  if (S.sheet && a !== 'top' && (POP.alone || (a !== 'stats' && a !== 'door'))) return;   // a card is open: only the bar answers (it closes the card first); a pop-up standing alone: only the bar
+  if (S.sheet && a !== 'top' && (POP.alone || (a !== 'stats' && a !== 'door'))) return;   // a card is open: only Pause answers (it closes the card first); a pop-up standing alone: only Pause
   if (a === 'top') {
-    const go = () => {
-      if (b === 'home') { goHome(); return; } if (b === 'gear') { gearTap(); return; } if (b === 'mute') { setPref('sound', !PREFS.sound); feel('snap'); return; }
-      if (b === 'pause') { if (!(S.jr && CQ.step !== 'go')) pauseTap(); return; }
-      if (GROUPS[b]) { if (GROUPS[b].off && GROUPS[b].off()) return; gearGroup(b); } };
-    if ((CARD.name && CARD.name !== 'moment') || POP.alone) { closeSheet(); go(); return; } go(); return;
+    if ((CARD.name && CARD.name !== 'moment') || POP.alone) closeSheet();
+    if (b === 'pause') pauseTap(); return;
   }
-  if (a === 'word') { if (b === 'merge') { if (S.jr) journeyEnd(); else journeyStart(); return; } wordTap(b); return; }   // the first word switches worlds; the others open their rows
+  if (a === 'word') {   // each word goes to its setting: Merge to the Journey, the rules to Game (both behind Pause), the place to Scene
+    if (b === 'scene') { catTap('scene'); return; }
+    FR.strip = b === 'merge' ? 'journey' : 'game'; FR.cat = FR.item = null; if (!S.paused) setPaused(true); syncBars(); return;
+  }
+  if (a === 'sp') {   // the strip
+    if (b === 'new') { newGameAsk(); return; } if (b === 'help') { openCard('help'); return; }
+    FR.strip = FR.strip === b ? null : b; feel('tick'); syncBars(); return;
+  }
+  if (a === 'sj') {   // a door, from the strip: Merge leaves the Journey; a door opens straight away
+    setPaused(false); frClose();
+    if (b === 'merge') { if (S.jr) journeyEnd(); syncUI(); return; }
+    if (!S.jr) journeyStart(); if (S.jr.door !== b) { if (S.jr.door) journeyLeave(); S.jr.door = b; DOORS[b].open(); } feel('snap'); syncUI(); return;
+  }
+  if (a === 'sg') {   // Game
+    if (RULES_ORDER.includes(b)) chooseRules(b);
+    else if (b === 'fresh') framePop({ title: 'Back to how SoRen came?', line: 'Every setting, as it was on day one. Your list and Save It stay.', back: 'Back', act: 'Fresh', go: fresh });
+    else setPref(b, !PREFS[b]);
+    feel('snap'); syncBars(); return;
+  }
+  if (a === 'ss') { if (b === 'sound') setPref('sound', !PREFS.sound); else setPref(`mix.${b}.on`, !PREFS.mix[b].on); feel('snap'); syncBars(); return; }   // Sound: the switch is mute; each sound on or off
+  if (a === 'cat') { catTap(b); feel('tick'); return; }
+  if (a === 'it') { const o = CATS[FR.cat] && CATS[FR.cat].items().find(x => x.id === b); if (!o) return; if (o.kind === 'sw') setPref(o.key, !getPref(o.key)); else FR.item = b; feel('tick'); syncBars(); return; }
+  if (a === 'ed') { const o = catItem();
+    if (b === 'on' && o) { setPref(`${o.key}.on`, !getPref(`${o.key}.on`)); if (o.key.startsWith('atmo') || o.key.startsWith('mix')) sound.init(); }
+    else if (b === 'back' || b === 'ok') FR.item = null; else if (b === 'close') { FR.cat = FR.item = null; }
+    feel('snap'); syncBars(); return; }
+  if (a === 'pick') { const o = catItem(); if (o) { setPref(o.key, o.list()[+b]); feel('snap'); syncBars(); } return; }
   if (a === 'row') { const o = rowItems()[+b]; if (!o || (o.dis && o.dis())) return; if (o.act) o.act(); else o.go(); feel('snap'); syncBars(); return; }
   if (a === 'st') { const o = STUDIO_ROW()[+b]; if (o) { o.act(); feel('snap'); syncBars(); } return; }
   if (a === 'tool') { useTool(b); return; }
@@ -4129,11 +4246,15 @@ function frameTouch(f) {
   if (a === 'tk') { if (S.tk && b === 'make') tkMaker(true); return; }
   if (a === 'stats') { if (!S.sheet) openCard('stats'); }
 }
-
-// Pause is pause and mute in one touch; the sound comes back as it was, never louder than you left it.
-function pauseTap() {
-  setPaused(!S.paused); syncBars();   // the sound waits with the game (35-audio.js reads S.paused); your setting is untouched, however you unpause
+// A slider: the level follows the finger and is heard at once; kept when the finger lifts.
+function sliderInput(el, done) {
+  const k = el.dataset.lv, v = clamp(+el.value / 100, 0, 1); setPrefRaw(k, k === 'vol' ? v : Math.max(0.05, v));
+  const pc = el.parentElement.querySelector('.pc'); if (pc) pc.textContent = `${Math.round(v * 100)}%`;
+  if (k === 'vol' || k.startsWith('mix')) sound.init();
+  if (done) { savePrefs(); sound.init(); BAR.ctx = BAR.strip = ''; syncBars(); }
 }
+// Pause: everything waits, and the strip opens; the sound waits with the game (35-audio.js reads S.paused); your setting is untouched.
+function pauseTap() { if (S.mode === 'rest') return; setPaused(!S.paused); if (!S.paused) FR.strip = null; FR.cat = FR.item = null; syncBars(); }
 /* ---------- The words of every choice, and the cards ---------- */
 // Every setting lives in the frame (80-frame.js). The words each choice can take are here, once. A card is only for what is read:
 // a moment (Game complete, Something went wrong), Statistics and Help; its rows are an icon, a name and a line, and its answers
@@ -4141,7 +4262,7 @@ function pauseTap() {
 const LABELS = {
   mode: Object.fromEntries(Object.entries(MODES).map(([k, m]) => [k, m.name])), overflow: { end: 'Classic', zen: 'Zen' },
   where: { live: 'Live', ...Object.fromEntries(Object.entries(PLACES).map(([k, p]) => [k, p.label])) },
-  clouds: { clear: 'Clear', some: 'Some', overcast: 'Overcast', dark: 'Dark', changing: 'Changing' }, hour: { live: 'Live', dawn: 'Dawn', day: 'Day', dusk: 'Dusk', night: 'Night' },
+  hour: { live: 'Live', dawn: 'Dawn', day: 'Day', dusk: 'Dusk', night: 'Night' },
   ambient: { off: 'Off', rain: 'Rain', wind: 'Wind', night: 'Night', fire: 'Fire' }, fadeAfter: { 60: 'An hour', 0: 'All night' }, bpm: { 5: 'Slow', 5.5: 'Natural', 6: 'Quick' }
 };
 const esc = (t) => String(t).replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' })[c]);
@@ -4149,19 +4270,19 @@ const text = (t) => (typeof t === 'function' ? t() : t);
 const hub = (ic, name, desc, go) => ({ ic, name, desc, kind: 'hub', go });
 const show = (ic, name, desc, v) => ({ ic, name, desc, kind: 'value', get: v });
 const FAQ = [
-  ['What is the Journey?', 'The other world. A landing over the sky alone, with the mountain and six doors in the ribbon under the pool: the mountain (the Journey itself, where you are), then Pacer (a dot that fills and empties; breathe with it), Tinker (spheres to catch, save or let go), Conquer (name what you will do, play first, go, come back, check in), Rest (the night-time sound machine), Studio (the settings as toys; nothing is kept unless you touch Use this) and Labs (the next science, under the stars). Touch a door once to see what it is, again to go in. The lit door, or the mountain, brings you back to the landing; the first word in the bar brings you back to Merge. Home brings you to the front door; the game in hand waits there as Resume.'],
+  ['What is the Journey?', 'The other world. A landing over the sky alone, with the mountain and six doors in the ribbon under the pool: the mountain (the Journey itself, where you are), then Pacer (a dot that fills and empties; breathe with it), Tinker (spheres to catch, save or let go), Conquer (name what you will do, play first, go, come back, check in), Rest (the night-time sound machine), Studio (the settings as toys; nothing is kept unless you touch Use this) and Labs (the next science, under the stars). Touch a door once to see what it is, again to go in. The lit door, or the mountain, brings you back to the landing. To go back to Merge: Pause › Journey › Merge, or touch the first word in the bar.'],
   ['What is the Pacer?', 'A dot at the centre fills the circle in five and a half seconds, green, then blue, then white, and empties again; the ring melts at the crest and comes back as it fills. A light goes round the pool’s edge once a breath. Breathe in as it fills, out as it empties. Its row sets the pace: Slow, Natural, Quick (5, 5.5 and 6 a minute, inside the range the studies used); the pool’s breath in Play follows it. With Chest on (Labs), lay the phone flat on your chest, hands off, and after fifteen seconds the dot follows your breath.'],
   ['What is Tinker?', 'Spheres come in sets of six, grow together, hold, shrink and go; a new six come somewhere else. Hold one and it is caught: it keeps its size and follows your finger. Drop it in Save It, the green tank, and it lives there, kept between visits; a smaller one dropped onto a bigger one is taken in. Let It Go is the circle in the tank: open while a set is grown, shut between sets; dropped in while open, it is gone for good. The + makes one of your own: name it or not, pick its glow, set it loose. A tap on any sphere is a soft tap on glass. Spheres are thoughts: keep the good ones, let the worries go. Nothing is scored.'],
   ['What is Conquer?', 'A door in the Journey. Five steps in the pool. Name it: up to three lines of what you will do after, or none. How long first: 15, 30 or 60 minutes of Merge, or Free. Go: you play; a bell at three minutes left, two at one; or touch Go now. Then three breaths out, and the pool goes dark with your lines and a send-off. I’m back: your lines, to touch as done; one done is a gold done, a whole list is a surprise. What you did leaves the list; the rest waits for next time.'],
   ['How do I play?', 'Touch the pool and slide to move the waiting sphere; let go to drop it. Two of a kind merge into the next size up, and the two largest make a Full Bloom.'],
-  ['What are the tools?', 'In the row under the pool. Strike: touch a sphere; it turns red, then the place’s own strike takes it. Mystery: your next sphere becomes whatever it touches first. Storm: the place’s own weather blows in and every sphere lands somewhere new (in Comp, Storm is a gust). A chain of three or a Full Bloom earns one, up to three of each; the count sits on the tile.'],
-  ['What is Comp?', 'Play with the calm taken off: touch the second word in the bar (Zen or Classic) and touch Comp. The line creeps down; the wind is real and restless. One sphere at a time carries a countdown: merge it in time and the line lifts or a tool is yours; miss it and the line sinks or a wave rolls in. Strike knocks a sphere down a size; Storm is a gust with a hurricane category. Storms, ice, rain and lightning come on their own, each announced in the bar with its countdown; when lightning heats a sphere red, touch it to cool it. Now and then two or three come at once. Rarely, a tree takes the power out: the pool browns out and the dropper malfunctions until it comes back. Glass knocked hard enough chips, cracks and shatters. No aim line, no Heritage. Touch COMPETITION in the bar to leave: nothing is lost.'],
+  ['What are the tools?', 'In the row under the pool, between Weather and Scene. Strike: touch a sphere; it turns red, then the place’s own strike takes it. Mystery: your next sphere becomes whatever it touches first. Storm: the place’s own weather blows in and every sphere lands somewhere new (in Comp, Storm is a gust). A chain of three or a Full Bloom earns one, up to three of each; the count sits on the tile.'],
+  ['What is Comp?', 'Play with the calm taken off: Pause › Game › Compete (or touch the second word in the bar). A harder mode starts with your next game; an easier one applies at once. The line creeps down; the wind is real and restless. One sphere at a time carries a countdown: merge it in time and the line lifts or a tool is yours; miss it and the line sinks or a wave rolls in. Strike knocks a sphere down a size; Storm is a gust with a hurricane category. Storms, ice, rain and lightning come on their own, each announced in the bar with its countdown; when lightning heats a sphere red, touch it to cool it. Now and then two or three come at once. Rarely, a tree takes the power out: the pool browns out and the dropper malfunctions until it comes back. Glass knocked hard enough chips, cracks and shatters. No aim line, no Heritage. Touch COMPETITION in the bar to leave: nothing is lost.'],
   ['What do the colours mean?', 'A green check means on, or the one chosen in its row. The tile you are on is deeper glass. Blue is the way on. White is quiet, or off. Red erases. Gold means something special. Colour is never the only sign.'],
-  ['How do I get around?', 'The bar above the pool: Home (the front door), the gear, the sound on or off, then three words: the first (Merge) takes you to the Journey and back; the second (Zen or Classic) opens the rules; the third is the place. On the right, the score and the time. Under the pool, always: the tools and Pause in Play, the mountain and the six doors in the Journey. The gear puts Scene, Weather, Sound, Game, Comfort and Help in that row; touch one and its checks appear above it; touch a check and it is on, at once, while you watch; touch the group again and the row goes. Nothing to drag. Loudness is the phone’s own buttons.'],
+  ['How do I get around?', 'The bar above the pool: three words (Merge, the rules, the place), Pause, and the score (touch it for Statistics). Each word goes to its setting. Pause opens a strip over the pool: ▶ to play on, ↺ for a new game, then Journey (the doors), Game (the mode, Aim, Next, Numbers, and Access: Still, Soft View, Breathe, Haptics) and Sound (on or off, the volume, each sound on or off), and ? for this Help. What shapes how you play is behind Pause; what adds to play is under the pool. Under the pool: Weather at the left, the tools, Scene at the right. Touch Weather and its four take the tools’ place; touch one and its row is its switch, how strong it is (a slider, in percent), ✓ and ›. Scene holds the place, the hour and Live sky. Touch the end tile again and the tools come back. Every change applies at once.'],
   ['What is Rest?', 'The night-time sound machine, a door in the Journey. The pool fades to dark while a bed plays on (rain, wind, night or fire, or none), for an hour or all night. Phones stop sound when they lock, so Rest keeps the screen awake; plug in for long sessions. The mountain, or the first word, wakes it.'],
-  ['What is Soft View?', 'The gear › Comfort › Soft View: no bursts, no banners, no lightning, a softer buzz, nothing bright above 4 kHz. Still is Reduce motion, and follows the phone. Breathe is the pool’s own breath, at the Pacer’s pace.'],
+  ['What is Soft View?', 'Pause › Game › Soft: no bursts, no banners, no lightning, a softer buzz, nothing bright above 4 kHz. Still is Reduce motion, and follows the phone. Breathe is the pool’s own breath, at the Pacer’s pace.'],
   ['What is Labs?', 'The Journey’s Labs door, in beta: the next science, each experiment a check under the stars. Look up: lift the phone toward the sky and the real stars overhead fill the pool; hold the light on the ringed star to draw a constellation. Chest: in the Pacer, lay the phone flat on your chest, hands off, and after fifteen seconds the dot follows your breath. Heavy: a big sphere follows your finger slowly, as heavy glass would. They read the phone’s own motion sensor, on the phone; nothing is kept or sent.'],
-  ['What is Studio?', 'A door in the Journey: the gear opened as a sandbox. Scene, Weather and Sound as you know them, Depth (how much of the scene is drawn: it steps on each touch), Fresh (every toy back to how SoRen came) and Use this (keeps what you made). Leave without it and nothing is kept.'],
+  ['What is Studio?', 'A door in the Journey: a sandbox. Scene and Weather as you know them, Sound as a full mixer (each sound’s level, in percent), Depth (how much of the scene is drawn: it steps on each touch), Fresh (every toy back to how SoRen came) and Use this (keeps what you made). Leave without it and nothing is kept.'],
   ['Why does it feel this way?', 'Real science, kept simple. The breath starts at five and a half a minute, near where breath and heartbeat fall into step for most people; the green line on Pace is the range the studies used. Glass rings long and wood stops short, because that is how each really sounds. Rain falls at its true speeds, thunder comes three seconds a kilometre after its flash so you can count it, and the sky is the real one: the sun, the moon with its phase, the planets in their colours and the stars stand where they stand right now over 41° north, worked out from the clock, not fetched. Lightning never flashes more than three times a second. Nature sound stays soft: quiet matters as much as the sound. None of it is treatment. It is somewhere to settle.'],
   ['What are the numbers?', 'Breath: 5.5 a minute, the mean where heart rate and breathing fall into step in the research; the green band on Pace is 4.8 to 6.6, the range the studies used. Light: never more than 3 flashes in a second, each flash one glow, never a flicker. Thunder: a rise of at least 50 ms, 3 seconds for every kilometre. Rain: each drop falls at the true speed for its size, and small drops outnumber large ones as they do in the sky. Sound: glass and wood ring for as long as glass and wood do; Tinker’s taps keep a dark timbre, under 1.5 kHz. Haptics: three strengths (0.5, 0.7, 1.0), the buzz first and the sound within 20 ms. Colour: the scene stays low in saturation and lighter than the frame around it; text is meant to be at least 7:1 against its background. The sky: the sun and planets to a tenth of a degree, the moon to a quarter (Meeus); the meteor showers on their nights, streaming from where their radiant stands. Every number is in the code, with its source.'],
   ['Is the sky real?', 'Yes. Where the sun and the moon stand, how much of the moon is lit and how big it looks, which planets and stars are up, which meteor shower is on tonight, and every eclipse are worked out on the phone from the date, the time and where you stand (41° north and your time zone until Live sky is on), the way an almanac does it. The window faces south and is as wide as that day’s arc: the sun’s by day, the moon’s by night. Nothing is sent anywhere.'],
@@ -4171,7 +4292,7 @@ const FAQ = [
   ['Is this a medical tool?', 'No. It is somewhere to settle. If you are struggling, talk to someone you trust or a professional.'],
   ['Which version is this?', `Version ${VERSION}. The physics has been locked since version 34 (${PHYSICS_ID}).`]
 ];
-const askComp = () => framePop({ title: 'Comp mode?', line: 'The line creeps, the wind is wild, glass can break. Leave any time: nothing is lost.', back: 'Back', act: 'Comp', safe: true, go: () => setPref('comp', true) });
+const askComp = (go = () => setPref('comp', true)) => framePop({ title: 'Comp mode?', line: 'The line creeps, the wind is wild, glass can break. Leave any time: nothing is lost.', back: 'Back', act: 'Comp', safe: true, go });   // asked every time; go: now, or from the next game
 // Each card: its name and its rows. Settings live in the frame (80-frame.js); a card is for what is read: the moments, Statistics and Help.
 const CARDS = {
   moment: { get title() { return MOMENT.title; }, moment: true, rows: () => MOMENT.rows.map(r => ({ ...r, kind: 'note' })) },   // see showCard
@@ -4323,7 +4444,9 @@ function bind() {
   });
   document.addEventListener('input', (e) => {
     const tx = e.target.closest('[data-task]'); if (tx) cqTyped(+tx.dataset.task, tx.value);   // Conquer's lines: a letter is heard, the first time
+    if (e.target.matches && e.target.matches('[data-lv]')) sliderInput(e.target, false);   // a slider: the level follows the finger
   });
+  document.addEventListener('change', (e) => { if (e.target.matches && e.target.matches('[data-lv]')) sliderInput(e.target, true); });   // and is kept when it lifts
   // Tinker's maker: a glow picked, the dice, Close, Set it loose
   $('mkCols').addEventListener('click', (e) => { const b = e.target.closest('[data-mk]'); if (!b || !S.tk) return; S.tk.mk = +b.dataset.mk; tkMakerSync(); });
   $('mkDice').addEventListener('click', () => { let w; do w = TK_NAMES[Math.floor(Math.random() * TK_NAMES.length)]; while (w === $('mkName').value); $('mkName').value = w; });
