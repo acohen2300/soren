@@ -1,10 +1,10 @@
 <!doctype html>
 <html lang="en">
 <head>
-<!-- SoRen v80 · physics locked since v34 (12627fd9) -->
+<!-- SoRen v81 · physics locked since v34 (12627fd9) -->
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'self' 'unsafe-inline'; style-src 'unsafe-inline'; img-src 'self' data: blob:; media-src blob: data:; manifest-src 'self'; worker-src 'self'; connect-src 'none'; font-src 'none'; base-uri 'none'; form-action 'none'">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'self' 'unsafe-inline'; style-src 'unsafe-inline'; img-src 'self' data: blob:; media-src blob: data:; manifest-src 'self'; worker-src 'self'; connect-src https://celestrak.org https://ssd-api.jpl.nasa.gov; font-src 'none'; base-uri 'none'; form-action 'none'">
 <title>SoRen · Somewhere to renew</title>
 <meta name="claude:viewport-fit-sides" content="cover">
 <style>
@@ -20,7 +20,7 @@
   color-scheme: dark;
   --u: calc(min(100vw, 460px) / 1206);
   --t1: calc(56 * var(--u)); --t2: calc(45 * var(--u));   /* headers and everything else: the only two sizes */
-  --row: calc(132 * var(--u)); --bar: calc(96 * var(--u)); --cw: calc(1166 * var(--u));   /* a row of tiles, the bar above the pool, the width of everything: named once */
+  --row: calc(132 * var(--u)); --bar: calc(136 * var(--u)); --cw: calc(1166 * var(--u));   /* a row of tiles, the bar above the pool, the width of everything: named once */
   --gap: calc(4 * var(--u)); --gap-x: calc(8 * var(--u));   /* the sky between tiles in a row of words (six hold Weather at 14 px); a little more between the bar's tiles and the context row's icons */
   --bg-bot: #0a0e1e;   /* the page's foot colour: the sky's, set as it changes (the overscroll, the home bar) */
   --ink: rgb(var(--ink-rgb));
@@ -28,7 +28,7 @@
   --tint-1: rgba(0, 0, 0, 0.3); --tint-2: rgba(0, 0, 0, 0.6); --tint-3: rgba(0, 0, 0, 0.9);   /* black over things: three tints */
   --on: 67, 194, 112; --pick: 80, 155, 255; --red: 255, 90, 80; --red-deep: 150, 30, 26; --gold: 255, 200, 90; --ink-rgb: 240, 240, 234; --edge: rgb(64, 66, 70);   /* red on a ring or a sign; red behind or under words is the deep red, 7:1 with off-white */
   --black: rgb(18, 18, 18); --label-rgb: 240, 240, 234; --label: rgb(var(--label-rgb)); --dim: rgb(182, 188, 202);   /* the chrome; the quiet text (the one ink); the one inactive grey */
-  --tile-rgb: 22, 30, 54; --tile: rgba(var(--tile-rgb), 0.15); --tile-sel: rgba(var(--tile-rgb), 0.35); --tile-solid: rgb(22, 30, 54);   /* a tile's glass: navy by day, white frost by night (72-sky.js); the one you are on */
+  --tile: transparent; --tile-sel: rgba(var(--ink-rgb), 0.18); --tile-line: rgb(var(--ink-rgb)); --tile-solid: rgb(22, 30, 54);   /* a tile: clear with a hairline, or tinted with none; each row sets its own from the sky (73-ink.js); the one you are on */
   --sans: -apple-system, BlinkMacSystemFont, system-ui, 'Segoe UI', Inter, sans-serif;
   --r-sm: calc(22 * var(--u)); --r: calc(34 * var(--u));
   --quick: .2s; --sweep: .6s; --settle: 1.2s; --long: 2.4s;   /* the only durations (the opening, the evening warmth and the weather keep their own) */
@@ -88,10 +88,10 @@ body.comp #game { filter: saturate(1.25) contrast(1.05); }
 .cancel { flex: none; padding: 0 calc(10 * var(--u)); font-size: var(--t1); text-decoration: underline; text-underline-offset: calc(6 * var(--u)); color: var(--ink); }
 
 /* ---------- The tiles: every piece of the frame is one, its own glass on the sky ---------- */
-.tile, .frow .cell { border-radius: var(--r-sm); background: var(--tile); }
+.tile, .frow .cell, .bar .cell, .sp { border-radius: var(--r-sm); background: var(--tile); border: 1px solid var(--tile-line); transition: color var(--long), border-color var(--long); }   /* the score is a tile like the rest of the bar */
 .frow .cell.sel, .bar .cell.sel { background: var(--tile-sel); }   /* the one you are on: the same glass, deeper */
 .frow .cell.on::after { content: ''; position: absolute; top: calc(14 * var(--u)); right: calc(14 * var(--u)); width: calc(28 * var(--u)); height: calc(15 * var(--u)); border: solid rgb(var(--on)); border-width: 0 0 calc(6 * var(--u)) calc(6 * var(--u)); transform: rotate(-45deg); filter: drop-shadow(0 0 calc(6 * var(--u)) rgba(var(--on), 0.9)); }   /* on, or the door you are in: a green check at the corner, glowing */
-@media (prefers-reduced-transparency: reduce) { :root { --tile: var(--tile-solid); --tile-sel: var(--tile-solid); } }   /* the phone's Reduce Transparency: the glass goes solid */
+@media (prefers-reduced-transparency: reduce) { :root { --tile: var(--tile-solid); --tile-sel: var(--tile-solid); } }   /* the phone's Reduce Transparency: the glass goes solid (73-ink.js keeps it so, white ink on navy) */
 
 /* The bar above the pool: home, the gear, the sound, then the word tile (the mode's three words: Merge | Zen | Winter, each a
    touch; in the Journey its word or the door's; while the gear is on, where you are and the value; a warning, with its countdown),
@@ -99,13 +99,13 @@ body.comp #game { filter: saturate(1.25) contrast(1.05); }
 .bar { flex: none; position: relative; height: var(--bar); display: flex; align-items: stretch; gap: var(--gap-x); }
 .bar .cell { flex: none; width: var(--bar); } .bar .ic { top: 50%; width: calc(48 * var(--u)); height: calc(48 * var(--u)); } .bar .ic::after { display: none; } .bar .ic svg { stroke-width: calc(3.6 * var(--u)); }
 .word { flex: 1 1 0; min-width: 0; display: flex; align-items: stretch; overflow: hidden; }
-.word .seg { flex: 1 1 0; min-width: 0; height: 100%; position: relative; display: grid; place-items: center; color: var(--ink); font-size: var(--t2); font-weight: 500; white-space: nowrap; padding: 0 calc(6 * var(--u)); border-radius: 0; }
+.word .seg { flex: 1 1 0; min-width: 0; height: 100%; position: relative; display: grid; place-items: center; color: var(--ink); font-size: var(--t2); font-weight: 500; white-space: nowrap; padding: 0 calc(3 * var(--u)); border-radius: 0; }
 .word .seg + .seg::before { content: ''; position: absolute; left: 0; top: 50%; height: calc(44 * var(--u)); width: 1px; transform: translateY(-50%); background: rgba(var(--ink-rgb), 0.5); }   /* thin lines between the three words, never the full height */
 .word .one, .word .path { flex: 1; display: flex; align-items: center; justify-content: center; gap: calc(10 * var(--u)); padding: 0 calc(16 * var(--u)); font-size: var(--t2); font-weight: 500; white-space: nowrap; overflow: hidden; color: var(--ink); }
 .word .one { font-weight: 600; }
 .path .w { flex: none; font-weight: 600; } .path .dot { flex: none; font-weight: 400; color: var(--label); } .path .v { min-width: 0; overflow: hidden; text-overflow: ellipsis; font-weight: 500; }
 .path .v.lv { color: rgb(186, 244, 212); }   /* a value as you move it: the one green word */
-.sp { flex: none; display: flex; align-items: center; gap: calc(18 * var(--u)); padding: 0 calc(6 * var(--u)) 0 calc(4 * var(--u)); font-weight: 600; font-size: var(--t2); color: var(--ink); white-space: nowrap; }   /* the score and the time: no box */
+.sp { flex: none; display: flex; align-items: center; justify-content: center; min-width: calc(88 * var(--u)); padding: 0 calc(6 * var(--u)); font-weight: 600; font-size: var(--t2); color: var(--ink); white-space: nowrap; }   /* the score and the time: no box */
 .sp:empty { display: none; } .sp #scoreVal:empty { display: none; }
 .word .hz { flex: 1; min-width: 0; display: flex; align-items: center; gap: calc(12 * var(--u)); padding: 0 calc(12 * var(--u)); }
 .hz .tri { flex: none; width: calc(44 * var(--u)); height: calc(44 * var(--u)); overflow: visible; }   /* the warning sign: a white triangle, its "!" cut out in red */
@@ -114,8 +114,8 @@ body.comp #game { filter: saturate(1.25) contrast(1.05); }
 .hz b, .hz i { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-size: var(--t2); color: rgb(var(--ink-rgb)); } .hz b { font-weight: 700; } .hz i { font-weight: 400; font-style: normal; }
 .hz .cd { flex: none; width: calc(72 * var(--u)); height: calc(72 * var(--u)); display: grid; place-items: center; border-radius: 50%; background: rgb(var(--ink-rgb)); color: rgb(var(--red-deep)); font-weight: 700; font-size: var(--t1); }
 .word.warn { box-shadow: inset 0 0 0 calc(3 * var(--u)) rgb(var(--red)); }
-.word.comp { background: rgb(var(--red-deep)); }
-.compw { flex: 1; display: inline-flex; align-items: center; justify-content: center; color: rgb(var(--ink-rgb)); font-weight: 700; font-style: italic; font-size: var(--t2); white-space: nowrap; }
+.word.comp { background: rgb(var(--red-deep)); border-color: transparent; }   /* its own ground, deep red: white on it, 7:1+, whatever the row's ink */
+.compw { flex: 1; display: inline-flex; align-items: center; justify-content: center; color: #fff; font-weight: 700; font-style: italic; font-size: var(--t2); white-space: nowrap; }
 .word .comp-sub { flex: 1; display: flex; align-items: center; justify-content: center; gap: calc(16 * var(--u)); }
 
 /* The pool: liquid glass, one fixed outline, as large as the space allows at its own shape. Its breathing edge is drawn on the canvas. */
@@ -127,7 +127,7 @@ body.comp #game { filter: saturate(1.25) contrast(1.05); }
 #bannerTitle { font-weight: 700; font-style: italic; font-size: var(--t1); line-height: 1.1; text-shadow: 0 calc(3 * var(--u)) calc(14 * var(--u)) var(--tint-3); text-wrap: balance; }
 #bannerSub { padding: 3px 11px; border-radius: 10px; background: var(--tint-2); border: 1px solid var(--chip-line); font-size: var(--t2); text-wrap: balance; } #bannerSub:empty { display: none; }
 /* The opening's name: light italic, in the circle's centre, its ink alone; it fades in with the circle. */
-.soren { position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%); opacity: 0; pointer-events: none; font: italic 300 calc(88 * var(--u))/1 var(--sans); color: var(--ink); white-space: nowrap; }
+.soren { position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%); opacity: 0; pointer-events: none; font: italic 300 calc(88 * var(--u))/1 var(--sans); color: var(--ink-circle, var(--ink)); white-space: nowrap; transition: color var(--long); }
 body.intro-in .soren { opacity: 1; transition: opacity var(--long) cubic-bezier(0.4, 0, 0.2, 1); } body.intro-quick.intro-in .soren { transition-duration: var(--quick); }
 
 /* The card: for what is read (a moment, Statistics, Help), one frame at one size over the pool. Its pill names it. Rows of 132:
@@ -164,7 +164,7 @@ body:has(#mc:not([hidden])) #line { visibility: hidden; }   /* the card covers t
 /* The opening: only the circle and the two doors. Rest: the frame sinks. */
 body.intro #line, body.intro #tileBar { opacity: 0; pointer-events: none; } body.intro .pool { box-shadow: none; }
 body.intro #ctxBar { opacity: 0; pointer-events: none; } body.intro-in #ctxBar { opacity: 1; pointer-events: auto; transition: opacity var(--long) cubic-bezier(0.4, 0, 0.2, 1); } body.intro-quick.intro-in #ctxBar { transition-duration: var(--quick); }
-body.intro #ctxBar { justify-content: center; } body.intro #ctxBar .cell { flex: 0 0 calc(388 * var(--u)); }   /* the door: two tiles under the circle, never over it */
+body.intro #ctxBar { justify-content: center; align-items: flex-end; } body.intro #ctxBar .cell { flex: 0 0 calc(260 * var(--u)); height: calc(186 * var(--u)); }   /* the door: two tiles, 84 x 60, standing a little taller than the row */
 body.rest .rows-wrap, body.rest .bar { opacity: 0.22; transition: opacity var(--sweep); } body.rest .rows-wrap:active, body.rest .rows-wrap:focus-within, body.rest .bar:active, body.rest.framed .rows-wrap, body.rest.framed .bar { opacity: 0.8; } body.rest .pool { box-shadow: none; }
 body.rest.carded .rows-wrap, body.rest.carded .bar { opacity: 1; }
 .warm { position: fixed; inset: 0; z-index: 100; pointer-events: none; background: rgb(255, 150, 60); mix-blend-mode: multiply; opacity: 0; transition: opacity 6s; }
@@ -435,7 +435,7 @@ const hexes = (s = '') => s.split(' ').filter(Boolean).map(h => '#' + h);
 for (const [key, p] of Object.entries(PLACES)) {   // what each record works out to, once
   const top = hex(p.color), a = hex(p.accent), [far0, cap, mid0, near0, tree0, trunk0] = hexes(p.land), el = Object.fromEntries((p.el || '').split(' ').filter(Boolean).map(e => { const [k, v] = e.split(':'); return [k, v ? +v : 1]; }));
   const L = (h, layer) => (h ? lawHex(h, layer) : h), far = L(far0, 'far'), mid = L(mid0, 'mid'), near = L(near0, 'near'), tree = L(tree0, 'tree'), trunk = L(trunk0, 'tree');   // each layer's colour brought inside the law: lighter far, darker near, never saturated (indoors and in orbit there is no land)
-  Object.assign(p, { key, far, cap, mid, near, tree, trunk, el, wings: hexes(p.wings).map(h => lawHex(h, 'accent')), strike: p.strike || STRIKE,
+  Object.assign(p, { key, far, cap: L(cap, 'accent'), mid, near, tree, trunk, el,   // the snow caps are a highlight: the accent law (the one that lets a thing be bright), not the far layer's wings: hexes(p.wings).map(h => lawHex(h, 'accent')), strike: p.strike || STRIKE,
     indoor: p.back === 'tray', space: p.back === 'space', dry: p.back === 'tray' || p.back === 'space', glass: p.back === 'tray', snow: p.ground === 'snow', grass: p.ground === 'meadow' || p.ground === 'field',
     accentSoft: rgba(a, 0.22),
     deepRGB: near0 ? law(mix(law(hex(near0), 'near'), [0, 0, 0], 0.3), 'near') : mix(top, [0, 0, 0], 0.4), edgeRGB: hex(p.edge || p.accent), glow: p.glow || '240,246,255', mist: el.mist || 0,
@@ -457,7 +457,7 @@ const compile = (key) => ({ ...PLACES[key], start: ARCS[PLACES[key].arc] ? ARCS[
 // arithmetic from the clock and the place, never by hand. Every formula is from Meeus, Astronomical Algorithms (2nd ed.), or JPL,
 // cited at its line. Positions are good to about a tenth of a degree for the sun and planets and a quarter degree for the moon:
 // what an eye can check against a window. Left out on purpose (they change nothing you can see on a phone): refraction, nutation
-// beyond the mean obliquity, the moon's libration, eclipses. Where you stand: 41° north and the longitude of your time zone until
+// beyond the mean obliquity, the moon's libration. Where you stand: 41° north and the longitude of your time zone until
 // the app is native and may ask for your location (an exception you can switch off). Nothing here reaches the network.
 const OBS = { lat: 41, lon: -new Date(new Date().getFullYear(), 0, 1).getTimezoneOffset() / 4 };   // degrees; the zone's meridian (15° an hour), east positive
 const RAD = Math.PI / 180, AU_KM = 149597870.7;
@@ -566,12 +566,211 @@ function showerAt(d) {   // the shower active tonight, if any, with its strength
 // refresh is an exception you can switch on, beside location. An empty list is honest; a stale one is not drawn.
 const PERISHABLE = { asOf: '2026-10-24', fresh: 30, comets: [], satellites: [] };   // comets: [name, q (AU), e, i, ω, Ω, T (JD of perihelion), H, n]; satellites need SGP4 and are parked until native (see PARKED.md)
 const perishableFresh = (d = new Date()) => (d - new Date(PERISHABLE.asOf)) / 86400000 <= PERISHABLE.fresh;
+// The window (Albert, Oct 25): facing south, as wide as that day's arc, the sun's from rise to set by day and the moon's over the night,
+// sliding from one to the other through twilight (never narrower than 100°, with 6° to spare at each end). Its height is fixed and
+// true (the horizon at 86% of the page, 80° at the top), so a winter sun sits low and a June sun rides high, as it does.
+const SKY_ARCS = {};
+function dayArc(d) {   // that day's arcs, walked at four-minute steps and kept: the sun's over the day, the moon's over the night that follows
+  const k = `${d.getFullYear()}-${d.getMonth()}-${d.getDate()}`; if (SKY_ARCS[k]) return SKY_ARCS[k];
+  const t0 = new Date(d.getFullYear(), d.getMonth(), d.getDate()), at = (m) => { const jd = julian(new Date(t0.getTime() + m * 60000)), lst = lstOf(jd); return { s: altAzOf(sunAt(jd).ra, sunAt(jd).dec, lst), m: altAzOf(moonAt(jd).ra, moonAt(jd).dec, lst) }; };
+  let sun = null, moon = null, set = 1440;
+  for (let m = 0; m <= 1440; m += 4) { const { s } = at(m); if (s[0] > -0.833) { if (!sun) sun = [s[1], s[1]]; sun[1] = s[1]; set = m; } }
+  for (let m = set; m <= set + 1440; m += 4) { const { s, m: mo } = at(m); if (m > set + 60 && s[0] > -0.833) break; if (mo[0] > 0) { if (!moon) moon = [mo[1], mo[1]]; moon[1] = mo[1]; } }
+  return (SKY_ARCS[k] = { sun: sun || [90, 270], moon });
+}
+function skyWindow(sky, d) {   // [the bearing at the left edge, at the right edge]
+  const a = dayArc(d), w = clamp((sky.sun.alt + 12) / 12, 0, 1), S = a.sun, M = a.moon || [90, 270], lo = Math.min, hi = Math.max;
+  const az0 = lo(M[0], M[1]) * (1 - w) + lo(S[0], S[1]) * w - 6, az1 = hi(M[0], M[1]) * (1 - w) + hi(S[0], S[1]) * w + 6, mid = (az0 + az1) / 2, half = Math.max(50, (az1 - az0) / 2);
+  return [mid - half, mid + half];
+}
+// The moon's own almanac: its size by its true distance; a supermoon (a full moon within 90% of its closest approach, NASA's
+// line: 360,000 km) or a micromoon (beyond 405,000 km); the full moons found by walking the phase (Meeus 49 by bisection on the
+// elongation), the Harvest Moon the one nearest the September equinox (the sun's longitude crossing 180°, Meeus 27), the Hunter's
+// Moon the next, a Blue Moon the second full moon of a calendar month; the folklore names by month (the Farmers' Almanac).
+const MOON_MEAN = 384400, MOON_NAMES = ['Wolf', 'Snow', 'Worm', 'Pink', 'Flower', 'Strawberry', 'Buck', 'Sturgeon', 'Corn', 'Hunter’s', 'Beaver', 'Cold'];
+const elong = (jd) => norm360(moonAt(jd).lon - sunAt(jd).lon);   // the moon's elongation from the sun along the ecliptic: 0 new, 180 full
+function fullMoons(y) {   // the full moons of a year, as dates, to about a minute
+  const out = []; let jd = julian(new Date(y, 0, 1)) - 1, prev = elong(jd);
+  for (let i = 0; i < 400; i++) { const j2 = jd + 1, e = elong(j2); if (prev < 180 && e >= 180) { let a = jd, b = j2; for (let n = 0; n < 24; n++) { const m = (a + b) / 2; if (elong(m) < 180) a = m; else b = m; } out.push(new Date(((a + b) / 2 - 2440587.5) * 86400000)); } prev = e; jd = j2; if (jd > julian(new Date(y + 1, 0, 1))) break; }
+  return out.filter(x => x.getFullYear() === y);
+}
+function equinoxSep(y) {   // the September equinox: the sun's apparent longitude reaching 180°
+  let a = julian(new Date(y, 8, 15)), b = julian(new Date(y, 8, 30)); for (let n = 0; n < 30; n++) { const m = (a + b) / 2; if (sunAt(m).lon < 180) a = m; else b = m; } return new Date(((a + b) / 2 - 2440587.5) * 86400000);
+}
+function moonNames(d = new Date()) {   // the names a full moon carries this month, and the next full moon
+  const y = d.getFullYear(), fulls = fullMoons(y), eq = equinoxSep(y), harvest = fulls.reduce((p, f) => (Math.abs(f - eq) < Math.abs(p - eq) ? f : p)), hunter = fulls.find(f => f > harvest);
+  const inMonth = fulls.filter(f => f.getMonth() === d.getMonth()), next = fulls.find(f => f >= d) || fullMoons(y + 1)[0];
+  const names = (f) => { const n = []; if (+f === +harvest) n.push('Harvest'); else if (+f === +hunter) n.push('Hunter’s'); else n.push(MOON_NAMES[f.getMonth()]); if (inMonth.length > 1 && f === inMonth[1]) n.push('Blue'); return n; };
+  return { next, names: names(next), harvest, hunter };
+}
+const moonSize = (moon) => ({ scale: MOON_MEAN / moon.dist, super: moon.dist <= 360000, micro: moon.dist >= 405000 });   // the disc's size against the mean, and the two names
+// Eclipses (Meeus 54, by geometry rather than the Besselian elements: the same answer to a few minutes, from the positions we have).
+// Lunar: the moon in the Earth's shadow at the antisolar point; the umbra's radius from the moon's and the sun's parallax and the
+// sun's semidiameter, widened by 2% for the atmosphere (Danjon). Solar: the moon over the sun as seen from where you stand, so the
+// moon is moved by its parallax first (Meeus 40); its magnitude is the part of the sun's diameter covered.
+const sep = (a, b) => Math.acos(clamp(sinD(a.dec) * sinD(b.dec) + cosD(a.dec) * cosD(b.dec) * cosD((a.ra - b.ra) * 15), -1, 1)) / RAD;   // degrees between two things in the sky
+function lunarEclipse(sun, moon) {   // { kind: 'total' | 'partial' | 'penumbral', mag, umbra (its radius against the moon's), dx, dy (the shadow's centre from the moon's, in moon radii, page-wise: east, up) }
+  const pm = Math.asin(6378.14 / moon.dist) / RAD, ps = 8.794 / 3600 / sun.R, ss = 0.26667 / sun.R, sm = Math.asin(1737.4 / moon.dist) / RAD;
+  const umbra = 1.02 * (0.99834 * pm - ss + ps), penumbra = 1.02 * (0.99834 * pm + ss + ps), anti = { ra: (sun.ra + 12) % 24, dec: -sun.dec }, dist = sep(moon, anti);
+  if (dist > penumbra + sm) return null;
+  const mag = (umbra + sm - dist) / (2 * sm), kind = mag >= 1 ? 'total' : mag > 0 ? 'partial' : 'penumbral';
+  const dra = ((anti.ra - moon.ra + 36) % 24 - 12) * 15 * cosD(moon.dec), ddec = anti.dec - moon.dec;   // where the shadow's centre lies from the moon, degrees
+  return { kind, mag: Math.max(0, mag), umbra: umbra / sm, penumbra: penumbra / sm, dx: dra / sm, dy: ddec / sm };
+}
+function topoMoon(moon, lst, lat = OBS.lat) {   // the moon as seen from the ground, not the Earth's centre: Meeus 40, a sphere
+  const pm = Math.asin(6378.14 / moon.dist), H = (lst - moon.ra) * 15, rs = sinD(lat), rc = cosD(lat);
+  const dra = Math.atan2(-rc * Math.sin(pm) * sinD(H), cosD(moon.dec) - rc * Math.sin(pm) * cosD(H)) / RAD, dec = Math.atan2((sinD(moon.dec) - rs * Math.sin(pm)) * Math.cos(dra * RAD), cosD(moon.dec) - rc * Math.sin(pm) * cosD(H)) / RAD;
+  return { ...moon, ra: moon.ra + dra / 15, dec };
+}
+function solarEclipse(sun, moon, lst) {   // { kind: 'total' | 'annular' | 'partial', mag (of the sun's diameter), dx, dy (the moon's centre from the sun's, in sun radii) }
+  const tm = topoMoon(moon, lst), ss = 0.26667 / sun.R, sm = Math.asin(1737.4 / moon.dist) / RAD, d = sep(sun, tm);
+  if (d > ss + sm) return null;
+  const mag = (ss + sm - d) / (2 * ss), kind = mag < 0.97 ? 'partial' : sm < ss ? 'annular' : 'total';   // the moon is known to a quarter degree, the sun's disc is half a degree: near-complete cover is called total
+  const dra = ((tm.ra - sun.ra + 36) % 24 - 12) * 15 * cosD(sun.dec), ddec = tm.dec - sun.dec;
+  return { kind, mag: Math.min(mag, 1), ratio: sm / ss, dx: dra / ss, dy: ddec / ss };
+}
 // The sky now: everything placed for one moment, facing south (bearing 180 is straight ahead; east is left, west is right).
 function skyAt(d = new Date()) {
   const jd = julian(d), lst = lstOf(jd), sun = sunAt(jd), moon = moonAt(jd), phase = moonPhase(sun, moon), ps = planetsAt(jd);
   const place = (o) => { const [alt, az] = altAzOf(o.ra, o.dec, lst); return { ...o, alt, az }; };
   const sh = showerAt(d), radiant = sh ? place({ ra: sh.ra, dec: sh.dec }) : null;
-  return { jd, lst, sun: place(sun), moon: { ...place(moon), ...phase }, planets: ps.map(place), shower: sh ? { ...sh, alt: radiant.alt, az: radiant.az } : null };
+  return { jd, lst, sun: place(sun), moon: { ...place(moon), ...phase, ...moonSize(moon) }, planets: ps.map(place), shower: sh ? { ...sh, alt: radiant.alt, az: radiant.az } : null, lunar: lunarEclipse(sun, moon), solar: solarEclipse(sun, moon, lst) };
+}
+/* ---------- Live sky: where you stand, the satellites and the comets, from the phone and two public lists (v81) ---------- */
+// One switch, Live sky (Albert, Oct 25), each part an exception logged in EXCEPTIONS.md:
+//   where you stand: the phone's own location, kept in memory only, never stored or sent; the sky model (25-sky-model.js) reads it;
+//   satellites and the ISS: CelesTrak's public list of the bright ones (orbital elements, "TLEs"), fetched once every two days and
+//     kept in storage for when there is no signal, flown here with SGP4 (Vallado's near-earth model, as in Spacetrack Report #3);
+//   comets: JPL's small-body database, the comets near perihelion this year, fetched every two weeks, flown by their orbits.
+// Off: none of this runs and nothing reaches the network, as before. Nothing about the user is kept by SoRen.
+const LSKY = { on: false, pos: null, sats: [], comets: [], asked: false, err: null };
+const LIVE_URL = {
+  tle: 'https://celestrak.org/NORAD/elements/gp.php?GROUP=visual&FORMAT=tle',   // the hundred-odd satellites bright enough to see
+  comets: 'https://ssd-api.jpl.nasa.gov/sbdb_query.api?fields=full_name,e,q,i,om,w,tp,M1,K1&sb-kind=c&sb-xfrag=1&sb-cdata=' + encodeURIComponent('{"AND":["q|LT|2.5","M1|LT|12"]}')
+};
+const LIVE_KEEP = { tle: 2, comets: 14 };   // days a list is trusted
+function liveStart() {   // the switch went on (or the app opened with it on): ask the phone where we are, and freshen the lists
+  LSKY.on = true;
+  if (navigator.geolocation && !LSKY.pos) navigator.geolocation.getCurrentPosition((p) => { LSKY.pos = [p.coords.latitude, p.coords.longitude]; OBS.lat = LSKY.pos[0]; OBS.lon = LSKY.pos[1]; PSKY.key = ''; skyRefresh(); }, () => { LSKY.err = 'place'; }, { maximumAge: 3600000, timeout: 15000 });
+  liveFetch('tle', (t) => { LSKY.sats = tleParse(t).map(sgp4Init).filter(Boolean); }); liveFetch('comets', (t) => { LSKY.comets = cometParse(t); });
+}
+function liveStop() { LSKY.on = false; LSKY.pos = null; OBS.lat = 41; OBS.lon = -new Date(new Date().getFullYear(), 0, 1).getTimezoneOffset() / 4; LSKY.sats = []; LSKY.comets = []; PSKY.key = ''; skyRefresh(); }
+function skyRefresh() { if (typeof updateSky === 'function' && PSKY.cv) { PSKY.at = 0; updateSky(true); } }
+function liveFetch(kind, use) {   // a public list, from storage while fresh, from the network otherwise; the network failing is not an error, only an older sky
+  const key = `soren.live.${kind}`, had = loadJSON(key);
+  if (had && had.at && (Date.now() - had.at) / 86400000 < LIVE_KEEP[kind] && had.text) { use(had.text); return; }
+  if (!LSKY.on) return;
+  fetch(LIVE_URL[kind], { cache: 'no-store' }).then(r => (r.ok ? r.text() : Promise.reject(r.status))).then((text) => { try { localStorage.setItem(key, JSON.stringify({ at: Date.now(), text })); } catch (e) {} use(text); PSKY.key = ''; }).catch(() => { if (had && had.text) use(had.text); });
+}
+// Two-line elements, as CelesTrak writes them (three lines each: the name, then lines 1 and 2).
+function tleParse(text) {
+  const L = text.split('\n').map(s => s.trimEnd()).filter(Boolean), out = [];
+  for (let i = 0; i + 2 < L.length + 1; i++) { if (L[i][0] === '1' && L[i + 1] && L[i + 1][0] === '2' && L[i].length >= 69) { out.push({ name: (i ? L[i - 1] : '').trim(), l1: L[i], l2: L[i + 1] }); i++; } }
+  return out;
+}
+// SGP4, the near-earth model (Vallado et al. 2006, "Revisiting Spacetrack Report #3"), WGS-72 as the lists assume. Enough for
+// everything you can see with your eyes, which is all low: the ISS and the bright ones. Deep-space objects (a period over 225
+// minutes) are left out. Checked against the report's test case (gate).
+const SGP = { ke: 0.0743669161, j2: 0.001082616, j3: -0.00000253881, j4: -0.00000165597, re: 6378.135, min: 1440 / (2 * Math.PI) };
+function sgp4Init(t) {
+  const l1 = t.l1, l2 = t.l2, f = (s, a, b) => parseFloat(s.slice(a, b)), exp = (s) => { const m = s.trim().match(/^([+-]?)(\d+)([+-]\d+)$/); return m ? parseFloat(m[1] + '0.' + m[2]) * Math.pow(10, +m[3]) : 0; }, tp = 2 * Math.PI;
+  const yr = +l1.slice(18, 20), doy = f(l1, 20, 32), bstar = exp(l1.slice(53, 61)), inclo = f(l2, 8, 16) * RAD, nodeo = f(l2, 17, 25) * RAD, ecco = parseFloat('0.' + l2.slice(26, 33)), argpo = f(l2, 34, 42) * RAD, mo = f(l2, 43, 51) * RAD, no = f(l2, 52, 63) / SGP.min;
+  const epoch = Date.UTC(yr < 57 ? 2000 + yr : 1900 + yr, 0, 1) + (doy - 1) * 86400000;
+  if (no <= 0 || ecco >= 1 || ecco < 0) return null;
+  // the mean elements recovered from the Kozai mean motion (initl)
+  const cosio = Math.cos(inclo), cosio2 = cosio * cosio, eccsq = ecco * ecco, omeosq = 1 - eccsq, rteosq = Math.sqrt(omeosq), x3thm1 = 3 * cosio2 - 1;
+  const ak = Math.pow(SGP.ke / no, 2 / 3), d1 = 0.75 * SGP.j2 * x3thm1 / (rteosq * omeosq), del = d1 / (ak * ak), adel = ak * (1 - del * del - del * (1 / 3 + 134 * del * del / 81));
+  const del2 = d1 / (adel * adel), no_unkozai = no / (1 + del2);
+  const ao = Math.pow(SGP.ke / no_unkozai, 2 / 3), sinio = Math.sin(inclo), po = ao * omeosq, con42 = 1 - 5 * cosio2, con41 = -con42 - cosio2 - cosio2, posq = po * po, rp = ao * (1 - ecco);
+  if (tp / no_unkozai >= 225) return null;   // deep space: not ours
+  const s = { name: t.name, epoch, bstar, inclo, nodeo, ecco, argpo, mo, no: no_unkozai, method: 'n' };
+  let sfour = 78 / SGP.re + 1, qzms24 = Math.pow((120 - 78) / SGP.re, 4); const perige = (rp - 1) * SGP.re;
+  if (perige < 156) { sfour = perige - 78; if (perige < 98) sfour = 20; qzms24 = Math.pow((120 - sfour) / SGP.re, 4); sfour = sfour / SGP.re + 1; }
+  const pinvsq = 1 / posq, tsi = 1 / (ao - sfour), eta = ao * ecco * tsi, etasq = eta * eta, eeta = ecco * eta, psisq = Math.abs(1 - etasq), coef = qzms24 * Math.pow(tsi, 4), coef1 = coef / Math.pow(psisq, 3.5);
+  const cc2 = coef1 * no_unkozai * (ao * (1 + 1.5 * etasq + eeta * (4 + etasq)) + 0.375 * SGP.j2 * tsi / psisq * con41 * (8 + 3 * etasq * (8 + etasq)));
+  s.cc1 = bstar * cc2; let cc3 = 0; if (ecco > 1e-4) cc3 = -2 * coef * tsi * (SGP.j3 / SGP.j2) * no_unkozai * sinio / ecco;
+  s.x1mth2 = 1 - cosio2; s.cc4 = 2 * no_unkozai * coef1 * ao * omeosq * (eta * (2 + 0.5 * etasq) + ecco * (0.5 + 2 * etasq) - SGP.j2 * tsi / (ao * psisq) * (-3 * con41 * (1 - 2 * eeta + etasq * (1.5 - 0.5 * eeta)) + 0.75 * s.x1mth2 * (2 * etasq - eeta * (1 + etasq)) * Math.cos(2 * argpo)));
+  s.cc5 = 2 * coef1 * ao * omeosq * (1 + 2.75 * (etasq + eeta) + eeta * etasq);
+  const cosio4 = cosio2 * cosio2, temp1 = 1.5 * SGP.j2 * pinvsq * no_unkozai, temp2 = 0.5 * temp1 * SGP.j2 * pinvsq, temp3 = -0.46875 * SGP.j4 * pinvsq * pinvsq * no_unkozai;
+  s.mdot = no_unkozai + 0.5 * temp1 * rteosq * con41 + 0.0625 * temp2 * rteosq * (13 - 78 * cosio2 + 137 * cosio4);
+  s.argpdot = -0.5 * temp1 * con42 + 0.0625 * temp2 * (7 - 114 * cosio2 + 395 * cosio4) + temp3 * (3 - 36 * cosio2 + 49 * cosio4);
+  const xhdot1 = -temp1 * cosio; s.nodedot = xhdot1 + (0.5 * temp2 * (4 - 19 * cosio2) + 2 * temp3 * (3 - 7 * cosio2)) * cosio;
+  s.omgcof = bstar * cc3 * Math.cos(argpo); s.xmcof = 0; if (ecco > 1e-4) s.xmcof = -2 / 3 * coef * bstar / eeta;
+  s.nodecf = 3.5 * omeosq * xhdot1 * s.cc1; s.t2cof = 1.5 * s.cc1; s.xlcof = Math.abs(cosio + 1) > 1.5e-12 ? -0.25 * (SGP.j3 / SGP.j2) * sinio * (3 + 5 * cosio) / (1 + cosio) : -0.25 * (SGP.j3 / SGP.j2) * sinio * (3 + 5 * cosio) / 1.5e-12;
+  s.aycof = -0.5 * (SGP.j3 / SGP.j2) * sinio; s.delmo = Math.pow(1 + eta * Math.cos(mo), 3); s.sinmao = Math.sin(mo); s.x7thm1 = 7 * cosio2 - 1;
+  s.isimp = (rp < 220 / SGP.re + 1); s.con41 = con41; s.eta = eta; s.ao = ao; s.cosio = cosio; s.sinio = sinio;
+  if (!s.isimp) { const cc1sq = s.cc1 * s.cc1; s.d2 = 4 * ao * tsi * cc1sq; const temp = s.d2 * tsi * s.cc1 / 3; s.d3 = (17 * ao + sfour) * temp; s.d4 = 0.5 * temp * ao * tsi * (221 * ao + 31 * sfour) * s.cc1; s.t3cof = s.d2 + 2 * cc1sq; s.t4cof = 0.25 * (3 * s.d3 + s.cc1 * (12 * s.d2 + 10 * cc1sq)); s.t5cof = 0.2 * (3 * s.d4 + 12 * s.cc1 * s.d3 + 6 * s.d2 * s.d2 + 15 * cc1sq * (2 * s.d2 + cc1sq)); }
+  else { s.d2 = s.d3 = s.d4 = s.t3cof = s.t4cof = s.t5cof = 0; }
+  return s;
+}
+function sgp4(s, date) {   // the satellite's place in the sky's frame (ECI, km) `tsince` minutes after its epoch; null when it has decayed
+  const tsince = (date.getTime() - s.epoch) / 60000, tp = 2 * Math.PI;
+  const xmdf = s.mo + s.mdot * tsince, argpdf = s.argpo + s.argpdot * tsince, nodedf = s.nodeo + s.nodedot * tsince, t2 = tsince * tsince;
+  let nodem = nodedf + s.nodecf * t2, tempa = 1 - s.cc1 * tsince, tempe = s.bstar * s.cc4 * tsince, templ = s.t2cof * t2, argpm = argpdf, mm = xmdf;
+  if (!s.isimp) { const delomg = s.omgcof * tsince, delm = s.xmcof * (Math.pow(1 + s.eta * Math.cos(xmdf), 3) - s.delmo), temp = delomg + delm; mm = xmdf + temp; argpm = argpdf - temp; const t3 = t2 * tsince, t4 = t3 * tsince; tempa = tempa - s.d2 * t2 - s.d3 * t3 - s.d4 * t4; tempe = tempe + s.bstar * s.cc5 * (Math.sin(mm) - s.sinmao); templ = templ + s.t3cof * t3 + t4 * (s.t4cof + tsince * s.t5cof); }
+  const nm = s.no; let em = s.ecco, inclm = s.inclo; const am = Math.pow(SGP.ke / nm, 2 / 3) * tempa * tempa; em = em - tempe;
+  if (em >= 1 || em < -0.001 || am < 0.95) return null;
+  if (em < 1e-6) em = 1e-6;
+  mm = mm + s.no * templ; const xlm = mm + argpm + nodem; nodem = nodem % tp; argpm = argpm % tp; mm = ((xlm - argpm - nodem) % tp + tp) % tp;
+  const sinim = Math.sin(inclm), cosim = Math.cos(inclm), ep = em, xincp = inclm, argpp = argpm, nodep = nodem, mp = mm;
+  const axnl = ep * Math.cos(argpp), temp = 1 / (am * (1 - ep * ep)), aynl = ep * Math.sin(argpp) + temp * s.aycof, xl = mp + argpp + nodep + temp * s.xlcof * axnl;
+  let u = ((xl - nodep) % tp + tp) % tp, eo1 = u, tem5 = 9999.9, sineo1 = 0, coseo1 = 0;
+  for (let k = 0; k < 10 && Math.abs(tem5) >= 1e-12; k++) { sineo1 = Math.sin(eo1); coseo1 = Math.cos(eo1); tem5 = 1 - coseo1 * axnl - sineo1 * aynl; tem5 = (u - aynl * coseo1 + axnl * sineo1 - eo1) / tem5; if (Math.abs(tem5) >= 0.95) tem5 = tem5 > 0 ? 0.95 : -0.95; eo1 += tem5; }
+  const ecose = axnl * coseo1 + aynl * sineo1, esine = axnl * sineo1 - aynl * coseo1, el2 = axnl * axnl + aynl * aynl, pl = am * (1 - el2);
+  if (pl < 0) return null;
+  const rl = am * (1 - ecose), rdotl = Math.sqrt(am) * esine / rl, rvdotl = Math.sqrt(pl) / rl, betal = Math.sqrt(1 - el2), temp0 = esine / (1 + betal);
+  const sinu = am / rl * (sineo1 - aynl - axnl * temp0), cosu = am / rl * (coseo1 - axnl + aynl * temp0), su0 = Math.atan2(sinu, cosu), sin2u = (cosu + cosu) * sinu, cos2u = 1 - 2 * sinu * sinu;
+  const temp1 = 1 / pl, temp2 = 0.5 * SGP.j2 * temp1, temp3 = temp2 * temp1;
+  const mrt = rl * (1 - 1.5 * temp3 * betal * s.con41) + 0.5 * temp2 * s.x1mth2 * cos2u, su = su0 - 0.25 * temp3 * s.x7thm1 * sin2u, xnode = nodep + 1.5 * temp3 * cosim * sin2u, xinc = xincp + 1.5 * temp3 * cosim * sinim * cos2u;
+  const mvt = rdotl - nm * temp2 * s.x1mth2 * sin2u / SGP.ke, rvdot = rvdotl + nm * temp2 * (s.x1mth2 * cos2u + 1.5 * s.con41) / SGP.ke;
+  const sinsu = Math.sin(su), cossu = Math.cos(su), snod = Math.sin(xnode), cnod = Math.cos(xnode), sini = Math.sin(xinc), cosi = Math.cos(xinc);
+  const xmx = -snod * cosi, xmy = cnod * cosi, ux = xmx * sinsu + cnod * cossu, uy = xmy * sinsu + snod * cossu, uz = sini * sinsu;
+  const vx = xmx * cossu - cnod * sinsu, vy = xmy * cossu - snod * sinsu, vz = sini * cossu;
+  if (mrt < 1) return null;   // decayed
+  return { r: [mrt * ux * SGP.re, mrt * uy * SGP.re, mrt * uz * SGP.re], v: [(mvt * ux + rvdot * vx) * SGP.re * SGP.ke / 60, (mvt * uy + rvdot * vy) * SGP.re * SGP.ke / 60, (mvt * uz + rvdot * vz) * SGP.re * SGP.ke / 60] };
+}
+// From the sky's frame to your sky: the Earth turns under it (sidereal time), then the view from where you stand (topocentric), degrees.
+function satTopo(r, date) {
+  const jd = julian(date), g = gmst(jd) * 15 * RAD, lat = OBS.lat * RAD, lon = OBS.lon * RAD, theta = g + lon;   // the observer's sidereal angle
+  const R = 6378.137, f = 1 / 298.257, C = 1 / Math.sqrt(1 + f * (f - 2) * Math.sin(lat) ** 2), Sv = (1 - f) ** 2 * C;
+  const ox = R * C * Math.cos(lat) * Math.cos(theta), oy = R * C * Math.cos(lat) * Math.sin(theta), oz = R * Sv * Math.sin(lat);   // where you stand, in the same frame
+  const dx = r[0] - ox, dy = r[1] - oy, dz = r[2] - oz;
+  const south = Math.sin(lat) * Math.cos(theta) * dx + Math.sin(lat) * Math.sin(theta) * dy - Math.cos(lat) * dz, east = -Math.sin(theta) * dx + Math.cos(theta) * dy, up = Math.cos(lat) * Math.cos(theta) * dx + Math.cos(lat) * Math.sin(theta) * dy + Math.sin(lat) * dz;
+  const range = Math.hypot(south, east, up), alt = Math.asin(up / range) / RAD, az = norm360(Math.atan2(east, -south) / RAD);
+  return { alt, az, range };
+}
+function satLit(r, date) {   // sunlit: not inside the Earth's shadow (a cylinder behind the Earth, as seen from the sun)
+  const jd = julian(date), s = sunAt(jd), sx = cosD(s.dec) * Math.cos(s.ra * 15 * RAD), sy = cosD(s.dec) * Math.sin(s.ra * 15 * RAD), sz = sinD(s.dec);   // toward the sun (ECI)
+  const along = r[0] * sx + r[1] * sy + r[2] * sz; if (along > 0) return true;
+  const perp = Math.sqrt(Math.max(0, r[0] ** 2 + r[1] ** 2 + r[2] ** 2 - along * along)); return perp > 6378.137;
+}
+function satsNow(date = new Date()) {   // the bright satellites up and lit right now: name, alt, az, size (the ISS large, the rest small)
+  if (!LSKY.on || !LSKY.sats.length) return [];
+  const out = [], jd = julian(date), sunAlt = altAzOf(sunAt(jd).ra, sunAt(jd).dec, lstOf(jd))[0];
+  if (sunAlt > -4) return out;   // satellites show against a dark sky
+  for (const s of LSKY.sats) { const p = sgp4(s, date); if (!p) continue; const t = satTopo(p.r, date); if (t.alt < 5 || !satLit(p.r, date)) continue; out.push({ name: s.name, alt: t.alt, az: t.az, iss: /ISS \(ZARYA\)|ZARYA/i.test(s.name) }); }
+  return out;
+}
+// Comets, from JPL's fields: e, q (AU), i, Ω, ω, tp (JD), and the brightness law M1 + 5 log Δ + K1 log r (Meeus 33 for the orbit:
+// elliptic by Kepler's equation, hyperbolic by its twin, near-parabolic by Barker's).
+function cometParse(text) {
+  try { const j = JSON.parse(text), F = j.fields, I = (k) => F.indexOf(k); return j.data.map(d => ({ name: String(d[I('full_name')]).trim(), e: +d[I('e')], q: +d[I('q')], i: +d[I('i')], om: +d[I('om')], w: +d[I('w')], tp: +d[I('tp')], M1: +d[I('M1')], K1: +(d[I('K1')] ?? 10) })).filter(c => isFinite(c.e) && isFinite(c.q) && isFinite(c.tp) && isFinite(c.M1)); } catch (e) { return []; }
+}
+function cometAt(c, jd) {   // the comet's place: RA, Dec, distance from the Earth and the sun, and its magnitude
+  const k = 0.01720209895, dt = jd - c.tp; let r, nu;
+  if (c.e < 0.98) { const a = c.q / (1 - c.e), n = k / Math.sqrt(a * a * a), M = n * dt; let E = M; for (let i = 0; i < 30; i++) E = M + c.e * Math.sin(E); nu = 2 * Math.atan2(Math.sqrt(1 + c.e) * Math.sin(E / 2), Math.sqrt(1 - c.e) * Math.cos(E / 2)); r = a * (1 - c.e * Math.cos(E)); }
+  else if (c.e > 1.02) { const a = c.q / (c.e - 1), n = k / Math.sqrt(a * a * a), M = n * dt; let H = Math.sign(M) * Math.log(2 * Math.abs(M) / c.e + 1.8); for (let i = 0; i < 40; i++) H = H - (c.e * Math.sinh(H) - H - M) / (c.e * Math.cosh(H) - 1); nu = 2 * Math.atan(Math.sqrt((c.e + 1) / (c.e - 1)) * Math.tanh(H / 2)); r = a * (c.e * Math.cosh(H) - 1); }
+  else { const W = 3 * k / Math.sqrt(2 * c.q * c.q * c.q) * dt, G = W / 2, Y = Math.cbrt(G + Math.sqrt(G * G + 1)), s = Y - 1 / Y; nu = 2 * Math.atan(s); r = c.q * (1 + s * s); }   // Barker (Meeus 34)
+  const T = centuries(jd), eps = obliquity(T), x = r * (Math.cos(nu + c.w * RAD) * cosD(c.om) - Math.sin(nu + c.w * RAD) * sinD(c.om) * cosD(c.i)), y = r * (Math.cos(nu + c.w * RAD) * sinD(c.om) + Math.sin(nu + c.w * RAD) * cosD(c.om) * cosD(c.i)), z = r * Math.sin(nu + c.w * RAD) * sinD(c.i);
+  const s = sunAt(jd), sl = s.lon * RAD, R = s.R, ex = x + R * Math.cos(sl), ey = y + R * Math.sin(sl), ez = z, delta = Math.hypot(ex, ey, ez);   // geocentric ecliptic
+  const lon = Math.atan2(ey, ex) / RAD, lat = Math.atan2(ez, Math.hypot(ex, ey)) / RAD, [ra, dec] = eclToEq(lon, lat, eps);
+  return { ra, dec, delta, r, mag: c.M1 + 5 * Math.log10(delta) + c.K1 * Math.log10(r), sunLon: s.lon };
+}
+function cometsNow(date = new Date()) {   // the comets bright enough to see (about 6th magnitude and better), placed, with their tails pointing away from the sun
+  if (!LSKY.on || !LSKY.comets.length) return [];
+  const jd = julian(date), lst = lstOf(jd), out = [];
+  for (const c of LSKY.comets) { const p = cometAt(c, jd); if (!(p.mag < 6.5)) continue; const [alt, az] = altAzOf(p.ra, p.dec, lst); if (alt < 0) continue; out.push({ name: c.name, alt, az, mag: p.mag, tail: norm360(p.sunLon + 180) }); }
+  return out;
 }
 /* ---------- The sky model ---------- */
 // Time and weather are two loops. Time: night 0, dawn 1, day 2, dusk 3. Clouds: clear, some, overcast, dark, clearing.
@@ -613,7 +812,7 @@ const ENV = { cover: 0, gloom: 0, precip: 0, rain: 0, snow: 0, light: 1, dark: 0
 const FEEL = { life: 0.45, heave: 0.035, glow: 0.65 };
 
 /* ---------- Storage (guarded: private windows and sandboxes can throw) ---------- */
-const VERSION = 80, PHYSICS_ID = '12627fd9';   // the build, and the first eight of the locked Physics block's hash
+const VERSION = 81, PHYSICS_ID = '12627fd9';   // the build, and the first eight of the locked Physics block's hash
 const JKEY = 'soren:journal:p5', JKEY_OLD = 'somatic-resonance:journal:v2', PKEY = 'soren:prefs:p5', SKEY = 'soren:pool:p5';
 function loadJSON(key) { try { const v = JSON.parse(localStorage.getItem(key) || 'null'); return v && typeof v === 'object' ? v : {}; } catch (e) { return {}; } }
 const SAVED = {};   // what each key last held: a save that changes nothing writes nothing
@@ -645,7 +844,8 @@ const DEFAULTS = {
   mins: 15, tasks: [],   // Conquer: how long you play first, and your list, up to three lines, each { text }
   saved: [],   // Tinker's Save It: the spheres kept there, each [size 0-1, glow index or -1, name or '']
   beta: { lookup: false, chest: false, heavy: false },   // the experiments: each off until you switch it on
-  depth: 3   // the scene's depth: 0 the sky only, 1 + the far land, 2 + the near ground, 3 + what moves in it
+  depth: 3,   // the scene's depth: 0 the sky only, 1 + the far land, 2 + the near ground, 3 + what moves in it
+  live: false   // Live sky: where you stand, the satellites, the comets (26-sky-live.js); each an exception in EXCEPTIONS.md
 };
 const PREFS = (() => {
   const s = loadJSON(PKEY), p = JSON.parse(JSON.stringify(DEFAULTS));
@@ -703,7 +903,7 @@ const rules = () => (compOn() ? 'end' : S.zen ? 'zen' : PREFS.overflow);   // Pl
 function setPaused(on) {   // one pause: everything waits, your time too
   if (on === S.paused) return;
   if (on) S.pauseT = Date.now(); else if (S.goal) S.goal.end += Date.now() - S.pauseT;
-  S.paused = on; S.aiming = false;
+  S.paused = on; S.aiming = false; if ($('ctxBar') && WORLD) syncBars();   // the bar's speaker follows the pause, whichever way it was set
 }
 // The app's timings, named once, the same in the styles: quick, a state changes; sweep, things move; settle, things come to
 // rest; long, two settles (the wash). Anything slower follows the breath, the weather or the opening.
@@ -1173,7 +1373,7 @@ const ICON = {
   home: 'M4 11l8-7 8 7v8.5a1 1 0 0 1-1 1h-4.5v-6h-5v6H5a1 1 0 0 1-1-1z',
   gear: 'M12 9a3 3 0 1 0 0 6 3 3 0 0 0 0-6zM19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z',
   eye: 'M2 12s4-7 10-7 10 7 10 7-4 7-10 7S2 12 2 12zM12 9.2a2.8 2.8 0 1 0 0 5.6 2.8 2.8 0 0 0 0-5.6z',
-  hiker: 'M13.6 2.4a1.9 1.9 0 1 0 0 3.8 1.9 1.9 0 0 0 0-3.8zM8.4 6.8l2.3-.6a1 1 0 0 1 1.2.7l1.2 4.4a1 1 0 0 1-.7 1.2l-2.3.6a1 1 0 0 1-1.2-.7L7.7 8a1 1 0 0 1 .7-1.2zM12.6 7.4l-1 5.6M12.4 8.9l3.7 1.4M16.6 8.2l-1.6 10.2M11.6 13l-1.4 3.7-1.8 3M11.6 13l3 .6-.3 3.6M3.5 21.5l7-2.7 4.6-2.4 5.4 5.1z',
+  mountain: 'M2.5 19.5L9 8.5l4 6.5 2.5-3.5 6 8z M7.2 11.5l1.8-1.2 1.6 1.2',   // the Journey: a climb, a place to go (the scene icon is a frame; Depth is a rise)
   rocket: 'M12 2.5c3 2.5 4.5 6 4.5 10v3h-9v-3c0-4 1.5-7.5 4.5-10zM12 8.5a1.6 1.6 0 1 0 0 3.2 1.6 1.6 0 0 0 0-3.2zM7.5 12.5 5 16.5h2.5M16.5 12.5 19 16.5h-2.5M10 18c0 1.5.8 2.6 2 3.6 1.2-1 2-2.1 2-3.6',
   rise: 'M5 17a7 7 0 0 1 14 0M3 17h18M12 5v2M5.5 8.5l1.4 1.4M18.5 8.5l-1.4 1.4'
 };
@@ -2108,8 +2308,11 @@ const shapePath = (c, [cx, cy, hw, hh, r]) => rrect(c, cx - hw, cy - hh, 2 * hw,
 const RING_R = LW * 140 / 1166;
 function circleWord(c, word, a = 1, tag = '', ring = true) {   // the circle and its word; a small green tag after the word when asked (Labs: beta)
   if (a < 0.01) return;
-  c.save(); c.globalAlpha = a; if (ring) { c.lineWidth = 1.8; c.strokeStyle = 'rgba(240,240,234,0.85)'; c.beginPath(); c.arc(CX, CY, RING_R, 0, TAU); c.stroke(); }
-  c.textAlign = 'center'; c.textBaseline = 'middle'; c.font = `italic 300 ${fpx(20)}px ${FONT.sans}`; c.shadowColor = 'rgba(0,0,0,0.5)'; c.shadowBlur = 6; c.fillStyle = 'rgb(240,240,234)';
+  inkCircle(); const k = INK.circle || { ink: [240, 240, 234], tint: null, a: 0 }, ink = `rgb(${k.ink.join(',')})`;   // the circle follows the rule (73-ink.js): a ring in the ink on a clear sky, a disc of tint where the sky needs it
+  c.save(); c.globalAlpha = a;
+  if (k.tint) { c.fillStyle = `rgba(${k.tint.join(',')},${k.a.toFixed(2)})`; c.beginPath(); c.arc(CX, CY, RING_R, 0, TAU); c.fill(); }
+  else if (ring) { c.lineWidth = 1.8; c.strokeStyle = ink; c.beginPath(); c.arc(CX, CY, RING_R, 0, TAU); c.stroke(); }
+  c.textAlign = 'center'; c.textBaseline = 'middle'; c.font = `italic 300 ${fpx(20)}px ${FONT.sans}`; c.fillStyle = ink;
   const w = c.measureText(word).width; c.fillText(word, CX, CY);
   if (tag) { c.shadowBlur = 0; c.font = `italic 500 ${fpx(11)}px ${FONT.sans}`; const tw = c.measureText(tag).width + 10, tx = CX + w / 2 + 4, ty = CY - fpx(14);
     c.fillStyle = `rgba(${GREEN},0.25)`; c.shadowColor = `rgba(${GREEN},0.9)`; c.shadowBlur = 8; c.beginPath(); rrect(c, tx, ty - fpx(8), tw, fpx(16), fpx(5)); c.fill();
@@ -2266,7 +2469,7 @@ function openTinker() {
   S.tk = { t: 0, balls: [], cycleN: -1, press: null, vanish: [], tank, mons, mon: { k: 0, open: false, r: 7 }, line: '', lineAt: -9, mk: 1 };
   PREFS.saved.forEach((v, i) => {   // Save It, as you left it
     const rc = RING_R * v[0], n = PREFS.saved.length, x = tank.x + 10 + rc + i * ((mons.x - mons.r - 10 - tank.x - 20 - 2 * rc) / Math.max(1, n - 1)), y = tank.y + tank.h / 2;
-    S.tk.balls.push({ x: clamp(x, tank.x + rc + 4, mons.x - mons.r - rc - 8), y, rc, r: rc, rFull: rc, state: 'tank', own: v[1] >= 0 ? TK_GLOWS[v[1]][1] : null, glow: v[1], name: v[2] || null, tap: null });
+    S.tk.balls.push({ x: clamp(x, tank.x + rc + 4, mons.x - mons.r - rc - 8), y, rc, r: rc, rFull: rc, kc: v[0], state: 'tank', own: v[1] >= 0 ? TK_GLOWS[v[1]][1] : null, glow: v[1], name: v[2] || null, tap: null });   // kc: the size it rejoins a set at, like one caught
   });
   tkMaker(false);
 }
@@ -2297,7 +2500,7 @@ function tkAbsorb(small, big) {   // the smaller is drawn into the bigger and go
   Z.balls = Z.balls.filter(c => c !== small); Z.vanish.push({ x: small.x, y: small.y, r: small.rc, to: { x: big.x, y: big.y }, t: 0, len: 0.5 }); big.tap = 0; feel('thock'); setTimeout(() => tkVoice('in', big.rc, big.x), 12);
 }
 function tkGone(b) {   // into Let It Go while it is open: gone for good
-  const Z = S.tk; Z.balls = Z.balls.filter(o => o !== b); Z.vanish.push({ x: b.x, y: b.y, r: b.rc, to: { x: Z.mons.x, y: Z.mons.y }, t: 0, len: 0.5 }); feel('thock'); setTimeout(() => tkVoice('gone', b.rc, b.x), 12); tkLine('gone..', Z.mons.x, Z.mons.y - Z.mons.r - 14);
+  const Z = S.tk; Z.balls = Z.balls.filter(o => o !== b); tkKeep(); Z.vanish.push({ x: b.x, y: b.y, r: b.rc, to: { x: Z.mons.x, y: Z.mons.y }, t: 0, len: 0.5 }); feel('thock'); setTimeout(() => tkVoice('gone', b.rc, b.x), 12); tkLine('gone..', Z.mons.x, Z.mons.y - Z.mons.r - 14);
 }
 const tkHit = (x, y) => { let best = null; for (const b of S.tk.balls) if (b.hit && Math.hypot(b.px - x, b.py - y) <= b.pr + 8 && (!best || b.pr < best.pr)) best = b; return best; };   // the smallest under the finger
 function tinkerTouch(p, down) {
@@ -2312,7 +2515,7 @@ function tinkerTouch(p, down) {
       if (o) { const [small, big] = o.rc < b.rc ? [o, b] : [b, o]; tkAbsorb(small, big); }
       if (Z.balls.filter(c => c.state === 'tank').length > TK.max) { const extra = Z.balls.filter(c => c.state === 'tank').slice(TK.max); Z.balls = Z.balls.filter(c => !extra.includes(c)); }
       tkKeep(); return; }
-    b.state = 'parked'; b.n = Z.cycleN; return;   // anywhere else: it waits for the next set to reach its size
+    b.state = 'parked'; b.n = Z.cycleN; tkKeep(); return;   // anywhere else: it waits for the next set to reach its size (and Save It is kept as it is now)
   }
   const pr = Z.press; if (!pr) return;
   if (pr.held) { const b = pr.b; b.x = clamp(p.x + pr.dx, b.rc, LW - b.rc); b.y = clamp(p.y + pr.dy, b.rc, LH - b.rc); return; }
@@ -2394,7 +2597,7 @@ function tkMake() {   // Set it loose: it glides out of the centre into the runn
 /* ---------- Labs: to seek out new science and innovation (the Journey's Labs door, beta) ---------- */
 // The door opens on stars coming toward you, as if you were travelling through space; for a second and a half they stretch into
 // streaks (warp), then settle to a slow drift. Streaks, never a flash; with Reduce motion they hold still. Under the stars, the
-// three experiments, each off until you switch it on, and Conquer (75-conquer.js), which lives here until it has a door of its own.
+// three experiments, each off until you switch it on.
 // The nod is to Star Trek: this is where the next science lives.
 const WARP = { stars: Array.from({ length: 140 }, () => ({ x: Math.random() * 2 - 1, y: Math.random() * 2 - 1, z: Math.random() })), go: 0 };
 function engage() { if (!lessMo()) { WARP.go = performance.now(); sound.whoosh(1, 0); feel('snap'); } }   // warp, on entering the Lab
@@ -2418,11 +2621,18 @@ const SENSE = { tilt: false, moving: false, beta: 45, gamma: 0, g: null, slow: 0
 function askSensor(kind, then) {   // 'tilt' (orientation) or 'moving' (acceleration); then(true) once it listens
   const E = kind === 'tilt' ? window.DeviceOrientationEvent : window.DeviceMotionEvent;
   if (!E) { then(false); return; }
-  const listen = () => {
-    if (!SENSE[kind]) window.addEventListener(kind === 'tilt' ? 'deviceorientation' : 'devicemotion', kind === 'tilt' ? onTilt : onMoving);
-    SENSE[kind] = true; then(true);
+  const listen = () => {   // on only once the sensor has spoken: a desktop names the events and never sends one
+    const ev = kind === 'tilt' ? 'deviceorientation' : 'devicemotion', on = kind === 'tilt' ? onTilt : onMoving;
+    if (SENSE[kind]) { then(true); return; }
+    const first = (e) => { if ((kind === 'tilt' ? e.beta : e.accelerationIncludingGravity && e.accelerationIncludingGravity.z) == null) return; clearTimeout(quiet); window.removeEventListener(ev, first); window.addEventListener(ev, on); SENSE[kind] = true; then(true); };
+    const quiet = setTimeout(() => { window.removeEventListener(ev, first); then(false); }, 2500);
+    window.addEventListener(ev, first);
   };
   if (typeof E.requestPermission === 'function') E.requestPermission().then(r => (r === 'granted' ? listen() : then(false))).catch(() => then(false)); else listen();
+}
+function sensorsBack() {   // after a reload an experiment is still on in the settings but no one is listening; the first touch asks the phone again (iPhones only answer a touch)
+  if (sensorsBack.done) return; sensorsBack.done = true;
+  for (const [k, kind] of [['lookup', 'tilt'], ['chest', 'moving']]) if (PREFS.beta[k] && !SENSE[kind]) askSensor(kind, (ok) => { if (!ok) { setPrefRaw(`beta.${k}`, false); savePrefs(); syncUI(); } });
 }
 function onTilt(e) { if (e.beta == null) return; SENSE.beta += (e.beta - SENSE.beta) * 0.18; SENSE.gamma += ((e.gamma || 0) - SENSE.gamma) * 0.18; }
 function onMoving(e) {   // the phone on your chest: it lifts a little with each breath
@@ -3063,7 +3273,7 @@ const GHOST = { x: LW / 2, side: 1 };   // Next: the sphere after this one, a sm
 function nextGhost(c, hx, pr, s) {
   if (hx > LW * 0.62) GHOST.side = -1; else if (hx < LW * 0.38) GHOST.side = 1;
   const gr = RADII[S.next] * 0.42; GHOST.x += (hx + GHOST.side * (pr + gr + 10) - GHOST.x) * 0.15;
-  c.save(); c.globalAlpha *= 0.38; drawOrb(c, GHOST.x, DROP_Y - 2, gr, S.next, 0, { scale: s });   // still: a bob near 0.2 Hz is the sway the guidance warns against c.restore();
+  c.save(); c.globalAlpha *= 0.38; drawOrb(c, GHOST.x, DROP_Y - 2, gr, S.next, 0, { scale: s }); c.restore();   // still: a bob near 0.2 Hz is the sway the guidance warns against
 }
 // One frame, in layers, back to front: the scenery (4), the weather over it (5), what the mode puts in the pool (6), and what
 // sits over the pool (a paused card, the breath out, the look, the opening). The sky behind the pool is the page (72-sky.js).
@@ -3071,7 +3281,7 @@ function render() {
   ctx.clearRect(0, 0, LW, LH);
   ctx.save();
   if (S.mode === 'rest') { drawRest(ctx); ctx.restore(); return; }
-  if (has('labs')) { drawLab(ctx); if (CQ.step) drawConquer(ctx); ctx.restore(); return; }   // Labs: the stars, and nothing of the world; Conquer's steps over them
+  if (has('labs')) { drawLab(ctx); ctx.restore(); return; }   // Labs: the stars, and nothing of the world
   const focus = S.mode === 'pacer', F = { w: here(), b: S.breath, focus, breathe: PREFS.breathing && !focus, fade: S.ballFade, s: heave(),
     red: S.offender ? clamp(S.overT / OVERFLOW_SEC, 0.4, 1) : 0, beat: 0.75 + 0.25 * Math.sin(animTime * 6) };
   renderScenery(F); renderWeather(); renderContent(F); renderOver();
@@ -3167,7 +3377,7 @@ function renderOver() {   // over the pool: a paused card, the breath out, the l
     words(ctx, 'Tap to play', 'Paused', 212);
   }
   if (S.jr && !S.jr.door) drawLanding(ctx);   // the Journey's landing: the circle, and the doors' words
-  if (S.jr && CQ.step && !has('labs')) drawConquer(ctx);   // Conquer's play and its breaths out, over the game
+  if (S.jr && CQ.step) drawConquer(ctx);   // Conquer's steps, its play and its breaths out, over the game
   if (S.outro) { const u = S.outro.t / (breathLen() / 2); drawCircle(ctx, 1, 0.38 + 0.12 * twice(S.outro.t), 'Breathe out', `${Math.max(1, 3 - Math.floor(u))}`); }   // Conquer: three breaths out before you go
   if (S.look) drawLook(ctx);
   if (S.intro) drawIntro(ctx, S.intro);
@@ -3219,8 +3429,10 @@ function drawIntro(c, o) {
   const line = smooth(clamp(o.t / o.len, 0, 1)), a = o.go == null ? 1 : clamp(1 - (o.t - o.go) / TIME.settle, 0, 1), kg = o.go == null ? 0 : smooth(clamp((o.t - o.go) / TIME.settle, 0, 1));
   const R = RING_R, hw = LW / 2 - EDGE, hh = LH / 2 - EDGE;
   c.save(); c.globalCompositeOperation = 'destination-out'; c.fillStyle = `rgba(0,0,0,${a})`; c.fillRect(0, 0, LW, LH); c.restore();   // the pool is clear: the sky shows through, and the world fades back in as you go
+  inkCircle(); const k = INK.circle || { ink: [240, 240, 234], tint: null, a: 0 };   // the ring in the row's ink; a disc of tint where the sky needs one (73-ink.js)
   c.save(); c.beginPath(); shapePath(c, [CX, CY, R + (hw - R) * kg, R + (hh - R) * kg, R + (CORNER - R) * kg]);
-  c.lineWidth = 1.8; c.strokeStyle = `rgba(240,240,234,${(0.85 * line * a).toFixed(3)})`; c.stroke(); c.restore();
+  if (k.tint && kg < 0.01) { c.fillStyle = `rgba(${k.tint.join(',')},${(k.a * line * a).toFixed(3)})`; c.fill(); }
+  else { c.lineWidth = 1.8; c.strokeStyle = `rgba(${k.ink.join(',')},${(line * a).toFixed(3)})`; c.stroke(); } c.restore();
 }
 // Heritage: a new marble comes out of the furnace, white-gold, cooling through amber to its true colours (about a second and a half).
 const HOT_AGE = 46 + 90;   // a merged marble starts at age 46; 60 a second
@@ -3264,7 +3476,7 @@ function tickClock(dt) {
 }
 function tickWorld(dt, k) {
   updateScene(dt); updateWind(dt); if (compOn()) { compWind(dt); compTick(dt); } updateLife(dt); updateBreath(dt); updateActions(dt, k); updateStorms(dt); updateStorm(dt); updateBoard(dt); updateCreatures(dt);
-  updateSky();
+  updateSky(); if (LSKY.on) drawSats();
 }
 function tickMode(dt, k) {
   if (awake()) updateDoom(dt);   // a Strike waits while the game waits
@@ -3353,11 +3565,12 @@ const PSKY = (() => {
   };
   const ladder = (L, v) => { let i = 1; while (i < L.length - 1 && L[i][0] < v) i++; const a = L[i - 1], b = L[i], t = clamp((v - a[0]) / (b[0] - a[0]), 0, 1); return [1, 2, 3].map(n => a[n] + (b[n] - a[n]) * t); };
   const holder = $('sky'), cv = [0, 1].map(() => { const c = document.createElement('canvas'); c.width = W; c.height = H; c.setAttribute('aria-hidden', 'true'); c.style.transition = 'opacity 2.4s'; holder.appendChild(c); return c; });
-  return { W, H, CAP, LAD, GLOW, ladder, cv, front: 0, key: '', hor: [10, 14, 30], tcol: [10, 14, 30], lum: 0, dark: null, now: null };
+  const fx = document.createElement('canvas'); fx.width = W; fx.height = H; fx.setAttribute('aria-hidden', 'true'); fx.style.zIndex = 3; holder.appendChild(fx);   // the satellites, moving, over both skies
+  return { W, H, CAP, LAD, GLOW, ladder, cv, fx, win: [90, 270], front: 0, key: '', hor: [10, 14, 30], tcol: [10, 14, 30], lum: 0, dark: null, now: null };
 })();
 // Where a thing in the sky lands on the page, facing south: bearing 90 (east) at the left edge, 270 (west) at the right; the
 // horizon at 86% down; 70° up at the top. The sun near noon in summer stands above the frame, as it should.
-const skyXYPage = (alt, az) => [((az - 90) / 180) * PSKY.W, (0.86 - alt / 70 * 0.86) * PSKY.H];
+const skyXYPage = (alt, az) => [((az - PSKY.win[0]) / (PSKY.win[1] - PSKY.win[0])) * PSKY.W, (0.86 - alt / 80 * 0.86) * PSKY.H];   // the window: that day's arc across (skyWindow), 80° up
 // The weights of the four palettes for the sun's height: night below −12°, dawn or dusk at the horizon, day above +8°.
 function skyBlend(alt, rising) {
   const tw = rising ? 'dawn' : 'dusk', w = { night: 0, dawn: 0, day: 0, dusk: 0 };
@@ -3368,7 +3581,10 @@ function skyBlend(alt, rising) {
 // Nothing waits on it and no frame is dropped for it (a whole sky in one go costs tens of milliseconds on a phone).
 const SKYJOB = { job: null, budget: 3 };
 function paintStart(c, sky) {   // the job: everything a row needs, worked out once
-  const { W, H, LAD, GLOW, ladder } = PSKY, w = skyBlend(sky.sun.alt, sky.sun.az < 180), keys = Object.keys(w).filter(k => w[k] > 0.001);
+  PSKY.win = skyWindow(sky, skyTime());   // the window for this paint: as wide as the day's arc
+  const { W, H, LAD, GLOW, ladder } = PSKY, w = skyBlend(sky.sun.alt, sky.sun.az < 180);
+  if (sky.solar && sky.sun.alt > -1) { const k = sky.solar.mag ** 10; for (const n in w) w[n] *= 1 - k; w.night += 0.7 * k; w.dusk += 0.3 * k; }   // a solar eclipse: the day dims toward twilight as the cover nears total (steeply: 95% cover is still daylight)
+  const keys = Object.keys(w).filter(k => w[k] > 0.001);
   const night = w.night, light = night < 0.5 ? sky.sun : sky.moon, lightXY = skyXYPage(light.alt, light.az), gs = keys.reduce((o, k) => { for (const f of ['r', 'a', 'k']) o[f] += GLOW[k][f] * w[k]; for (let i = 0; i < 3; i++) o.c[i] += GLOW[k].c[i] * w[k]; return o; }, { c: [0, 0, 0], r: 0, a: 0, k: 0 });
   const sx = clamp(lightXY[0] / W, -0.3, 1.3), sy = clamp(lightXY[1] / H, -0.4, 1.1), up = light.alt > -6 ? 1 : clamp(1 + (light.alt + 6) / 6, 0, 1);   // the glow fades as the light sinks under the horizon
   const ex = Array.from({ length: W }, (_, x) => Math.exp(-(((x / (W - 1) - sx) / .55) ** 2))), far = Array.from({ length: W }, (_, x) => clamp(Math.abs(x / (W - 1) - sx) / .9, 0, 1));
@@ -3395,10 +3611,11 @@ function paintRows(J, ms) {   // some rows, for up to `ms` milliseconds; true wh
   return J.y >= H;
 }
 function paintFinish(J) {   // the rows are in: the stars and the moon over them
-  const { c, sky } = J; c.putImageData(J.im, 0, 0);
+  const { c, sky } = J; c.putImageData(J.im, 0, 0); PSKY.im = J.im;   // the field the ink reads (73-ink.js): the gradient, before the stars and the moon
   const dark = clamp((-sky.sun.alt - 6) / 12, 0, 1);   // the stars come out from civil to astronomical twilight
   if (dark > 0.02) drawPageStars(c, sky, dark);
-  if (sky.moon.alt > -2) drawPageMoon(c, sky.moon, 1 - 0.55 * (1 - dark));   // the moon by day is a pale thing
+  if (sky.moon.alt > -2) drawPageMoon(c, sky.moon, 1 - 0.55 * (1 - dark), sky.lunar);   // the moon by day is a pale thing
+  if (sky.solar && sky.sun.alt > -1) drawEclipse(c, sky);
   return J.rows;
 }
 function paintSky(c, sky) { const J = paintStart(c, sky); paintRows(J, 1e9); return paintFinish(J); }   // one sky in one go (the tests, and the first paint)
@@ -3407,24 +3624,46 @@ function drawPageStars(c, sky, dark) {   // the real stars overhead facing south
   c.save();
   FIELD.forEach((f) => { const [alt, az] = altAzOf(f[0], f[1], lst), p = skyXYPage(alt, az); if (!on(p, alt)) return; c.fillStyle = `rgba(230,236,255,${(dark * f[2] * 0.8).toFixed(2)})`; c.fillRect(p[0], p[1], 1, 1); });
   for (const v of Object.values(STAR)) { const [alt, az] = altAzOf(v[0], v[1], lst), p = skyXYPage(alt, az); if (!on(p, alt)) continue; const r = Math.max(0.5, 1.5 - 0.3 * v[2]); c.globalAlpha = dark * clamp(1.1 - 0.16 * v[2], 0.3, 1); c.fillStyle = v[3] || '#eef2ff'; c.beginPath(); c.arc(p[0], p[1], r, 0, TAU); c.fill(); }
+  for (const co of cometsNow(skyTime())) { const p = skyXYPage(co.alt, co.az); if (!on(p, co.alt)) continue; drawComet(c, p, co, dark); }
   for (const pl of sky.planets) { if (pl.alt < 0.5) continue; const p = skyXYPage(pl.alt, pl.az); if (!on(p, pl.alt)) continue; const r = clamp(1.9 - 0.35 * pl.mag, 0.8, 2.6); c.globalAlpha = dark * clamp(1.2 - 0.15 * pl.mag, 0.5, 1); c.fillStyle = `rgb(${pl.rgb})`; c.beginPath(); c.arc(p[0], p[1], r, 0, TAU); c.fill(); if (pl.mag < 0) { c.globalAlpha *= 0.25; c.beginPath(); c.arc(p[0], p[1], r * 2.4, 0, TAU); c.fill(); } }
   c.restore();
 }
+function drawComet(c, [x, y], co, dark) {   // a soft head and a tail away from the sun, brighter as it is brighter
+  const a = dark * clamp(1 - (co.mag - 1) / 5.5, 0.25, 1), tail = (co.tail - PSKY.win[0]) / (PSKY.win[1] - PSKY.win[0]) * PSKY.W, dx = tail > x ? 1 : -1, len = 10 + 26 * a;
+  const g = c.createLinearGradient(x, y, x + dx * len, y - len * 0.6); g.addColorStop(0, `rgba(220,232,255,${(0.6 * a).toFixed(2)})`); g.addColorStop(1, 'rgba(220,232,255,0)');
+  c.save(); c.strokeStyle = g; c.lineWidth = 2.2; c.lineCap = 'round'; c.beginPath(); c.moveTo(x, y); c.lineTo(x + dx * len, y - len * 0.6); c.stroke();
+  c.fillStyle = `rgba(235,242,255,${(0.9 * a).toFixed(2)})`; c.beginPath(); c.arc(x, y, 1.6, 0, TAU); c.fill(); c.restore();
+}
+function drawSats() {   // every frame: the bright satellites up and lit, the ISS largest; nothing drawn (and nothing cleared) when none are
+  const fx = PSKY.fx, c = fx.getContext('2d'), sats = satsNow(skyTime());
+  if (!sats.length) { if (fx._had) { c.clearRect(0, 0, PSKY.W, PSKY.H); fx._had = false; } return; }
+  c.clearRect(0, 0, PSKY.W, PSKY.H); fx._had = true;
+  for (const s of sats) { const [x, y] = skyXYPage(s.alt, s.az); if (x < -2 || x > PSKY.W + 2 || y < 0) continue; c.fillStyle = s.iss ? 'rgba(255,248,230,0.95)' : 'rgba(230,236,255,0.8)'; c.beginPath(); c.arc(x, y, s.iss ? 1.6 : 0.8, 0, TAU); c.fill(); }
+}
 const MOON_CV = (() => { const m = document.createElement('canvas'); m.width = m.height = 16; return m; })();
-function drawPageMoon(c, moon, a) {   // the disc, lit on its true side by its true fraction: facing south the waxing moon is lit on the right (west)
-  const [x, y] = skyXYPage(moon.alt, moon.az), r = 5.5, k = moon.frac, side = moon.waxing ? 1 : -1, m = MOON_CV.getContext('2d'), o = 8;
+function drawPageMoon(c, moon, a, ecl) {   // the disc, lit on its true side by its true fraction: facing south the waxing moon is lit on the right (west); its size by its true distance (a supermoon is 7% wider than the mean)
+  const [x, y] = skyXYPage(moon.alt, moon.az), r = 5.5 * moon.scale, k = moon.frac, side = moon.waxing ? 1 : -1, m = MOON_CV.getContext('2d'), o = 8;
   m.clearRect(0, 0, 16, 16); m.globalCompositeOperation = 'source-over'; m.fillStyle = '#f4f7ff'; m.beginPath(); m.arc(o, o, r, 0, TAU); m.fill();
   m.globalCompositeOperation = 'destination-out'; m.beginPath();   // the dark part: a half-disc on the unlit side, and the terminator's ellipse
   m.arc(o, o, r, -Math.PI / 2, Math.PI / 2, side > 0); m.fill();   // the unlit half
   m.globalCompositeOperation = k > 0.5 ? 'source-over' : 'destination-out'; m.beginPath(); m.ellipse(o, o, Math.abs(1 - 2 * k) * r, r, 0, -Math.PI / 2, Math.PI / 2, k > 0.5 ? side > 0 : side < 0); m.fill();   // gibbous: light spills past the middle; crescent: dark does
+  if (ecl) {   // a lunar eclipse: the Earth's shadow over the lit disc, where it truly falls; the umbra is the red of every sunset on Earth at once
+    const ux = o - ecl.dx * r, uy = o - ecl.dy * r, ur = ecl.umbra * r, pr = ecl.penumbra * r; m.globalCompositeOperation = 'source-atop';
+    const pg = m.createRadialGradient(ux, uy, ur, ux, uy, pr); pg.addColorStop(0, 'rgba(0,0,0,0.55)'); pg.addColorStop(1, 'rgba(0,0,0,0)'); m.fillStyle = pg; m.beginPath(); m.arc(ux, uy, pr, 0, TAU); m.fill();
+    const ug = m.createRadialGradient(ux, uy, ur * 0.85, ux, uy, ur); ug.addColorStop(0, 'rgba(118,32,22,0.96)'); ug.addColorStop(1, 'rgba(118,32,22,0)'); m.fillStyle = ug; m.beginPath(); m.arc(ux, uy, ur, 0, TAU); m.fill();
+  }
   c.save(); c.globalAlpha = a; c.drawImage(MOON_CV, x - o, y - o); c.restore();
+}
+function drawEclipse(c, sky) {   // a solar eclipse: the moon's dark disc over the sun's core, where it truly sits, at the drawn scale of the sun
+  const e = sky.solar, [x, y] = skyXYPage(sky.sun.alt, sky.sun.az), R = 0.05 * PSKY.H * 0.9, mr = R * e.ratio, mx = x - e.dx * R, my = y - e.dy * R;
+  const g = c.createRadialGradient(mx, my, mr * 0.8, mx, my, mr); g.addColorStop(0, 'rgba(10,12,24,0.92)'); g.addColorStop(1, 'rgba(10,12,24,0)');
+  c.save(); c.beginPath(); c.arc(x, y, R * 1.15, 0, TAU); c.clip(); c.fillStyle = g; c.beginPath(); c.arc(mx, my, mr, 0, TAU); c.fill(); c.restore();   // only the bite shows: a new moon is dark against the sky
 }
 const rgbCss = (c) => `rgb(${c.map(Math.round).join(',')})`;
 const skyMeta = document.querySelector('meta[name=theme-color]') || document.head.appendChild(Object.assign(document.createElement('meta'), { name: 'theme-color' }));
 // The one contrast formula (WCAG): the relative luminance of a colour, and the ratio between two (the gate measures the real pixels).
 const relLum = (c) => c.reduce((s, v, i) => { v /= 255; return s + [0.2126, 0.7152, 0.0722][i] * (v <= 0.04045 ? v / 12.92 : ((v + 0.055) / 1.055) ** 2.4); }, 0);
 const contrast = (a, b) => { const x = relLum(a), y = relLum(b); return (Math.max(x, y) + 0.05) / (Math.min(x, y) + 0.05); };
-const SKY_DARK = 0.12;   // a sky's light (relative luminance) under this is dark: the tiles go to white frost
 function updateSky(now = false) {   // every frame: a slice of a paint in hand, or a new paint when the minute (or the held hour) changes; `now` finishes it at once
   if (!SKYJOB.job) {
     const d = skyTime(), key = `${skyHour()}:${Math.floor(d.getTime() / 60000)}`; if (key === PSKY.key || (!now && performance.now() - (PSKY.at || -9e9) < 2400)) return; PSKY.key = key; PSKY.at = performance.now();   // never while the last cross-fade is still running (2.4 s): the back canvas is the one fading out
@@ -3435,9 +3674,74 @@ function updateSky(now = false) {   // every frame: a slice of a paint in hand, 
   PSKY.front = back; PSKY.cv[back].style.zIndex = 2; PSKY.cv[1 - back].style.zIndex = 1; PSKY.cv[back].style.opacity = 1; PSKY.cv[1 - back].style.opacity = 0;
   PSKY.hor = rows[rows.length - 1]; PSKY.tcol = rows[0]; PSKY.lum = relLum(rows.reduce((a, r) => a.map((v, i) => v + r[i] / rows.length), [0, 0, 0]));
   document.documentElement.style.setProperty('--bg-bot', rgbCss(PSKY.hor)); skyMeta.content = rgbCss(PSKY.tcol);
-  const dark = PSKY.lum < SKY_DARK; if (dark !== PSKY.dark) { PSKY.dark = dark; document.documentElement.style.setProperty('--tile-rgb', dark ? '255, 255, 255' : '22, 30, 54'); document.body.classList.toggle('dark-sky', dark); }   // the tiles' glass: white frost on a dark sky, navy on a light one
+  PSKY.dark = PSKY.lum < 0.12;   // a dark sky (the pool's frost reads it)
+  if (now) inkApply(); else setTimeout(inkApply, 1200);   // the ink follows, midway through the cross-fade
 }
-/* ---------- Conquer: name it, play first, go, come back, check in (in Labs, until it has a door of its own) ---------- */
+/* ---------- The ink: the least that reaches 7.1:1, row by row, from the sky (v81) ---------- */
+// Albert's rule (Oct 25): every word and icon over the sky reads at 7.1:1, with the least done to get there, decided per row
+// (the bar, the ribbon, the row of checks; the circle in the pool) from the sky behind that row, every repaint. In order:
+//   1. Ink alone. White or dark, whichever reaches 7.1:1 against the sky's field behind the row; shaded from the sky's own colour
+//      toward pure white or black only as far as 7.1:1 needs, so the ink belongs to its sky. A clear tile shows its edge as a
+//      hairline in the same ink.
+//   2. Only when neither ink can (the mid-tone band: dawn, golden hour, dusk, twilight, the moon's glow): the least tint behind the
+//      row, navy under white ink or frost under dark ink, whichever is smaller. A tinted tile has no hairline: the tint is its edge.
+// The field is the painted gradient (PSKY.im), measured at its half-percentiles of light across the row, so a star or the
+// moon under a tile does not darken a whole night row. Contrast is WCAG's (relLum, contrast in 72-sky.js); the gate measures the
+// real pixels. Everything else about a tile (the green check, the blue ring, the gold) is unchanged.
+const INK = { goal: 7.1, white: [255, 255, 255], black: [4, 6, 14], navy: [22, 30, 54], rows: ['line', 'ctxBar', 'tileBar'], circle: null, key: '' };
+const mixRGB = (a, b, t) => a.map((v, i) => Math.round(v + (b[i] - v) * t));
+function inkField(x0, y0, x1, y1) {   // the sky's field behind a page rectangle: its darkest and lightest, pinpoint lights left out
+  const im = PSKY.im; if (!im) return null;
+  const vw = innerWidth, vh = innerHeight, s = Math.max(vw / PSKY.W, vh / PSKY.H), ox = (vw - PSKY.W * s) / 2, oy = (vh - PSKY.H * s) / 2;   // object-fit: cover
+  const cx0 = clamp(Math.floor((x0 - ox) / s), 0, PSKY.W - 1), cx1 = clamp(Math.ceil((x1 - ox) / s), 1, PSKY.W), cy0 = clamp(Math.floor((y0 - oy) / s), 0, PSKY.H - 1), cy1 = clamp(Math.ceil((y1 - oy) / s), 1, PSKY.H);
+  const px = []; const d = im.data;
+  for (let y = cy0; y < cy1; y++) for (let x = cx0; x < cx1; x++) { const n = (y * PSKY.W + x) * 4; px.push([d[n], d[n + 1], d[n + 2]]); }
+  if (!px.length) return null;
+  px.sort((a, b) => relLum(a) - relLum(b)); return { lo: px[Math.floor(px.length * 0.005)], hi: px[Math.min(px.length - 1, Math.floor(px.length * 0.995))] };   // the half-percent at each end: a star, not the sky
+}
+function inkRule(f) {   // the least ink, hairline and tint that reach the goal against a field
+  const G = INK.goal, W = INK.white, B = INK.black, N = INK.navy, least = (from, to, against) => { for (let t = 0; t <= 100; t++) { const c = mixRGB(from, to, t / 100); if (contrast(c, against) >= G) return c; } return to; };
+  if (contrast(W, f.hi) >= G) return { ink: least(f.hi, W, f.hi), tint: null, a: 0 };
+  if (contrast(B, f.lo) >= G) return { ink: least(f.lo, B, f.lo), tint: null, a: 0 };
+  let an = 1, af = 1;
+  for (let t = 0; t <= 100; t++) if (contrast(W, mixRGB(f.hi, N, t / 100)) >= G) { an = t / 100; break; }
+  for (let t = 0; t <= 100; t++) if (contrast(B, mixRGB(f.lo, W, t / 100)) >= G) { af = t / 100; break; }
+  const floor = (v) => Math.max(0.1, v);   // a tint is the tile's edge: never so faint that the edge is lost
+  return an <= af ? { ink: W, tint: N, a: floor(an) } : { ink: B, tint: W, a: floor(af) };
+}
+function inkApply() {   // every repaint, and whenever the rows move: each row's ink, hairline and tint, as style on the row
+  if (!PSKY.im) return;
+  const solid = matchMedia('(prefers-reduced-transparency: reduce)').matches || matchMedia('(prefers-contrast: more)').matches;   // the phone asked for solid: white on navy, always
+  for (const id of INK.rows) {
+    const el = $(id); if (!el) continue; const r = el.getBoundingClientRect(); if (!r.height) continue;
+    const f = inkField(r.left, r.top, r.right, r.bottom); if (!f) continue; const k = solid ? { ink: INK.white, tint: INK.navy, a: 1 } : inkRule(f), ink = k.ink.join(', ');
+    el.style.setProperty('--ink-rgb', ink); el.style.setProperty('--ink', `rgb(${ink})`); el.style.setProperty('--label', `rgb(${ink})`);
+    el.style.setProperty('--tile', k.tint ? `rgba(${k.tint.join(', ')}, ${k.a.toFixed(2)})` : 'transparent');
+    el.style.setProperty('--tile-sel', k.tint ? `rgba(${k.tint.join(', ')}, ${Math.min(1, k.a + 0.2).toFixed(2)})` : `rgba(${ink}, 0.18)`);   // the one you are on: the same tint, deeper; on a clear tile, a wash of the ink
+    el.style.setProperty('--tile-line', k.tint ? 'transparent' : `rgb(${ink})`); el.style.setProperty('--dim', `rgba(${ink}, 0.72)`);   // the one inactive grey: the row's ink, dimmed
+  }
+  INK.at = 0;   // the circle reads again at its next draw
+}
+// The circle in the pool, at the door and the landing: read where it sits, every couple of seconds, just before it is drawn. At the
+// door the pool is clear and the sky's field is behind it; at the landing the pool's glass is, so the pool's own pixels are read.
+function inkCircle() {
+  const t = performance.now(); if (t - (INK.at || 0) < 2000) return; INK.at = t;
+  let f = null;
+  if (S.intro) { const r = $('pool').getBoundingClientRect(), sx = r.width / LW, sy = r.height / LH; f = inkField(r.left + (CX - RING_R) * sx, r.top + (CY - RING_R) * sy, r.left + (CX + RING_R) * sx, r.top + (CY + RING_R) * sy); }
+  else if (canvas && canvas.width) {
+    const d = poolDPR(), x0 = Math.max(0, Math.floor((CX - RING_R) * d)), y0 = Math.max(0, Math.floor((CY - RING_R) * d)), w = Math.min(canvas.width - x0, Math.ceil(2 * RING_R * d)), h = Math.min(canvas.height - y0, Math.ceil(2 * RING_R * d));
+    const r = $('pool').getBoundingClientRect(), sx = r.width / LW, sy = r.height / LH, sky = inkField(r.left + (CX - RING_R) * sx, r.top + (CY - RING_R) * sy, r.left + (CX + RING_R) * sx, r.top + (CY + RING_R) * sy);   // the page's sky under the circle
+    if (w >= 4 && h >= 4 && sky) {   // what is seen: the pool's own pixels laid over that sky by their alpha (the glass and its frost are translucent)
+      const im = ctx.getImageData(x0, y0, w, h).data, mid = sky.lo.map((v, i) => (v + sky.hi[i]) / 2), px = [];
+      for (let i = 0; i < im.length; i += 28) { const a = im[i + 3] / 255; px.push([0, 1, 2].map(j => im[i + j] * a + mid[j] * (1 - a))); }   // every seventh pixel
+      if (px.length > 50) { px.sort((a, b) => relLum(a) - relLum(b)); f = { lo: px[Math.floor(px.length * 0.005)], hi: px[Math.min(px.length - 1, Math.floor(px.length * 0.995))] }; }
+    }
+    if (!f) f = sky;
+  }
+  INK.circle = f ? inkRule(f) : null;
+  const k = INK.circle || { ink: [240, 240, 234] }; document.documentElement.style.setProperty('--ink-circle', `rgb(${k.ink.join(', ')})`);   // the door's own word, Soren, is HTML
+}
+/* ---------- Conquer: name it, play first, go, come back, check in (its own door in the Journey) ---------- */
 // Five steps, all in the pool, no card. Name it: up to three lines of what you will do (or none: then it is a break). How long
 // first: 15, 30 or 60 minutes of Merge, or Free. Go: you play; one bell at three minutes left, two at one; then three breaths
 // out, and the pool goes dark with your lines and a send-off. Return: tap I'm back. Check in: tick what you did; one thing done is
@@ -3528,13 +3832,14 @@ const WIN_MANY = [['Did you realize?', 'You made a to-do list and finished it. W
 const SCALE = [523.25, 587.33, 659.25, 698.46, 783.99, 880, 987.77];   // each tick climbs a major scale
 const tickNote = (n) => { sound.init(); if (sound.live) sound.voice({ f: SCALE[Math.min(n, 7) - 1], peak: 0.07, attack: 0.02, decay: 1.6, echo: true, bus: 'game' }); };
 function tickLine(i) {
-  CQ.ticks[i] = !CQ.ticks[i]; if (!CQ.ticks[i]) { CQ.lit = -1; return; }
+  CQ.ticks[i] = !CQ.ticks[i];
+  if (!CQ.ticks[i]) { CQ.lit = -1; if (CQ.won) { clearTimeout(CQ.won.t2); if (CQ.won.n > 1) { J.lists = Math.max(0, J.lists - 1); journalDirty = true; saveJournal(); } CQ.won = null; } return; }   // unticked after the win: the win goes with it, and the list is not counted
   const n = CQ.ticks.length, got = CQ.ticks.filter(Boolean).length; feel('snap'); CQ.lit = i;
   if (got < n) { tickNote(got); return; }
   if (CQ.won) return; CQ.won = { t: animTime, n };
   if (n === 1) { CQ.won.words = WIN_ONE[Math.floor(Math.random() * WIN_ONE.length)]; sound.done(); setTimeout(() => sound.wash(), 700); return; }
   CQ.won.words = WIN_MANY[Math.floor(Math.random() * WIN_MANY.length)]; J.lists++; journalDirty = true; saveJournal(); tickNote(got);
-  setTimeout(() => { if (CQ.won) { sound.done(); feel('bloom'); setTimeout(() => sound.wash(), 600); if (!lessMo() && !METEOR) meteor(false); } }, TIME.long * 1000);   // the two secret lines tick gold, then the swell
+  CQ.won.t2 = setTimeout(() => { if (CQ.won) { sound.done(); feel('bloom'); setTimeout(() => sound.wash(), 600); if (!lessMo() && !METEOR) meteor(false); } }, TIME.long * 1000);   // the two secret lines tick gold, then the swell
 }
 function cqDone() {   // what you did leaves the list; what's left waits for next time. Then the landing: Merge is yours
   if (CQ.ticks) { const list = tasks(); PREFS.tasks = list.filter((t, i) => !CQ.ticks[i]); CQ.ticks = null; savePrefs(); }
@@ -3584,15 +3889,15 @@ function cqRow(c, txt, y, box, done, lit) {   // one line of the list: its words
 /* ---------- The door and the Journey (v80) ---------- */
 // The door: the circle fades in where it sits, Soren in it, and two tiles under it, Merge and Journey. Touch one and the circle
 // expands out into the pool's edge. Merge: the game (a game you didn't lose comes back as it was). Journey: the landing, the
-// circle with Journey in it over the sky alone, and the hiker and six doors in the ribbon: the hiker (the Journey itself, where you are), then Pacer,
+// circle with Journey in it over the sky alone, and the mountain and six doors in the ribbon: the mountain (the Journey itself, where you are), then Pacer,
 // Tinker, Conquer, Rest, Studio and Labs. Touch a door once and the circle says what it is; touch it again and you are in. The lit door,
-// or the hiker, brings you back to the landing; the bar's first word brings you back to Merge. The sky stays live, and in the
+// or the mountain, brings you back to the landing; the bar's first word brings you back to Merge. The sky stays live, and in the
 // Journey the land stands aside: the pool is the sky alone (Studio keeps the scene, it is a sandbox of it; Conquer's play is the
 // game). Pacer: the dot (50-breathing.js). Tinker: the thought game (56-tinker.js). Conquer: name it, play first, go, come back,
 // check in (75-conquer.js). Rest: the night-time sound machine (60-game.js). Studio: the gear with its toys, kept only by Use
 // this. Labs: the next science, under the stars (57-lab.js). A door's row sits above the ribbon only while it has one.
-const DOORS = {   // each door: its word, its icon, one line, and what it opens; the hiker is the landing itself
-  journey: { n: 'Journey', ic: ICON.hiker, line: '', open: null },
+const DOORS = {   // each door: its word, its icon, one line, and what it opens; the mountain is the landing itself
+  journey: { n: 'Journey', ic: ICON.mountain, line: '', open: null },
   pacer: { n: 'Pacer', ic: ICON.eye, line: 'A dot that fills and empties. Breathe with it.', open: () => setMode('pacer') },
   tinker: { n: 'Tinker', ic: ICON.hand, line: 'Spheres to catch. Save the good ones; let the worries go.', open: () => setMode('tinker') },
   conquer: { n: 'Conquer', ic: ICON.task, line: 'Name what you will do, play first, go and do it, come back, check in.', open: () => { setMode('merge'); conquerStart(); } },
@@ -3622,7 +3927,7 @@ function journeyLeave() {   // leaving a door, for the landing or for Merge: eac
   const d = S.jr && S.jr.door; if (!d) return;
   if (d === 'conquer') conquerEnd(); if (S.mode !== 'merge') setMode('merge'); setPaused(false); S.jr.door = null; S.jr.peek = null; frClose();
 }
-function doorTile(k) {   // a door in the row: a first touch shows it, the same touch again opens it; the lit door, or the hiker, takes you back to the landing
+function doorTile(k) {   // a door in the row: a first touch shows it, the same touch again opens it; the lit door, or the mountain, takes you back to the landing
   if (!S.jr) return;
   if (k === 'journey' || S.jr.door === k) { journeyLeave(); syncUI(); return; }
   if (S.jr.door) journeyLeave();
@@ -3652,7 +3957,7 @@ function studioKeep() { STUDIO.was = null; STUDIO.on = false; savePrefs(); STUDI
 function studioFresh() { for (const k of ['atmo', 'mix', 'clouds', 'hour', 'depth']) setPrefRaw(k, JSON.parse(JSON.stringify(DEFAULTS[k]))); sound.init(); syncUI(); }
 /* ---------- The frame (v80): one bar, one ribbon, one row of checks ---------- */
 // The bar above the pool: home, the gear, the sound, the word tile, the score (in Play) and the time. The ribbon under the pool,
-// always, icons alone: in Play the tools and Pause; in the Journey the hiker and the six doors; with the gear on, the setting groups. Above the
+// always, icons alone: in Play the tools and Pause; in the Journey the mountain and the six doors; with the gear on, the setting groups. Above the
 // ribbon, one row, only while something is being chosen: the checks of the group or the word you touched, or what the door does.
 // Every setting is a tile: touch it and it is on (a green check), or it is the one chosen in its row. Nothing to drag but spheres:
 // no sliders, no switches, no third level. What you see is what applies where you are. Cards are left for what is read.
@@ -3686,7 +3991,7 @@ const SOUNDS = { merge: ['game', 'alerts', 'drone', 'nature', 'weather'], pacer:
 const SOUND_IC = { game: ICON.note, alerts: ICON.clock, breath: ICON.rings, touch: ICON.hand, drone: ICON.hum, nature: ICON.leaf, weather: ICON.cloud };
 const SOUND_N = { game: 'Game', alerts: 'Alerts', breath: 'Breath', touch: 'Touch', drone: 'Drone', nature: 'Nature', weather: 'Weather' };
 const GROUPS = {
-  scene: { n: 'Scene', ic: ICON.scene, row: () => CHOICES.hour.map(h => pk(h, LABELS.hour[h], h === 'live' ? ICON.clock : h === 'night' ? ICON.moon : ICON.sun, 'hour', h)) },
+  scene: { n: 'Scene', ic: ICON.scene, row: () => [...CHOICES.hour.map(h => pk(h, LABELS.hour[h], h === 'live' ? ICON.clock : h === 'night' ? ICON.moon : ICON.sun, 'hour', h)), ...(S.mode === 'studio' ? [] : [sw('live', 'Live sky', ICON.star, 'live')])] },   // Live sky: where you stand, the satellites, the comets (not a Studio toy: it asks the phone)
   weather: { n: 'Weather', ic: SUNCLOUD, row: () => [...ATMO.map(k => sw(k, skyName(k), k === 'rain' && here().snow ? ICON.snow : ICON[k], `atmo.${k}.on`, () => sound.init())),
     { id: 'clouds', n: 'Clouds', ic: ICON.cloud, on: () => PREFS.clouds !== 'clear', go: () => setPref('clouds', PREFS.clouds === 'clear' ? 'changing' : 'clear') },   // clouds, or a clear sky; the sky's own changing look
     { id: 'all', n: 'All', ic: ICON.cloud, on: () => ATMO.some(k => PREFS.atmo[k].on), go: allWeather }], off: () => here().dry },
@@ -3723,7 +4028,7 @@ function tilesHTML() {
 }
 const tilesClass = () => (FR.word ? 'words' + (WORDS[FR.word]().length > 6 ? ' slide' : '') : '');   // the words' rows are words alone; more than six slide sideways
 function ctxHTML() {   // the ribbon, icons alone
-  if (S.intro) return fCell('door:free', ICON.play, S.prev ? 'Resume' : 'Merge', 'quiet') + fCell('door:journey', ICON.hiker, 'Journey', 'pick');
+  if (S.intro) return fCell('door:free', ICON.play, S.prev ? 'Resume' : 'Merge') + fCell('door:journey', ICON.mountain, 'Journey');   // the door: two plain tiles, no ring on either
   if (FR.gear) {
     if (S.mode === 'studio') return STUDIO_ROW().map((o, i) => fCell(`st:${i}`, o.ic, o.n, `${o.cls || ''}${FR.group === o.id ? ' sel' : ''}`)).join('');
     return gearKeys().map(k => { const g = GROUPS[k], off = g.off && g.off(); return fCell(`top:${k}`, g.ic, g.n, off ? 'none' : FR.group === k ? 'sel' : ''); }).join('');
@@ -3755,8 +4060,9 @@ function wordHTML() {   // what the word tile holds
 function lineHTML() {
   const sq = (k, d, w, cls = '') => `<button class="cell ${cls}" data-f="top:${k}" aria-label="${w}">${icon(d)}</button>`;
   const w = warning(), word = `<div class="word tile${compOn() && !LINE.sub ? ' comp' : w && !compOn() ? ' warn' : ''}" id="word">${wordHTML()}</div>`;
-  const sp = `<button class="sp" data-f="stats" aria-label="Score and time">${S.jr ? '' : '<b class="num" id="scoreVal"></b>'}<span class="num" id="clock"></span></button>`;
-  return sq('home', ICON.home, 'Home') + sq('gear', ICON.gear, 'Settings', FR.gear ? 'sel' : '') + sq('mute', PREFS.sound ? ICON.speaker : MUTED, PREFS.sound ? 'Sound on' : 'Sound off') + word + sp;
+  const sp = S.jr ? '' : `<button class="sp" data-f="stats" aria-label="Score"><b class="num" id="scoreVal"></b></button>`;   // the score, in Play; the time is the phone's own, top left
+  const heard = PREFS.sound && !S.paused;   // paused, the sound waits: the speaker says so without touching the setting
+  return sq('home', ICON.home, 'Home') + sq('gear', ICON.gear, 'Settings', FR.gear ? 'sel' : '') + sq('mute', heard ? ICON.speaker : MUTED, heard ? 'Sound on' : 'Sound off') + word + sp;
 }
 // Everything shown is drawn again only when what it shows has changed.
 function syncBars() {
@@ -3774,7 +4080,7 @@ function syncBars() {
   document.body.classList.toggle('intro-in', !!(S.intro && S.intro.rest)); document.body.classList.toggle('intro-quick', !!(S.intro && S.intro.quick));
   document.body.classList.toggle('carded', !!CARD.name); document.body.classList.toggle('framed', FR.gear || !!FR.word);
   $('plus').hidden = !S.tk || !!S.sheet;   // Tinker's +, in the pool's corner
-  if (`${rowc}` !== BAR.rows) { BAR.rows = `${rowc}`; fitPool(); }
+  if (`${rowc}` !== BAR.rows) { BAR.rows = `${rowc}`; fitPool(); inkApply(); }   // a row came or went: the pool fits, and each row reads its sky again
 }
 function tickBars() {   // every frame: the score and its glow, a warning's countdown; every quarter second, the rest
   const an = $('alertN'), w = warning(); if ((!!w) !== !!an || (w && $('line').querySelector('.hz b').textContent !== w[0])) syncBars();   // a warning comes, changes and goes
@@ -3785,12 +4091,10 @@ function tickBars() {   // every frame: the score and its glow, a warning's coun
   }
   const ms = performance.now(); if (ms - (tickBars.t || 0) < 250) return; tickBars.t = ms;
   ctxSync();
-  const t = new Date().toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' }).toLowerCase();
-  const c = $('clock'); if (c && c.textContent !== t) c.textContent = t;
 }
 function applySeason() { BAR.line = BAR.tiles = BAR.ctx = ''; if ($('ctxBar') && WORLD) syncBars(); }   // a new place: the frame is rebuilt for it
 // The frame's one pop-up, when no card is open: the card's own pop-up, standing alone over the frame.
-function framePop(o) { if (!CARD.name) { POP.alone = true; const mc = $('mc'); mc.classList.add('alone'); mc.hidden = false; fitCard(); } popup(o); }
+function framePop(o) { if (!CARD.name) { POP.alone = true; S.sheet = 'pop'; const mc = $('mc'); mc.classList.add('alone'); mc.hidden = false; fitCard(); syncBars(); } popup(o); }   // standing alone it is a sheet like any card: the game waits, the ribbon does not answer
 function allWeather() {   // the weather, all of it off, or back as it was
   const on = ATMO.filter(k => PREFS.atmo[k].on);
   if (on.length) { allWx.was = on; for (const k of ATMO) PREFS.atmo[k].on = false; }
@@ -3799,7 +4103,7 @@ function allWeather() {   // the weather, all of it off, or back as it was
 }
 const allWx = { was: null };
 const FRESH_KEEP = ['tasks', 'saved', 'mins', 'mode'];   // Fresh: every setting back to day one; what you wrote and what you saved stay
-function fresh() { for (const k in DEFAULTS) if (!FRESH_KEEP.includes(k)) setPrefRaw(k, JSON.parse(JSON.stringify(DEFAULTS[k]))); savePrefs(); sound.init(); newWorld(); syncUI(); }
+function fresh() { compStop(); for (const k in DEFAULTS) if (!FRESH_KEEP.includes(k)) setPrefRaw(k, JSON.parse(JSON.stringify(DEFAULTS[k]))); savePrefs(); sound.init(); newWorld(); syncUI(); }   // Comp is a state, not a setting: it stops first
 function goHome() {   // Home: the opening's door; the game in hand waits there as Resume
   closeSheet(); hideCard(); frClose(); LINE.sub = null;
   if (S.jr) { journeyLeave(); S.jr = null; } if (S.mode !== 'merge') setMode('merge'); if (compOn()) setPref('comp', false);
@@ -3809,13 +4113,13 @@ function goHome() {   // Home: the opening's door; the game in hand waits there 
 // A touch in the frame. Every target says what it is in its data-f.
 function frameTouch(f) {
   const [a, b] = f.split(':');
-  if (S.sheet && a !== 'top' && a !== 'stats' && a !== 'door') return;   // a card is open: only the bar answers (it closes the card first)
+  if (S.sheet && a !== 'top' && (POP.alone || (a !== 'stats' && a !== 'door'))) return;   // a card is open: only the bar answers (it closes the card first); a pop-up standing alone: only the bar
   if (a === 'top') {
     const go = () => {
       if (b === 'home') { goHome(); return; } if (b === 'gear') { gearTap(); return; } if (b === 'mute') { setPref('sound', !PREFS.sound); feel('snap'); return; }
       if (b === 'pause') { if (!(S.jr && CQ.step !== 'go')) pauseTap(); return; }
       if (GROUPS[b]) { if (GROUPS[b].off && GROUPS[b].off()) return; gearGroup(b); } };
-    if (CARD.name && CARD.name !== 'moment') { closeSheet(); go(); return; } go(); return;
+    if ((CARD.name && CARD.name !== 'moment') || POP.alone) { closeSheet(); go(); return; } go(); return;
   }
   if (a === 'word') { if (b === 'merge') { if (S.jr) journeyEnd(); else journeyStart(); return; } wordTap(b); return; }   // the first word switches worlds; the others open their rows
   if (a === 'row') { const o = rowItems()[+b]; if (!o || (o.dis && o.dis())) return; if (o.act) o.act(); else o.go(); feel('snap'); syncBars(); return; }
@@ -3827,11 +4131,8 @@ function frameTouch(f) {
 }
 
 // Pause is pause and mute in one touch; the sound comes back as it was, never louder than you left it.
-const PAUSE = { was: false };
 function pauseTap() {
-  const p = !S.paused;
-  if (p) { PAUSE.was = !!PREFS.sound; if (PREFS.sound) setPref('sound', false); } else { if (PAUSE.was) setPref('sound', true); PAUSE.was = false; }
-  setPaused(p); syncBars();
+  setPaused(!S.paused); syncBars();   // the sound waits with the game (35-audio.js reads S.paused); your setting is untouched, however you unpause
 }
 /* ---------- The words of every choice, and the cards ---------- */
 // Every setting lives in the frame (80-frame.js). The words each choice can take are here, once. A card is only for what is read:
@@ -3848,7 +4149,7 @@ const text = (t) => (typeof t === 'function' ? t() : t);
 const hub = (ic, name, desc, go) => ({ ic, name, desc, kind: 'hub', go });
 const show = (ic, name, desc, v) => ({ ic, name, desc, kind: 'value', get: v });
 const FAQ = [
-  ['What is the Journey?', 'The other world. A landing over the sky alone, with the hiker and six doors in the ribbon under the pool: the hiker (the Journey itself, where you are), then Pacer (a dot that fills and empties; breathe with it), Tinker (spheres to catch, save or let go), Conquer (name what you will do, play first, go, come back, check in), Rest (the night-time sound machine), Studio (the settings as toys; nothing is kept unless you touch Use this) and Labs (the next science, under the stars). Touch a door once to see what it is, again to go in. The lit door, or the hiker, brings you back to the landing; the first word in the bar brings you back to Merge. Home brings you to the front door; the game in hand waits there as Resume.'],
+  ['What is the Journey?', 'The other world. A landing over the sky alone, with the mountain and six doors in the ribbon under the pool: the mountain (the Journey itself, where you are), then Pacer (a dot that fills and empties; breathe with it), Tinker (spheres to catch, save or let go), Conquer (name what you will do, play first, go, come back, check in), Rest (the night-time sound machine), Studio (the settings as toys; nothing is kept unless you touch Use this) and Labs (the next science, under the stars). Touch a door once to see what it is, again to go in. The lit door, or the mountain, brings you back to the landing; the first word in the bar brings you back to Merge. Home brings you to the front door; the game in hand waits there as Resume.'],
   ['What is the Pacer?', 'A dot at the centre fills the circle in five and a half seconds, green, then blue, then white, and empties again; the ring melts at the crest and comes back as it fills. A light goes round the pool’s edge once a breath. Breathe in as it fills, out as it empties. Its row sets the pace: Slow, Natural, Quick (5, 5.5 and 6 a minute, inside the range the studies used); the pool’s breath in Play follows it. With Chest on (Labs), lay the phone flat on your chest, hands off, and after fifteen seconds the dot follows your breath.'],
   ['What is Tinker?', 'Spheres come in sets of six, grow together, hold, shrink and go; a new six come somewhere else. Hold one and it is caught: it keeps its size and follows your finger. Drop it in Save It, the green tank, and it lives there, kept between visits; a smaller one dropped onto a bigger one is taken in. Let It Go is the circle in the tank: open while a set is grown, shut between sets; dropped in while open, it is gone for good. The + makes one of your own: name it or not, pick its glow, set it loose. A tap on any sphere is a soft tap on glass. Spheres are thoughts: keep the good ones, let the worries go. Nothing is scored.'],
   ['What is Conquer?', 'A door in the Journey. Five steps in the pool. Name it: up to three lines of what you will do after, or none. How long first: 15, 30 or 60 minutes of Merge, or Free. Go: you play; a bell at three minutes left, two at one; or touch Go now. Then three breaths out, and the pool goes dark with your lines and a send-off. I’m back: your lines, to touch as done; one done is a gold done, a whole list is a surprise. What you did leaves the list; the rest waits for next time.'],
@@ -3856,14 +4157,16 @@ const FAQ = [
   ['What are the tools?', 'In the row under the pool. Strike: touch a sphere; it turns red, then the place’s own strike takes it. Mystery: your next sphere becomes whatever it touches first. Storm: the place’s own weather blows in and every sphere lands somewhere new (in Comp, Storm is a gust). A chain of three or a Full Bloom earns one, up to three of each; the count sits on the tile.'],
   ['What is Comp?', 'Play with the calm taken off: touch the second word in the bar (Zen or Classic) and touch Comp. The line creeps down; the wind is real and restless. One sphere at a time carries a countdown: merge it in time and the line lifts or a tool is yours; miss it and the line sinks or a wave rolls in. Strike knocks a sphere down a size; Storm is a gust with a hurricane category. Storms, ice, rain and lightning come on their own, each announced in the bar with its countdown; when lightning heats a sphere red, touch it to cool it. Now and then two or three come at once. Rarely, a tree takes the power out: the pool browns out and the dropper malfunctions until it comes back. Glass knocked hard enough chips, cracks and shatters. No aim line, no Heritage. Touch COMPETITION in the bar to leave: nothing is lost.'],
   ['What do the colours mean?', 'A green check means on, or the one chosen in its row. The tile you are on is deeper glass. Blue is the way on. White is quiet, or off. Red erases. Gold means something special. Colour is never the only sign.'],
-  ['How do I get around?', 'The bar above the pool: Home (the front door), the gear, the sound on or off, then three words: the first (Merge) takes you to the Journey and back; the second (Zen or Classic) opens the rules; the third is the place. On the right, the score and the time. Under the pool, always: the tools and Pause in Play, the hiker and the six doors in the Journey. The gear puts Scene, Weather, Sound, Game, Comfort and Help in that row; touch one and its checks appear above it; touch a check and it is on, at once, while you watch; touch the group again and the row goes. Nothing to drag. Loudness is the phone’s own buttons.'],
-  ['What is Rest?', 'The night-time sound machine, a door in the Journey. The pool fades to dark while a bed plays on (rain, wind, night or fire, or none), for an hour or all night. Phones stop sound when they lock, so Rest keeps the screen awake; plug in for long sessions. The hiker, or the first word, wakes it.'],
+  ['How do I get around?', 'The bar above the pool: Home (the front door), the gear, the sound on or off, then three words: the first (Merge) takes you to the Journey and back; the second (Zen or Classic) opens the rules; the third is the place. On the right, the score and the time. Under the pool, always: the tools and Pause in Play, the mountain and the six doors in the Journey. The gear puts Scene, Weather, Sound, Game, Comfort and Help in that row; touch one and its checks appear above it; touch a check and it is on, at once, while you watch; touch the group again and the row goes. Nothing to drag. Loudness is the phone’s own buttons.'],
+  ['What is Rest?', 'The night-time sound machine, a door in the Journey. The pool fades to dark while a bed plays on (rain, wind, night or fire, or none), for an hour or all night. Phones stop sound when they lock, so Rest keeps the screen awake; plug in for long sessions. The mountain, or the first word, wakes it.'],
   ['What is Soft View?', 'The gear › Comfort › Soft View: no bursts, no banners, no lightning, a softer buzz, nothing bright above 4 kHz. Still is Reduce motion, and follows the phone. Breathe is the pool’s own breath, at the Pacer’s pace.'],
   ['What is Labs?', 'The Journey’s Labs door, in beta: the next science, each experiment a check under the stars. Look up: lift the phone toward the sky and the real stars overhead fill the pool; hold the light on the ringed star to draw a constellation. Chest: in the Pacer, lay the phone flat on your chest, hands off, and after fifteen seconds the dot follows your breath. Heavy: a big sphere follows your finger slowly, as heavy glass would. They read the phone’s own motion sensor, on the phone; nothing is kept or sent.'],
   ['What is Studio?', 'A door in the Journey: the gear opened as a sandbox. Scene, Weather and Sound as you know them, Depth (how much of the scene is drawn: it steps on each touch), Fresh (every toy back to how SoRen came) and Use this (keeps what you made). Leave without it and nothing is kept.'],
   ['Why does it feel this way?', 'Real science, kept simple. The breath starts at five and a half a minute, near where breath and heartbeat fall into step for most people; the green line on Pace is the range the studies used. Glass rings long and wood stops short, because that is how each really sounds. Rain falls at its true speeds, thunder comes three seconds a kilometre after its flash so you can count it, and the sky is the real one: the sun, the moon with its phase, the planets in their colours and the stars stand where they stand right now over 41° north, worked out from the clock, not fetched. Lightning never flashes more than three times a second. Nature sound stays soft: quiet matters as much as the sound. None of it is treatment. It is somewhere to settle.'],
   ['What are the numbers?', 'Breath: 5.5 a minute, the mean where heart rate and breathing fall into step in the research; the green band on Pace is 4.8 to 6.6, the range the studies used. Light: never more than 3 flashes in a second, each flash one glow, never a flicker. Thunder: a rise of at least 50 ms, 3 seconds for every kilometre. Rain: each drop falls at the true speed for its size, and small drops outnumber large ones as they do in the sky. Sound: glass and wood ring for as long as glass and wood do; Tinker’s taps keep a dark timbre, under 1.5 kHz. Haptics: three strengths (0.5, 0.7, 1.0), the buzz first and the sound within 20 ms. Colour: the scene stays low in saturation and lighter than the frame around it; text is meant to be at least 7:1 against its background. The sky: the sun and planets to a tenth of a degree, the moon to a quarter (Meeus); the meteor showers on their nights, streaming from where their radiant stands. Every number is in the code, with its source.'],
-  ['Is the sky real?', 'Yes. Where the sun and the moon stand, how much of the moon is lit, which planets and stars are up, and which meteor shower is on tonight are all worked out on the phone from the date and the time, for 41° north and your time zone, the way an almanac does it. Nothing is looked up. Comets and satellites change too fast to know without fresh data, so they are left out for now.'],
+  ['Is the sky real?', 'Yes. Where the sun and the moon stand, how much of the moon is lit and how big it looks, which planets and stars are up, which meteor shower is on tonight, and every eclipse are worked out on the phone from the date, the time and where you stand (41° north and your time zone until Live sky is on), the way an almanac does it. The window faces south and is as wide as that day’s arc: the sun’s by day, the moon’s by night. Nothing is sent anywhere.'],
+  ['What is the moon doing?', () => { const s = skyAt(skyTime()), m = s.moon, n = moonNames(skyTime()), lit = Math.round(m.frac * 100), when = n.next.toLocaleDateString([], { month: 'long', day: 'numeric' });
+    return `${m.alt > 0 ? 'Up now' : 'Below the horizon'}, ${m.waxing ? 'waxing' : 'waning'}, ${lit}% lit, ${Math.round(m.dist / 1000).toLocaleString()},000 km away${m.super ? ': a supermoon, as close as it comes' : m.micro ? ': a micromoon, as far as it goes' : ''}. The next full moon is the ${n.names.join(' ')} Moon, ${when}.${s.lunar ? ` Tonight the Earth’s shadow is on it: a ${s.lunar.kind} eclipse.` : ''}${s.solar ? ` The moon is over the sun right now: a ${s.solar.kind} eclipse, ${Math.round(s.solar.mag * 100)}% covered.` : ''} A supermoon is a full moon within 360,000 km; the Harvest Moon is the one nearest the September equinox, the Hunter’s the next; the other names are the almanac’s, by month. Eclipses are drawn where the shadow truly falls, at the moon’s drawn size.`; }],
   ['Does SoRen collect anything?', 'No. Everything stays on this phone: no accounts, no ads, no tracking, no notifications, nothing to buy. Leaving costs you nothing.'],
   ['Is this a medical tool?', 'No. It is somewhere to settle. If you are struggling, talk to someone you trust or a professional.'],
   ['Which version is this?', `Version ${VERSION}. The physics has been locked since version 34 (${PHYSICS_ID}).`]
@@ -3922,6 +4225,7 @@ function openCard(name) {
 function closeSheet() {   // everything away, as it stands
   const was = S.sheet; if (!was) return;
   CARD.name = null; S.sheet = null; $('mc').hidden = true; $('mcPop').hidden = true; if (was === 'moment') S.card = false;
+  if (POP.alone) { POP.alone = false; $('mc').classList.remove('alone'); }   // the frame's own pop-up stood alone: it goes too
   try { canvas.focus({ preventScroll: true }); } catch (e) {}
   syncUI();
 }
@@ -3946,6 +4250,7 @@ function setPref(k, v) {   // a change takes effect everywhere, at once, and is 
   else if (k === 'overflow') S.fair = S.world.balls.length || S.score ? S.fair && v === 'end' : v === 'end';   // changing the rules mid-game: it no longer counts
   else if (k === 'comp') { if (v) { if (S.mode !== 'merge') setMode('merge'); compStart(); } else compStop(); }
   else if (k === 'fadeAfter' && S.rest) S.rest.left = v * 60;
+  else if (k === 'live') { if (v) liveStart(); else liveStop(); }
   else if (k.startsWith('beta.') && v && k !== 'beta.heavy') askSensor(k === 'beta.lookup' ? 'tilt' : 'moving', (ok) => { if (!ok) { setPrefRaw(k, false); savePrefs(); syncUI(); say(E_ASKED[k] ? 'Not allowed' : 'Not on this device', E_ASKED[k] ? 'Motion was refused. Close SoRen fully and open it again to be asked once more' : 'It needs a phone’s motion sensor'); } E_ASKED[k] = true; });   // iPhones ask once a launch: a refusal stays until the next
   syncUI();
 }
@@ -3956,7 +4261,7 @@ function logical(clientX, clientY) {   // screen to board: spheres breathe in pl
 }
 function bind() {
   let pointerId = null, grab = 0;   // the dropper moves with your finger like a trackpad: by how far it slides, not to where it lands
-  document.addEventListener('pointerdown', () => { sound.init(); S.lastInput = performance.now(); if (S.intro) introSkip(); }, true);   // a tap anywhere finishes the opening
+  document.addEventListener('pointerdown', () => { sound.init(); S.lastInput = performance.now(); if (S.intro) introSkip(); sensorsBack(); }, true);   // a tap anywhere finishes the opening
   canvas.addEventListener('pointerdown', (e) => {
     if (e.button !== undefined && e.button !== 0) return;
     playFade(true);
@@ -3966,7 +4271,7 @@ function bind() {
     const p = logical(e.clientX, e.clientY);
     if (CQ.step && CQ.step !== 'go') { conquerTouch(p); return; }   // Check in: a line touched is ticked
     if (S.jr && (!S.jr.door || S.jr.door === 'labs' || S.jr.door === 'studio' || S.pac)) return;   // the landing, Labs, the Studio and the Pacer: the pool is to look at
-    if (S.paused) { setPaused(false); syncBars(); return; }   // tap to play
+    if (S.paused) { setPaused(false); syncBars(); return; }   // tap to play (the speaker follows: lineHTML)
     try { canvas.setPointerCapture(e.pointerId); } catch (err) {}
     if (S.tk) { tinkerTouch(p, true); return; }
     if (S.armed) { strikeSphere(sphereAt(p.x, p.y)); return; }   // armed: this touch uses it
@@ -4003,7 +4308,7 @@ function bind() {
     if (!$('mcPop').hidden && t.closest('#mc')) {   // the pop-up answers first
       const p = t.closest('[data-pop]'); if (!p) return;
       $('mcPop').hidden = true;
-      if (POP.alone) { POP.alone = false; $('mc').classList.remove('alone'); if (!CARD.name) $('mc').hidden = true; syncBars(); }   // the frame's pop-up stood alone: it goes with its answer
+      if (POP.alone) closeSheet();   // the frame's pop-up stood alone: it goes with its answer, like any sheet
       if (p.dataset.pop === 'go') { const f = POP.go; POP.go = null; if (f) f(); }
       return;
     }
@@ -4026,7 +4331,7 @@ function bind() {
   $('maker').addEventListener('submit', (e) => { e.preventDefault(); if (S.tk) tkMake(); });
   document.addEventListener('focusout', (e) => { const tx = e.target.closest && e.target.closest('[data-task]'); if (tx) cqLock(+tx.dataset.task); });   // the finger leaves a line with words in it: locked in gold
   document.addEventListener('keydown', (e) => {
-    if (e.key === 'Escape' && POP.alone) { POP.alone = false; $('mcPop').hidden = true; $('mc').classList.remove('alone'); if (!CARD.name) $('mc').hidden = true; syncBars(); return; }   // the frame's own pop-up: Escape is Back
+    if (e.key === 'Escape' && POP.alone) { closeSheet(); return; }   // the frame's own pop-up: Escape is Back
     if (e.key === 'Enter' && e.target.matches && e.target.matches('[data-task]')) { e.preventDefault(); const i = +e.target.dataset.task; cqLock(i); const nx = $('jrText').children[i + 1]; if (nx) nx.focus(); else e.target.blur(); return; }
     if (CARD.name && e.key === 'Escape') footAct('close');
     if (e.key === 'Escape' && S.tk && !$('maker').hidden) tkMaker(false);
@@ -4039,7 +4344,7 @@ function bind() {
     updateWarmth(); syncBars(); if (S.mode === 'rest') requestWake(true);
   });
   window.addEventListener('pagehide', flush);
-  window.addEventListener('resize', () => { setupDPI(); fitPool(); BAR.ctlKey = ''; BAR.rows = ''; syncBars(); if (CARD.name || POP.alone) fitCard(); });
+  window.addEventListener('resize', () => { setupDPI(); fitPool(); BAR.ctlKey = ''; BAR.rows = ''; syncBars(); inkApply(); if (CARD.name || POP.alone) fitCard(); });
 }
 function setupDPI() { const dpr = poolDPR(); canvas.width = Math.round(LW * dpr); canvas.height = Math.round(LH * dpr); ctx.setTransform(dpr, 0, 0, dpr, 0, 0); makeSprites(); }
 // The slider's handle: a blue ring round white, with ‹ ›.
@@ -4073,6 +4378,7 @@ function start() {
   handles(); bind(); newWorld(true); setupDPI();
   const prev = loadJSON(SKEY); S.prev = Array.isArray(prev.balls) && prev.balls.length && !prev.gameOver ? prev : null;   // every launch is a new game; one not lost waits at the door (Resume) until the first drop of a new one
   newPool(); PREFS.mode = 'merge'; S.tod = PREFS.hour === 'live' ? clockTod() : HOURS[PREFS.hour];
+  if (PREFS.live) liveStart();
   updateScene(0); updateSky(true); updateWind(0); updateWarmth(); syncUI(); fitPool();
   opening();
   requestAnimationFrame(frame);
