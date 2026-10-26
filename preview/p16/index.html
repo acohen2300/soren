@@ -1,7 +1,7 @@
 <!doctype html>
 <html lang="en">
 <head>
-<!-- SoRen v84 · physics locked since v34 (12627fd9) -->
+<!-- SoRen v85 · physics locked since v34 (12627fd9) -->
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'self' 'unsafe-inline'; style-src 'unsafe-inline'; img-src 'self' data: blob:; media-src blob: data:; manifest-src 'self'; worker-src 'self'; connect-src https://celestrak.org https://ssd-api.jpl.nasa.gov; font-src 'none'; base-uri 'none'; form-action 'none'">
@@ -80,7 +80,7 @@ body.rm button, body.rm .pill, body.rm .cancel { transition: none; }
 .pill { flex: none; display: inline-flex; align-items: center; height: calc(78 * var(--u)); padding: 0 calc(22 * var(--u)); border-radius: var(--r-sm); white-space: nowrap;
   box-shadow: inset 0 0 0 calc(3 * var(--u)) var(--ring, rgb(var(--pick))); background: transparent; font-weight: 700; font-size: var(--t1); color: var(--ink); transition: box-shadow var(--quick); }
 .pill.on { --ring: rgb(var(--on)); } .pill:disabled { --ring: var(--edge); color: var(--dim); }
-/* Comp: the same hues, brighter; the pool a touch more vivid. */
+/* Challenge: the same hues, brighter; the pool a touch more vivid. */
 body.comp { --on: 90, 220, 130; --pick: 110, 175, 255; --gold: 255, 215, 110; }
 body.comp #game { filter: saturate(1.25) contrast(1.05); }
 .cancel { flex: none; padding: 0 calc(10 * var(--u)); font-size: var(--t1); text-decoration: underline; text-underline-offset: calc(6 * var(--u)); color: var(--ink); }
@@ -92,7 +92,7 @@ body.comp #game { filter: saturate(1.25) contrast(1.05); }
 
 /* The bar above the pool: home, the gear, the sound, then the word tile (the mode's three words: Merge | Zen | Winter, each a
    touch; in the Journey its word or the door's; while the gear is on, where you are and the value; a warning, with its countdown),
-   then the score and the time, unboxed. Comp is an overlay: the word tile red, COMPETITION in it. */
+   then the score and the time, unboxed. Challenge shows in the words (Challenge · level). */
 .bar { flex: none; position: relative; height: var(--bar); display: flex; align-items: stretch; gap: var(--gap-x); }
 .bar .cell { flex: none; width: var(--bar); border-color: transparent; }   /* Pause floats where the row is clear; by day it keeps the navy */ .bar .ic { top: 50%; width: calc(48 * var(--u)); height: calc(48 * var(--u)); } .bar .ic::after { display: none; } .bar .ic svg { stroke-width: calc(3.6 * var(--u)); }
 .word { flex: 1 1 0; min-width: 0; display: flex; align-items: stretch; overflow: hidden; }
@@ -108,9 +108,6 @@ body.comp #game { filter: saturate(1.25) contrast(1.05); }
 .hz b, .hz i { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-size: var(--t2); color: rgb(var(--ink-rgb)); } .hz b { font-weight: 700; } .hz i { font-weight: 400; font-style: normal; }
 .hz .cd { flex: none; width: calc(72 * var(--u)); height: calc(72 * var(--u)); display: grid; place-items: center; border-radius: 50%; background: rgb(var(--ink-rgb)); color: rgb(var(--red-deep)); font-weight: 700; font-size: var(--t1); }
 .word.warn { box-shadow: inset 0 0 0 calc(3 * var(--u)) rgb(var(--red)); }
-.word.comp { background: rgb(var(--red-deep)); border-color: transparent; }   /* its own ground, deep red: white on it, 7:1+, whatever the row's ink */
-.compw { flex: 1; display: inline-flex; align-items: center; justify-content: center; color: #fff; font-weight: 700; font-size: var(--t2); white-space: nowrap; }
-.word .comp-sub { flex: 1; display: flex; align-items: center; justify-content: center; gap: calc(16 * var(--u)); }
 
 /* The pool: liquid glass, one fixed outline, as large as the space allows at its own shape. Its breathing edge is drawn on the canvas. */
 .pool { position: relative; width: min(var(--cw), calc((100vh - 16px - env(safe-area-inset-top, 0px) - env(safe-area-inset-bottom, 0px) - var(--chrome, calc(300 * var(--u)))) * 380 / 490));
@@ -221,7 +218,9 @@ input[type=range]::-moz-range-track { height: 4px; border-radius: 2px; backgroun
 .dash .hr input::-webkit-inner-spin-button, .dash .hr input::-webkit-outer-spin-button { -webkit-appearance: none; margin: 0; }
 .dash .chip.task { text-align: left; padding: 0 14px; overflow: hidden; text-overflow: ellipsis; }
 .dash .chip.way { box-shadow: inset 0 0 0 2px rgb(var(--pick)); }   /* the suggested door: blue, the way on (rule 1) */
-.dash .note { margin: 6px 2px 0; font-size: max(14px, var(--t2)); }
+.strip { max-height: calc(100% - 16px); overflow-y: auto; }   /* a long section (Challenge) scrolls inside the pool */
+.strip .hn { flex: none; width: 6.4em; font-size: max(14px, var(--t2)); font-weight: 600; }
+.dash .note, .strip .note { margin: 6px 2px 0; font-size: max(14px, var(--t2)); }
 .strip .tog-btn { flex: none; height: 44px; display: grid; place-items: center; }
 /* The shimmer: one sweep of silver across a tile, "this, now"; the breeze passes it round every tile, clockwise. */
 .glint { overflow: hidden; }
@@ -474,6 +473,9 @@ const PLACES = {
   celestial: { label: 'Orbit', color: '#03040c', accent: '#c4b5fd', synth: 'crystal', edge: '#a5b4fc', night: true,
     back: 'space', storm: ['Meteor shower', 'stars', '6,8,24'], strike: ['A meteor', '255,214,150', 'meteor'], creature: 'satellite',
     tiers: 'Moon Dust:cbd5e1|Mercury:a8a29e|Venus:fde68a|Earth:38bdf8|Mars:f87171|Jupiter:fdba74|Saturn:fcd34d|Uranus:67e8f9|Neptune:6366f1|The Sun:fbbf24' },
+  earth: { label: 'Earth', color: '#020510', accent: '#7dd3fc', synth: 'crystal', edge: '#7dd3fc', night: true,   // the planet from orbit: you are the ISS (v85; 41-earth.js)
+    back: 'space', storm: ['Meteor shower', 'stars', '6,8,24'], strike: ['A meteor', '255,214,150', 'meteor'], creature: 'satellite',
+    tiers: 'Ice Cap:e0f2fe|Reef:67e8f9|Desert:fcd34d|Forest:4ade80|Ocean:38bdf8|Aurora:a7f3d0|City Lights:fbbf24|Storm Eye:a5b4fc|Moonrise:e2e8f0|Sunrise:fb923c' },
   heritage: { label: 'Heritage', color: '#2a1c12', accent: '#f0c27a', synth: 'glass', edge: '#d9a65a', glow: '250,232,205',
     back: 'tray', storm: ['The lamp gutters', 'dark', '8,4,0'], strike: ['The lamp', '255,220,160', 'lamp'],
     tiers: 'Clay:b5693f|Clambroth:e9dfcf|Peppermint:f1e9e4|Candy Swirl:e9b53d|Onionskin:e0563a|Mica:2f5f9e|Lutz:2e7d58|End of Day:a3456f|Sulphide:b9c9d4|Heirloom:d99a2b' }
@@ -870,7 +872,7 @@ const ENV = { cover: 0, gloom: 0, precip: 0, rain: 0, snow: 0, light: 1, dark: 0
 const FEEL = { life: 0.45, heave: 0.035, glow: 0.65 };
 
 /* ---------- Storage (guarded: private windows and sandboxes can throw) ---------- */
-const VERSION = 84, PHYSICS_ID = '12627fd9';   // the build, and the first eight of the locked Physics block's hash
+const VERSION = 85, PHYSICS_ID = '12627fd9';   // the build, and the first eight of the locked Physics block's hash
 const JKEY = 'soren:journal:p5', JKEY_OLD = 'somatic-resonance:journal:v2', PKEY = 'soren:prefs:p5', SKEY = 'soren:pool:p5';
 function loadJSON(key) { try { const v = JSON.parse(localStorage.getItem(key) || 'null'); return v && typeof v === 'object' ? v : {}; } catch (e) { return {}; } }
 const SAVED = {};   // what each key last held: a save that changes nothing writes nothing
@@ -893,11 +895,13 @@ const CHOICES = {
 };
 // Breath, from the research (research/SENSORY-SCIENCE.md, Table 1): the measured mean resonance, and the band the studies used.
 const BREATH = { pace: 5.5, band: [4.8, 6.6], ratio: 0.4 };   // breaths a minute; the green zone on Pace; in-breath share of a breath (Design, no validated ratio)
+const HAZ_W = ['wind', 'rain', 'bolt', 'cover'], HAZ_X = ['ice', 'line', 'timer', 'storm', 'power', 'deluge'];   // Challenge's hazards: the weather (a switch and a severity), the rest (a switch)
 const DEFAULTS = {
   mode: 'merge', overflow: 'end', where: 'live', cover: { on: false, lv: 0.5 }, hour: 'live',   // cover: the clouds, on or off, and how much of the sky (v82; was five looks)
  
   atmo: { bolt: { on: false, lv: 1 }, wind: { on: false, lv: 0.4 }, rain: { on: false, lv: 1 } },
-  breathing: true, bpm: 5.5, aim: true, next: false, numbers: true, comp: false,   // comp: Play with the calm taken off; never remembered, a double opt-in every time
+  breathing: true, bpm: 5.5, aim: true, next: false, numbers: true, comp: false,   // comp: Challenge is on; never remembered, asked every time
+  haz: { wind: { on: true, lv: 0.5 }, rain: { on: true, lv: 0.5 }, bolt: { on: true, lv: 0.5 }, cover: { on: false, lv: 0.5 }, ice: false, line: true, timer: true, storm: true, power: false, deluge: false },   // Challenge's hazards (v84): the weather with its severity, then the rest; kept
   sound: true, vol: 0.85, ambient: 'off', ambLv: 1, fadeAfter: 60, soft: false, still: reduceMotion, vibe: true,   // soft: Soft View, low stimulation, no surprises
   mix: { game: { on: true, lv: 0.7 }, alerts: { on: true, lv: 0.7 }, breath: { on: true, lv: 0.7 }, touch: { on: true, lv: 0.7 }, drone: { on: true, lv: 0.7 }, nature: { on: true, lv: 0.6 }, weather: { on: true, lv: 0.6 } },   // the Sound card: each kind of sound, its level and whether it plays
   mins: 15, tasks: [],   // Conquer: how long you play first, and your list, up to three lines, each { text }
@@ -918,11 +922,14 @@ const PREFS = (() => {
   p.beta = Object.fromEntries(Object.keys(DEFAULTS.beta).map(k => [k, obj(s.beta)[k] === true]));
   p.saved = (Array.isArray(s.saved) ? s.saved : []).slice(0, 12).filter(Array.isArray).map(v => { const g = Math.round(Number(v[1])); return [clamp(Number(v[0]) || 0.5, 0.1, 1), clamp(Number.isFinite(g) ? g : -1, -1, 5), String(v[2] || '').slice(0, 24)]; });
   if (!CHOICES.mins.includes(p.mins)) p.mins = DEFAULTS.mins;
-  p.vol = clamp(+p.vol, 0, 1); p.comp = false;   // Comp is never remembered: it asks every time
+  { const h = obj(s.haz); for (const k of HAZ_W) { const a = obj(h[k]); p.haz[k] = { on: a.on == null ? DEFAULTS.haz[k].on : !!a.on, lv: clamp(Number(a.lv) || DEFAULTS.haz[k].lv, 0.05, 1) }; } for (const k of HAZ_X) p.haz[k] = typeof h[k] === 'boolean' ? h[k] : DEFAULTS.haz[k]; }
+  p.vol = clamp(+p.vol, 0, 1); p.comp = false; p.hour = 'live';   // the hour is always the real one outside Studio (v85)   // Challenge is never remembered: it asks every time
   p.depth = clamp(Math.round(+p.depth), 0, 3); if (!Number.isFinite(p.depth)) p.depth = 3;
   p.tasks = (Array.isArray(s.tasks) ? s.tasks : []).slice(0, 3).map(t => ({ text: String(obj(t).text || '').slice(0, 60) })).filter(t => t.text.trim());
   return p;
 })();
+// The weather as it is now: in Challenge its hazards set it; elsewhere your Weather (v84: one home each).
+const wx = (k) => (compOn() ? hazNow()[k] : k === 'cover' ? PREFS.cover : PREFS.atmo[k]);
 const STUDIO = { on: false, was: null };   // Studio: a sandbox. On entry the settings are copied; nothing is saved while it is on; leaving puts the copy back unless you touched Use this
 const savePrefs = () => { if (!STUDIO.on) saveJSON(PKEY, { v: VERSION, ...PREFS }); };   // every saved object carries the version it was written by, so a later build can migrate it
 const getPref = (k) => k.split('.').reduce((o, p) => o[p], PREFS);
@@ -959,7 +966,7 @@ const S = {
 const layersNow = () => (S.jr && !S.jr.door ? ['scene', 'weather'] : S.jr && S.jr.door === 'labs' ? ['labs'] : S.jr && S.jr.door === 'conquer' && !(CQ.step === 'go' || CQ.step === 'out') ? ['scene', 'weather'] : MODES[S.mode].layers);
 // The spheres move only when their layer is on and nothing is asking for you: no card, not paused.
 const awake = () => has('spheres') && !S.gameOver && !S.card && !S.sheet && !S.paused && !S.parked && !S.intro && !S.outro && !S.gone && !S.look;
-const rules = () => (compOn() ? 'end' : S.zen ? 'zen' : PREFS.overflow);   // Play now and Keep going are Zen for this game only; your setting stays. Comp always ends at the line
+const rules = () => (compOn() ? 'end' : S.zen ? 'zen' : PREFS.overflow);   // Play now and Keep going are Zen for this game only; your setting stays. Challenge always ends at the line
 function setPaused(on) {   // one pause: everything waits, your time too
   if (on === S.paused) return;
   if (on) S.pauseT = Date.now(); else if (S.goal) S.goal.end += Date.now() - S.pauseT;
@@ -996,7 +1003,8 @@ function updateHour(dt) {
 }
 function updateCover(dt) {
   const quiet = !has('weather'), w = here();
-  const x = PREFS.cover.on ? 3 * PREFS.cover.lv : 0, j = Math.floor(x) % 5, g = smooth(x - Math.floor(x));   // the clouds: clear at 0%, some, overcast, dark at 100%
+  if (w.dry) { S.cloud = S.cellA = 0; RN.level = 0; }   // a place with no weather (indoors, in space) has none at once: a change of scene, not of weather
+  const cv = wx('cover'), x = cv.on ? 3 * cv.lv : 0, j = Math.floor(x) % 5, g = smooth(x - Math.floor(x));   // the clouds: clear at 0%, some, overcast, dark at 100%
   S.cloud += ((quiet ? 0 : SKY_LOOKS[j] + (SKY_LOOKS[(j + 1) % 5] - SKY_LOOKS[j]) * g) - S.cloud) * Math.min(1, dt / 25);   // weather changes over tens of seconds, never cut (the law's 20 to 60 s)
   S.cellA += (stormYouMake() - S.cellA) * Math.min(1, dt * (stormYouMake() > S.cellA ? 1.8 : 0.35));   // in fast, away slowly
   ENV.cover = Math.max(S.cloud * 0.93, S.cellA, RN.level * 0.85);
@@ -1025,8 +1033,8 @@ function updateLife(dt) { const a = ARCS[here().arc]; if (a) a[1](dt); }   // th
 
 /* ---------- Wind ---------- */
 // One signed wind (positive blows right): the Wind switch's, plus gusts that build, hold and pass. It swings round, picks up,
-// eases or drops to a lull at irregular times. It sways the waiting sphere, carries falling ones, and nudges the pile in a strong gust.
-const W = { dir: Math.random() < 0.5 ? -0.7 : 0.7, target: 0, rate: 0.5, turnT: 30, gust: null, gustT: 14, nudge: 0, made: 0 };
+// eases or drops to a lull at irregular times. Outside Challenge it is to see and hear: it pushes nothing (v84). In Challenge its push is a hazard (65-comp.js).
+const W = { dir: Math.random() < 0.5 ? -0.7 : 0.7, target: 0, rate: 0.5, turnT: 30, gust: null, gustT: 14, made: 0 };
 W.target = W.dir;
 const expo = (mean, lo, hi) => clamp(-Math.log(1 - Math.random()) * mean, lo, hi);   // irregular waits: mostly short, now and then long
 const gustLevel = (g) => { const p = g.t / g.dur; return g.peak * (p < 0.25 ? smooth(p / 0.25) : p > 0.75 ? smooth((1 - p) / 0.25) : 1); };
@@ -1051,15 +1059,6 @@ function updateWind(dt) {
     W.gustT = expo(40, 8, 150) * (1 - ENV.wind * 0.5);
   }
   ENV.blow = clamp(W.dir * (base > 0.04 ? base + (W.gust ? gustLevel(W.gust) : 0) : 0), -1.6, 1.6);
-  if (W.gust && !W.gust.pushed && W.gust.t > W.gust.dur * 0.25) {
-    W.gust.pushed = true;
-    if (Math.abs(ENV.blow) > 0.85 && awake()) W.nudge = Math.sign(ENV.blow) * Math.min(1, Math.abs(ENV.blow) - 0.6);
-  }
-}
-const windFall = () => (compOn() ? 0 : ENV.blow * 0.045);   // in Comp the wind reaches every sphere through its own drag (65-comp.js), not the engine's input
-function nudgePile() {   // a strong gust gives the pile one push as it arrives: spheres rock and resettle rather than slide away
-  if (W.nudge) for (const b of S.world.balls) if (b.landed) { const k = W.nudge * 0.3 * Math.sqrt(30 / b.radius); b.vx += k; b.omega += k / b.radius; }
-  W.nudge = 0;
 }
 /* ---------- Audio ---------- */
 // One calm scale for everything. Every sound is made here, in the browser: no files, nothing fetched.
@@ -1346,7 +1345,7 @@ function feel(name, k = 1) {   // k: 0 to 1, how hard (a collision's speed); it 
 /* ---------- Messages ---------- */
 // One message channel, over the pool. Soft View keeps it quiet, and nothing is said while you rest.
 let bannerQueue = [], bannerUntil = 0;
-function say(title, sub, ms = 1900) { if (S.mode !== 'rest' && (!PREFS.soft || compOn())) bannerQueue.push([title, sub || '', ms]); }   // Soft View: no banners, except in Comp, where they are the warnings
+function say(title, sub, ms = 1900) { if (S.mode !== 'rest' && (!PREFS.soft || compOn())) bannerQueue.push([title, sub || '', ms]); }   // Soft View: no banners, except in Challenge, where they are the warnings
 function tickBanner(now) {
   if (now <= bannerUntil) return;
   const next = bannerQueue.shift();
@@ -1374,7 +1373,7 @@ function maybePraise(reason, x, y) {
 // Plain is off, green is on, blue is in hand, gold is you did it right, red is trouble.
 const cssRGB = (n) => getComputedStyle(document.body).getPropertyValue(n).replace(/\s/g, '');   // state colours live in the CSS :root; body.comp brightens them
 let LIGHT = cssRGB('--ink-rgb'), GOLD = cssRGB('--gold'), RED = cssRGB('--red'), GREEN = cssRGB('--on'), BLUE = cssRGB('--pick'), LABEL = cssRGB('--label-rgb'), RED_RGB = RED.split(',').map(Number);
-function readPalette() { LIGHT = cssRGB('--ink-rgb'); GOLD = cssRGB('--gold'); RED = cssRGB('--red'); GREEN = cssRGB('--on'); BLUE = cssRGB('--pick'); LABEL = cssRGB('--label-rgb'); RED_RGB = RED.split(',').map(Number); }   // the canvas follows the page's colours: read again when Comp brightens them
+function readPalette() { LIGHT = cssRGB('--ink-rgb'); GOLD = cssRGB('--gold'); RED = cssRGB('--red'); GREEN = cssRGB('--on'); BLUE = cssRGB('--pick'); LABEL = cssRGB('--label-rgb'); RED_RGB = RED.split(',').map(Number); }   // the canvas follows the page's colours: read again when Challenge brightens them
 const CLOUD = 'M7.5 14.5h9.5a3.5 3.5 0 0 0 .4-7 5 5 0 0 0-9.6 1.2A3 3 0 0 0 7.5 14.5z', DOT = (x, y, r) => `M${x - r} ${y}a${r} ${r} 0 1 0 ${2 * r} 0a${r} ${r} 0 1 0 ${-2 * r} 0`;
 const ICON = {
   pause: 'M8.5 6.5v11M15.5 6.5v11',
@@ -2050,6 +2049,7 @@ function drawSpace(c, b) {
 function drawScene(c, b, k) {
   const w = here();
   if (w.indoor) { drawTray(c); return; }
+  if (w.key === 'earth') { drawEarthView(c, b); return; }   // the planet from orbit (41-earth.js)
   if (w.space) { drawSpace(c, b); return; }
   ensureLand();
   drawSky(c, b, k);
@@ -2084,6 +2084,88 @@ function drawScene(c, b, k) {
   if (lay(3) > 0.002) for (const live of w.live) { c.globalAlpha = lay(3); LIVE[live](c); } c.globalAlpha = 1;   // what moves in the scene itself: a fire, a waterfall, the waves, an owl, a shooting star
   c.globalAlpha = 0.03; c.drawImage(SPR.grain, 0, 0, LW, LH); c.globalAlpha = 1;   // one static grain over the scene only: it kills banding and gives the flat layers a surface, imitating no medium; it never drifts
   if (S.lit > 0.01) { c.save(); c.globalCompositeOperation = 'lighter'; c.fillStyle = `rgba(190,205,235,${Math.min(0.2, S.lit * 0.2).toFixed(3)})`; c.fillRect(0, 0, LW, LH); c.restore(); }   // the whole world lights up
+}
+/* ---------- Earth: the planet from orbit; you are the ISS (v85, Albert Oct 25: "the true SoRen way") ---------- */
+// The Earth below as the station sees it, painted in SoRen's style and worked out, not drawn by hand: the near-side perspective
+// projection from 420 km up (Snyder, Map Projections: A Working Manual, 1987, p. 169), so the horizon lies 20.6° from the point
+// below and everything nearer the edge is foreshortened, as from a window looking out. The day-night line from the real sun (its
+// place from 25-sky-model.js and Greenwich sidereal time), with twilight about 6° deep. The continents' true shapes and the 120
+// largest cities from Natural Earth (public domain; 1:110 million, rounded to half a degree, about 38 KB), the cities lit on the
+// night side by their size. Where the station is: with Live sky on, the real ISS from CelesTrak through SGP4 (26-sky-live.js);
+// off, a true ISS orbit (51.64° inclination, 92.7 minutes) from fixed elements, its shape right and its place not (said in Help).
+// The stars as from orbit: no twinkle, more of them; the moon with its true phase. No weather here (rule 6).
+const EARTH_LAND = '-119,-160,-120,-161,-120,-162,-125,-162,-129,-162,-131,-161,-133,-161,-128,-161,-124,-161,-122,-160,-121,-159,-119,-160|-318,-159,-322,-159,-325,-159,-326,-158,-327,-157,-326,-156,-322,-157,-320,-157,-319,-158,-318,-159|-90,-156,-88,-157,-87,-158,-87,-159,-87,-160,-90,-161,-93,-161,-97,-162,-101,-162,-106,-162,-108,-161,-108,-160,-104,-160,-102,-159,-101,-158,-100,-158,-99,-157,-97,-156,-96,-156,-93,-156,-90,-156|-242,-147,-240,-147,-237,-147,-239,-148,-240,-148,-243,-148,-245,-147,-242,-147|-251,-147,-248,-148,-249,-148,-252,-147,-255,-147,-253,-146,-251,-147|-198,-144,-196,-144,-194,-144,-192,-145,-194,-145,-196,-145,-199,-145,-202,-145,-204,-145,-205,-144,-203,-143,-201,-144,-198,-144|-137,-142,-137,-143,-137,-144,-138,-144,-140,-145,-142,-145,-145,-145,-144,-144,-146,-144,-148,-145,-150,-144,-150,-143,-148,-143,-146,-142,-144,-142,-144,-141,-143,-141,-143,-139,-142,-138,-141,-138,-139,-139,-138,-140,-137,-141,-137,-142|-117,-128,-118,-129,-120,-128,-121,-129,-123,-129,-124,-130,-125,-130,-125,-131,-125,-132,-124,-132,-126,-133,-127,-133,-129,-134,-130,-134,-131,-135,-131,-136,-131,-137,-130,-137,-128,-138,-126,-138,-126,-139,-125,-140,-125,-141,-124,-141,-123,-142,-123,-144,-122,-145,-122,-146,-121,-146,-122,-147,-123,-148,-124,-149,-127,-149,-127,-150,-129,-151,-132,-151,-134,-152,-137,-152,-140,-152,-141,-153,-144,-153,-148,-153,-151,-153,-154,-153,-154,-154,-151,-155,-149,-155,-147,-156,-150,-156,-153,-156,-156,-157,-156,-158,-154,-159,-153,-160,-151,-161,-146,-161,-143,-161,-140,-162,-136,-163,-131,-163,-127,-163,-123,-164,-119,-165,-117,-166,-116,-166,-114,-166,-111,-165,-107,-165,-103,-164,-100,-163,-95,-163,-90,-164,-86,-164,-84,-163,-82,-163,-76,-163,-73,-162,-69,-162,-65,-162,-60,-161,-57,-161,-59,-160,-59,-159,-63,-159,-67,-159,-71,-159,-72,-158,-72,-157,-71,-156,-68,-156,-64,-155,-62,-155,-60,-154,-58,-153,-55,-153,-52,-153,-51,-153,-48,-152,-45,-152,-42,-152,-40,-151,-38,-151,-35,-150,-33,-150,-31,-149,-31,-148,-33,-148,-32,-147,-31,-146,-29,-146,-27,-145,-25,-145,-23,-144,-22,-143,-21,-143,-18,-143,-17,-143,-15,-143,-14,-142,-12,-142,-11,-143,-9,-143,-6,-143,-4,-142,-1,-142,0,-143,2,-143,4,-142,6,-142,8,-142,10,-141,13,-141,14,-140,15,-140,17,-140,19,-140,20,-141,22,-142,24,-141,25,-140,27,-140,29,-140,30,-141,32,-140,34,-140,36,-140,39,-140,41,-140,43,-140,44,-141,45,-141,47,-141,50,-141,52,-141,54,-141,56,-141,58,-140,60,-140,62,-140,64,-139,66,-139,67,-138,68,-137,70,-137,71,-138,72,-138,74,-138,76,-139,77,-140,79,-139,80,-138,82,-138,84,-137,86,-137,88,-137,90,-136,91,-136,93,-135,95,-135,97,-135,98,-134,100,-134,102,-134,102,-133,104,-132,105,-132,107,-132,109,-132,111,-132,113,-132,114,-132,115,-133,116,-134,117,-135,120,-135,121,-135,123,-136,125,-136,126,-136,128,-135,130,-135,132,-135,134,-136,136,-136,138,-136,139,-138,139,-139,137,-140,136,-141,138,-141,138,-142,137,-143,136,-144,137,-144,140,-145,142,-144,143,-143,144,-143,145,-142,146,-141,147,-141,148,-140,149,-140,151,-139,153,-139,155,-139,156,-138,157,-137,158,-137,160,-136,162,-136,163,-135,164,-135,166,-134,168,-135,169,-134,171,-134,174,-134,175,-134,176,-132,177,-133,178,-134,179,-134,181,-134,183,-134,185,-134,187,-134,188,-134,190,-134,192,-135,193,-134,196,-134,197,-134,199,-134,201,-134,202,-133,203,-133,206,-131,207,-131,208,-132,210,-133,212,-134,214,-134,216,-134,218,-134,220,-133,222,-133,223,-132,226,-132,227,-132,229,-132,230,-133,231,-133,233,-133,235,-134,237,-134,240,-135,242,-134,243,-134,245,-133,246,-133,248,-133,250,-133,252,-133,254,-133,256,-133,258,-134,259,-133,262,-133,264,-133,266,-133,268,-133,270,-132,270,-131,271,-131,272,-132,272,-133,273,-134,275,-134,277,-134,280,-134,282,-134,284,-134,286,-134,289,-134,291,-134,292,-134,292,-135,293,-136,295,-136,298,-137,300,-137,303,-137,305,-138,307,-138,309,-137,310,-138,312,-138,314,-139,316,-139,318,-139,319,-140,322,-140,323,-141,325,-141,328,-141,330,-142,332,-142,335,-142,337,-142,339,-142,341,-143,342,-143,342,-144,341,-145,340,-146,339,-147,336,-148,335,-148,332,-149,331,-150,330,-150,328,-151,328,-152,327,-152,327,-153,327,-154,328,-155,329,-156,333,-157,334,-158,330,-158,327,-158,324,-158,322,-159,321,-160,321,-161,320,-162,322,-163,323,-163,325,-164,327,-165,330,-165,333,-166,338,-167,339,-168,345,-168,346,-169,352,-168,357,-169,360,-169,360,-180,-360,-180,-360,-169,-358,-168,-355,-169,-354,-169,-353,-168,-352,-168,-349,-169,-346,-168,-340,-168,-338,-168,-337,-168,-334,-169,-328,-170,-324,-170,-316,-171,-310,-170,-302,-171,-297,-171,-292,-171,-286,-170,-286,-169,-294,-169,-300,-169,-302,-168,-307,-167,-307,-166,-306,-166,-305,-165,-306,-164,-309,-164,-311,-163,-314,-162,-309,-162,-304,-162,-301,-163,-298,-162,-294,-161,-293,-161,-294,-160,-296,-159,-299,-159,-303,-159,-307,-158,-311,-158,-312,-157,-315,-157,-316,-156,-317,-154,-316,-154,-314,-155,-311,-154,-307,-154,-306,-155,-303,-155,-300,-154,-297,-154,-295,-153,-292,-153,-292,-152,-293,-151,-292,-151,-290,-150,-289,-151,-286,-151,-283,-150,-280,-150,-278,-150,-275,-149,-273,-149,-270,-149,-269,-149,-267,-149,-265,-149,-262,-149,-259,-149,-256,-149,-254,-149,-251,-149,-248,-149,-245,-149,-242,-149,-239,-149,-237,-148,-235,-148,-232,-148,-230,-148,-228,-147,-227,-148,-226,-149,-225,-149,-223,-149,-220,-150,-217,-150,-215,-150,-212,-150,-210,-150,-207,-150,-204,-150,-201,-151,-200,-150,-202,-149,-203,-148,-205,-148,-206,-147,-207,-147,-207,-145,-206,-146,-203,-146,-201,-146,-198,-146,-196,-146,-195,-147,-193,-147,-190,-147,-187,-147,-185,-146,-183,-147,-180,-147,-178,-145,-177,-146,-175,-146,-172,-146,-170,-147,-168,-147,-165,-147,-163,-148,-161,-147,-161,-146,-159,-147,-156,-147,-154,-147,-152,-148,-150,-148,-148,-147,-146,-147,-143,-147,-140,-146,-138,-146,-136,-146,-135,-145,-134,-144,-135,-143,-135,-142,-136,-142,-136,-141,-137,-140,-137,-139,-136,-138,-135,-137,-135,-136,-135,-135,-135,-134,-133,-133,-132,-132,-131,-132,-129,-131,-128,-130,-127,-130,-126,-129,-124,-129,-123,-129,-121,-128,-120,-128,-118,-127,-117,-127,-116,-127,-114,-127,-115,-128,-117,-128|-136,-108,-133,-109,-130,-109,-131,-110,-133,-110,-134,-110,-135,-111,-136,-111,-138,-111,-140,-110,-142,-110,-145,-109,-147,-108,-149,-106,-148,-106,-145,-107,-142,-108,-141,-107,-141,-106,-139,-105,-137,-105,-136,-106,-136,-108|-117,-102,-116,-103,-116,-104,-119,-104,-120,-104,-121,-105,-122,-104,-120,-102,-118,-103,-117,-102|141,-99,137,-100,137,-98,138,-98,138,-97,139,-98,141,-98,141,-99|291,-82,293,-82,294,-82,295,-82,297,-82,297,-84,296,-85,296,-86,295,-86,294,-87,293,-87,292,-87,291,-85,291,-84,289,-82,289,-81,291,-82|346,-82,346,-83,348,-82,348,-83,348,-84,346,-86,345,-87,346,-88,345,-88,343,-88,342,-90,341,-92,340,-93,339,-93,337,-93,336,-93,333,-92,334,-90,337,-88,338,-88,339,-87,341,-86,342,-85,343,-84,344,-83,344,-82,346,-81,346,-82|349,-72,351,-74,351,-73,352,-74,352,-75,354,-76,355,-76,356,-75,357,-75,357,-77,356,-78,354,-78,354,-79,354,-80,353,-81,352,-83,350,-83,349,-83,350,-81,350,-80,348,-79,348,-78,349,-78,349,-76,349,-75,349,-73,348,-72,346,-70,345,-69,346,-69,347,-70,349,-71,349,-72|334,-44,333,-45,332,-44,331,-43,330,-42,328,-41,328,-40,329,-40,330,-41,331,-42,332,-42,333,-43,334,-44|357,-35,357,-36,356,-37,355,-36,355,-35,356,-35,357,-35|359,-34,357,-34,357,-33,358,-33,359,-33,360,-32,360,-33,359,-34|336,-33,335,-33,334,-32,336,-33|334,-30,335,-31,334,-31,333,-31,333,-29,334,-30|100,-27,100,-30,101,-30,101,-31,100,-32,100,-31,99,-31,100,-33,100,-34,99,-34,99,-36,98,-38,97,-41,96,-45,95,-48,94,-50,93,-50,91,-51,90,-51,88,-50,88,-49,87,-47,87,-46,87,-44,87,-43,88,-42,89,-40,89,-39,88,-38,88,-37,88,-35,89,-34,89,-32,90,-32,91,-32,92,-32,93,-32,94,-30,95,-29,96,-28,96,-27,97,-28,98,-26,98,-25,98,-24,99,-25,100,-26,100,-27|287,-28,288,-29,289,-28,290,-29,291,-30,291,-31,291,-33,291,-34,292,-34,292,-36,292,-37,293,-38,295,-39,296,-40,298,-41,297,-41,299,-43,299,-45,300,-44,301,-45,302,-47,303,-48,304,-49,306,-51,306,-52,306,-53,306,-55,307,-56,307,-58,307,-59,306,-61,306,-62,306,-63,305,-65,303,-66,303,-68,302,-69,301,-70,301,-71,300,-73,300,-74,300,-75,299,-76,297,-76,295,-76,294,-77,293,-78,291,-77,290,-77,290,-76,289,-76,287,-78,285,-77,284,-77,283,-77,281,-76,280,-75,280,-73,279,-72,278,-71,276,-71,277,-70,276,-69,275,-70,274,-71,275,-69,275,-68,276,-67,276,-66,274,-68,273,-68,272,-70,270,-69,270,-68,269,-66,268,-66,269,-65,266,-64,265,-64,263,-63,259,-63,256,-64,254,-65,252,-64,250,-65,248,-66,248,-67,247,-68,246,-68,244,-68,243,-68,241,-68,240,-68,239,-69,238,-69,237,-69,236,-70,235,-70,233,-70,231,-69,230,-68,230,-67,231,-67,231,-66,232,-64,231,-63,230,-61,230,-60,230,-59,229,-58,229,-57,228,-56,228,-55,227,-53,227,-52,228,-53,227,-51,228,-52,228,-53,228,-52,227,-50,227,-49,227,-48,227,-47,228,-46,227,-45,228,-44,228,-45,229,-44,231,-43,232,-42,233,-41,234,-41,235,-41,236,-41,238,-41,238,-40,239,-40,240,-40,242,-39,243,-38,243,-37,244,-36,245,-36,245,-35,246,-33,247,-35,248,-34,247,-33,248,-32,249,-33,249,-31,250,-30,250,-29,251,-29,251,-28,252,-29,252,-28,253,-28,254,-28,256,-29,257,-30,258,-30,259,-30,259,-29,260,-27,261,-27,260,-26,261,-25,262,-24,263,-25,265,-24,265,-23,264,-23,265,-22,266,-23,267,-24,269,-24,271,-24,272,-24,273,-24,274,-25,273,-26,273,-27,272,-27,272,-28,271,-29,271,-30,273,-31,274,-32,275,-32,277,-34,278,-34,279,-35,280,-35,282,-35,282,-34,283,-33,283,-32,283,-30,283,-29,283,-27,283,-26,284,-25,283,-25,284,-24,284,-23,284,-22,285,-21,286,-22,286,-24,286,-25,287,-26,287,-27,287,-28|324,-21,325,-22,323,-22,323,-20,324,-21|241,-20,241,-21,238,-19,240,-19,241,-19,242,-20,241,-20|322,-20,321,-20,320,-20,319,-19,319,-18,321,-19,322,-20|323,-19,323,-20,322,-18,321,-17,322,-17,323,-18,323,-19|249,-20,247,-21,247,-20,248,-19,250,-18,250,-17,252,-17,253,-17,254,-17,255,-17,254,-17,252,-18,250,-19,249,-20|236,-16,237,-17,238,-17,236,-18,235,-18,233,-18,234,-17,235,-17,236,-16|246,-16,246,-17,243,-18,240,-18,240,-17,241,-16,243,-17,244,-17,246,-16|320,-17,318,-16,317,-16,316,-15,317,-15,318,-15,319,-16,320,-17|315,-15,314,-14,313,-14,313,-13,314,-14,315,-15|217,-14,221,-14,222,-13,225,-14,226,-15,229,-16,231,-17,229,-18,227,-17,225,-17,223,-17,221,-16,219,-15,217,-15,217,-16,213,-15,213,-14,211,-14,212,-12,215,-12,216,-13,217,-13,217,-14|269,-12,268,-14,268,-12,269,-12,269,-11,269,-12|312,-14,311,-14,310,-13,309,-12,309,-10,310,-11,311,-12,312,-13,312,-14|304,-11,303,-11,303,-12,302,-12,300,-13,299,-13,298,-12,297,-11,299,-11,300,-11,300,-10,300,-11,302,-11,302,-10,303,-10,303,-8,304,-8,305,-9,305,-10,304,-11|254,-7,254,-8,252,-7,252,-6,254,-6,254,-7|261,-6,262,-8,260,-7,258,-7,257,-7,256,-7,256,-6,259,-6,261,-6|306,-9,306,-10,305,-8,304,-7,303,-6,301,-5,302,-5,303,-6,304,-6,305,-7,306,-8,306,-9|268,-2,269,-6,271,-7,273,-5,275,-3,277,-3,278,-4,280,-5,282,-5,285,-7,289,-8,291,-9,292,-10,292,-11,295,-12,296,-13,294,-13,294,-15,296,-16,297,-18,299,-18,299,-19,300,-19,299,-20,302,-21,301,-21,300,-21,298,-21,296,-20,294,-19,293,-18,292,-16,289,-15,288,-16,287,-16,287,-18,285,-19,284,-18,282,-18,280,-17,278,-16,278,-17,275,-17,276,-15,277,-15,277,-12,276,-11,272,-9,270,-9,267,-7,267,-8,266,-8,266,-7,264,-6,266,-5,268,-5,267,-4,264,-4,264,-3,262,-3,261,-2,264,-1,265,-1,268,-2|250,3,249,1,247,0,245,1,242,1,240,0,240,-1,242,-3,243,-2,247,-1,247,-2,246,-2,245,-3,243,-4,245,-6,245,-7,246,-9,246,-11,245,-11,244,-11,245,-9,243,-10,243,-9,243,-8,242,-7,242,-5,241,-6,241,-8,241,-11,240,-11,239,-11,239,-9,239,-7,238,-7,238,-6,238,-4,239,-3,240,0,240,1,242,3,243,2,246,2,248,2,250,3|257,2,257,1,256,1,256,-1,257,-2,256,-2,255,-1,255,2,255,4,256,4,256,3,257,3,257,2|212,-12,209,-12,208,-10,205,-8,204,-7,203,-6,202,-4,200,-1,199,0,198,2,197,4,195,5,194,7,193,8,191,10,191,11,192,11,195,10,197,9,198,7,199,6,201,4,203,4,205,3,206,1,208,0,207,-1,208,-2,209,-2,209,-4,210,-5,211,-5,212,-6,212,-9,212,-12|236,4,238,2,236,2,235,0,235,-2,233,-3,233,-5,232,-8,232,-7,230,-8,229,-7,228,-7,227,-6,224,-7,223,-6,222,-6,220,-6,220,-3,219,-3,218,-1,218,1,218,3,219,4,221,3,222,4,223,5,224,6,226,6,227,8,228,9,229,10,231,11,232,12,233,14,234,14,235,13,235,12,237,11,238,11,238,10,237,10,237,9,236,8,235,6,236,5,236,4|253,17,253,16,253,14,252,13,252,15,251,14,251,12,251,11,248,12,248,14,248,15,247,16,247,15,246,15,244,14,245,16,246,17,247,17,248,16,249,17,250,18,251,18,251,20,252,19,253,18,253,17|162,12,161,12,160,14,159,16,160,20,162,19,163,17,164,15,163,13,162,12|-122,20,-124,20,-123,21,-123,22,-122,22,-122,20|248,21,247,20,247,19,246,18,245,19,245,20,246,21,246,22,247,22,247,21,248,22,248,21|237,19,234,17,235,18,237,19,238,21,239,23,239,21,238,20,237,19|244,24,245,23,246,23,246,22,245,21,244,21,244,22,244,23,244,24|251,24,252,22,250,23,250,22,251,21,250,20,250,22,249,22,249,23,250,23,250,24,249,25,250,25,251,24|243,26,243,24,242,25,241,27,242,27,243,26|243,37,244,36,244,37,245,36,244,36,245,34,245,33,243,32,243,30,243,29,245,28,245,29,248,28,248,26,248,25,247,26,246,27,245,26,244,28,242,27,241,28,241,29,242,29,241,30,241,29,240,30,240,31,240,33,241,32,241,35,241,37,243,37|-131,36,-132,36,-133,36,-134,36,-134,37,-133,37,-132,37,-131,36|-154,36,-154,35,-156,36,-157,36,-156,37,-155,37,-154,37,-153,36,-152,36,-154,36|-145,40,-143,39,-143,40,-142,40,-140,39,-138,39,-139,38,-138,38,-137,37,-137,36,-138,37,-139,37,-140,37,-140,36,-141,36,-141,37,-142,37,-143,35,-143,36,-145,36,-146,36,-147,36,-148,36,-149,37,-147,37,-145,37,-146,38,-146,39,-147,39,-146,40,-145,40|221,37,219,36,217,37,217,39,218,40,220,40,222,40,222,39,221,39,221,37|-311,38,-312,38,-312,39,-312,40,-312,41,-312,40,-311,40,-310,40,-310,39,-310,38,-311,38|-312,41,-313,41,-313,42,-312,42,-312,41|-315,43,-316,43,-317,43,-316,43,-315,43|-159,46,-159,45,-157,45,-156,45,-154,43,-153,42,-152,42,-151,42,-151,41,-150,41,-148,41,-149,40,-150,40,-151,40,-153,40,-156,40,-154,41,-155,41,-156,41,-157,42,-157,43,-159,43,-160,44,-161,44,-164,44,-164,45,-166,45,-167,44,-168,44,-169,44,-170,44,-169,44,-168,45,-168,46,-167,46,-165,46,-163,46,-161,46,-159,46|-155,48,-156,47,-156,49,-157,49,-156,50,-155,49,-155,48|242,46,241,44,240,46,240,47,241,49,243,51,244,50,244,49,242,46|-156,53,-158,53,-158,54,-157,54,-156,54,-156,53|-154,53,-154,52,-155,52,-155,53,-156,54,-154,53|269,68,270,68,268,66,268,67,267,67,266,65,265,66,265,67,266,68,267,68,268,69,269,68|69,71,68,70,66,69,65,69,65,70,66,70,66,71,67,71,69,71|47,71,48,71,50,71,52,71,51,70,53,71,52,70,49,70,47,71|31,76,30,75,31,74,30,73,29,74,28,74,25,75,25,76,27,76,30,76,31,76|18,82,20,81,19,78,18,78,17,78,17,81,16,82,17,82,18,82|282,74,281,73,282,72,281,70,278,69,274,69,272,67,270,68,270,69,267,69,264,68,262,68,264,66,263,63,261,62,260,63,261,65,260,65,259,67,261,67,262,68,264,69,265,71,269,71,271,71,273,75,275,74,278,76,279,76,280,79,280,81,281,82,283,83,284,80,284,78,282,76,282,74|19,84,18,83,17,85,19,86,19,84|288,88,289,88,291,89,291,87,288,86,286,84,283,85,282,83,280,83,280,85,281,87,283,87,283,90,284,91,286,89,288,88|-127,93,-126,93,-124,93,-125,92,-126,92,-128,93,-129,93,-128,94,-127,93|-124,98,-125,98,-127,99,-129,100,-128,100,-126,99,-124,99,-124,98|-247,97,-248,97,-251,98,-252,98,-254,99,-254,100,-256,100,-257,101,-257,102,-255,101,-253,101,-252,101,-251,100,-250,99,-248,98,-247,97|-112,101,-114,100,-112,100,-111,100,-112,99,-110,99,-109,99,-107,98,-108,97,-106,97,-106,96,-105,95,-106,93,-107,93,-108,94,-108,95,-108,96,-111,94,-112,94,-111,95,-113,95,-115,95,-119,95,-119,96,-118,97,-117,98,-115,101,-113,103,-112,103,-111,103,-112,101|-265,108,-263,108,-264,106,-262,104,-263,104,-264,105,-265,106,-266,107,-266,108,-265,108|287,101,289,98,286,99,285,96,287,94,287,92,285,93,284,92,284,94,284,96,284,98,284,99,284,102,283,104,283,107,285,108,284,108,285,109,286,107,287,105,286,104,287,101|-14,105,-17,103,-20,104,-18,106,-19,108,-17,109,-15,110,-13,110,-11,109,-12,108,-12,106,-14,105|25,111,24,110,22,111,22,112,25,112,25,111|-306,114,-308,113,-309,114,-309,115,-308,116,-306,116,-305,116,-304,115,-306,114|-6,117,-8,115,-6,115,-4,115,-4,114,-6,112,-4,112,-2,109,-1,109,0,107,1,106,3,105,3,104,2,104,3,103,1,102,-2,102,-5,101,-6,101,-7,100,-9,101,-10,100,-12,100,-9,102,-7,103,-10,103,-11,104,-8,105,-10,106,-9,107,-6,107,-6,108,-7,109,-10,110,-9,111,-10,112,-11,111,-11,113,-12,114,-12,116,-10,117,-8,117,-6,117|-331,120,-332,120,-334,120,-335,120,-333,121,-331,121,-331,120|-159,124,-159,123,-160,123,-161,124,-160,125,-159,125,-159,124|-164,125,-166,124,-168,124,-168,125,-167,126,-164,126,-164,125|-343,128,-342,127,-341,127,-339,127,-337,127,-338,126,-339,126,-341,126,-341,127,-343,127,-344,127,-343,128|-170,131,-170,130,-169,131,-168,130,-166,130,-163,129,-163,128,-162,128,-160,127,-162,127,-165,127,-166,128,-168,127,-171,126,-172,127,-174,127,-173,128,-172,130,-172,131,-170,131|-29,133,-29,132,-27,130,-30,129,-36,127,-37,127,-40,127,-46,128,-44,129,-48,130,-44,130,-44,131,-49,131,-47,133,-44,133,-41,131,-38,133,-36,132,-32,133,-29,133|-152,134,-154,134,-154,135,-154,136,-152,137,-150,136,-150,135,-152,134|-350,133,-349,133,-349,134,-344,134,-340,132,-342,131,-345,131,-345,129,-346,129,-348,129,-349,129,-352,130,-352,131,-354,131,-357,131,-358,131,-357,132,-360,132,-359,131,-360,130,-360,138,-355,136,-350,134,-350,133|-191,138,-193,138,-195,138,-197,138,-200,139,-198,139,-196,140,-194,140,-193,139,-191,138|360,142,358,142,357,142,360,143,360,142|-357,142,-360,142,-360,143,-358,143,-355,143,-355,142,-357,142|-181,139,-181,137,-178,139,-176,137,-177,136,-175,134,-173,136,-171,138,-171,140,-168,140,-165,139,-163,138,-162,137,-164,136,-163,135,-163,134,-167,133,-169,133,-172,133,-172,132,-174,130,-175,130,-177,128,-180,128,-181,127,-182,126,-184,126,-186,124,-188,122,-189,120,-189,118,-186,118,-186,116,-185,114,-182,115,-178,114,-176,113,-175,112,-172,111,-170,111,-167,110,-165,110,-165,109,-164,107,-163,104,-160,102,-158,103,-157,105,-158,108,-160,109,-156,110,-154,112,-153,113,-153,114,-155,116,-157,118,-155,120,-156,122,-156,125,-155,125,-151,125,-149,124,-148,125,-146,124,-143,123,-143,122,-139,122,-139,120,-139,118,-137,118,-135,116,-132,118,-130,120,-129,121,-128,119,-125,116,-123,114,-124,113,-121,112,-119,110,-116,110,-115,109,-114,108,-112,107,-111,104,-113,104,-114,103,-118,102,-120,100,-123,100,-128,101,-131,101,-133,100,-134,99,-137,98,-140,95,-142,94,-141,94,-137,97,-133,98,-130,98,-128,97,-130,96,-130,94,-129,92,-126,91,-123,92,-121,94,-121,93,-120,92,-122,91,-127,89,-128,89,-131,87,-132,87,-132,89,-129,91,-132,91,-134,90,-136,89,-138,88,-140,87,-141,86,-142,86,-142,85,-141,84,-140,84,-140,83,-141,83,-142,83,-144,83,-145,83,-146,82,-147,82,-144,82,-147,81,-148,81,-148,82,-149,81,-148,81,-148,79,-150,78,-151,79,-151,78,-150,78,-150,77,-151,76,-152,74,-152,75,-151,76,-152,77,-153,78,-153,77,-153,76,-154,76,-153,76,-153,74,-152,74,-152,73,-151,71,-153,70,-155,69,-156,68,-157,68,-158,67,-158,66,-161,65,-162,64,-163,63,-163,61,-163,60,-162,58,-161,57,-161,56,-160,54,-160,52,-161,50,-162,50,-163,51,-163,52,-164,53,-165,55,-166,56,-165,57,-166,58,-167,60,-168,60,-170,59,-171,59,-172,60,-173,61,-175,61,-177,61,-178,61,-179,60,-179,59,-178,59,-179,58,-180,59,-180,58,-182,58,-183,59,-185,59,-186,60,-188,59,-189,59,-191,57,-193,57,-194,56,-195,55,-195,53,-195,52,-194,52,-195,50,-195,49,-196,46,-196,45,-195,44,-195,43,-194,41,-193,40,-193,39,-192,38,-190,37,-189,36,-187,37,-186,37,-184,37,-183,38,-182,39,-181,40,-181,41,-181,42,-179,43,-177,43,-175,43,-174,43,-174,42,-175,41,-175,39,-175,38,-176,37,-177,37,-176,37,-176,36,-177,35,-176,35,-177,34,-176,34,-177,33,-177,32,-178,32,-177,31,-177,32,-176,31,-176,32,-175,32,-174,32,-173,32,-172,32,-171,32,-170,32,-169,32,-168,31,-167,31,-166,30,-167,29,-166,29,-167,28,-167,27,-167,26,-167,25,-167,24,-167,23,-168,23,-168,22,-167,22,-167,21,-166,20,-165,19,-164,18,-163,18,-162,18,-161,18,-160,19,-159,19,-158,19,-157,19,-156,18,-155,18,-155,17,-154,17,-152,19,-151,19,-151,20,-151,21,-150,22,-149,22,-148,23,-147,22,-145,23,-144,24,-144,25,-143,25,-142,24,-143,24,-143,23,-144,23,-143,22,-143,21,-144,20,-143,18,-142,20,-143,20,-143,22,-140,23,-141,24,-140,24,-139,23,-138,23,-136,22,-136,21,-135,21,-132,21,-131,20,-130,20,-129,21,-126,21,-124,21,-125,21,-125,20,-123,20,-122,19,-121,17,-120,17,-118,16,-117,15,-117,14,-116,14,-115,13,-114,12,-112,12,-110,12,-108,12,-107,11,-106,11,-104,9,-103,8,-102,7,-101,4,-100,3,-100,2,-101,0,-97,0,-97,-2,-96,-1,-93,-2,-90,-3,-89,-4,-89,-5,-87,-5,-83,-6,-80,-6,-77,-7,-74,-10,-73,-10,-71,-10,-70,-11,-70,-13,-69,-15,-70,-18,-71,-19,-74,-22,-75,-24,-77,-26,-78,-28,-78,-31,-78,-34,-79,-36,-79,-37,-80,-39,-82,-42,-82,-44,-84,-45,-84,-46,-86,-46,-89,-47,-91,-48,-93,-48,-95,-50,-97,-52,-97,-53,-97,-54,-97,-56,-98,-57,-99,-58,-101,-62,-103,-64,-105,-64,-105,-66,-107,-68,-108,-69,-110,-70,-111,-70,-112,-70,-114,-69,-116,-69,-117,-68,-117,-69,-114,-71,-115,-72,-113,-73,-114,-74,-115,-76,-118,-77,-122,-78,-125,-78,-124,-79,-125,-80,-124,-81,-125,-82,-128,-82,-129,-82,-130,-82,-130,-84,-129,-85,-128,-84,-127,-85,-129,-86,-130,-87,-131,-89,-131,-90,-133,-90,-135,-91,-135,-93,-133,-94,-131,-94,-132,-96,-134,-97,-136,-100,-137,-101,-138,-101,-138,-104,-136,-105,-137,-105,-139,-105,-140,-105,-142,-106,-142,-108,-143,-108,-145,-107,-147,-106,-150,-105,-151,-103,-150,-102,-151,-101,-151,-97,-150,-95,-148,-94,-151,-93,-149,-92,-149,-88,-146,-89,-145,-85,-147,-84,-147,-87,-149,-86,-148,-84,-147,-80,-146,-79,-147,-77,-147,-74,-146,-74,-145,-71,-144,-68,-143,-65,-143,-62,-143,-60,-143,-58,-142,-55,-141,-51,-141,-47,-140,-43,-140,-40,-141,-37,-143,-36,-143,-35,-147,-33,-150,-31,-152,-29,-153,-28,-153,-27,-154,-24,-156,-21,-158,-17,-159,-16,-160,-14,-161,-13,-162,-12,-162,-11,-163,-9,-162,-8,-161,-7,-160,-5,-160,-4,-161,-5,-162,-4,-162,-2,-161,-2,-161,-1,-160,1,-160,2,-159,2,-158,3,-157,4,-157,5,-156,5,-155,7,-154,8,-155,8,-155,9,-155,11,-155,12,-155,13,-156,14,-156,15,-157,16,-156,17,-157,17,-158,18,-159,18,-160,17,-161,17,-161,16,-160,15,-161,15,-162,14,-162,16,-162,15,-163,15,-163,16,-164,16,-165,17,-166,17,-166,16,-167,17,-167,18,-168,19,-169,19,-169,20,-170,20,-170,19,-171,20,-172,20,-172,21,-171,22,-172,22,-171,22,-172,23,-173,24,-174,25,-175,26,-175,27,-176,27,-176,26,-177,26,-178,27,-179,27,-180,27,-181,28,-182,28,-183,28,-184,29,-187,31,-188,32,-189,32,-191,32,-192,32,-193,31,-195,32,-196,32,-198,33,-199,33,-202,34,-203,35,-204,36,-205,36,-207,37,-208,37,-210,39,-211,40,-211,41,-211,42,-211,43,-211,44,-211,45,-212,46,-214,48,-216,49,-217,50,-219,51,-219,52,-219,53,-220,53,-221,54,-221,56,-222,56,-224,57,-224,58,-225,59,-226,60,-226,62,-228,63,-230,64,-230,63,-230,62,-229,60,-227,58,-226,57,-226,56,-225,55,-224,54,-223,53,-223,51,-222,51,-221,50,-221,49,-220,49,-220,48,-219,47,-219,46,-220,46,-221,47,-222,48,-223,49,-224,49,-224,51,-225,52,-226,53,-227,54,-227,53,-228,54,-229,54,-230,55,-230,56,-229,55,-228,56,-228,57,-230,59,-231,59,-232,60,-233,62,-233,63,-234,65,-235,66,-236,67,-237,67,-237,68,-238,68,-239,69,-241,69,-241,70,-243,72,-245,75,-245,76,-246,76,-247,78,-248,80,-249,81,-248,82,-248,84,-249,86,-248,87,-248,91,-248,94,-249,95,-249,96,-249,97,-246,96,-245,94,-245,95,-245,96,-246,98,-250,100,-251,101,-255,102,-256,103,-256,105,-258,106,-259,107,-261,109,-261,110,-262,110,-264,111,-264,113,-267,114,-268,116,-270,116,-273,116,-276,117,-280,119,-282,119,-285,120,-288,120,-292,121,-294,122,-296,121,-296,120,-297,120,-299,119,-301,119,-303,118,-304,119,-303,121,-301,122,-301,123,-304,121,-305,120,-308,119,-307,118,-308,116,-311,115,-313,115,-313,114,-316,113,-317,112,-319,111,-321,111,-322,111,-324,110,-326,109,-330,109,-328,110,-326,111,-324,112,-321,112,-320,113,-317,114,-315,115,-315,117,-314,118,-316,117,-317,118,-318,117,-319,118,-320,117,-321,118,-323,117,-324,117,-324,119,-325,120,-328,120,-329,121,-331,121,-331,122,-332,123,-331,124,-330,125,-329,126,-328,126,-326,126,-325,127,-323,127,-322,128,-323,129,-322,130,-323,130,-325,129,-326,129,-327,129,-330,129,-333,129,-334,130,-336,131,-333,132,-329,133,-327,133,-328,132,-323,132,-325,133,-327,134,-329,135,-331,136,-334,137,-332,138,-329,138,-326,139,-326,140,-324,141,-322,141,-318,142,-316,142,-313,143,-310,142,-309,141,-308,142,-304,142,-305,141,-301,141,-299,141,-295,140,-291,140,-290,140,-287,140,-284,140,-282,139,-278,139,-275,138,-273,138,-271,139,-269,139,-266,139,-263,140,-260,140,-258,140,-257,140,-256,141,-255,141,-252,139,-249,140,-249,139,-246,139,-245,140,-243,140,-240,139,-235,138,-232,138,-230,138,-228,137,-231,136,-227,135,-222,136,-220,136,-218,135,-216,136,-218,137,-216,137,-214,137,-212,138,-211,137,-209,136,-206,136,-203,135,-200,136,-197,136,-197,137,-195,137,-192,136,-192,135,-191,136,-189,136,-188,138,-191,139,-193,140,-193,142,-190,144,-188,144,-186,143,-183,140,-185,139,-181,139|-228,146,-229,145,-225,146,-222,145,-220,146,-218,145,-216,143,-215,144,-217,146,-215,146,-213,146,-211,145,-210,143,-209,142,-206,141,-202,140,-202,139,-205,139,-204,138,-205,138,-208,138,-212,138,-214,138,-218,138,-224,137,-227,137,-228,138,-230,139,-232,138,-235,140,-233,140,-230,140,-227,140,-225,141,-229,141,-233,141,-236,141,-237,142,-232,143,-235,143,-239,143,-237,145,-236,145,-230,147,-228,146|-209,147,-211,146,-214,147,-213,147,-211,147,-209,147|-153,146,-155,146,-157,146,-159,145,-160,146,-162,147,-161,148,-156,147,-153,146|-173,146,-172,145,-170,147,-165,148,-161,145,-161,144,-158,145,-156,145,-151,144,-148,144,-148,143,-144,143,-142,142,-138,141,-136,140,-134,138,-138,137,-133,136,-130,136,-127,134,-124,134,-124,132,-128,130,-130,131,-133,133,-136,133,-136,131,-134,130,-131,129,-129,127,-130,125,-133,126,-138,127,-135,126,-133,125,-132,124,-138,125,-142,126,-144,127,-147,128,-150,129,-155,128,-157,129,-156,131,-152,131,-148,131,-149,132,-148,133,-145,135,-146,135,-147,136,-150,137,-154,138,-152,138,-155,140,-156,140,-158,140,-159,140,-163,139,-170,140,-174,141,-177,141,-179,142,-177,142,-180,142,-180,144,-179,146,-177,147,-172,148,-173,146|-201,148,-198,147,-195,148,-194,147,-196,146,-193,145,-193,143,-197,143,-199,143,-200,143,-205,145,-205,146,-201,145,-203,147,-201,148|287,146,284,146,280,147,282,148,284,148,287,147,287,146|-186,146,-189,144,-191,144,-192,146,-192,147,-191,148,-189,148,-185,148,-181,148,-184,146,-186,146|-241,143,-246,142,-247,143,-252,144,-251,144,-250,146,-248,147,-250,149,-243,149,-240,148,-235,148,-233,148,-231,147,-234,146,-238,145,-241,144,-241,143|301,150,299,149,296,150,292,150,293,151,296,151,301,150|-187,150,-188,149,-191,149,-194,150,-193,151,-190,151,-188,151,-187,150|290,151,289,150,281,150,278,149,274,151,275,152,278,152,283,152,290,151|-197,153,-195,153,-195,151,-196,150,-200,150,-202,150,-202,151,-205,151,-205,153,-203,153,-200,153,-197,153|-216,152,-214,152,-212,152,-211,151,-213,150,-219,150,-224,149,-227,149,-228,149,-224,150,-233,150,-235,150,-233,152,-231,153,-225,152,-222,151,-218,151,-221,153,-219,154,-217,153,-216,152|115,141,114,141,107,142,103,143,103,144,105,144,105,146,109,147,107,147,112,149,111,150,116,151,122,153,129,153,132,154,136,154,138,153,136,152,129,151,123,151,117,149,114,147,111,145,111,143,115,141|-189,154,-187,154,-183,154,-181,153,-182,152,-180,152,-178,151,-176,151,-173,151,-170,151,-166,152,-162,151,-160,151,-160,150,-161,149,-164,149,-166,149,-172,149,-176,149,-180,149,-185,150,-186,151,-186,152,-188,153,-192,153,-194,154,-193,154,-189,154|-232,155,-233,154,-234,153,-236,153,-240,152,-243,152,-246,152,-242,154,-238,155,-235,155,-232,155|214,154,214,153,216,153,222,153,227,152,228,152,228,151,226,150,220,149,219,148,221,148,224,148,226,148,227,147,228,147,231,148,238,147,238,146,246,146,247,147,251,147,254,147,257,146,258,145,257,144,259,142,263,142,265,144,268,143,271,143,275,143,276,143,280,143,278,145,281,146,299,144,301,143,306,142,314,142,318,142,320,141,319,139,322,139,325,139,328,139,332,139,336,139,339,137,342,138,340,139,341,140,347,140,351,140,357,139,360,138,360,130,357,129,355,129,357,128,358,127,359,126,359,125,358,125,355,125,349,124,347,123,344,122,341,121,341,120,338,121,333,120,332,120,330,119,327,120,326,118,324,116,326,115,326,112,324,112,323,111,324,110,321,109,320,106,317,106,316,104,314,102,313,103,312,106,311,111,312,114,314,115,314,116,317,116,320,119,324,121,327,122,329,125,327,125,325,123,320,121,319,124,313,123,308,120,310,118,306,118,303,118,303,119,300,119,297,118,291,119,284,118,278,114,270,109,273,109,274,108,276,108,278,109,280,108,283,106,283,104,281,102,281,100,280,97,277,94,276,93,274,90,271,88,270,87,267,86,266,86,265,87,262,85,262,84,261,85,260,84,259,83,259,82,258,81,257,80,256,80,255,80,255,79,255,78,256,78,257,77,258,75,259,74,259,71,258,70,256,70,255,69,253,69,253,70,253,71,252,73,254,74,252,75,251,76,251,75,250,76,249,76,250,77,250,78,251,79,249,79,249,80,246,79,244,78,242,78,243,79,243,80,244,81,243,82,242,81,239,80,238,79,236,78,235,77,236,76,238,76,238,75,239,74,242,76,243,75,245,75,245,74,242,73,241,72,239,71,238,70,240,69,241,67,242,65,244,63,244,62,243,61,243,60,244,60,244,58,243,56,242,56,241,54,239,51,237,49,235,47,232,46,230,45,228,44,228,45,226,44,224,43,222,43,221,41,220,41,219,42,220,43,217,43,216,43,213,41,212,40,211,38,213,36,215,33,217,32,218,31,219,27,218,23,217,22,214,21,213,19,210,17,210,18,210,20,209,21,207,21,206,22,205,24,203,25,202,25,202,27,200,27,200,25,199,22,198,20,198,18,200,18,201,17,201,15,202,14,203,13,204,12,205,12,206,11,207,10,207,8,207,7,207,6,208,5,208,3,207,2,205,4,203,6,203,7,201,8,201,10,200,11,201,12,200,13,199,14,199,15,198,16,197,17,197,16,196,17,197,18,197,20,197,21,198,23,197,24,197,26,196,27,196,30,195,32,194,34,193,33,191,31,190,32,188,32,189,35,189,36,187,39,186,40,185,41,184,42,184,43,184,44,183,46,181,46,181,45,181,44,180,44,179,44,178,44,178,43,176,43,174,43,174,41,173,40,170,39,168,37,166,35,164,34,164,33,163,33,162,32,161,32,160,30,160,28,161,26,160,24,160,21,159,21,158,19,158,18,157,18,156,17,155,16,153,18,152,21,151,23,151,24,150,25,149,28,149,29,147,32,146,36,146,38,146,41,145,43,142,42,141,42,138,44,139,45,139,46,136,47,135,48,134,49,133,51,129,50,126,50,123,50,119,51,117,51,115,51,114,54,113,54,111,54,109,53,107,54,105,55,103,56,102,58,100,60,99,60,98,61,97,60,96,60,96,59,97,57,98,55,99,55,99,54,100,53,100,52,100,51,101,51,101,50,102,50,101,51,102,52,103,52,103,50,103,49,103,48,104,49,104,48,105,48,107,48,108,48,109,50,111,51,112,52,113,53,113,52,113,51,113,50,114,48,115,48,116,47,117,47,118,46,119,45,120,45,119,43,118,42,117,41,116,41,116,40,115,39,116,38,115,38,114,38,113,37,113,36,111,36,111,35,111,34,110,34,108,34,107,33,106,33,105,33,104,32,104,31,102,30,99,29,97,28,96,28,95,27,93,27,92,27,91,27,91,26,90,26,90,25,89,25,88,25,87,25,86,26,87,28,86,28,86,30,85,30,86,31,85,31,86,32,86,33,85,34,85,35,84,36,82,37,82,39,80,40,80,41,78,43,78,44,78,45,77,47,76,48,75,49,74,50,74,51,73,52,72,53,71,55,70,56,69,56,70,57,70,58,70,59,69,58,69,57,68,56,68,55,67,56,66,57,65,60,65,57,67,55,68,52,69,51,70,50,71,48,71,46,73,44,74,44,74,42,74,40,75,37,76,37,77,36,78,34,79,32,80,31,82,29,83,28,85,27,85,26,86,25,87,25,87,24,85,23,86,23,87,23,87,22,88,21,89,21,91,21,93,22,95,22,96,22,97,23,98,23,99,23,101,23,101,24,102,24,102,23,102,22,102,21,101,18,100,16,99,14,97,11,95,8,93,6,91,4,88,2,86,1,84,-2,84,-3,83,-3,82,-4,81,-5,80,-7,79,-9,78,-9,77,-12,78,-13,79,-14,78,-15,79,-16,78,-17,79,-18,80,-20,81,-21,81,-22,81,-24,81,-25,81,-28,82,-29,81,-31,80,-32,79,-33,77,-34,75,-35,73,-37,72,-38,70,-39,70,-40,69,-41,70,-43,71,-44,71,-46,71,-47,71,-48,70,-49,68,-50,66,-51,65,-51,65,-52,66,-52,66,-53,65,-55,65,-57,64,-58,63,-59,62,-60,61,-61,60,-62,58,-64,56,-66,55,-66,53,-67,52,-67,52,-68,50,-68,49,-68,47,-68,46,-68,45,-68,43,-69,41,-69,40,-70,39,-70,38,-69,37,-68,36,-68,37,-67,36,-65,36,-63,35,-61,34,-60,33,-57,31,-56,30,-54,30,-52,29,-51,29,-48,29,-45,29,-44,28,-43,27,-42,26,-39,25,-38,24,-36,23,-35,23,-33,24,-32,24,-30,24,-29,25,-27,25,-26,27,-25,27,-24,27,-23,27,-21,26,-20,26,-18,26,-17,26,-15,25,-14,24,-13,25,-12,24,-12,24,-10,22,-8,20,-6,19,-4,18,-2,18,-1,19,1,19,2,19,5,20,6,19,7,18,8,17,9,17,10,15,9,14,9,13,8,12,9,11,10,10,11,9,13,7,13,5,13,4,12,2,12,-1,11,-2,10,-4,9,-6,10,-7,10,-8,10,-9,10,-12,10,-13,9,-15,9,-16,9,-18,10,-20,11,-22,12,-23,14,-25,15,-26,16,-26,18,-27,19,-28,20,-29,20,-29,21,-30,22,-31,23,-32,23,-33,24,-33,25,-34,26,-33,27,-34,29,-35,29,-34,30,-33,31,-33,32,-33,33,-33,34,-32,36,-33,38,-33,39,-33,40,-33,41,-34,42,-34,43,-34,44,-33,44,-33,45,-33,46,-32,47,-31,49,-30,49,-30,50,-30,51,-29,53,-28,53,-26,55,-25,56,-23,56,-22,58,-21,58,-19,60,-20,62,-19,64,-19,65,-17,66,-15,67,-14,68,-12,70,-12,72,-10,72,-9,71,-7,71,-5,70,-4,70,-2,71,0,72,1,73,3,73,6,74,10,74,11,73,13,74,15,74,17,74,19,75,20,74,20,73,22,74,21,73,21,72,22,71,22,70,20,69,21,68,22,68,22,67,23,66,25,66,26,66,28,65,30,65,31,63,33,62,36,62,38,61,39,61,40,62,40,64,42,65,43,66,46,65,46,64,47,64,48,64,50,64,50,63,53,63,55,63,57,62,58,62,59,62,60,63,62,63,63,63,64,62,64,63,66,62,68,62,69,62,69,63,70,64,70,66,71,68,72,69,72,71,72,72,72,73,71,73,69,74,68,72,65,72,63,73,61,73,59,72,57,73,55,73,54,75,53,76,54,78,52,79,55,81,58,81,58,82,62,82,65,83,67,84,70,84,74,83,77,82,79,82,81,82,83,83,83,84,83,85,82,86,81,86,80,87,77,89,75,89,73,90,75,91,76,92,75,93,78,94,78,95,76,94,75,94,74,93,72,93,70,93,70,91,71,91,73,91,73,90,70,90,68,89,67,89,67,90,65,91,67,92,63,93,61,93,61,92,59,91,59,90,58,90,57,87,56,87,55,85,56,84,56,83,58,83,58,82,55,82,54,81,53,80,52,81,52,82,51,82,50,82,47,81,49,80,48,80,47,80,46,81,45,81,46,79,47,78,46,78,47,77,48,76,48,75,46,76,47,75,46,75,46,73,45,73,43,74,43,75,42,77,41,78,40,79,40,80,39,81,39,83,39,84,38,84,38,85,37,85,35,86,34,86,32,87,30,88,31,89,30,89,30,90,29,90,28,90,27,90,27,91,28,91,26,91,25,91,25,90,25,89,25,88,27,87,28,86,30,84,32,84,32,83,34,82,35,82,37,81,37,80,35,81,34,81,33,80,34,79,34,78,33,78,32,76,31,76,32,78,31,79,31,80,30,80,29,81,28,82,27,82,26,83,24,83,22,85,21,86,20,88,19,88,18,89,17,88,16,88,15,87,13,86,9,87,6,86,6,85,6,84,4,82,2,82,1,81,0,80,-1,79,0,77,-1,77,-1,75,-3,75,-4,73,-7,73,-9,73,-10,73,-11,72,-12,72,-12,73,-13,74,-15,74,-16,74,-17,74,-18,74,-17,75,-18,77,-19,77,-19,79,-18,80,-18,82,-18,83,-18,84,-18,85,-19,86,-16,87,-14,87,-11,87,-9,87,-7,87,-4,87,-3,88,-2,92,-4,94,-6,95,-9,96,-9,97,-7,98,-3,97,-4,100,-2,99,3,100,3,102,5,102,7,103,8,103,9,106,12,107,14,107,16,107,18,108,17,109,17,110,16,111,16,113,17,114,19,114,20,115,21,115,21,114,21,113,22,113,21,112,19,111,20,110,20,109,22,109,22,108,24,108,25,109,27,108,28,108,30,108,33,109,35,110,37,109,39,109,40,110,43,110,42,112,42,114,43,115,45,116,47,114,48,114,49,116,49,117,48,117,47,117,47,118,49,119,52,119,54,119,56,119,58,120,56,121,53,121,49,120,46,120,45,121,43,121,43,123,42,125,43,126,45,128,49,130,51,130,51,131,48,132,44,131,42,130,43,129,40,127,36,125,34,123,36,121,38,120,36,118,34,117,33,114,32,112,29,112,28,111,26,111,25,113,24,115,22,118,21,119,17,117,14,116,11,117,11,119,10,124,12,125,17,127,21,129,25,132,30,136,33,137,38,140,43,141,46,140,49,142,53,142,56,142,63,141,60,140,62,139,64,140,68,139,73,138,81,136,82,135,82,134,80,133,77,132,68,134,66,133,70,132,70,129,72,128,74,128,74,129,73,130,74,130,79,129,81,130,80,131,84,133,86,133,88,132,89,134,87,135,88,136,87,137,93,137,94,135,91,135,91,134,93,133,96,134,96,135,100,136,107,138,109,138,107,136,109,136,111,137,115,137,118,138,120,137,122,138,120,139,121,140,127,139,130,138,137,136,138,137,136,138,136,139,134,139,135,140,133,141,133,142,137,144,138,146,140,146,145,146,146,144,144,143,145,142,146,141,145,138,147,137,146,135,143,133,145,132,146,133,148,134,148,135,150,136,149,137,150,138,148,138,147,139,149,141,146,143,150,144,149,146,150,146,151,145,151,143,153,142,152,144,155,145,159,145,163,144,161,145,161,147,165,148,169,148,174,148,172,149,174,150,177,150,181,151,186,152,192,152,193,152,198,153,202,153,202,154,204,155,209,155,212,155,209,154,214,154|-188,155,-189,155,-192,155,-193,156,-189,156,-187,155,-188,155|-220,155,-224,155,-227,155,-225,156,-223,156,-220,156,-220,155|49,156,45,155,41,155,43,156,42,157,46,157,47,156,49,156|-219,157,-222,157,-225,157,-223,158,-222,158,-219,157|-192,156,-195,156,-196,156,-197,157,-197,158,-195,158,-194,158,-191,157,-192,156|-200,157,-199,156,-203,156,-206,157,-210,157,-208,157,-211,158,-211,159,-207,158,-202,158,-200,157|210,157,199,156,203,158,204,159,206,159,211,157,210,157|37,159,43,158,38,157,37,156,35,155,34,154,32,154,28,155,29,155,26,156,22,158,21,159,26,160,27,159,30,159,31,160,34,160,37,159|51,161,55,160,52,159,46,159,40,159,40,160,37,160,35,161,41,161,44,161,46,161,51,161|102,161,100,161,98,161,98,160,95,160,93,160,94,161,90,161,94,162,97,162,97,161,98,162,100,162,103,161,102,161|200,158,196,158,190,158,187,159,185,160,182,161,188,162,192,163,196,161,200,160,200,158|-174,159,-172,159,-174,158,-178,157,-182,156,-186,157,-188,158,-186,159,-190,159,-192,159,-193,160,-192,161,-191,162,-189,162,-185,163,-182,161,-179,161,-176,161,-174,159|-137,166,-132,166,-127,166,-124,165,-129,164,-134,163,-135,163,-131,163,-136,162,-139,161,-142,160,-146,159,-148,159,-154,159,-151,158,-152,158,-151,157,-153,156,-156,156,-157,155,-160,154,-159,154,-156,154,-161,152,-166,153,-172,153,-175,153,-179,153,-179,154,-176,154,-177,156,-175,156,-170,155,-173,156,-176,157,-174,158,-171,158,-170,159,-173,159,-174,161,-168,160,-167,160,-164,161,-168,161,-175,161,-179,162,-180,163,-183,163,-183,164,-180,164,-178,164,-174,165,-171,165,-169,165,-166,165,-165,166,-162,166,-159,166,-152,166,-151,166,-146,166,-141,166,-137,166|-54,167,-42,165,-45,165,-53,165,-64,164,-63,164,-56,164,-50,164,-46,164,-44,163,-46,162,-41,163,-32,164,-26,163,-24,163,-33,161,-34,161,-40,160,-35,160,-38,159,-39,158,-39,155,-37,154,-40,154,-43,153,-40,152,-39,150,-41,150,-39,149,-43,148,-41,148,-42,147,-44,147,-47,147,-45,145,-45,144,-49,145,-50,145,-47,144,-44,143,-44,141,-47,141,-49,142,-51,143,-50,142,-53,140,-47,140,-45,140,-50,139,-55,137,-61,136,-64,136,-66,135,-68,133,-73,132,-74,132,-77,131,-80,131,-81,130,-81,128,-82,127,-86,125,-85,124,-86,122,-87,120,-90,120,-93,122,-97,122,-98,123,-100,125,-103,127,-104,129,-105,130,-107,132,-107,134,-108,134,-106,137,-103,137,-102,138,-102,140,-104,139,-105,139,-107,139,-109,139,-110,141,-109,142,-107,142,-103,141,-106,142,-108,143,-110,143,-112,143,-109,145,-111,146,-112,147,-115,149,-117,150,-117,151,-123,152,-127,152,-132,152,-137,152,-139,153,-143,154,-138,155,-134,155,-142,155,-147,156,-146,157,-139,158,-131,159,-131,160,-136,160,-134,161,-127,162,-124,163,-125,164,-121,164,-114,164,-108,164,-106,164,-101,165,-96,164,-93,164,-89,163,-94,164,-94,165,-87,166,-80,166,-77,167,-70,167,-54,167';
+const EARTH_CITIES = [[35.7, 139.7, 35.7], [40.7, -74.0, 19.0], [19.4, -99.1, 19.0], [19.1, 72.9, 19.0], [-23.6, -46.6, 18.8], [31.2, 121.4, 15.0], [22.6, 88.4, 14.8], [23.7, 90.4, 12.8], [-34.6, -58.4, 12.8], [34.0, -118.2, 12.5], [30.1, 31.2, 11.9], [-22.9, -43.2, 11.7], [34.7, 135.5, 11.3], [39.9, 116.4, 11.1], [14.6, 121.0, 11.1], [55.8, 37.6, 10.5], [41.0, 29.0, 10.1], [48.9, 2.4, 9.9], [37.6, 127.0, 9.8], [6.4, 3.4, 9.5], [-6.2, 106.8, 9.1], [41.8, -87.6, 9.0], [51.5, -0.1, 8.6], [-12.0, -77.1, 8.0], [35.7, 51.4, 7.9], [-4.3, 15.3, 7.8], [4.6, -74.1, 7.8], [22.3, 114.2, 7.2], [25.0, 121.6, 6.9], [13.0, 77.6, 6.8], [13.8, 100.5, 6.7], [-33.4, -70.7, 5.7], [25.8, -80.2, 5.6], [40.4, -3.7, 5.6], [43.7, -79.4, 5.2], [1.3, 103.9, 5.2], [-8.8, 13.2, 5.2], [33.3, 44.4, 5.1], [15.6, 32.5, 4.8], [-33.9, 151.2, 4.6], [33.7, -84.4, 4.5], [24.6, 46.7, 4.5], [29.7, -95.3, 4.5], [21.0, 105.8, 4.4], [38.9, -77.0, 4.3], [-37.8, 145.0, 4.2], [30.7, 104.1, 4.1], [16.8, 96.2, 4.1], [5.3, -4.0, 3.8], [-15.8, -47.9, 3.7], [39.9, 32.9, 3.7], [25.7, -100.3, 3.7], [43.8, 87.6, 3.6], [37.8, -122.4, 3.5], [-26.2, 28.0, 3.4], [52.5, 13.4, 3.4], [36.8, 3.0, 3.4], [41.9, 12.5, 3.3], [39.0, 125.8, 3.3], [34.5, 69.2, 3.3], [38.0, 23.7, 3.2], [-33.9, 18.4, 3.2], [33.6, -7.6, 3.2], [32.1, 34.8, 3.1], [9.0, 38.7, 3.1], [-1.3, 36.8, 3.0], [10.5, -66.9, 3.0], [-6.8, 39.3, 2.9], [38.7, -9.1, 2.8], [50.4, 30.5, 2.7], [14.7, -17.5, 2.6], [33.5, 36.3, 2.5], [36.8, 10.2, 2.4], [48.2, 16.4, 2.4], [49.3, -123.1, 2.3], [39.7, -105.0, 2.3], [32.9, 13.2, 2.2], [41.3, 69.3, 2.2], [23.1, -82.4, 2.2], [18.5, -69.9, 2.2], [40.4, 49.9, 2.1], [5.6, -0.2, 2.1], [29.4, 48.0, 2.1], [15.4, 44.2, 2.0], [18.5, -72.3, 2.0], [44.4, 26.1, 1.9], [-25.3, -57.6, 1.9], [33.9, 35.5, 1.8], [35.0, 135.7, 1.8], [53.9, 27.6, 1.8], [50.8, 4.3, 1.7], [52.2, 21.0, 1.7], [34.0, -6.8, 1.7], [-0.2, -78.5, 1.7], [-18.9, 47.5, 1.7], [47.5, 19.1, 1.7], [3.9, 11.5, 1.6], [-16.5, -68.2, 1.6], [9.1, 7.5, 1.6], [-17.8, 31.0, 1.6], [-34.9, -56.2, 1.5], [12.7, -8.0, 1.5], [9.5, -13.7, 1.5], [11.6, 104.9, 1.5], [6.1, 1.2, 1.5], [25.3, 51.5, 1.4], [3.1, 101.7, 1.4], [-26.0, 32.6, 1.4], [13.7, -89.2, 1.4], [0.3, 32.6, 1.4], [52.1, 4.3, 1.4], [25.2, 55.3, 1.4], [-36.8, 174.8, 1.4], [-4.3, 15.3, 1.4], [-25.7, 28.2, 1.3], [-15.4, 28.3, 1.3], [9.9, -84.1, 1.3], [9.0, -79.5, 1.3], [59.3, 18.1, 1.3], [46.2, 6.1, 1.2]];   // [lat, lon, millions], largest first
+const EV = { R: 6371, h: 420, i: 51.64, T: 92.68, at: 0, cv: null, scale: 3, iss: null };   // km, km, degrees, minutes; when last painted; the painted canvas; its resolution step
+const EV_P = 1 + EV.h / EV.R, EV_RH = (EV_P - 1) / (EV_P - 1 / EV_P) * Math.sqrt(1 - 1 / (EV_P * EV_P));   // the height in Earth radii; the horizon's radius in the projection
+const evGeo = () => ({ top: LH * 0.4, r: LW * 1.25, cx: LW / 2 });   // on the pool: the horizon's top, its radius on screen
+const evRings = (() => EARTH_LAND.split('|').map(r => { const a = r.split(',').map(Number), out = []; for (let i = 0; i < a.length; i += 2) out.push([a[i + 1] / 2, a[i] / 2]); return out; }))();   // [lat, lon]
+function issPlace(d = new Date()) {   // where the station is: [lat, lon] below it
+  const iss = LSKY.on && LSKY.sats.find(s => /ISS/.test(s.name || ''));
+  if (iss) { const r = sgp4(iss, d); if (r) { const p = r.r || r, lon = norm360(Math.atan2(p[1], p[0]) / RAD - gmst(julian(d)) * 15 + 180) - 180, lat = Math.atan2(p[2], Math.hypot(p[0], p[1])) / RAD; return [lat, lon, true]; } }
+  const tm = (d.getTime() / 60000), u = TAU * (tm / EV.T % 1), node = norm360(-5.0 * tm / 1440) * RAD, inc = EV.i * RAD;   // a circular orbit, the node regressing about 5° a day
+  const lat = Math.asin(Math.sin(inc) * Math.sin(u)) / RAD, lonI = Math.atan2(Math.cos(inc) * Math.sin(u), Math.cos(u)) + node;
+  return [lat, norm360(lonI / RAD - gmst(julian(d)) * 15 + 180) - 180, false];
+}
+function subSolar(d = new Date()) { const jd = julian(d), s = sunAt(jd), [ra, dec] = eclToEq(s.lon, 0, obliquity(centuries(jd))); return [dec, norm360(ra * 15 - gmst(jd) * 15 + 180) - 180]; }
+function evProject(lat, lon, c0) {   // [x, y, visible] on the pool, north up; past the horizon, pinned to it
+  const [p0, l0] = c0, sp = sinD(lat), cp = cosD(lat), s0 = sinD(p0), k0 = cosD(p0), dl = lon - l0, cosc = s0 * sp + k0 * cp * cosD(dl), g = evGeo();
+  let x = cp * sinD(dl), y = k0 * sp - s0 * cp * cosD(dl); const vis = cosc >= 1 / EV_P;
+  if (vis) { const k = (EV_P - 1) / (EV_P - cosc); x *= k; y *= k; } else { const n = Math.hypot(x, y) || 1; x = x / n * EV_RH; y = y / n * EV_RH; }
+  return [g.cx + x / EV_RH * g.r, g.top + g.r - y / EV_RH * g.r, vis];
+}
+function evUnproject(px, py, c0) {   // a pool point back to [lat, lon], or null off the planet (Snyder 23-1 inverted)
+  const g = evGeo(), x = (px - g.cx) / g.r * EV_RH, y = (g.top + g.r - py) / g.r * EV_RH, rho = Math.hypot(x, y); if (rho > EV_RH) return null;
+  const P = EV_P, q = rho * rho * (P + 1) / (P - 1), sinc = (P - Math.sqrt(Math.max(0, 1 - q))) / ((P - 1) / rho + rho / (P - 1)); if (!(sinc <= 1)) return null;
+  if (rho < 1e-9) return [c0[0], c0[1]];
+  const c = Math.asin(sinc), [p0, l0] = c0, lat = Math.asin(Math.cos(c) * sinD(p0) + y * Math.sin(c) * cosD(p0) / rho) / RAD;
+  const lon = l0 + Math.atan2(x * Math.sin(c), rho * cosD(p0) * Math.cos(c) - y * sinD(p0) * Math.sin(c)) / RAD; return [lat, norm360(lon + 180) - 180];
+}
+const sunLight = (lat, lon, ss) => clamp((sinD(lat) * sinD(ss[0]) + cosD(lat) * cosD(ss[0]) * cosD(lon - ss[1]) + 0.1) / 0.2, 0, 1);   // 1 in day, 0 past about 6° of twilight
+function evPaint(d) {   // starts a paint of the planet at a third of the pool's resolution: land and sea, then day and night per point
+  const n = EV.scale, w = Math.ceil(LW / n), h = Math.ceil(LH / n), c0 = issPlace(d), ss = subSolar(d);
+  const q = 2, m = EV.mask || (EV.mask = document.createElement('canvas')), W = w * q, H = h * q; m.width = W; m.height = H; const mc = m.getContext('2d');   // the land drawn at twice the painted size, so each painted point takes its share of coast
+  mc.setTransform(q / n, 0, 0, q / n, 0, 0); mc.fillStyle = '#000'; mc.fillRect(0, 0, LW, LH); mc.fillStyle = '#f00';
+  for (const ring of evRings) { const pts = ring.map(([la, lo]) => evProject(la, lo, c0)); if (!pts.some(p => p[2])) continue; mc.beginPath(); pts.forEach(([x, y], k) => (k ? mc.lineTo(x, y) : mc.moveTo(x, y))); mc.closePath(); mc.fill(); }
+  const img = new ImageData(w, h);
+  EV.job = { n, w, h, q, W, c0, ss, land: mc.getImageData(0, 0, W, H).data, img, row: 0 };
+}
+function evStep(budget) {   // a slice of the paint, a few milliseconds a frame (as the page's sky is painted: 72-sky.js); swapped in when whole
+  const J = EV.job; if (!J) return; const t0 = performance.now(), { n, w, h, q, W, c0, ss, land } = J, o = J.img.data;
+  const SEA = [[18, 52, 96], [4, 8, 20]], LAND = [[74, 104, 70], [10, 12, 14]];   // day, night: a deep sea and a muted land, inside the scene law's lightness
+  while (J.row < h && performance.now() - t0 < budget) {
+    const j = J.row++;
+    for (let i = 0; i < w; i++) {
+      const ll = evUnproject((i + 0.5) * n, (j + 0.5) * n, c0), k = (j * w + i) * 4; if (!ll) { o[k + 3] = 0; continue; }
+      let a = 0; for (let dy = 0; dy < q; dy++) for (let dx = 0; dx < q; dx++) a += land[((j * q + dy) * W + i * q + dx) * 4] > 128 ? 1 : 0; a /= q * q;   // how much of this point is land: soft coasts
+      const L = sunLight(ll[0], ll[1], ss);
+      for (let ch = 0; ch < 3; ch++) { const day = SEA[0][ch] + (LAND[0][ch] - SEA[0][ch]) * a, night = SEA[1][ch] + (LAND[1][ch] - SEA[1][ch]) * a; o[k + ch] = night + (day - night) * L; }
+      o[k + 3] = 255;
+    }
+  }
+  if (J.row < h) return;
+  const cv = EV.cv || (EV.cv = document.createElement('canvas')); cv.width = w; cv.height = h; cv.getContext('2d').putImageData(J.img, 0, 0);
+  EV.iss = c0; EV.ss = ss; EV.job = null;
+}
+const EV_STARS = (() => { const r = seeded(11); return Array.from({ length: 420 }, () => [r() * LW, r() * LH * 0.62, r() * 1.2 + 0.3, 0.35 + r() * 0.6]); })();
+function drawEarthView(c, b) {
+  if (!EV.job && performance.now() - EV.at > 1000) { EV.at = performance.now(); evPaint(new Date()); }   // a new paint each second, sliced
+  evStep(EV.cv ? 4 : 1e9); if (!EV.cv) return;   // the first paint whole, then four milliseconds a frame
+  c.drawImage(sprite('earthsky', LW, LH, (s) => {   // the black of space and the stars as from orbit: steady, many
+    const bg = s.createLinearGradient(0, 0, 0, LH); bg.addColorStop(0, '#010208'); bg.addColorStop(1, '#050816'); s.fillStyle = bg; s.fillRect(0, 0, LW, LH);
+    s.fillStyle = '#fff'; for (const [x, y, z, a] of EV_STARS) { s.globalAlpha = a; s.fillRect(x, y, z, z); } s.globalAlpha = 1;
+  }), 0, 0, LW, LH);
+  const sky = PSKY.now; if (sky) {   // the moon, its true phase; the planets you can see, in their colours, placed by their angle from the sun
+    const m = sky.moon, mx = LW * 0.78, my = LH * 0.14, mr = 14; dot(c, mx, my, mr, '#d9dde3');
+    const k = 1 - 2 * m.frac, sh = c.createLinearGradient(mx - mr, my, mx + mr, my); if (m.frac < 0.98) { c.save(); c.beginPath(); c.arc(mx, my, mr, 0, TAU); c.clip(); c.fillStyle = 'rgba(2,3,8,0.92)'; c.beginPath(); c.ellipse(mx + (m.waxing ? -1 : 1) * mr * (1 - m.frac) * 0.9, my, mr * Math.abs(k) + mr * (1 - m.frac) * 0.4, mr, 0, 0, TAU); c.fill(); c.restore(); }
+    const sun = sunAt(sky.jd); for (const p of sky.planets) if (p.mag < 2) { const e = ((p.lon != null ? p.lon : p.ra * 15) - sun.lon + 540) % 360 - 180; dot(c, LW / 2 + e / 180 * LW * 0.45, LH * 0.08 + Math.abs(e) / 180 * LH * 0.18, 2 + Math.max(0, 1.5 - p.mag) * 0.9, `rgb(${p.rgb || '255,240,220'})`); }
+  }
+  c.imageSmoothingEnabled = true; c.drawImage(EV.cv, 0, 0, LW, LH);
+  const g = evGeo(), ss = EV.ss, c0 = EV.iss;
+  c.save(); c.globalCompositeOperation = 'lighter';
+  for (const [la, lo, mil] of EARTH_CITIES) { const [x, y, vis] = evProject(la, lo, c0); if (!vis) continue; const night = 1 - sunLight(la, lo, ss); if (night < 0.2) continue; glow(c, x, y, 3 + Math.sqrt(mil) * 2.2, '255,205,130', 0.55 * night); }   // the cities, by their size, on the night side
+  c.restore();
+  c.save(); c.globalCompositeOperation = 'lighter'; c.globalAlpha = 0.5 + 0.3 * b; c.strokeStyle = 'rgb(120,190,255)'; c.lineWidth = 4; c.shadowColor = 'rgba(120,190,255,0.9)'; c.shadowBlur = 16; c.beginPath(); c.arc(g.cx, g.top + g.r, g.r + 1, Math.PI, TAU); c.stroke(); c.restore();   // the thin blue line of air, brighter on the in-breath
 }
 /* ---------- Weather particles ---------- */
 // One fixed pool per kind; the scene's level for that kind (0–1) sets how many are active. Creatures and leaves are kept a
@@ -2228,7 +2310,7 @@ function updateStorms(dt) {   // the light and the sound of every strike, played
   S.growl = LT.level * 0.13 * thunder();   // the storm's low growl, under the strikes
 }
 // What each is doing right now, 0 to 1: its switch. Nothing without weather; no lightning while you rest.
-const made = (k) => { const a = PREFS.atmo[k]; return has('weather') && !(k === 'bolt' && S.mode === 'rest') ? Math.max(a.on ? a.lv : 0, S.fx[k] || 0) : 0; };   // in Comp the wind is always on: its level rides in on S.fx.wind
+const made = (k) => { const a = wx(k); return has('weather') && !(k === 'bolt' && S.mode === 'rest') ? Math.max(a.on ? a.lv : 0, S.fx[k] || 0) : 0; };   // in Challenge the wind is always on: its level rides in on S.fx.wind
 const LT = { next: 0, tail: 0, level: 0, was: false }, RN = { level: 0 };
 const QUIET_START = 30;   // seconds after launch with no strike, whatever the weather
 const stormYouMake = () => { const L = made('bolt'); return L ? 0.5 + 0.5 * L : LT.tail > 0 ? 0.6 : 0; };
@@ -2239,13 +2321,13 @@ const streak = (dir, k, lag = 0) => ({ x: dir > 0 ? -40 - lag - Math.random() * 
 function updateActions(dt, k) {
   const L = made('bolt');   // your storm: the stronger it is, the more often it strikes and the closer it lands
   if (L && !LT.was) LT.next = Math.max(LT.next, animTime + 0.7);   // however a storm begins, its growl comes first
-  if (!L && LT.was && !PREFS.atmo.bolt.on) { LT.tail = 4; LT.next = animTime + 0.8; }   // a storm you stop rolls away
+  if (!L && LT.was && !wx('bolt').on) { LT.tail = 4; LT.next = animTime + 0.8; }   // a storm you stop rolls away
   LT.was = !!L;
   if (L) { if (animTime >= Math.max(LT.next, QUIET_START) && strikeSky(clamp(0.1 + L * (0.15 + 0.75 * Math.random()), 0, 1))) LT.next = animTime + 0.4 + (0.8 + 3.6 * (1 - L)) * Math.random(); }
   else if (LT.tail > 0) { LT.tail -= dt; if (animTime >= LT.next && LT.tail > 1 && strikeSky(0.1 + 0.2 * Math.random(), true)) LT.next = animTime + 1.2 + Math.random(); }
   LT.level += ((L ? 0.4 + 0.45 * L + 0.15 * Math.sin(animTime * 1.3) : LT.tail > 0 ? 0.6 * LT.tail / 4 : 0) - LT.level) * Math.min(1, dt * 3);
   LIT.now += ((S.storm && here().indoor ? 0.12 : S.mode === 'pacer' && here().indoor ? 0.55 : 1) - LIT.now) * Math.min(1, dt * 3);   // the lamp turns down in Calm, and gutters in a storm
-  S.fx.wind = Math.max(0, S.fx.wind - dt / 6);   // Comp's wind passes
+  S.fx.wind = Math.max(0, S.fx.wind - dt / 6);   // Challenge's wind passes
   RN.level += (made('rain') - RN.level) * Math.min(1, dt / 12);   // rain from a switch comes and goes over tens of seconds, never cut
   const g = lessMo() ? 0 : clamp(Math.abs(ENV.blow) - 0.25, 0, 1);   // the wind you can see: streaks of air, more and faster the stronger it blows
   if (g > 0.02 && Math.random() < g * 0.9 * k) streaks.push(streak(windSide(), 0.4 + 0.6 * g));
@@ -2668,7 +2750,7 @@ function tkMake() {   // Set it loose: it glides out of the centre into the runn
 // three experiments, each off until you switch it on.
 // The nod is to Star Trek: this is where the next science lives.
 const WARP = { stars: Array.from({ length: 140 }, () => ({ x: Math.random() * 2 - 1, y: Math.random() * 2 - 1, z: Math.random() })), go: 0 };
-function engage() { if (!lessMo()) { WARP.go = performance.now(); sound.whoosh(1, 0); feel('snap'); } }   // warp, on entering the Lab
+function engage() { const m = PSKY.now && PSKY.now.moon; SV.az = (m && m.alt > 5 ? m.az : 180) * RAD; SV.sel = null; if (!lessMo()) { WARP.go = performance.now(); sound.whoosh(1, 0); feel('snap'); } }   // warp, on entering the Lab; the sky opens facing the moon when it is up, else south
 function drawLab(c) {
   const now = performance.now(), k = WARP.go ? 1 - clamp((now - WARP.go) / 1500, 0, 1) : 0, speed = lessMo() ? 0 : 0.0016 + 0.06 * k * k, trail = 1 + 40 * k * k, f = Math.max(LW, LH) * 0.5;   // k: the warp, full at the door, gone in a second and a half
   if (WARP.go && k <= 0) WARP.go = 0;
@@ -2680,6 +2762,7 @@ function drawLab(c) {
     c.beginPath(); c.moveTo(qx, qy); c.lineTo(px + 0.01, py); c.stroke();
   }
   c.restore();
+  if (k < 0.35) { drawSkyView(c, clamp((0.35 - k) / 0.35, 0, 1)); return; }   // the warp settles into tonight's sky (58-skyview.js)
   if (!CQ.step) circleWord(c, 'Labs', 1, 'beta');
 }
 
@@ -2772,6 +2855,81 @@ function drawLook(c) {
   c.restore();
   hint(c, `Look Up · ${L.con.name}${L.k < L.con.lines.length ? ' · hold the light on the ringed star' : ''}`);
 }
+/* ---------- Sky view: the Labs door's sky, now (v85; grows out of Look up: one home) ---------- */
+// After the warp, the Labs pool is tonight's sky as it stands: the bright stars, the planets in their colours, the moon, the two
+// black holes' directions (marked, never drawn: nothing can be seen of them), and Halley's Comet where it is on its way back.
+// Drag across the pool to turn; touch something for its name and what is true of it. Every fact below is checked against the
+// source named beside it (SKY.md). Where astronomers' measurements disagree, the range is given. Nothing is fetched.
+const SV = { az: Math.PI, sel: null, drag: null, span: 110 * RAD };   // facing south; 110° across the pool
+const SKYFACTS = {   // name: [what it is, a true fact or two]
+  Moon: ['The Moon', 'About 384,400 km away on average; its light takes 1.3 seconds to reach you. The same face always turns toward us.'],   // NASA Moon fact sheet
+  Mercury: ['Mercury', 'The planet nearest the Sun. A year there is 88 Earth days.'],   // NASA planetary fact sheet
+  Venus: ['Venus', 'The brightest planet. Its surface is about 465 °C, and it turns so slowly its day (243 Earth days) is longer than its year (225).'],
+  Mars: ['Mars', 'Its day is 24 hours 37 minutes. Two small moons, Phobos and Deimos.'],
+  Jupiter: ['Jupiter', 'The largest planet: about 11 Earths across. Galileo saw its four big moons in 1610: Io, Europa, Ganymede, Callisto.'],
+  Saturn: ['Saturn', 'Its rings are mostly water ice. The planet is less dense than water.'],
+  Polaris: ['Polaris, the North Star', 'About 430 light-years away. It sits within a degree of the pole, so the sky turns around it.'],   // Hipparcos (van Leeuwen 2007)
+  Vega: ['Vega', 'About 25 light-years away. About 12,000 years from now it will be the pole star.'],
+  Sirius: ['Sirius', 'The brightest star in the night sky, about 8.6 light-years away, with a white dwarf companion.'],
+  Betelgeuse: ['Betelgeuse', 'A red supergiant, roughly 500 to 700 light-years away (measurements disagree). One day it will explode as a supernova.'],
+  Rigel: ['Rigel', 'A blue supergiant, roughly 850 light-years away.'],
+  Arcturus: ['Arcturus', 'About 37 light-years away; the brightest star north of the celestial equator.'],
+  Deneb: ['Deneb', 'Very far and very bright: roughly 1,500 to 2,600 light-years away (measurements disagree).'],
+  Altair: ['Altair', 'About 17 light-years away. It spins so fast it bulges at its equator.'],
+  Capella: ['Capella', 'About 43 light-years away: two giant stars orbiting each other.'],
+  Aldebaran: ['Aldebaran', 'An orange giant about 65 light-years away, the eye of Taurus.'],
+  Antares: ['Antares', 'A red supergiant roughly 550 light-years away; its name means "rival of Mars".'],
+  Spica: ['Spica', 'About 250 light-years away: two hot stars close enough to stretch each other.'],
+  Procyon: ['Procyon', 'About 11.5 light-years away, one of our near neighbours.'],
+  Regulus: ['Regulus', 'About 79 light-years away, the heart of Leo.'],
+  'Sagittarius A*': ['Sagittarius A*', 'The black hole at the centre of our galaxy: about 4 million times the Sun’s mass, about 26,000 light-years away. First imaged in 2022 (Event Horizon Telescope).'],
+  'Cygnus X-1': ['Cygnus X-1', 'The first black hole widely accepted (1970s): about 21 times the Sun’s mass, about 7,200 light-years away (Miller-Jones et al. 2021).'],
+  Halley: ['Halley’s Comet', 'It returns about every 76 years (74 to 79, as the planets tug it). It passed its farthest point, beyond Neptune’s orbit, in December 2023, and is next closest to the Sun in July 2061.']
+};
+const SV_HOLES = [['Sagittarius A*', 17.7611, -29.0078], ['Cygnus X-1', 19.9727, 35.2017]];   // RA (hours), Dec (degrees), J2000
+const HALLEY = { name: 'Halley', e: 0.96714, q: 0.58598, i: 162.263, om: 58.420, w: 111.332, tp: 2446469.96, M1: 5.5, K1: 8 };   // 1P/Halley's orbit (JPL, 1986 epoch): its place years on is near, not exact
+function svXY(altD, azD) {   // a place in the sky (degrees) on the pool, facing SV.az; [x, y, on the pool]
+  let d = azD * RAD - SV.az; d = Math.atan2(Math.sin(d), Math.cos(d));
+  const x = CX + d / (SV.span / 2) * (LW / 2), y = LH - 24 - altD / 90 * (LH - 60); return [x, y, Math.abs(d) < SV.span / 2 + 0.05 && altD > -2];
+}
+function svThings() {   // everything you can touch, placed now
+  const d = new Date(), jd = julian(d), lst = lstOf(jd), out = [], sky = PSKY.now;
+  for (const n in STAR) { const s = STAR[n], [alt, az] = altAzOf(s[0], s[1], lst); out.push({ n, alt, az, mag: s[2], kind: 'star' }); }
+  if (sky) { out.push({ n: 'Moon', alt: sky.moon.alt, az: sky.moon.az, kind: 'moon', frac: sky.moon.frac, waxing: sky.moon.waxing }); for (const p of sky.planets) out.push({ n: p.name, alt: p.alt, az: p.az, mag: p.mag, rgb: p.rgb, kind: 'planet' }); }
+  for (const [n, ra, dec] of SV_HOLES) { const [alt, az] = altAzOf(ra, dec, lst); out.push({ n, alt, az, kind: 'hole' }); }
+  const h = cometAt(HALLEY, jd), [ha, hz] = altAzOf(h.ra, h.dec, lst); out.push({ n: 'Halley', alt: ha, az: hz, kind: 'comet', mag: h.mag });
+  return out;
+}
+function drawSkyView(c, fade) {
+  const things = svThings(); c.save(); c.globalAlpha = fade;
+  const g = c.createLinearGradient(0, 0, 0, LH); g.addColorStop(0, '#02040c'); g.addColorStop(1, '#0b1430'); c.fillStyle = g; c.fillRect(0, 0, LW, LH);
+  const lst = lstOf(julian(new Date())); c.fillStyle = '#dbe4ff';
+  for (const f of FIELD) { const [alt, az] = altAzOf(f[0], f[1], lst), [x, y, on] = svXY(alt, az); if (on && alt > 0) { c.globalAlpha = fade * f[2]; c.fillRect(x, y, 1.2, 1.2); } }
+  c.globalAlpha = fade;
+  for (const t of things) {
+    const [x, y, on] = svXY(t.alt, t.az); if (!on || t.alt < 0) continue;
+    if (t.kind === 'star') dot(c, x, y, clamp(2.6 - 0.45 * t.mag, 0.8, 2.8), '#f1f5ff');
+    else if (t.kind === 'planet') dot(c, x, y, clamp(3.4 - 0.5 * t.mag, 1.8, 4.5), `rgb(${t.rgb})`);
+    else if (t.kind === 'moon') { dot(c, x, y, 9, '#e6e9ee'); if (t.frac < 0.98) { c.save(); c.beginPath(); c.arc(x, y, 9, 0, TAU); c.clip(); c.fillStyle = 'rgba(2,4,12,0.9)'; c.beginPath(); c.ellipse(x + (t.waxing ? -1 : 1) * 9 * (1 - t.frac), y, 9, 9, 0, 0, TAU); c.fill(); c.restore(); } }
+    else if (t.kind === 'hole') { c.strokeStyle = 'rgba(200,180,255,0.75)'; c.lineWidth = 1.2; c.setLineDash([3, 4]); c.beginPath(); c.arc(x, y, 9, 0, TAU); c.stroke(); c.setLineDash([]); }   // a direction, never a picture
+    else if (t.kind === 'comet') { c.strokeStyle = 'rgba(180,230,255,0.75)'; c.lineWidth = 1.2; c.beginPath(); c.moveTo(x - 6, y); c.lineTo(x + 6, y); c.moveTo(x, y - 6); c.lineTo(x, y + 6); c.stroke(); }   // far too faint to see: marked
+  }
+  c.fillStyle = 'rgba(10,14,28,0.9)'; c.fillRect(0, LH - 24, LW, 24);   // the ground, and the four points of the compass on it
+  c.fillStyle = '#fff'; c.font = `500 ${fpx(14)}px ${FONT.sans}`; c.textAlign = 'center'; c.textBaseline = 'middle';
+  for (const [w, a] of [['N', 0], ['E', 90], ['S', 180], ['W', 270]]) { const [x, , on] = svXY(10, a); if (on) c.fillText(w, x, LH - 12); }
+  const s = SV.sel && things.find(t => t.n === SV.sel);
+  if (s) { const [x, y, on] = svXY(s.alt, s.az); if (on) { c.strokeStyle = '#fff'; c.lineWidth = 2; c.beginPath(); c.arc(x, y, 16, 0, TAU); c.stroke(); }
+    const f = SKYFACTS[s.n] || [s.n, s.alt < 0 ? 'Below the horizon now.' : `${Math.round(s.alt)}° up, ${Math.round(s.az)}° from north.`]; words(c, f[0], f[1], LH - 96); }   // low, above the ground: the top is where the bar's banners speak
+  c.restore();
+}
+function skyTouch(p, phase) {   // drag to turn; a touch (no drag) names what is nearest
+  if (phase === 'down') { SV.drag = { x: p.x, az: SV.az, moved: false }; return; }
+  const D = SV.drag; if (!D) return;
+  if (phase === 'move') { const dx = p.x - D.x; if (Math.abs(dx) > 6) D.moved = true; if (D.moved) SV.az = D.az - dx / LW * SV.span; return; }
+  SV.drag = null; if (D.moved) return;
+  let best = null, bd = 30; for (const t of svThings()) { if (t.alt < 0) continue; const [x, y, on] = svXY(t.alt, t.az); const dd = Math.hypot(x - p.x, y - p.y) - (SKYFACTS[t.n] ? 8 : 0); if (on && dd < bd) { bd = dd; best = t; } }   // the famous win a near tie
+  SV.sel = best ? best.n : null; if (best) { const f = SKYFACTS[best.n]; speak(f ? `${f[0]}. ${f[1]}` : best.n); feel('tick'); }
+}
 /* ---------- Modes: the same screen, different layers in the pool ---------- */
 // Changing mode pauses the game: nothing is lost, the pool waits just as it is.
 function setMode(m) {
@@ -2807,7 +2965,7 @@ async function requestWake(on) {   // keep the screen awake in Rest: phones stop
 /* ---------- Game flow ---------- */
 function pickNextTier() {
   const w = [0.40, 0.32, 0.18, 0.10].slice(0, Math.min(3, Math.max(2, S.highestTier - 1)) + 1);
-  let r = Math.random() * w.reduce((a, b) => a + b, 0);
+  let r = (S.rng || Math.random)() * w.reduce((a, b) => a + b, 0);   // the daily challenge deals today's spheres from today's seed
   for (let i = 0; i < w.length; i++) { if (r < w[i]) return i; r -= w[i]; }
   return 0;
 }
@@ -2817,7 +2975,7 @@ function newPool() {
   Object.assign(S, { world: createWorld(), score: 0, blooms: 0, merges: 0, highestTier: 2, current: 0, next: 1, fair: PREFS.overflow === 'end', zen: false, wild: false,
     canDrop: true, cooldown: 0, overT: 0, offender: 0, gameOver: false, combo: 0, comboT: 0, tools: { strike: 0, mystery: 0, storm: 0 }, armed: false, storm: null, stormQ: [], roundDone: false, playT: 0, nudged: 0 });
   if (S.parked) unpark(); else hideCard();
-  if (PREFS.comp) compStart();   // a fresh game in Comp starts its line and its clocks again
+  if (PREFS.comp) compStart();   // a fresh game in Challenge starts its line and its clocks again
   if (S.pendRules) { const v = S.pendRules; S.pendRules = null; if (v === 'comp') setPref('comp', true); else { setPrefRaw('overflow', 'end'); S.fair = true; savePrefs(); } }   // a harder mode chosen mid-game starts here (80-frame.js chooseRules)
 }
 function startPool() { S.prev = null; newPool(); savePool(); syncUI(); say('A fresh game', here().label); }
@@ -2832,12 +2990,10 @@ function newWorld(quiet) {
 const panFor = (x) => ((x / LW) - 0.5) * 1.4;
 const aimX = (r) => clamp(S.dropX + S.sway, r + 5, LW - r - 5);
 function dropCurrent() {
-  if (!awake() || !S.canDrop || compLocked()) return;   // Comp: no drops while lightning waits
+  if (!awake() || !S.canDrop || compLocked()) return;   // Challenge: no drops while lightning waits
   S.prev = null;   // the first drop in a new game: the last one is let go
-  const r = S.wild ? WILD_R : RADII[S.current], x = aimX(r), fault = compOn() ? dropFault() : null;   // exactly where the waiting sphere is drawn. Comp, power out: the dropper misbehaves
-  if (fault === 'jam') { sound.tick(); feel('tick'); S.canDrop = false; S.cooldown = 30; return; }   // nothing comes out
-  if (fault === 'two') { const r2 = RADII[S.next], x2 = clamp(x + (x < LW / 2 ? 1 : -1) * (r + r2 + 2), r2 + 5, LW - r2 - 5); addBall(S.world, x2, DROP_Y, S.next, { vy: 1.4 }); S.next = pickNextTier(); }   // two at once
-  addBall(S.world, x, DROP_Y, S.wild ? 0 : S.current, { wild: S.wild, vy: fault === 'fast' ? 9 : 1.4 });   // too fast: a hard knock, glass and all
+  const r = S.wild ? WILD_R : RADII[S.current], x = aimX(r);   // exactly where the waiting sphere is drawn
+  addBall(S.world, x, DROP_Y, S.wild ? 0 : S.current, { wild: S.wild, vy: 1.4 });
   sound.drop(panFor(x), here().synth);
   Object.assign(S, { canDrop: false, cooldown: 20, wild: false, current: S.next, next: pickNextTier(), combo: 0 });
 }
@@ -2921,7 +3077,7 @@ function useTool(k) {
   if (!(S.tools[k] > 0)) { say(TOOL_NAMES[k], compOn() ? 'Earned by a timer sphere, a Full Bloom or a chain of three' : 'Earned by a Full Bloom or a chain of three'); sound.tick(); return; }
   if (k === 'strike') { S.armed = true; say('Strike', 'Touch the sphere to take'); }
   else if (k === 'mystery') { if (S.wild) return; S.wild = true; S.tools.mystery--; sound.wash(); say('Mystery', 'It becomes whatever it touches first'); }
-  else if (compOn()) { if (COMP.gust) return; S.tools.storm--; compGust(); }   // Comp: a gust, not a lift
+  else if (compOn()) { if (COMP.gust) return; S.tools.storm--; compGust(); }   // Challenge: a gust, not a lift
   else if (!S.stormQ.length) { S.tools.storm--; stirPile(); }
   syncBars();
 }
@@ -2940,7 +3096,7 @@ function updateDoom(dt) {
   else if (kind === 'bolt') boltAt(b);
   else { S.zap = { kind, x: b.x, y: b.y, r: b.radius, rgb, until: animTime + TIME.sweep }; ({ ice: () => sound.crackle(6), wave: () => sound.whoosh(0.9, panFor(b.x)), meteor: () => sound.crack(0.18) })[kind](); }
   if (!lessMo()) spawnParticles(b.x, b.y, `rgb(${rgb})`, 26, 6);
-  feel('crack'); if (compOn()) compStrike(b, name); else mist([b], name, 'Space opened'); syncBars();   // Comp: knocked down a size, not taken
+  feel('crack'); if (compOn()) compStrike(b, name); else mist([b], name, 'Space opened'); syncBars();   // Challenge: knocked down a size, not taken
 }
 function stirPile() {   // they lift off behind the weather, shuffled, and come back in from the top one at a time; the physics does the fall
   S.stormQ = [...S.world.balls].sort(() => Math.random() - 0.5).map(b => ({ tier: b.tier, wild: b.wild }));
@@ -2964,7 +3120,7 @@ const OVERFLOW_SEC = 4;
 function checkOverflow(dt) {
   // Any sphere come to rest on the pile counts while it stays over the line; one thrown upward by a merge doesn't, and a merged
   // one (born at age 46) gets its moment to settle.
-  const over = S.world.balls.filter(b => b.landed && b.age > (b.hot ? 75 : 45) && b.vy > -0.6 && b.y - b.radius < dangerAt(b.x));   // in Comp the line creeps and can be a sea
+  const over = S.world.balls.filter(b => b.landed && b.age > (b.hot ? 75 : 45) && b.vy > -0.6 && b.y - b.radius < dangerAt(b.x));   // in Challenge the line creeps and can be a sea
   if (!over.length) {
     if (S.rescueAt && animTime - S.rescueAt < 1.5) maybePraise('rescue', LW / 2, dangerAt(LW / 2) + 60);
     S.rescueAt = 0; S.overT = Math.max(0, S.overT - dt); if (S.overT <= 0) clearAlert();
@@ -2983,14 +3139,14 @@ function endGame() {
   S.gameOver = true; S.aiming = false; clearAlert();
   const note = !S.fair ? 'This game doesn’t count toward your best' : S.score > 0 && S.score >= J.best ? 'A new best' : `Best ${fmt(J.best)}`;
   saveJournal(); savePool(); feel('thock'); sound.wash();
-  showCard({ title: 'Game complete', rows: [{ ic: ICON.star, name: 'Over the line', desc: [PREFS.numbers ? fmt(S.score) : '', note].filter(Boolean).join(' · ') }],
-    answers: [compOn() ? ['Leave', () => { setPref('comp', false); keepGoing(); }, ICON.x] : ['Go on', keepGoing, ICON.play], ['Again', startPool]] });   // Comp always ends at the line: keeping going means leaving it
+  showCard({ title: 'Game complete', rows: [{ ic: ICON.star, name: COMP.daily ? 'Today’s challenge' : 'Over the line', desc: [PREFS.numbers ? fmt(S.score) : '', COMP.daily ? dailyNote() : note].filter(Boolean).join(' · ') }],
+    answers: [compOn() ? ['Leave', () => { setPref('comp', false); keepGoing(); }, ICON.x] : ['Go on', keepGoing, ICON.play], ['Again', startPool]] });   // Challenge always ends at the line: keeping going means leaving it; Again tries today's again
 }
 
 /* ---------- The pool keeps: saved on this phone, so it can wait for you ---------- */
 const poolSnap = () => ({ v: VERSION, score: S.score, blooms: S.blooms, highestTier: S.highestTier, current: S.current, next: S.next, tools: S.tools, wild: S.wild, gameOver: S.gameOver, fair: S.fair, merges: S.merges,
     balls: S.world.balls.map(b => [Math.round(b.x * 10) / 10, Math.round(b.y * 10) / 10, b.tier, b.wild ? 1 : 0, b.landed ? 1 : 0]) });   // a sphere still falling comes back falling
-function savePool() {   // a storm saves once it has passed. A Comp run is never saved: each one is a fresh run
+function savePool() {   // a storm saves once it has passed. A Challenge run is never saved: each one is a fresh run
   if (!S.stormQ.length && !compOn()) saveJSON(SKEY, poolSnap());
 }
 function loadPool(p) {
@@ -3022,43 +3178,52 @@ function journalStats() {   // only what was measured: your best, your Full Bloo
   for (let i = 0; i < 7; i++) { const d = new Date(); d.setDate(d.getDate() - i); week.push(dayKey(d)); }
   return { best: J.best, blooms: J.blooms, lists: J.lists, today: sum([dayKey()]), week: sum(week) };
 }
-/* ---------- Comp: Play with the calm taken off ---------- */
-// An overlay on Play, a double opt-in away, left with one touch. The overflow line creeps down and can turn into a slow sea; one
-// sphere at a time carries a countdown: merge it in time and the line lifts or a tool is yours, miss it and the line sinks or a
-// wave rolls in. The wind is real and restless. Strike knocks a sphere down a size instead of taking it; Storm is a gust with a
-// hurricane category. Glass knocked hard enough chips, then cracks, then shatters. Random when, never random whether: a merged
-// timer sphere always pays, and nothing bad comes without the countdown as its warning.
-// Everything here reaches the physics the way the tools already do, through addBall and vx: the Physics block is never touched.
-// The numbers are real: drag on a sphere (½ρ·Cd·A·v²), Hertz contact, Auerbach's law for the crack threshold, the Weibull size
-// effect, Wiederhorn's static fatigue, the Kaimal spectrum for the wind. COMP-SPEC.md has the derivations and the one stated anchor.
+/* ---------- Challenge: Classic with the hazards you choose (v84; was Challenge) ---------- */
+// Classic, plus the hazards you switch on in Pause › Game › Challenge: the weather (wind, rain or snow, lightning, clouds), each with
+// its severity, and the rest (ice, the creeping line, timer spheres, storms, power cuts, the Deluge). The level is the sum of their
+// points. Random when, never random whether: every hazard is announced in the bar with its countdown first.
+// Everything here reaches the physics the way the tools already do, through addBall, vx and vy: the Physics block is never touched.
+// The numbers are real: drag on a sphere (½ρ·Cd·A·v²), Archimedes for the Deluge, the Kaimal spectrum for the wind; the moon's
+// light in a blackout from its phase and height. COMP-SPEC.md has the derivations. (The code keeps the name COMP inside.)
 const CT = {   // the tuning table: every number play can change, in one place
   line: { v: [0.2, 0.6], cap: LH * 0.4, step: 20 },   // px/s, re-drawn each cycle; how far down it may creep; how far a lift or a sink moves it
   wait: [3, 60], quiet: 10,                           // every wait is random in this range, in seconds; at least this long after a bad outcome
   wave: { amp: 14, period: 8 },                        // px, and seconds a swell
-  wind: { scale: 12, cap: 32, I: 0.25, L: 30 },        // Weibull scale (m/s), the tropical-storm cap, turbulence intensity, integral length scale (m)
+  wind: { scale: 12, cap: 32, I: 0.25, L: 30 },        // Weibull scale (m/s) at 100%, the tropical-storm cap, turbulence intensity, integral length scale (m)
   cat: [['Tropical storm', 63, 118, 35], ['Category 1', 119, 153, 30], ['Category 2', 154, 177, 20], ['Category 3', 178, 208, 10], ['Category 4', 209, 251, 5]],   // Saffir-Simpson in km/h, and the odds
-  glass: { v0: 5, temper: 1, n: 16, k: 0.5 },          // m/s to crack a tier-0 pair; tempered glass is 4; the fatigue exponent, and its rate (a few storms wear a sphere down)
-  reach: [1.6, 14], cool: 0.9, pulse: 18                // a hot sphere is touched within 1.6 radii + 14 px; blue for 0.9 s after; the fastest any red pulse goes (rad/s: under 3 a second)
+  reach: [1.6, 14], cool: 0.9, pulse: 18,               // a hot sphere is touched within 1.6 radii + 14 px; blue for 0.9 s after; the fastest any red pulse goes (rad/s: under 3 a second)
+  water: { top: 0.42, rise: 16, hold: [8, 16], drain: 22, float: 1.6, drag: 0.04 },   // the Deluge: up to 42% of the pool, rising over 16 s, holding, draining over 22 s; hollow glass: 1.6× the water's lift over its weight; water drag
+  power: { brown: [4, 8], black: [8, 16], dimBrown: 0.55, star: 0.02, moon: 0.35, flick: [0.34, 0.6] }   // seconds out; how dark a brownout is; the stars' and a full high moon's share of the light; each flicker at least a third of a second (under 3 a second)
 };
+// The points: the weather by its severity (1 to 3), the rest fixed. The level is their sum (29 with everything at full).
+const HAZ_PTS = { ice: 2, line: 2, timer: 2, storm: 3, power: 4, deluge: 4 };
+const HAZ_N = { wind: 'Wind', rain: 'Rain', bolt: 'Lightning', cover: 'Clouds', ice: 'Ice', line: 'Creeping line', timer: 'Timer spheres', storm: 'Storms', power: 'Power cuts', deluge: 'Deluge' };
+const hazNow = () => (COMP.daily ? COMP.daily.haz : PREFS.haz);   // today's challenge lends its own hazards; yours stay as you set them
+const hazOn = (k, H = hazNow()) => (HAZ_W.includes(k) ? H[k].on : H[k]);
+const hazPts = (k, H = hazNow()) => (!hazOn(k, H) ? 0 : HAZ_W.includes(k) ? Math.ceil(H[k].lv * 3) : HAZ_PTS[k]);
+const level = (H = hazNow()) => [...HAZ_W, ...HAZ_X].reduce((n, k) => n + hazPts(k, H), 0);
+// Each season brings its own storm, when that hazard is on: spring's showers fill the Deluge faster; summer's thunderstorms cut the
+// power more often; autumn's gusts are the strongest wind; winter's floor is ice.
+const seasonNow = () => { const w = worldOf(); return ['spring', 'summer', 'autumn', 'winter'].includes(w) ? w : null; };
 const WALL_IN = 4.5, FLOOR_IN = 6.5;   // half a px inside the locked Physics block's own wall (4) and floor (6) insets: a sphere this close is touching
 const RHO_AIR = 1.225, RHO_GLASS = 2500, G = 9.81, NU = 1.5e-5, MS_PER = 0.157;   // kg/m³, kg/m³, m/s², m²/s; m/s per px/frame (1 px = 1 mm at 60 fps, on the engine's slower clock)
 const WATER = '90,180,255';
-const COMP = { on: false, step: 0, glow: null, line: DANGER_Y, v: 0, vTo: 0, gap: 0, ball: null, wave: null, good: [], bad: [], wx: null, gust: null, vw: 0, lv: 0, pairs: new Set(), pairs2: new Set(), hits: [], hz: null, hzGap: 0, hzDeck: [], floor: null, cool: null };
-const compOn = () => COMP.on && S.mode === 'merge' && !here().dry;   // nowhere without wind
+const COMP = { on: false, step: 0, glow: null, line: DANGER_Y, v: 0, vTo: 0, gap: 0, ball: null, wave: null, good: [], bad: [], wx: null, gust: null, vw: 0, lv: 0, hz: null, hzGap: 0, hzDeck: [], floor: null, cool: null, water: 0, power: null, daily: null };
+const compOn = () => COMP.on && S.mode === 'merge' && !here().dry;   // nowhere without weather
 const rnd = (a, b) => a + Math.random() * (b - a);
 const wait = () => rnd(...CT.wait);
 const gauss = () => Math.sqrt(-2 * Math.log(1 - Math.random())) * Math.cos(TAU * Math.random());
 const deal = (bag, all) => { if (!bag.length) { bag.push(...all); for (let i = bag.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [bag[i], bag[j]] = [bag[j], bag[i]]; } } return bag.pop(); };   // a shuffled deck (Fisher-Yates): no streaks of bad luck
 const pulse = (rate) => (PREFS.soft || lessMo() ? 0.8 : 0.6 + 0.4 * Math.sin(animTime * Math.min(CT.pulse, rate)));   // every red pulse: capped under 3 a second, steady with Soft View or Reduce motion
 function compStart() {
-  Object.assign(COMP, { on: true, step: 0, glow: null, line: DANGER_Y, v: 0, vTo: rnd(...CT.line.v), gap: wait(), ball: null, wave: null, good: [], bad: [], gust: null, vw: 0, lv: 0, wx: { U: 0, v: 0, a: 0, aim: 0, t: 0 }, hz: null, hzGap: wait(), hzDeck: [], floor: null, cool: null, rev: 0, litAt: 0, alert: null, alertAt: -1 });
-  for (const b of S.world.balls) b.dmg = null;
-  windEpisode(); S.fair = false; say('Comp', 'The line creeps. The wind is wild. Leave any time.');
+  Object.assign(COMP, { on: true, step: 0, glow: null, line: DANGER_Y, v: 0, vTo: rnd(...CT.line.v), gap: wait(), ball: null, wave: null, good: [], bad: [], gust: null, vw: 0, lv: 0, wx: { U: 0, v: 0, a: 0, aim: 0, t: 0 }, hz: null, hzGap: wait(), hzDeck: [], floor: null, cool: null, water: 0, power: null, alert: null, alertAt: -1 });
+  S.rng = COMP.daily ? mulberry(COMP.daily.seed) : null;   // today's spheres, the same for everyone, again on each try
+  windEpisode(); S.fair = false; say(COMP.daily ? 'Today’s challenge' : 'Challenge', `Level ${level()}. Leave any time.`);
 }
-function compStop() { if (!COMP.on) return; COMP.on = false; COMP.ball = COMP.wave = COMP.gust = COMP.hz = COMP.floor = COMP.cool = null; S.fx.wind = 0; for (const b of S.world.balls) b.dmg = null; say('Comp off', 'Back to Play'); }
-const compForget = (id) => { if (COMP.ball && COMP.ball.id === id) COMP.ball = null; if (COMP.hz && COMP.hz.id === id) COMP.hz = null; };   // a timer sphere struck or shattered: no outcome either way
+function compStop() { if (!COMP.on) return; COMP.on = false; COMP.ball = COMP.wave = COMP.gust = COMP.hz = COMP.floor = COMP.cool = COMP.power = COMP.daily = null; COMP.water = 0; S.fx.wind = 0; S.fx.rain = 0; S.rng = null; say('Challenge off', 'Back to Classic'); }
+const compForget = (id) => { if (COMP.ball && COMP.ball.id === id) COMP.ball = null; if (COMP.hz && COMP.hz.id === id) COMP.hz = null; };   // a timer sphere struck: no outcome either way
 
-/* The line: it creeps, and under a wave it rolls. The overflow check and the drawing both read it here. */
+/* The line: it creeps (when the creeping line is on), and under a wave it rolls. The overflow check and the drawing both read it here. */
 const waveEnv = () => { const w = COMP.wave; return w ? smooth(Math.min(w.t / 2, (w.len - w.t) / 2, 1)) : 0; };   // a wave rises over two seconds and ebbs over two
 const waveAt = (x) => { const w = COMP.wave; return w ? CT.wave.amp * waveEnv() * Math.sin(TAU * (x / LW - (lessMo() ? 0 : w.t / CT.wave.period))) : 0; };
 const sink = () => { COMP.line = Math.min(CT.line.cap, COMP.line + CT.line.step); glowLine(RED, 2, 1); };
@@ -3066,19 +3231,20 @@ const lift = () => { COMP.line = Math.max(DANGER_Y, COMP.line - CT.line.step); g
 const dangerAt = (x) => (compOn() ? COMP.line + waveAt(x) : DANGER_Y);
 function compTick(dt) {
   if (!compOn() || !awake()) return;
-  const L = CT.line; COMP.v += (COMP.vTo - COMP.v) * Math.min(1, dt * 0.5); COMP.line = clamp(COMP.line + COMP.v * dt, DANGER_Y, L.cap);
+  const L = CT.line; COMP.v += (COMP.vTo - COMP.v) * Math.min(1, dt * 0.5);
+  if (hazOn('line')) COMP.line = clamp(COMP.line + COMP.v * dt, DANGER_Y, L.cap);
   if (COMP.wave && (COMP.wave.t += dt) >= COMP.wave.len) COMP.wave = null;
   if (COMP.glow && (COMP.glow.t += dt) >= COMP.glow.len) COMP.glow = null;
   const step = Math.floor((COMP.line - DANGER_Y) / 4); if (step > COMP.step && !COMP.glow) glowLine(RED, 0.9, 0.55); COMP.step = step;   // every 4 px it creeps, a soft red pulse
   if (COMP.cool && (COMP.cool.t += dt) > CT.cool) COMP.cool = null;
-  hazTick(dt);
+  hazTick(dt); waterTick(dt); powerTick(dt);
   const tb = COMP.ball;
   if (tb) {
     if (!S.world.balls.some(b => b.id === tb.id)) { COMP.ball = null; outcome(true); }   // it merged: in time
     else if ((tb.left -= dt) <= 0) { COMP.ball = null; outcome(false); }
     return;
   }
-  if ((COMP.gap -= dt) > 0 || COMP.hz) return;   // never while a hazard runs: a timer sphere must always be possible
+  if (!hazOn('timer') || (COMP.gap -= dt) > 0 || COMP.hz) return;   // never while a hazard runs: a timer sphere must always be possible
   COMP.gap = wait(); COMP.vTo = rnd(...L.v);
   const b = timerPick(); if (!b) { COMP.gap = CT.wait[0]; return; }   // no pair on the board yet: look again soon
   const left = wait(); COMP.ball = { id: b.id, left, total: left }; sound.tick(); say('Timer sphere', 'Merge it before the ring is gone');
@@ -3094,17 +3260,27 @@ function outcome(good) {
   else { if (COMP.wave) COMP.wave.len = COMP.wave.t + wait(); else COMP.wave = { t: 0, len: wait() }; say('Too late', 'A wave rolls in'); sound.whoosh(0.7, 0); }   // a wave on a wave runs on, never snaps
 }
 
-/* Hazards that come on their own, one at a time, from a shuffled deck, each announced on the state bar with its countdown:
-   a storm (10 s of warning, then a gust with its category), ice or a wet floor (winter freezes, everywhere else it rains), and
-   lightning (a sphere heats red and sparks; touch it within 3 s to cool it; the dropper is locked meanwhile, and the bar says so). */
-const HAZ = ['storm', 'floor', 'lightning', 'storm', 'floor', 'lightning', 'outage', 'double', 'triple'];   // a deck of nine: the outage and the combinations are the rare cards
+/* Hazards that come on their own, one at a time, from a shuffled deck made of what you switched on, each announced in the bar with
+   its countdown: a storm (10 s of warning, then a gust with its category), a wet or icy floor, lightning (a sphere heats red; touch
+   it within 3 s to cool it; the dropper waits), a power cut, the Deluge, and the rare combinations. */
 const PART = { storm: 'Storm', zap: 'Lightning', sink: 'Line drop' };
 const PLAN = { storm: [['storm', 10]], lightning: [['zap', 3]], double: [['storm', 3], ['zap', 5]], triple: [['sink', 3], ['storm', 3], ['zap', 5]] };   // what fires, and when
+function hazCards() {   // the deck, from what is on now; stronger weather deals its card more often; the season adds its own
+  const c = [], se = seasonNow(), n = (k) => Math.ceil(hazNow()[k].lv * 3);
+  if (hazOn('storm')) c.push('storm', 'storm');
+  if (hazOn('rain') || hazOn('ice')) c.push('floor', 'floor');
+  if (hazOn('bolt')) for (let i = 0; i < n('bolt'); i++) c.push('lightning');
+  if (hazOn('power')) c.push(...Array(se === 'summer' ? 2 : 1).fill('power'));
+  if (hazOn('deluge')) c.push(...Array(se === 'spring' ? 2 : 1).fill('deluge'));
+  if (hazOn('storm') && hazOn('bolt')) c.push('double');
+  if (hazOn('storm') && hazOn('bolt') && hazOn('line')) c.push('triple');
+  return c;
+}
 function hazTick(dt) {
   const h = COMP.hz;
-  if (!h) { if ((COMP.hzGap -= dt) <= 0 && !COMP.ball) hazStart(deal(COMP.hzDeck, HAZ)); return; }   // never over a timer sphere
+  if (!h) { if ((COMP.hzGap -= dt) <= 0 && !COMP.ball) { const cards = hazCards(); if (!cards.length) { COMP.hzGap = CT.wait[1]; return; } if (COMP.hzDeck.some(k => !cards.includes(k))) COMP.hzDeck = []; hazStart(deal(COMP.hzDeck, cards)); } return; }   // never over a timer sphere; a deck dealt from switches since turned off starts again
   h.t += dt;
-  if (h.kind === 'outage') { if (!h.hit && h.t >= 3.6) { h.hit = true; sound.crack(0.2); feel('crack'); } if (h.t >= h.len) { hazEnd(); say('Power restored', 'The lights are back'); sound.done(); } return; }
+  if (h.kind === 'power' || h.kind === 'deluge') { if (h.t >= h.len) hazEnd(); return; }   // their own clocks run in powerTick and waterTick
   if (h.kind === 'floor') { const f = COMP.floor; f.lv = h.t < 3 ? h.t / 3 : h.t > h.len ? Math.max(0, 1 - (h.t - h.len) / 2) : 1; if (h.t > h.len + 2) { COMP.floor = null; hazEnd(); } return; }
   const b = h.id && S.world.balls.find(x => x.id === h.id);
   for (const p of h.parts) if (!p.done && (h.t >= p.at || (p.k === 'zap' && !b))) {
@@ -3115,10 +3291,10 @@ function hazTick(dt) {
   }
   if (h.parts.every(p => p.done)) hazEnd();
 }
-// Alerts are read twice a frame (the bar, and its seconds): built once
 function hazStart(kind) {
-  if (kind === 'outage') { const dir = Math.random() < 0.5 ? -1 : 1; COMP.hz = { kind, t: 0, warn: 5, len: 5 + rnd(8, 20), x: dir > 0 ? rnd(40, LW - 40 - TREE.dx) : rnd(40 + TREE.dx, LW - 40), dir, st: 0, held: false }; return; }
-  if (kind === 'floor') { const ice = !!here().snow; COMP.floor = { ice, lv: 0 }; COMP.hz = { kind, t: 0, len: wait() }; return; }
+  if (kind === 'power') { powerStart(); return; }
+  if (kind === 'deluge') { const W = CT.water, rise = W.rise / (seasonNow() === 'spring' ? 1.5 : 1); COMP.hz = { kind, t: 0, len: 5 + rise + rnd(...W.hold) + W.drain, rise }; say('Deluge', 'The pool is filling'); sound.whoosh(0.5, 0); return; }
+  if (kind === 'floor') { const ice = hazOn('ice') && (!hazOn('rain') || !!here().snow || seasonNow() === 'winter'); COMP.floor = { ice, lv: 0 }; COMP.hz = { kind, t: 0, len: wait() }; return; }
   const h = { kind, t: 0, cat: rollCat(), parts: PLAN[kind].map(([k, at]) => ({ k, at, done: false })), name: { double: 'Double trouble', triple: 'Triple threat' }[kind] };
   if (h.parts.some(p => p.k === 'zap')) {
     const L = S.world.balls.filter(b => b.landed && !b.wild && (!COMP.ball || b.id !== COMP.ball.id)); if (!L.length) { COMP.hzGap = CT.wait[0]; return; }
@@ -3127,7 +3303,7 @@ function hazStart(kind) {
   COMP.hz = h;
 }
 function hazEnd() { COMP.hz = null; COMP.hzGap = Math.max(wait(), CT.quiet); }
-function zap(b) {   // the bolt: the sphere comes down a size, as a Strike in Comp
+function zap(b) {   // the bolt: the sphere comes down a size, as a Strike in Challenge
   boltAt(b); feel('crack'); compStrike(b, 'Lightning');
 }
 const zapPart = () => COMP.hz && COMP.hz.parts && COMP.hz.parts.find(p => p.k === 'zap' && !p.done);
@@ -3140,57 +3316,95 @@ function compTouch(p) {   // while a sphere is hot a touch only cools: on it (ge
   if (h.parts.every(q => q.done)) hazEnd();
 }
 function compAlert() { if (COMP.alertAt !== animTime) { COMP.alertAt = animTime; COMP.alert = alertNow(); } return COMP.alert; }   // built once a frame
-function alertNow() {   // what the status bar's middle shows, or nothing: [the event, a line on it, seconds to the next thing]. Short: the middle holds about twenty letters a line
-  const h = COMP.hz;
+function alertNow() {   // what the bar shows, or nothing: [the event, a line on it, seconds to the next thing]
+  const h = COMP.hz, pw = COMP.power;
   if (h && h.parts) {
     const left = h.parts.filter(p => !p.done); if (!left.length) return null; const next = Math.min(...left.map(p => p.at)) - h.t;
     if (h.name) return [`${h.name} alert`, h.parts.map(p => `${PART[p.k]}${p.done ? ' ✓' : ''}`).join(' · '), next];   // each part ticks as it passes; the circle counts to the next
     return zapPart() ? ['Touch the red one', 'Dropper locked', next] : [`${stormName(h.cat)} incoming`, `${h.cat[1]} to ${h.cat[2]} km/h`, next];
   }
-  if (h && h.kind === 'outage') return h.t < h.warn ? ['Power outage', 'A tree is down', h.warn - h.t] : ['Power out', 'Dropper faulty', h.len - h.t];
+  if (pw) return pw.back ? ['Power back', 'It flickers on', pw.end - pw.t] : [pw.kind === 'black' ? 'Blackout' : 'Brownout', pw.kind === 'black' ? 'Lit by the moon and the lightning' : 'The lights dip', pw.out - pw.t];
+  if (h && h.kind === 'deluge') { const up = h.t < 5 + h.rise; return [up ? 'Deluge' : COMP.water > 4 && h.t > h.len - CT.water.drain ? 'Draining' : 'High water', up ? 'The spheres float up' : 'Floating spheres', h.len - h.t]; }
   if (h && h.kind === 'floor' && h.t < h.len) { const ice = COMP.floor.ice, end = h.len - h.t <= 3; return [end ? (ice ? 'Ice melting' : 'Floor drying') : (ice ? 'Ice on the ground' : 'Wet floor'), ice ? 'Spheres skid' : 'Slick, and it drags', h.len - h.t]; }
   if (COMP.wave) return ['A wave rolls', 'The line is a sea', COMP.wave.len - COMP.wave.t];
   return null;
 }
-/* The power outage: a tree falls on the line behind the pool, sparks and a little fire; "Lights out in 5". Then a brownout: the
-   pool dims and swells back unevenly (slow, never a flash: well under three changes a second; steady with Soft View or
-   Reduce motion), the spheres hard to see, and the dropper freezes and stutters, as a screen on failing power would. Then "Power restored". */
-const outageOn = () => !!COMP.hz && COMP.hz.kind === 'outage' && COMP.hz.t >= COMP.hz.warn;
-const dropFault = () => (outageOn() ? ['jam', 'fast', 'two', null][Math.floor(Math.random() * 4)] : null);   // jammed, too fast, two at once, or it works
-function outageDim() {   // how dark the pool is, 0 to 1: nearly black down where the spheres are; each lightning flash lights it for an instant
-  const h = COMP.hz; if (!h || h.kind !== 'outage' || h.t < h.warn) return 0;
-  const k = clamp((h.t - h.warn) / 0.8, 0, 1) * clamp((h.len - h.t) / 0.8, 0, 1), dt = clamp(animTime - (COMP.litAt || animTime), 0, 0.1); COMP.litAt = animTime;
+
+/* Power cuts (v84). A pole and its line stand in the scene for the whole game while the hazard is on. Lightning strikes the pole:
+   a brownout (dim, shorter) or a blackout (dark, longer), never known which. Off at once; back with two or three uneven flickers,
+   each at least a third of a second (inside three flashes a second); steady with Soft View or Reduce motion. In a blackout the pool
+   is lit only by the real moon (its phase, its height, and the clouds over it), the stars (about a thousandth of a full moon),
+   and each flash of lightning. The sky stays: it is the pool's lights that go. */
+const POLE = { x: 0.8, h: 150 };   // where the pole stands (a share of the pool's width) and how tall, px above the land's line
+function powerStart() {
+  const P = CT.power, black = Math.random() < 0.5, out = 0.15 + rnd(...(black ? P.black : P.brown)), n = 2 + (Math.random() < 0.5 ? 1 : 0), fl = [];
+  let t = out; for (let i = 0; i < n * 2; i++) { const d = rnd(...P.flick); fl.push([t, t + d, i % 2 === 0]); t += d; }   // on, off, on, off...: each step a third of a second or more
+  COMP.power = { kind: black ? 'black' : 'brown', t: 0, out, fl, end: t, back: false };
+  COMP.hz = { kind: 'power', t: 0, len: t + 0.2 };
+  const px = LW * POLE.x; if (flash(1) && !lessMo()) S.zap = { kind: 'bolt', path: makeBolt(px, HORIZON + 52 - POLE.h), until: animTime + TIME.sweep };
+  S.rumbles.push({ at: animTime + 0.08, close: 1, vol: 0.8 }); sound.crack(0.2); feel('crack');
+}
+function powerTick(dt) {
+  const p = COMP.power; if (!p) return;
+  p.t += dt; p.back = p.t >= p.out; if (p.t >= p.end) { COMP.power = null; say('Power back', 'The lights are on'); sound.done(); }
+}
+function moonLight() {   // the share of full light the moon and stars give the pool now, 0 to about 0.37
+  const P = CT.power, m = PSKY.now && PSKY.now.moon, cloud = wx('cover').on ? wx('cover').lv : 0;
+  const moon = m && m.alt > 0 ? P.moon * m.frac * Math.sin(Math.min(m.alt, 60) * RAD) / Math.sin(60 * RAD) : 0;   // brighter as it climbs (less air), full at 60°
+  return (moon + P.star) * (1 - 0.85 * cloud);
+}
+function powerDim() {   // how dark the pool is, 0 to 1, with each lightning flash lighting it for an instant
+  const p = COMP.power; if (!p) return 0;
+  let k = p.kind === 'black' ? 1 - moonLight() : CT.power.dimBrown;
+  if (p.back) { const f = p.fl.find(x => p.t >= x[0] && p.t < x[1]); k = f && f[2] && !(PREFS.soft || lessMo()) ? 0 : f ? k * (PREFS.soft || lessMo() ? 0.5 : 1) : 0; }   // a flicker: on, then dark again
+  const dt = clamp(animTime - (COMP.litAt || animTime), 0, 0.1); COMP.litAt = animTime;
   COMP.rev = Math.max(clamp(S.lit * 1.6, 0, 1), (COMP.rev || 0) * Math.exp(-dt / 0.3));   // the flash, held a third of a second so the eye can find the spheres
-  return k * (PREFS.soft || lessMo() ? 0.88 : clamp(0.9 + 0.08 * Math.sin(h.t * 2.1) + 0.05 * Math.sin(h.t * 5.3 + 1), 0.78, 0.99)) * (1 - 0.9 * COMP.rev);
+  return k * (1 - 0.9 * COMP.rev);
 }
-function outageFrozen(dt) {   // the dropper on failing power: held for a moment, then a quick catch-up, at random
-  const h = COMP.hz; if (!h || h.kind !== 'outage' || h.t < h.warn) return false;
-  if ((h.st -= dt) <= 0) { h.held = !h.held; h.st = h.held ? rnd(0.25, 0.8) : rnd(0.08, 0.25); }
-  return h.held;
-}
-const TREE = { len: 230, dx: 155, pole: 176, reach: 0.7329 };   // a 230 px tree falls 42° onto a wire 176 px up, 155 px away: the tip lands on the pole's wire (acos(176/230) is 40°)
-function drawOutage(c) {   // 0-2 s the tree sways, 2-3.6 s it falls (slow, then faster, as a falling thing does), 3.6 s it hits the wire: a flare, sparks, fire
-  const h = COMP.hz; if (!h || h.kind !== 'outage') return;
-  const d = h.dir, x = h.x, base = HORIZON + 52, px = x + d * TREE.dx, top = base - TREE.pole, t = h.t, soft = lessMo();
-  const fall = clamp((t - 2) / 1.6, 0, 1), th = d * Math.acos(TREE.pole / TREE.len) * fall * fall, sway = soft || t > 2 ? 0 : Math.sin(t * 13) * 2.2 * smooth(t / 2);
-  const tx = x + Math.sin(th) * TREE.len + sway, ty = base - Math.cos(th) * TREE.len;
-  c.save(); c.lineCap = 'round'; c.lineJoin = 'round';
-  c.strokeStyle = 'rgb(26,20,16)'; c.lineWidth = 8; c.beginPath(); c.moveTo(px, base + 6); c.lineTo(px, top); c.stroke();   // the pole, its cross-arm and the wire
-  c.lineWidth = 5; c.beginPath(); c.moveTo(px - 24, top + 4); c.lineTo(px + 24, top + 4); c.stroke();
-  c.strokeStyle = 'rgba(40,34,30,0.95)'; c.lineWidth = 2; c.beginPath(); c.moveTo(px - d * 230, top + 22); c.quadraticCurveTo(px - d * 110, top + 34, px, top + 4); c.quadraticCurveTo(px + d * 110, top + 34, px + d * 230, top + 22); c.stroke();
-  c.strokeStyle = 'rgb(38,26,18)'; c.lineWidth = 12; c.beginPath(); c.moveTo(x, base); c.lineTo(tx, ty); c.stroke();   // the trunk
-  c.fillStyle = 'rgb(16,30,19)'; c.strokeStyle = 'rgba(160,200,140,0.6)'; c.lineWidth = 2;   // the crown: dark, with a pale rim so it reads against the hills
-  for (const [k, r] of [[0.62, 30], [0.76, 36], [0.9, 34], [1, 26], [0.84, 44]]) { const cx = x + (tx - x) * k + (k === 0.84 ? -d * 6 : 0), cy = base + (ty - base) * k - (k === 0.84 ? 8 : 0); c.beginPath(); c.arc(cx, cy, r, 0, TAU); c.fill(); c.stroke(); }
-  if (t >= 3.6 && t < h.warn + 5) {   // where it hit the wire
-    const e = t - 3.6, fade = clamp((h.warn + 5 - t) / 1.5, 0, 1), f = soft ? 0.8 : 0.7 + 0.3 * Math.sin(animTime * 11), fx = px, fy = top + 4;
-    glow(c, fx, fy, 150, '255,235,190', 0.95 * Math.exp(-e / 0.4)); glow(c, fx, fy, 90, '255,150,60', 0.8 * f * fade);   // the flare, then the fire's glow
-    c.fillStyle = 'rgba(255,170,60,0.95)';
-    for (let i = 0; i < 4; i++) { const w = 7 + i % 2 * 3, hh = (24 + 14 * i % 3 * 1.5) * (soft ? 0.85 : 0.7 + 0.3 * Math.sin(animTime * 9 + i * 2)) * fade, ox = (i - 1.5) * 9; c.beginPath(); c.moveTo(fx + ox - w, fy + 6); c.quadraticCurveTo(fx + ox - w * 0.4, fy - hh * 0.5, fx + ox, fy - hh); c.quadraticCurveTo(fx + ox + w * 0.4, fy - hh * 0.5, fx + ox + w, fy + 6); c.fill(); }
-    c.fillStyle = 'rgba(255,230,140,0.95)'; c.beginPath(); c.ellipse(fx, fy + 2, 8, 12 * fade, 0, 0, TAU); c.fill();
-    if (!soft && e < 3.5) { c.strokeStyle = 'rgba(255,245,200,0.95)'; c.lineWidth = 1.6; for (let i = 0; i < 12; i++) { const s = Math.random() * TAU, r0 = 6 + Math.random() * 10, r1 = r0 + 8 + Math.random() * 26 * Math.exp(-e / 2); c.beginPath(); c.moveTo(fx + Math.cos(s) * r0, fy + Math.sin(s) * r0); c.lineTo(fx + Math.cos(s) * r1, fy + Math.sin(s) * r1); c.stroke(); } }
-  }
+function drawPole(c) {   // the pole, its cross-arm and the line, behind everything; struck: a flare at its top
+  if (!hazOn('power') || worldOf() === 'stars') return;
+  const px = LW * POLE.x, base = HORIZON + 52, top = base - POLE.h, p = COMP.power;
+  c.save(); c.lineCap = 'round'; c.strokeStyle = 'rgb(26,20,16)'; c.lineWidth = 7; c.beginPath(); c.moveTo(px, base + 6); c.lineTo(px, top); c.stroke();
+  c.lineWidth = 4; c.beginPath(); c.moveTo(px - 22, top + 6); c.lineTo(px + 22, top + 6); c.stroke();
+  c.strokeStyle = 'rgba(40,34,30,0.9)'; c.lineWidth = 1.6; for (const s of [-1, 1]) { c.beginPath(); c.moveTo(px + s * 20, top + 6); c.quadraticCurveTo(px + s * 140, top + 30, px + s * 300, top + 18); c.stroke(); }
+  if (p && p.t < 1.2) { const e = p.t; glow(c, px, top + 4, 120, '255,235,190', 0.9 * Math.exp(-e / 0.35)); }   // the strike's flare, fading
   c.restore();
 }
+
+/* The Deluge (v84). Heavy rain fills the pool from the bottom; the spheres are hollow glass and float, rising with the water toward
+   the line; it holds, then drains slowly. The lift is Archimedes: an upward push on each sphere by the share of it under water,
+   1.6 times its weight when it is all under (so a sphere floats a little over half out), and water drags. In the dark the water's
+   surface catches the moon and each flash: the pile easier to see, harder to manage. */
+function waterTick(dt) {
+  const h = COMP.hz, W = CT.water, top = LH * W.top * (seasonNow() === 'spring' ? 1.15 : 1);
+  if (h && h.kind === 'deluge') {
+    S.fx.rain = Math.max(S.fx.rain || 0, h.t < h.len - W.drain ? 1 : 0);   // the downpour, while it fills and holds
+    const want = h.t < 5 ? 0 : h.t < 5 + h.rise ? top * smooth((h.t - 5) / h.rise) : h.t < h.len - W.drain ? top : top * smooth((h.len - h.t) / W.drain);
+    COMP.water = want;
+  } else if (COMP.water > 0) COMP.water = Math.max(0, COMP.water - top / W.drain * dt);
+}
+const waterTop = () => LH - FLOOR_IN - COMP.water;
+function underShare(b) {   // the share of a sphere's disc under the water (a circular segment), 0 to 1
+  const r = b.radius, h = clamp(b.y + r - waterTop(), 0, 2 * r); if (h <= 0) return 0; if (h >= 2 * r) return 1;
+  const d = r - h, A = r * r * Math.acos(d / r) - d * Math.sqrt(r * r - d * d); return A / (Math.PI * r * r);
+}
+function drawWater(c) {
+  const y0 = waterTop(), a = clamp(COMP.water / 30, 0, 1);
+  c.save(); c.fillStyle = `rgba(${WATER},${(0.26 * a).toFixed(3)})`; c.beginPath(); c.moveTo(8, LH - 6);
+  for (let x = 8; x <= LW - 8; x += 6) c.lineTo(x, y0 + (lessMo() ? 0 : Math.sin(x / 22 + animTime * 1.6) * 2.2));
+  c.lineTo(LW - 8, LH - 6); c.closePath(); c.fill();
+  c.strokeStyle = `rgba(200,230,255,${(0.75 * a).toFixed(3)})`; c.lineWidth = 1.4; c.beginPath();
+  for (let x = 8; x <= LW - 8; x += 6) c.lineTo(x, y0 + (lessMo() ? 0 : Math.sin(x / 22 + animTime * 1.6) * 2.2)); c.stroke(); c.restore();
+}
+function drawWaterLight(c) {   // over the dark: the moon's path on the water, and each flash along the whole surface
+  const y0 = waterTop(), m = PSKY.now && PSKY.now.moon, lit = clamp(S.lit * 1.6, 0, 1);
+  c.save(); c.globalCompositeOperation = 'lighter';
+  if (m && m.alt > 0) { const mx = clamp(LW * (0.5 + (m.az - 180) / 160), 20, LW - 20), k = 0.6 * moonLight() / CT.power.moon;   // the glitter under the moon: broken dashes on the surface
+    for (let i = 0; i < 9; i++) { const w = 26 - i * 2, x = mx + Math.sin(i * 1.7 + (lessMo() ? 0 : animTime)) * 6, y = y0 + 2 + i * 5; if (y > LH - 8) break; c.fillStyle = `rgba(230,240,255,${(k * (1 - i / 9)).toFixed(3)})`; c.fillRect(x - w / 2, y, w, 1.6); } }
+  if (lit > 0.02) { c.strokeStyle = `rgba(235,245,255,${(0.9 * lit).toFixed(3)})`; c.lineWidth = 2; c.beginPath(); for (let x = 8; x <= LW - 8; x += 6) c.lineTo(x, y0 + Math.sin(x / 22 + animTime * 1.6) * 2.2); c.stroke(); }
+  c.restore();
+}
+
 /* The floor, with real numbers. Sliding friction: glass on glass is the engine's own 0.22; glass on ice about 0.03; wet glass
    about 0.1. The engine's floor takes 0.6% of a rolling sphere's speed each frame; that loss scales with the friction, so the
    difference is handed back. Water also drags: a film 1 mm deep wets a slice of each sphere's silhouette (a circular segment),
@@ -3222,19 +3436,19 @@ function compLook() {   // what the line shows: a pulse (red sinking, gold lifti
   const g = COMP.glow; if (g) return { rgb: g.rgb, a: g.amp * Math.sin(Math.PI * g.t / g.len) };
   return COMP.wave ? { rgb: WATER, a: 0.8 * waveEnv() } : null;
 }
-/* The wind. A mean per episode (Weibull, shape 2), turbulence and direction as Ornstein-Uhlenbeck processes (the discrete form of
-   the Kaimal spectrum): intensity I, correlation time L/U. Only the sideways part acts on a side-on pool; the push flips when the
-   direction wanders through the perpendicular, often in light wind, rarely in strong. The Storm tool's gust adds on top. */
-function windEpisode() { const w = COMP.wx, K = CT.wind; w.U = Math.min(K.cap, K.scale * Math.sqrt(-Math.log(1 - Math.random()))); w.aim = Math.random() < 0.5 ? 0 : Math.PI; w.t = wait(); }
+/* The wind, when it is on. A mean per episode (Weibull, shape 2, its scale by the severity; autumn's the strongest), turbulence and
+   direction as Ornstein-Uhlenbeck processes (the discrete form of the Kaimal spectrum): intensity I, correlation time L/U. Only
+   the sideways part acts on a side-on pool. The Storm tool's gust, and storms when they are on, add on top. */
+function windEpisode() { const w = COMP.wx, K = CT.wind, on = hazOn('wind'), sc = K.scale * (on ? 0.4 + 1.2 * hazNow().wind.lv : 0) * (seasonNow() === 'autumn' ? 1.3 : 1); w.U = Math.min(K.cap, sc * Math.sqrt(-Math.log(1 - Math.random()))); w.aim = Math.random() < 0.5 ? 0 : Math.PI; w.t = wait(); }
 function compWind(dt) {
-  const w = COMP.wx, K = CT.wind; if ((w.t -= dt) <= 0) windEpisode();
+  const w = COMP.wx, K = CT.wind; if ((w.t -= dt) <= 0 || (!hazOn('wind') && w.U)) windEpisode();
   const T = Math.max(0.5, K.L / Math.max(w.U, 1)), q = Math.sqrt(2 * dt / T);
-  w.v = Math.max(0, w.v + (w.U - w.v) / T * dt + K.I * w.U * q * gauss());
+  w.v = w.U ? Math.max(0, w.v + (w.U - w.v) / T * dt + K.I * w.U * q * gauss()) : 0;
   const sa = 0.26 * clamp(15 / Math.max(w.v, 1), 1, 6); w.a += (w.aim - w.a) / T * dt + sa * q * gauss();   // 15° of wander in strong wind, more in light
   let vw = w.v * Math.cos(w.a);   // m/s, positive blows right
   const g = COMP.gust; if (g) { if ((g.t += dt) >= 5) COMP.gust = null; else vw += g.dir * g.v * (g.t < 1 ? smooth(g.t) : g.t < 3 ? 1 : smooth((5 - g.t) / 2)); }   // a 3 s peak, the WMO gust
   COMP.vw = vw; COMP.lv = clamp(Math.abs(vw) / K.cap, 0, 1); S.fx.wind = Math.max(S.fx.wind, COMP.lv);   // the streaks and the sound follow the real wind
-  ENV.blow = clamp(Math.sign(vw) * ratio(Math.abs(vw), 0.03) / 0.1125, -1.6, 1.6); W.nudge = 0;   // the engine's own scale: blow 1 is the drag on a 30 mm sphere at 19 m/s
+  ENV.blow = clamp(Math.sign(vw) * ratio(Math.abs(vw), 0.03) / 0.1125, -1.6, 1.6);   // the engine's own scale: blow 1 is the drag on a 30 mm sphere at 19 m/s
 }
 const ratio = (v, r) => { const Re = Math.abs(v) * 2 * r / NU, cd = Re < 2e5 ? 0.47 : Re > 4e5 ? 0.2 : 0.47 - 0.27 * (Re - 2e5) / 2e5; return 3 * RHO_AIR * cd * v * Math.abs(v) / (8 * r * RHO_GLASS * G); };   // drag over weight, signed; r in metres; the drag crisis included
 const rollCat = () => { const r = Math.random() * 100; let acc = 0; for (const k of CT.cat) { acc += k[3]; if (r < acc) return k; } return CT.cat[0]; };   // weighted low
@@ -3244,73 +3458,42 @@ function compGust(c = rollCat()) {   // the Storm tool, or a storm that came on 
   COMP.gust = { t: 0, v: kmh / 3.6, dir };
   say(c === CT.cat[0] ? c[0] : `Hurricane? ${c[0]}`, `${kmh} km/h, from the ${dir > 0 ? 'left' : 'right'}`); sound.whoosh(1, -dir * 0.5); feel('thock');
 }
-function compBefore() {   // before each physics step: the wind on every sphere as drag against its own speed, then where everything was
-  for (const b of S.world.balls) { const rel = COMP.vw - b.vx * MS_PER; b.vx += PHYS.gravity * ratio(rel, b.radius / 1000) * (b.wild ? 0.5 : 1); floorPush(b); const p = b.pv || (b.pv = {}); p.x = b.x; p.y = b.y; p.vx = b.vx; p.vy = b.vy; }   // where it was, kept on the sphere: nothing allocated per step
-}
-/* Glass. Each sphere keeps a strength s (1 is pristine). A new contact is an impact at the closing speed before it; Hertz gives the
-   stress as (v / v_c)^(2/5), with v_c from Auerbach's law: 5 m/s for a tier-0 pair (the stated anchor), falling with the contact
-   radius to the power 5/6. Over the threshold: a chip, a crack, or a shatter by how far over. Under it: static fatigue, only near it. */
-const vCrack = (Rs) => CT.glass.v0 * CT.glass.temper * Math.pow(Rs / 6, -5 / 6);   // Rs: the contact radius in mm, R·R' / (R + R'), or R on a wall
-function compAfter() {
-  const balls = S.world.balls, was = COMP.pairs, now = COMP.pairs2; now.clear(); const hits = COMP.hits; hits.length = 0;
-  for (let i = 0; i < balls.length; i++) {
-    const a = balls[i], pa = a.pv;
-    for (let j = i + 1; j < balls.length; j++) {
-      const b = balls[j], dx = b.x - a.x, dy = b.y - a.y, d = Math.hypot(dx, dy); if (d > a.radius + b.radius + 0.6) continue;
-      const key = Math.min(a.id, b.id) * 1e6 + Math.max(a.id, b.id); now.add(key);
-      const pb = b.pv; if (!pa || !pb || was.has(key)) continue;
-      const vn = ((pa.vx - pb.vx) * dx + (pa.vy - pb.vy) * dy) / (d || 1);   // closing speed along the line of centres, px/frame
-      if (vn > 0.5) hits.push([a, b, vn * MS_PER, a.radius * b.radius / (a.radius + b.radius)]);
-    }
-    if (!pa) continue;
-    if ((a.x <= a.radius + WALL_IN && pa.x > a.radius + WALL_IN) || (a.x >= LW - a.radius - WALL_IN && pa.x < LW - a.radius - WALL_IN)) hits.push([a, null, Math.abs(pa.vx) * MS_PER, a.radius]);
-    if (a.y >= LH - a.radius - FLOOR_IN && pa.y < LH - a.radius - FLOOR_IN) hits.push([a, null, Math.abs(pa.vy) * MS_PER, a.radius]);
+function compBefore() {   // before each physics step: the wind on every sphere as drag against its own speed, the floor, the Deluge's lift
+  const wet = COMP.water > 1, W = CT.water;
+  for (const b of S.world.balls) {
+    const rel = COMP.vw - b.vx * MS_PER; b.vx += PHYS.gravity * ratio(rel, b.radius / 1000) * (b.wild ? 0.5 : 1); floorPush(b);
+    if (wet) { const f = underShare(b); if (f > 0) { b.vy -= PHYS.gravity * W.float * f; b.vy *= 1 - W.drag * f; b.vx *= 1 - W.drag * 0.5 * f; } }   // Archimedes, and the water's drag
   }
-  // A knock inside the eight sub-steps can bounce apart before the frame ends and never show as a contact: a sudden change of
-  // velocity beyond gravity and the wind's drift is that knock. The closing speed is the change over (1 + the engine's restitution).
-  for (const a of balls) {
-    const pa = a.pv; if (!pa || hits.some(h => h[0] === a || h[1] === a)) continue;
-    const jolt = Math.hypot(a.vx - pa.vx, a.vy - pa.vy - PHYS.gravity); if (jolt < 2) continue;
-    let near = null, nd = 1e9; for (const b of balls) if (b !== a) { const d = Math.hypot(b.x - a.x, b.y - a.y) - a.radius - b.radius; if (d < nd) { nd = d; near = b; } }
-    const onWall = a.x <= a.radius + 8 || a.x >= LW - a.radius - 8 || a.y >= LH - a.radius - 10, v = jolt / (1 + PHYS.rest) * MS_PER;
-    if (near && nd < 8 && !onWall) hits.push([a, near, v, a.radius * near.radius / (a.radius + near.radius)]); else if (onWall) hits.push([a, null, v, a.radius]);
-  }
-  COMP.pairs = now; COMP.pairs2 = was;
-  for (const [a, b, v, Rs] of hits) { const x = Math.pow(v / vCrack(Rs), 0.4); damage(a, x); if (b) damage(b, x); }   // both feel the same pressure
 }
-function damage(b, x) {
-  if (b.wild || b.merged || !S.world.balls.includes(b)) return;
-  const d = b.dmg || (b.dmg = { s: 1, marks: [] });
-  if (x < d.s) { d.s -= CT.glass.k * Math.pow(x / d.s, CT.glass.n); return; }
-  const k = x / d.s;
-  if (k >= 2.5 || d.marks.length >= 3) { shatter(b); return; }
-  d.s *= k < 1.5 ? 0.6 : 0.3; d.marks.push({ a: Math.random() * TAU, n: k < 1.5 ? 1 : 2 });   // a chip, or a crack: a new flaw, and weaker for it
-  sound.crackle(k < 1.5 ? 2 : 4); if (k >= 1.5) feel('tick');
-}
-function shatter(b) { compForget(b.id); if (!lessMo()) spawnParticles(b.x, b.y, '#ffffff', 14, 5); sound.crack(0.12); feel('crack'); mist([b], 'Shattered', 'Glass breaks'); }
-function compStrike(b, name) {   // Strike in Comp: down to a random smaller size, not gone (the smallest goes)
+function compStrike(b, name) {   // Strike in Challenge: down to a random smaller size, not gone (the smallest goes)
   compForget(b.id); if (!b.tier) { mist([b], name, 'Space opened'); return; }
   const t = Math.floor(Math.random() * b.tier);
   spawnParticles(b.x, b.y, here().tiers[b.tier].c1, 20, 4.5); S.world.balls = S.world.balls.filter(x => x !== b);
   addBall(S.world, b.x, b.y, t, { vx: b.vx, vy: b.vy, angle: b.angle, omega: b.omega, landed: true, age: 46 }).hot = true; sound.wash(); say(name, `Down to ${VALUES[t]}`);   // hot: the same moment to settle a merged sphere gets
 }
-/* Drawing: the timer sphere's receding red ring and its countdown; a chip or a crack as a fine white line that turns with the glass. */
+/* Drawing: the timer sphere's receding red ring and its countdown. */
 function drawTimerBall(c, b, R) {
   const tb = COMP.ball, p = clamp(tb.left / tb.total, 0, 1), n = Math.ceil(tb.left), k = pulse(4 + 14 * (1 - p));   // red: something is about to happen to it; it quickens as time runs out
   halo(c, b.x, b.y, R, RED, k); halo(c, b.x, b.y, R * 1.15, RED, 0.5 * k); c.save(); c.strokeStyle = `rgb(${RED})`; c.lineWidth = 3; c.lineCap = 'round';
   c.beginPath(); c.arc(b.x, b.y, R + 3, -Math.PI / 2, -Math.PI / 2 + TAU * p); c.stroke();
   dot(c, b.x, b.y, R * 0.52, 'rgba(0,0,0,0.55)'); c.fillStyle = '#fff'; c.textAlign = 'center'; c.textBaseline = 'middle'; c.font = `700 ${Math.round(R * (n > 9 ? 0.62 : 0.78))}px ${FONT.sans}`; c.fillText(String(n), b.x, b.y + 1); c.restore();
 }
-function drawCracks(c, b, R) {
-  c.save(); c.translate(b.x, b.y); c.rotate(b.angle); c.strokeStyle = 'rgba(255,255,255,0.85)'; c.lineCap = 'round';
-  for (const m of b.dmg.marks) {
-    const r0 = R * 0.95, ca = Math.cos(m.a), sa = Math.sin(m.a), px = -sa, py = ca; c.lineWidth = m.n === 1 ? 1.2 : 1.6;
-    c.beginPath(); c.moveTo(ca * r0, sa * r0);
-    for (let i = 1; i <= m.n * 2; i++) { const t = i / (m.n * 2), rr = r0 - R * (m.n === 1 ? 0.35 : 0.9) * t, s = (i % 2 ? 1 : -1) * R * 0.1 * (1 - t); c.lineTo(ca * rr + px * s, sa * rr + py * s); }
-    c.stroke();
-  }
-  c.restore();
+
+/* Today's challenge (v84). Its hazards, their severities and a target score come from the date, so everyone has the same day with
+   no server; its spheres come from the same seed (60-game.js pickNextTier). You see how far past the target you got, and try as
+   often as you like. A daily board to submit to waits for the native app (Game Center, opt-in: an exception). The target is
+   1,000 points plus 150 a level, a first guess to tune from real scores. */
+const mulberry = (a) => () => { a = (a + 0x6D2B79F5) | 0; let t = Math.imul(a ^ (a >>> 15), 1 | a); t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t; return ((t ^ (t >>> 14)) >>> 0) / 4294967296; };   // a small seeded random (Mulberry32)
+function dailyPlan(d = new Date()) {
+  const seed = d.getFullYear() * 10000 + (d.getMonth() + 1) * 100 + d.getDate(), r = mulberry(seed), haz = {};
+  for (const k of HAZ_W) haz[k] = { on: r() < (k === 'cover' ? 0.4 : 0.6), lv: [0.34, 0.67, 1][Math.floor(r() * 3)] };
+  for (const k of HAZ_X) haz[k] = r() < 0.45;
+  const all = [...HAZ_W, ...HAZ_X]; while (all.filter(k => hazOn(k, haz)).length < 3) { const k = all[Math.floor(r() * all.length)]; if (HAZ_W.includes(k)) haz[k].on = true; else haz[k] = true; }   // at least three
+  const L = level(haz); return { seed, haz, level: L, target: 1000 + 150 * L, date: d.toDateString() };
 }
+function dailyStart() { COMP.daily = dailyPlan(); setPrefRaw('comp', true); S.pendRules = null; frClose(); startPool(); setPaused(false); tell(`Today’s challenge · level ${COMP.daily.level}`); syncUI(); }
+function dailyLeave() { COMP.daily = null; S.rng = null; startPool(); setPaused(false); syncUI(); }
+const dailyNote = () => { const d = COMP.daily; if (!d) return ''; const past = S.score - d.target; return `Target ${fmt(d.target)} · ${past >= 0 ? `${fmt(past)} past it` : `${fmt(-past)} to go`}`; };
 /* ---------- Render ---------- */
 // The pool's edge is anchored: breathing in, a band of light grows inward from it; breathing out, it draws back. Each sphere
 // breathes in place, from its true size to a little over it, so the line holds still. Only the picture breathes: the physics never moves.
@@ -3361,7 +3544,7 @@ function renderScenery({ b, focus, breathe }) {   // layer 4: the sky inside the
   drawCreatures(ctx, stepDt);
   for (const p of particles) if (p.bg) { ctx.globalAlpha = Math.max(0, p.alpha); ctx.fillStyle = p.color; ctx.beginPath(); ctx.arc(p.x, p.y, p.r, 0, TAU); ctx.fill(); }
   ctx.globalAlpha = 1;
-  if (compOn()) drawOutage(ctx);   // Comp: the fallen tree, behind everything
+  if (compOn()) drawPole(ctx);   // Challenge, power cuts on: the pole and its line, behind everything
 }
 function renderWeather() {   // layer 5: in front of the scenery, behind the mode's content
   drawWeather(ctx); drawStreaks(ctx); drawFog(ctx);
@@ -3372,9 +3555,9 @@ function renderContent({ w, b, focus, breathe, fade, s, red, beat }) {   // laye
     const end = rules() === 'end', col = mix(w.edgeRGB, RED_RGB, red), la = end ? 0.6 : 0.28, g = ctx.createLinearGradient(12, 0, LW - 12, 0);
     ctx.globalAlpha = fade; g.addColorStop(0, rgba(col, 0)); g.addColorStop(0.12, rgba(col, la)); g.addColorStop(0.88, rgba(col, la)); g.addColorStop(1, rgba(col, 0));
     ctx.strokeStyle = g; ctx.lineWidth = end ? 1.5 : 1; ctx.beginPath();
-    if (compOn()) for (let x = 12; x <= LW - 12; x += 4) ctx.lineTo(x, dangerAt(x)); else { ctx.moveTo(12, DANGER_Y); ctx.lineTo(LW - 12, DANGER_Y); }   // Comp: it creeps, and under a wave it rolls
+    if (compOn()) for (let x = 12; x <= LW - 12; x += 4) ctx.lineTo(x, dangerAt(x)); else { ctx.moveTo(12, DANGER_Y); ctx.lineTo(LW - 12, DANGER_Y); }   // Challenge: it creeps, and under a wave it rolls
     ctx.stroke();
-    const lk = compOn() && compLook(); if (lk) { ctx.save(); ctx.globalAlpha = fade * lk.a; ctx.strokeStyle = `rgb(${lk.rgb})`; ctx.shadowColor = `rgb(${lk.rgb})`; ctx.shadowBlur = 14; ctx.lineWidth = 2.5; ctx.stroke(); ctx.restore(); }   // Comp: red as it sinks, gold as it lifts, water blue under a wave
+    const lk = compOn() && compLook(); if (lk) { ctx.save(); ctx.globalAlpha = fade * lk.a; ctx.strokeStyle = `rgb(${lk.rgb})`; ctx.shadowColor = `rgb(${lk.rgb})`; ctx.shadowBlur = 14; ctx.lineWidth = 2.5; ctx.stroke(); ctx.restore(); }   // Challenge: red as it sinks, gold as it lifts, water blue under a wave
   }
   drawRipples(ctx);
   ctx.globalAlpha = focus ? fade : 1;
@@ -3385,7 +3568,7 @@ function renderContent({ w, b, focus, breathe, fade, s, red, beat }) {   // laye
       const pr = S.wild ? WILD_R : RADII[S.current], hx = aimX(pr);
       if (S.aimCancelled) { ctx.fillStyle = 'rgba(240,240,234,0.9)'; ctx.font = `400 ${fpx(14)}px ${FONT.sans}`; ctx.textAlign = 'center'; ctx.fillText('Let go outside the board to cancel', LW / 2, DROP_Y); }
       else {
-        if (PREFS.aim && !compOn()) {   // Comp: no aim line
+        if (PREFS.aim && !compOn()) {   // Challenge: no aim line
           const pts = predictPath(hx, 1.4, pr), [lx, ly] = pts[pts.length - 1];
           ctx.save(); ctx.strokeStyle = S.wild ? '#fef08a' : w.tiers[S.current].c1; ctx.globalAlpha = 0.45 * fade; ctx.lineWidth = 1.4; ctx.setLineDash([4, 5]);
           ctx.beginPath(); pts.forEach(([x, y], i) => i ? ctx.lineTo(x, y) : ctx.moveTo(x, y + pr)); ctx.stroke();
@@ -3396,16 +3579,15 @@ function renderContent({ w, b, focus, breathe, fade, s, red, beat }) {   // laye
       }
     }
     ctx.globalAlpha = fade;
-    if (compOn() && COMP.floor) drawFloor(ctx);   // Comp: ice or water on the floor
+    if (compOn() && COMP.floor) drawFloor(ctx);   // Challenge: ice or water on the floor
     const hot = compOn() ? hotId() : 0;
     for (const ball of S.world.balls) {   // each sphere breathes in place; red: this goes unless you act; gold: you did it right
       const g = goldOf(ball);
       drawOrb(ctx, ball.x, ball.y, ball.radius, ball.tier, ball.angle, { aura: breathe ? FEEL.glow * 0.5 * b : 0, lift: breathe ? FEEL.glow * 0.06 * b : 0, scale: s, wild: ball.wild,
         halo: ball.id === S.offender ? [RED, red * beat] : g > 0.01 ? [GOLD, g] : null });
       if (ball.hot && ball.age < HOT_AGE && w.glass) hotGlass(ctx, ball);
-      if (ball.dmg && ball.dmg.marks.length) drawCracks(ctx, ball, ball.radius * s);   // Comp: chipped or cracked glass
       if (COMP.ball && ball.id === COMP.ball.id) drawTimerBall(ctx, ball, ball.radius * s);
-      if (ball.id === hot) drawHot(ctx, ball, ball.radius * s);   // Comp: lightning's target
+      if (ball.id === hot) drawHot(ctx, ball, ball.radius * s);   // Challenge: lightning's target
       if (COMP.cool && COMP.cool.id === ball.id) halo(ctx, ball.x, ball.y, ball.radius * s, BLUE, 1 - COMP.cool.t / 0.9);   // cooled: blue, then itself
       if (S.doom && ball.id === S.doom.id) {   // watch out: red, quickening
         const k = PREFS.soft || lessMo() ? 0.8 : 0.55 + 0.45 * Math.sin(S.doom.t * 18);   // under three pulses a second; steady with Soft View or Reduce motion
@@ -3414,7 +3596,9 @@ function renderContent({ w, b, focus, breathe, fade, s, red, beat }) {   // laye
     }
     if (S.armed) { ctx.save(); ctx.strokeStyle = `rgba(${GREEN},${(0.35 + 0.25 * Math.sin(animTime * 4.4)).toFixed(3)})`; ctx.lineWidth = 2; ctx.setLineDash([5, 6]); for (const ball of S.world.balls) { ctx.beginPath(); ctx.arc(ball.x, ball.y, ball.radius * s + 3, 0, TAU); ctx.stroke(); } ctx.restore(); }   // armed: every sphere is a target
   }
-  const dim = compOn() ? outageDim() : 0; if (dim > 0.01) { ctx.globalAlpha = 1; const g = ctx.createLinearGradient(0, HORIZON, 0, LH); g.addColorStop(0, 'rgba(4,6,10,0)'); g.addColorStop(0.2, `rgba(4,6,10,${(0.85 * dim).toFixed(3)})`); g.addColorStop(1, `rgba(2,3,6,${Math.min(0.985, 1.04 * dim).toFixed(3)})`); ctx.fillStyle = g; ctx.fillRect(0, HORIZON, LW, LH - HORIZON); }   // Comp: the brownout, darkest down where the spheres are; the sky, the moon and lightning untouched
+  if (compOn() && COMP.water > 1) drawWater(ctx);   // Challenge: the Deluge, over the spheres it holds
+  const dim = compOn() ? powerDim() : 0; if (dim > 0.01) { ctx.globalAlpha = 1; const g = ctx.createLinearGradient(0, HORIZON, 0, LH); g.addColorStop(0, 'rgba(4,6,10,0)'); g.addColorStop(0.2, `rgba(4,6,10,${(0.85 * dim).toFixed(3)})`); g.addColorStop(1, `rgba(2,3,6,${Math.min(0.985, 1.04 * dim).toFixed(3)})`); ctx.fillStyle = g; ctx.fillRect(0, HORIZON, LW, LH - HORIZON); }   // Challenge: the brownout, darkest down where the spheres are; the sky, the moon and lightning untouched
+  if (compOn() && COMP.water > 1) drawWaterLight(ctx);   // the water catches the moon and each flash, over the dark
   if (!focus) { ctx.globalAlpha = 1; drawBoard(ctx); }
   ctx.globalAlpha = 1;
   if (S.zap && animTime < S.zap.until) drawZap(ctx, S.zap, clamp((S.zap.until - animTime) / TIME.sweep, 0, 1)); else S.zap = null;   // a Strike, all the way down
@@ -3510,7 +3694,7 @@ function hotGlass(c, b) {
 }
 // Where a sphere dropped now will land: the same gravity, air and wind as the real fall, stopping at the first contact.
 function predictPath(x0, vy0, r) {
-  const pts = [[x0, DROP_Y]], a = windFall() * (30 / Math.max(20, r)), grav = PHYS.gravity;
+  const pts = [[x0, DROP_Y]], a = 0, grav = PHYS.gravity;   // the wind pushes nothing on the way down outside Challenge; in Challenge it is drag (65-comp.js), not foreseen
   let x = x0, y = DROP_Y, vx = 0, vy = vy0;
   for (let i = 0; i < 320; i++) {   // eight sub-steps a frame move a sphere by v + 0.5625·a, exactly as stepWorld does
     x += vx + a * 0.5625; y += vy + grav * 0.5625;
@@ -3550,19 +3734,17 @@ function tickMode(dt, k) {
   if (S.mode === 'rest') updateRest(dt);
   if (S.tk) updateTinker(dt);
   S.ballFade += ((has('spheres') ? 1 : 0) - S.ballFade) * (1 - Math.pow(0.9, k));
-  const swayTo = ENV.blow * 20 + Math.sin(animTime * 2.3) * Math.min(1, Math.abs(ENV.blow)) * 4;
+  const swayTo = compOn() ? ENV.blow * 20 + Math.sin(animTime * 2.3) * Math.min(1, Math.abs(ENV.blow)) * 4 : 0;   // the waiting sphere sways only where the wind is a hazard
   S.sway += (swayTo - S.sway) * (1 - Math.pow(0.95, k));
   if (awake()) {
-    if (!(compOn() && outageFrozen(dt))) S.dropX += (S.targetX - S.dropX) * (1 - Math.pow(PREFS.beta.heavy ? 0.65 + 0.3 * (RADII[S.current] - 12) / 81 : 0.65, k));   // Beta, heavy glass: a big sphere follows your finger slowly
+    S.dropX += (S.targetX - S.dropX) * (1 - Math.pow(PREFS.beta.heavy ? 0.65 + 0.3 * (RADII[S.current] - 12) / 81 : 0.65, k));   // Beta, heavy glass: a big sphere follows your finger slowly
     if (!S.canDrop && (S.cooldown -= k) <= 0) S.canDrop = true;
     if (S.comboT > 0 && (S.comboT -= k) <= 0) S.combo = 0;
-    nudgePile();
     physAcc = Math.min(physAcc + k, 4);
     while (physAcc >= 1 && awake()) {   // fixed 60 Hz physics: every screen plays out the same pile
       physAcc -= 1;
-      const comp = compOn(); if (comp) compBefore();   // Comp: the wind's push, and where everything was
-      const res = stepWorld(S.world, windFall());
-      if (comp) compAfter();   // Comp: every new contact is a knock on glass
+      if (compOn()) compBefore();   // Challenge: the wind's drag, the wet or icy floor, the Deluge's lift
+      const res = stepWorld(S.world, 0);
       if (res.landed) S.cooldown = Math.min(S.cooldown, 6);
       if (res.events.length) handleEvents(res.events);
     }
@@ -3575,7 +3757,7 @@ function tickChrome(dt, k) {
   if ((uiT += dt) > 0.5) { uiT = 0; syncBars(); }
   if ((warmT -= dt) <= 0) { warmT = 60; updateWarmth(); }
 }
-// The safety net: one error never stops the loop; a second one in a session parks everything safely (Comp off, the game saved) and offers a restart.
+// The safety net: one error never stops the loop; a second one in a session parks everything safely (Challenge off, the game saved) and offers a restart.
 let faults = 0;
 function fault(e) {
   faults++; try { console.error(e); } catch (x) {}
@@ -4133,8 +4315,8 @@ function frClose() { FR.strip = FR.cat = FR.item = null; }
 const lv = (id, n, ic, key) => ({ id, n, ic, kind: 'lv', key });
 const pickOf = (id, n, key, list, label) => ({ id, n, kind: 'pick', key, list, label });
 const CATS = {
-  weather: { n: 'Weather', ic: SUNCLOUD, off: () => here().dry, items: () => [lv('wind', skyName('wind'), ICON.wind, 'atmo.wind'), lv('cover', 'Clouds', ICON.cloud, 'cover'), lv('rain', skyName('rain'), here().snow ? ICON.snow : ICON.rain, 'atmo.rain'), lv('bolt', 'Lightning', ICON.bolt, 'atmo.bolt')] },
-  scene: { n: 'Scene', ic: ICON.rise, items: () => [pickOf('where', 'Place', 'where', () => CHOICES.where, (v) => LABELS.where[v]), pickOf('hour', 'Hour', 'hour', () => CHOICES.hour, (v) => LABELS.hour[v]), ...(S.mode === 'studio' ? [] : [{ id: 'live', n: 'Live sky', kind: 'sw', key: 'live' }])] },   // Live sky asks the phone: not a Studio toy
+  weather: { n: 'Weather', ic: SUNCLOUD, off: () => here().dry || compOn(), items: () => [lv('wind', skyName('wind'), ICON.wind, 'atmo.wind'), lv('cover', 'Clouds', ICON.cloud, 'cover'), lv('rain', skyName('rain'), here().snow ? ICON.snow : ICON.rain, 'atmo.rain'), lv('bolt', 'Lightning', ICON.bolt, 'atmo.bolt')] },
+  scene: { n: 'Scene', ic: ICON.rise, items: () => [pickOf('where', 'Place', 'where', () => CHOICES.where, (v) => LABELS.where[v]), ...(S.mode === 'studio' ? [pickOf('hour', 'Hour', 'hour', () => CHOICES.hour, (v) => LABELS.hour[v])] : [{ id: 'live', n: 'Live sky', kind: 'sw', key: 'live' }])] },   // everything live (v85): the hour is the real hour; choosing one is a Studio toy. Live sky asks the phone: not a Studio toy
   sound: { n: 'Sound', ic: ICON.note, items: () => SOUND_ALL.map(k => lv(k, SOUND_N[k], SOUND_IC[k], `mix.${k}`)) }   // Studio's mixer: each sound's level
 };
 const catItem = () => FR.cat && FR.item && CATS[FR.cat].items().find(o => o.id === FR.item);
@@ -4190,8 +4372,10 @@ function ctxSync() {   // the tools' counts, in place
 // The pause strip: Resume, New game | Journey, Game, Sound | Help. A section opens in place under it; touch it again and it closes.
 const STRIP = {
   game: { n: 'Game', ic: ICON.bloom },
+  challenge: { n: 'Challenge', ic: ICON.bolt, show: () => !S.jr && (compOn() || S.pendRules === 'comp') },   // the hazards: only while Challenge is the mode, now or next
   sound: { n: 'Sound', ic: ICON.note }
 };
+const stripKeys = () => Object.keys(STRIP).filter(k => !STRIP[k].show || STRIP[k].show());
 const worldBtn = () => ({ n: 'Journey', ic: ICON.mountain });   // one icon (Albert, 20:00): the Journey's landing, from Play or from inside a door; Merge is a door there
 const RULES_ORDER = ['zen', 'classic', 'comp'];   // easiest to hardest: an easier one applies now, a harder one from the next game (Albert, Oct 25, 14:57)
 const rulesNow = () => (compOn() ? 'comp' : rules() === 'zen' ? 'zen' : 'classic');
@@ -4200,7 +4384,7 @@ function chooseRules(v) {
   const now = rulesNow(); if (v === now && !S.pendRules) return;
   if (v === now) { S.pendRules = null; syncBars(); return; }
   const harder = RULES_ORDER.indexOf(v) > RULES_ORDER.indexOf(now);
-  if (harder && inGame()) { const go = () => { S.pendRules = v; say(v === 'comp' ? 'Comp' : 'Classic', 'From your next game'); syncBars(); }; if (v === 'comp') askComp(go); else go(); return; }
+  if (harder && inGame()) { const go = () => { S.pendRules = v; say(v === 'comp' ? 'Challenge' : 'Classic', 'From your next game'); syncBars(); }; if (v === 'comp') askComp(go); else go(); return; }
   S.pendRules = null; applyRules(v);
 }
 function applyRules(v) {   // the rules, now
@@ -4212,11 +4396,20 @@ const chip = (key, word, on, cls = '') => `<button class="chip${on ? ' on' : ''}
 const chipRow = (items) => `<div class="chips">${items.join('')}</div>`;
 function stripBody(k) {
   if (k === 'game') {
-    const pend = S.pendRules, now = rulesNow(), mode = S.jr ? '' : `<div class="hd">Mode${pend ? `<i>${esc(pend === 'comp' ? 'Compete' : 'Classic')} from your next game</i>` : ''}</div>`
-      + chipRow([['zen', 'Zen'], ['classic', 'Classic'], ['comp', 'Compete']].map(([v, w]) => chip(`sg:${v}`, w, now === v, pend === v ? 'next' : '')));
+    const pend = S.pendRules, now = rulesNow(), mode = S.jr ? '' : `<div class="hd">Mode${pend ? `<i>${esc(pend === 'comp' ? 'Challenge' : 'Classic')} from your next game</i>` : ''}</div>`
+      + chipRow([['zen', 'Zen'], ['classic', 'Classic'], ['comp', 'Challenge']].map(([v, w]) => chip(`sg:${v}`, w, now === v, pend === v ? 'next' : '')));
     return mode + `<div class="hd">Play</div>` + chipRow([chip('sg:aim', 'Aim', PREFS.aim), chip('sg:next', 'Next', PREFS.next), chip('sg:numbers', 'Numbers', PREFS.numbers)])
       + `<div class="hd">Access</div>` + chipRow([chip('sg:still', 'Still', PREFS.still), chip('sg:soft', 'Soft', PREFS.soft), chip('sg:breathing', 'Breathe', PREFS.breathing), chip('sg:vibe', 'Haptics', PREFS.vibe)])
       + chipRow([...(S.jr ? [chip('sg:stats', 'Statistics', false, 'quiet')] : []), chip('sg:fresh', 'Start fresh', false, 'quiet')]);   // Statistics: the score in Play, here in the Journey (it has no score)
+  }
+  if (k === 'challenge') {
+    const d = COMP.daily, W = hazNow();
+    if (d) return `<div class="hd">Today’s challenge<i>Level ${d.level} · target ${fmt(d.target)}</i></div><p class="note">${esc([...HAZ_W, ...HAZ_X].filter(k => hazOn(k, W)).map(k => k === 'rain' ? skyName('rain') : HAZ_N[k]).join(' · '))}</p>` + chipRow([chip('sh:leave', 'Leave today’s', false, 'quiet')]);
+    const row = (k) => `<div class="sl-row"><button class="tog-btn" data-f="sh:${k}" role="switch" aria-checked="${W[k].on}" aria-label="${k === 'rain' ? skyName('rain') : HAZ_N[k]}"><span class="tog${W[k].on ? ' on' : ''}"></span></button><span class="hn">${esc(k === 'rain' ? skyName('rain') : HAZ_N[k])}</span>`
+      + `<label class="sl${W[k].on ? '' : ' off'}"><input type="range" min="5" max="100" step="1" value="${pct(W[k].lv)}" data-lv="haz.${k}.lv" aria-label="${HAZ_N[k]} severity"><b class="pc num">${pct(W[k].lv)}%</b></label></div>`;
+    return `<div class="hd">Weather<i>Level ${level()}</i></div>` + HAZ_W.map(row).join('')
+      + `<div class="hd">Hazards</div>` + chipRow(['ice', 'line', 'timer'].map(k => chip(`sh:${k}`, HAZ_N[k], W[k]))) + chipRow(['storm', 'power', 'deluge'].map(k => chip(`sh:${k}`, HAZ_N[k], W[k])))
+      + chipRow([chip('sh:daily', 'Today’s challenge', false, 'quiet')]);
   }
   if (k === 'sound') return `<div class="sl-row"><button class="tog-btn" data-f="ss:sound" role="switch" aria-checked="${PREFS.sound}" aria-label="Sound"><span class="tog${PREFS.sound ? ' on' : ''}"></span></button>`
     + `<label class="sl${PREFS.sound ? '' : ' off'}"><input type="range" min="0" max="100" step="1" value="${pct(PREFS.vol)}" data-lv="vol" aria-label="Volume"><b class="pc num">${pct(PREFS.vol)}%</b></label></div>`
@@ -4227,33 +4420,32 @@ function stripHTML() {
   const b = (k, d, w, cls = '') => `<button class="sb ${cls}" data-f="${k}" aria-label="${w}">${icon(d)}</button>`;
   const wb = worldBtn();
   return `<div class="top">${b('top:pause', ICON.play, 'Resume', 'go')}${b('sp:new', ICON.reset, 'New game')}<span class="div"></span>${b('sp:world', wb.ic, wb.n)}`
-    + Object.keys(STRIP).map(k => b(`sp:${k}`, STRIP[k].ic, STRIP[k].n, FR.strip === k ? 'sel' : '')).join('') + `<span class="gap"></span>${b('sp:help', ICON.ask, 'Help', 'help')}</div>`
+    + stripKeys().map(k => b(`sp:${k}`, STRIP[k].ic, STRIP[k].n, FR.strip === k ? 'sel' : '')).join('') + `<span class="gap"></span>${b('sp:help', ICON.ask, 'Help', 'help')}</div>`
     + (FR.strip ? `<div class="body">${stripBody(FR.strip)}</div>` : '');
 }
 const stripShown = () => S.paused && !S.intro && !S.sheet && S.mode !== 'rest';
 
 // The bar tells you things (rule 3). The word tile: in Play three words (Merge, the rules, the place), status only; in the Journey
 // its word or the door's; for two seconds after any touch, what you touched and how it is set ("Wind · on · 40%"); a warning with
-// its countdown; COMPETITION. Then Pause (while paused it is where you are, outlined white; the strip's ▶ plays), and the score.
-const LINE = { sub: null, tell: '', until: 0 };
+// its countdown; Challenge's level. Then Pause (while paused it is where you are, outlined white; the strip's ▶ plays), and the score.
+const LINE = { tell: '', until: 0 };
 function tell(t) { LINE.tell = t; LINE.until = performance.now() + 2000; BAR.line = ''; }   // the bar says it, for two seconds
 const TRI = '<svg class="tri" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3 22 20.5H2z"/><path d="M12 9.5v5M12 17.3v.3"/></svg>';   // the warning sign: the international shape
-const warning = () => !LINE.sub && (overWarn() || (compOn() && compAlert()));   // over the line first: it ends the game
+const warning = () => overWarn() || (compOn() && compAlert());   // over the line first: it ends the game
 const hzHTML = (w) => `<div class="hz" role="alert">${TRI}<span class="al"><b>${esc(w[0])}</b><i>${esc(w[1])}</i></span><span class="cd num" id="alertN"></span></div>`;
 const WORD = Object.fromEntries(Object.entries(MODES).map(([k, m]) => [k, m.name]));   // the mode's one word, the same on the tile, in the bar and in the code
-const rulesWord = () => (compOn() ? 'Comp' : rules() === 'zen' ? 'Zen' : 'Classic');
+const rulesWord = () => (compOn() ? `${COMP.daily ? 'Today' : 'Challenge'} · ${level()}` : rules() === 'zen' ? 'Zen' : 'Classic');
 function wordHTML() {   // what the word tile holds
-  if (LINE.sub === 'comp') return `<div class="comp-sub"><button class="pill" data-act="compoff">Leave Comp</button><button class="cancel" data-act="subcancel">Cancel</button></div>`;
   const w = warning();
-  if (compOn()) return `<button class="compw" data-act="compmenu">COMPETITION</button>${w ? hzHTML(w) : ''}`;
   if (w) return hzHTML(w);
-  if (LINE.tell && performance.now() < LINE.until) return `<div class="one" role="status">${esc(LINE.tell)}</div>`;
+  if (LINE.tell && performance.now() < LINE.until && !(S.jr && CQ.step === 'go')) return `<div class="one" role="status">${esc(LINE.tell)}</div>`;   // the tell steps aside while Conquer's clock runs
   const seg = (k, t) => `<span class="seg">${esc(t)}</span>`;
   if (S.jr) return seg('merge', CQ.step === 'go' ? `Conquer · ${S.goal ? `until ${clockAt(S.goal.end)}` : 'free'}` : jrWord());
+  if (compOn()) return seg('rules', rulesWord()) + seg('scene', here().label);   // Challenge: its level and the place (the words would not fit three)
   return seg('merge', WORD[S.mode]) + seg('rules', rulesWord()) + seg('scene', here().label);
 }
 function lineHTML() {
-  const w = warning(), word = `<div class="word tile${compOn() && !LINE.sub ? ' comp' : w && !compOn() ? ' warn' : ''}" id="word">${wordHTML()}</div>`;
+  const w = warning(), word = `<div class="word tile${w ? ' warn' : ''}" id="word">${wordHTML()}</div>`;
   const sp = S.jr ? '' : `<button class="sp" data-f="stats" aria-label="Score, and Statistics"><b class="num" id="scoreVal"></b></button>`;   // the score, in Play: touch it for Statistics
   const pz = S.mode === 'rest' ? '' : S.paused ? `<button class="cell sel" aria-disabled="true" aria-label="Paused">${icon(ICON.pause)}</button>` : `<button class="cell" data-f="top:pause" aria-label="Pause">${icon(ICON.pause)}</button>`;   // paused: where you are (the strip's ▶ plays: one home)
   return word + pz + sp;
@@ -4296,7 +4488,7 @@ function applySeason() { BAR.line = BAR.tiles = BAR.ctx = BAR.strip = BAR.dash =
 // The frame's one pop-up, when no card is open: the card's own pop-up, standing alone over the frame.
 function framePop(o) { if (!CARD.name) { POP.alone = true; S.sheet = 'pop'; const mc = $('mc'); mc.classList.add('alone'); mc.hidden = false; fitCard(); syncBars(); } popup(o); }   // standing alone it is a sheet like any card: the game waits, the ribbon does not answer
 const FRESH_KEEP = ['tasks', 'saved', 'mins', 'mode'];   // Fresh: every setting back to day one; what you wrote and what you saved stay
-function fresh() { compStop(); S.pendRules = null; for (const k in DEFAULTS) if (!FRESH_KEEP.includes(k)) setPrefRaw(k, JSON.parse(JSON.stringify(DEFAULTS[k]))); savePrefs(); sound.init(); newWorld(); syncUI(); }   // Comp is a state, not a setting: it stops first
+function fresh() { compStop(); S.pendRules = null; for (const k in DEFAULTS) if (!FRESH_KEEP.includes(k)) setPrefRaw(k, JSON.parse(JSON.stringify(DEFAULTS[k]))); savePrefs(); sound.init(); newWorld(); syncUI(); }   // Challenge is a state, not a setting: it stops first
 function newGameAsk() {   // ↺ in the strip: a game in hand is asked about once; an empty or finished one starts at once
   const go = () => { setPaused(false); if (S.jr) journeyEnd(); startPool(); };
   if (inGame()) framePop({ title: 'Start a new game?', line: 'This one ends here. Its score goes in your Statistics.', back: 'Back', act: 'New game', go }); else go();
@@ -4316,11 +4508,17 @@ function frameTouch(f) {
   }
   if (a === 'sg') {   // Game
     const w = { aim: 'Aim', next: 'Next', numbers: 'Numbers', still: 'Still', soft: 'Soft View', breathing: 'Breathe', vibe: 'Haptics' };
-    if (RULES_ORDER.includes(b)) { chooseRules(b); tell(S.pendRules ? `${b === 'comp' ? 'Compete' : 'Classic'} · from your next game` : { zen: 'Zen', classic: 'Classic', comp: 'Compete' }[b]); }
+    if (RULES_ORDER.includes(b)) { chooseRules(b); tell(S.pendRules ? `${b === 'comp' ? 'Challenge' : 'Classic'} · from your next game` : { zen: 'Zen', classic: 'Classic', comp: 'Challenge' }[b]); }
     else if (b === 'fresh') framePop({ title: 'Back to how SoRen came?', line: 'Every setting, as it was on day one. Your list and Save It stay.', back: 'Back', act: 'Fresh', go: fresh });
     else if (b === 'stats') { openCard('stats'); return; }
     else { setPref(b, !PREFS[b]); tell(`${w[b]} · ${onOff(PREFS[b])}`); }
     feel('snap'); syncBars(); return;
+  }
+  if (a === 'sh') {   // Challenge's hazards
+    if (b === 'daily') { framePop({ title: 'Today’s challenge?', line: `Level ${dailyPlan().level}, target ${fmt(dailyPlan().target)}. The same hazards and spheres for everyone today; try as often as you like.`, back: 'Back', act: 'Start', go: dailyStart }); return; }
+    if (b === 'leave') { framePop({ title: 'Leave today’s challenge?', line: 'This game ends here. Your own hazards come back.', back: 'Back', act: 'Leave', go: dailyLeave }); return; }
+    if (HAZ_W.includes(b)) setPref(`haz.${b}.on`, !PREFS.haz[b].on); else setPref(`haz.${b}`, !PREFS.haz[b]);
+    if (b === 'wind') windEpisode(); tell(`${b === 'rain' ? skyName('rain') : HAZ_N[b]} · ${onOff(hazOn(b))} · level ${level()}`); feel('snap'); syncBars(); return;
   }
   if (a === 'ss') { if (b === 'sound') { setPref('sound', !PREFS.sound); tell(`Sound · ${onOff(PREFS.sound)}`); } else { setPref(`mix.${b}.on`, !PREFS.mix[b].on); tell(`${SOUND_N[b]} · ${onOff(PREFS.mix[b].on)}`); } feel('snap'); syncBars(); return; }   // Sound: the switch is mute; each sound on or off
   if (a === 'cat') { const was = FR.cat; catTap(b); if (FR.cat && FR.cat !== was) tell(CATS[b].n); feel('tick'); return; }
@@ -4343,7 +4541,7 @@ const itemTell = (o) => (o.kind === 'lv' ? `${o.n} · ${onOff(getPref(`${o.key}.
 // A slider: the level follows the finger and is heard at once; kept when the finger lifts.
 function sliderInput(el, done) {
   const k = el.dataset.lv, v = clamp(+el.value / 100, 0, 1); setPrefRaw(k, k === 'vol' ? v : Math.max(0.05, v));
-  const o = catItem(); tell(k === 'vol' ? `Volume · ${Math.round(v * 100)}%` : o ? itemTell(o) : `${Math.round(v * 100)}%`); const ln = $('line'); if (ln) { BAR.line = lineHTML(); ln.innerHTML = BAR.line; fitIcons(ln); }   // the bar says it as the finger moves
+  const o = catItem(), hz = k.startsWith('haz.') && k.split('.')[1]; tell(k === 'vol' ? `Volume · ${Math.round(v * 100)}%` : hz ? `${HAZ_N[hz]} · ${Math.round(v * 100)}% · level ${level()}` : o ? itemTell(o) : `${Math.round(v * 100)}%`); const ln = $('line'); if (ln) { BAR.line = lineHTML(); ln.innerHTML = BAR.line; fitIcons(ln); }   // the bar says it as the finger moves
   const pc = el.parentElement.querySelector('.pc'); if (pc) pc.textContent = `${Math.round(v * 100)}%`;
   if (k === 'vol' || k.startsWith('mix')) sound.init();
   if (done) { savePrefs(); sound.init(); BAR.ctx = BAR.strip = ''; syncBars(); }
@@ -4399,24 +4597,25 @@ const FAQ = [
   ['What is Tinker?', 'Spheres come in sets of six, grow together, hold, shrink and go; a new six come somewhere else. Hold one and it is caught: it keeps its size and follows your finger. Drop it in Save It, the green tank, and it lives there, kept between visits; a smaller one dropped onto a bigger one is taken in. Let It Go is the circle in the tank: open while a set is grown, shut between sets; dropped in while open, it is gone for good. The + makes one of your own: name it or not, pick its glow, set it loose. A tap on any sphere is a soft tap on glass. Spheres are thoughts: keep the good ones, let the worries go. Nothing is scored.'],
   ['What is Conquer?', 'A door in the Journey. Five steps in the pool. Name it: up to three lines of what you will do after, or none. How long first: 15, 30 or 60 minutes of Merge, or Free. Go: you play; a bell at three minutes left, two at one; or touch Go now. Then three breaths out, and the pool goes dark with your lines and a send-off. I’m back: your lines, to touch as done; one done is a gold done, a whole list is a surprise. What you did leaves the list; the rest waits for next time.'],
   ['How do I play?', 'Touch the pool and slide to move the waiting sphere; let go to drop it. Two of a kind merge into the next size up, and the two largest make a Full Bloom.'],
-  ['What are the tools?', 'In the row under the pool, between Weather and Scene. Strike: touch a sphere; it turns red, then the place’s own strike takes it. Mystery: your next sphere becomes whatever it touches first. Storm: the place’s own weather blows in and every sphere lands somewhere new (in Comp, Storm is a gust). A chain of three or a Full Bloom earns one, up to three of each; the count sits on the tile.'],
-  ['What is Comp?', 'Play with the calm taken off: Pause › Game › Compete (or touch the second word in the bar). A harder mode starts with your next game; an easier one applies at once. The line creeps down; the wind is real and restless. One sphere at a time carries a countdown: merge it in time and the line lifts or a tool is yours; miss it and the line sinks or a wave rolls in. Strike knocks a sphere down a size; Storm is a gust with a hurricane category. Storms, ice, rain and lightning come on their own, each announced in the bar with its countdown; when lightning heats a sphere red, touch it to cool it. Now and then two or three come at once. Rarely, a tree takes the power out: the pool browns out and the dropper malfunctions until it comes back. Glass knocked hard enough chips, cracks and shatters. No aim line, no Heritage. Touch COMPETITION in the bar to leave: nothing is lost.'],
+  ['What are the tools?', 'In the row under the pool, between Weather and Scene. Strike: touch a sphere; it turns red, then the place’s own strike takes it. Mystery: your next sphere becomes whatever it touches first. Storm: the place’s own weather blows in and every sphere lands somewhere new (in Challenge, Storm is a gust). A chain of three or a Full Bloom earns one, up to three of each; the count sits on the tile.'],
+  ['What is Challenge?', 'Classic with the hazards you choose: Pause › Game › Challenge, then the bolt in the strip for the hazards. The weather (wind, rain or snow, lightning, clouds) each has a severity; then ice, the creeping line, timer spheres, storms, power cuts and the Deluge (the pool fills and the spheres float up). Each adds to the level, shown in the bar. Every hazard is announced before it comes. Today’s challenge: the same hazards and spheres for everyone today, with a target to beat; try as often as you like (a board to submit to waits for the app). A harder mode starts with your next game; leave any time.'],
   ['What do the colours mean?', 'Words are white. A green check means on, or the one chosen in its row. A white outline is where you are. Blue is the way on. Red warns. Gold means something special. Colour is never the only sign.'],
   ['How do I get around?', 'The bar above the pool tells you where you are and what you just touched (for two seconds); it opens nothing. Then Pause, and the score (touch it for Statistics). Pause opens a strip over the pool: ▶ to play on, ↺ for a new game, the mountain for the Journey, Game (the mode, Aim, Next, Numbers, Access: Still, Soft View, Breathe, Haptics) and Sound (on or off, the volume, each sound), and ? for this Help. What shapes how you play is behind Pause; what adds to play is under the pool: Weather, the tools and Scene.'],
   ['What is Rest?', 'The night-time sound machine, a door in the Journey. The pool fades to dark while a bed plays on (rain, wind, night or fire, or none), for an hour or all night. Phones stop sound when they lock, so Rest keeps the screen awake; plug in for long sessions. Its lit door wakes it.'],
   ['What is Soft View?', 'Pause › Game › Soft: no bursts, no banners, no lightning, a softer buzz, nothing bright above 4 kHz. Still is Reduce motion, and follows the phone. Breathe is the pool’s own breath, at the Pacer’s pace.'],
-  ['What is Labs?', 'The Journey’s Labs door, in beta: the next science, each experiment a check under the stars. Look up: lift the phone toward the sky and the real stars overhead fill the pool; hold the light on the ringed star to draw a constellation. Chest: in the Pacer, lay the phone flat on your chest, hands off, and after fifteen seconds the dot follows your breath. Heavy: a big sphere follows your finger slowly, as heavy glass would. They read the phone’s own motion sensor, on the phone; nothing is kept or sent.'],
+  ['What is Labs?', 'The Journey’s Labs door, in beta: the next science. After the warp the pool is tonight’s sky, facing the moon when it is up: drag to turn it, touch a star, a planet, the moon, a black hole’s direction or Halley’s Comet for what is true of it (where measurements disagree, the range). Under it, each experiment a check. Look up: lift the phone toward the sky and the real stars overhead fill the pool; hold the light on the ringed star to draw a constellation. Chest: in the Pacer, lay the phone flat on your chest, hands off, and after fifteen seconds the dot follows your breath. Heavy: a big sphere follows your finger slowly, as heavy glass would. They read the phone’s own motion sensor, on the phone; nothing is kept or sent.'],
   ['What is Studio?', 'A door in the Journey: a sandbox. Scene and Weather as you know them, Sound as a full mixer (each sound’s level, in percent), Depth (how much of the scene is drawn: it steps on each touch), Fresh (every toy back to how SoRen came) and Use this (keeps what you made). Leave without it and nothing is kept.'],
   ['Why does it feel this way?', 'Real science, kept simple. The breath starts at five and a half a minute, near where breath and heartbeat fall into step for most people; the green line on Pace is the range the studies used. Glass rings long and wood stops short, because that is how each really sounds. Rain falls at its true speeds, thunder comes three seconds a kilometre after its flash so you can count it, and the sky is the real one: the sun, the moon with its phase, the planets in their colours and the stars stand where they stand right now over 41° north, worked out from the clock, not fetched. Lightning never flashes more than three times a second. Nature sound stays soft: quiet matters as much as the sound. None of it is treatment. It is somewhere to settle.'],
   ['What are the numbers?', 'Breath: 5.5 a minute, the mean where heart rate and breathing fall into step in the research; the green band on Pace is 4.8 to 6.6, the range the studies used. Light: never more than 3 flashes in a second, each flash one glow, never a flicker. Thunder: a rise of at least 50 ms, 3 seconds for every kilometre. Rain: each drop falls at the true speed for its size, and small drops outnumber large ones as they do in the sky. Sound: glass and wood ring for as long as glass and wood do; Tinker’s taps keep a dark timbre, under 1.5 kHz. Haptics: three strengths (0.5, 0.7, 1.0), the buzz first and the sound within 20 ms. Colour: the scene stays low in saturation and lighter than the frame around it; text is meant to be at least 7:1 against its background. The sky: the sun and planets to a tenth of a degree, the moon to a quarter (Meeus); the meteor showers on their nights, streaming from where their radiant stands. Every number is in the code, with its source.'],
-  ['Is the sky real?', 'Yes. Where the sun and the moon stand, how much of the moon is lit and how big it looks, which planets and stars are up, which meteor shower is on tonight, and every eclipse are worked out on the phone from the date, the time and where you stand (41° north and your time zone until Live sky is on), the way an almanac does it. The window faces south and is as wide as that day’s arc: the sun’s by day, the moon’s by night. Nothing is sent anywhere.'],
+  ['Is the sky real?', 'Yes. Where the sun and the moon stand, how much of the moon is lit and how big it looks, which planets and stars are up, which meteor shower is on tonight, and every eclipse are worked out on the phone from the date, the time and where you stand (41° north and your time zone until Live sky is on), the way an almanac does it. The hour is always the real one (Studio lets you try another, as a toy). The window faces south and is as wide as that day’s arc: the sun’s by day, the moon’s by night. Nothing is sent anywhere.'],
   ['What is the moon doing?', () => { const s = skyAt(skyTime()), m = s.moon, n = moonNames(skyTime()), lit = Math.round(m.frac * 100), when = n.next.toLocaleDateString([], { month: 'long', day: 'numeric' });
     return `${m.alt > 0 ? 'Up now' : 'Below the horizon'}, ${m.waxing ? 'waxing' : 'waning'}, ${lit}% lit, ${Math.round(m.dist / 1000).toLocaleString()},000 km away${m.super ? ': a supermoon, as close as it comes' : m.micro ? ': a micromoon, as far as it goes' : ''}. The next full moon is the ${n.names.join(' ')} Moon, ${when}.${s.lunar ? ` Tonight the Earth’s shadow is on it: a ${s.lunar.kind} eclipse.` : ''}${s.solar ? ` The moon is over the sun right now: a ${s.solar.kind} eclipse, ${Math.round(s.solar.mag * 100)}% covered.` : ''} A supermoon is a full moon within 360,000 km; the Harvest Moon is the one nearest the September equinox, the Hunter’s the next; the other names are the almanac’s, by month. Eclipses are drawn where the shadow truly falls, at the moon’s drawn size.`; }],
   ['Does SoRen collect anything?', 'No. Everything stays on this phone: no accounts, no ads, no tracking, no notifications, nothing to buy. Leaving costs you nothing.'],
   ['Is this a medical tool?', 'No. It is somewhere to settle. If you are struggling, talk to someone you trust or a professional.'],
+  ['What is Earth?', 'A place: the planet from orbit; you are the International Space Station, 420 km up. The day and night on it are the real ones, from where the sun is now; the coasts are true (Natural Earth); the cities light up on the night side. With Live sky on it is where the station really is; with it off, a true station orbit, the right shape but not its place today. No weather up here.'],
   ['Which version is this?', `Version ${VERSION}. The physics has been locked since version 34 (${PHYSICS_ID}).`]
 ];
-const askComp = (go = () => setPref('comp', true)) => framePop({ title: 'Comp mode?', line: 'The line creeps, the wind is wild, glass can break. Leave any time: nothing is lost.', back: 'Back', act: 'Comp', go });   // asked every time; go: now, or from the next game
+const askComp = (go = () => setPref('comp', true)) => framePop({ title: 'Challenge?', line: 'Classic with the hazards you choose. Leave any time: nothing is lost.', back: 'Back', act: 'Challenge', go });   // asked every time; go: now, or from the next game
 // Each card: its name and its rows. Settings live in the frame (80-frame.js); a card is for what is read: the moments, Statistics and Help.
 const CARDS = {
   moment: { get title() { return MOMENT.title; }, moment: true, rows: () => MOMENT.rows.map(r => ({ ...r, kind: 'note' })) },   // see showCard
@@ -4459,7 +4658,7 @@ function footHTML(name) {
 }
 function openCard(name) {
   if (!CARDS[name]) return;
-  CARD.name = name; S.sheet = name; S.aiming = false; LINE.sub = null; frClose(); POP.alone = false; $('mc').classList.remove('alone');
+  CARD.name = name; S.sheet = name; S.aiming = false; frClose(); POP.alone = false; $('mc').classList.remove('alone');
   $('mcPill').textContent = CARDS[name].title;
   $('mcFoot').innerHTML = footHTML(name);
   $('mc').querySelectorAll('#mcFoot button.cell').forEach(c => c.classList.add('pick'));   // the answers are blue: where to go
@@ -4516,24 +4715,27 @@ function bind() {
     const p = logical(e.clientX, e.clientY);
     if (CQ.step && CQ.step !== 'go') { conquerTouch(p); return; }   // Check in: a line touched is ticked
     if (S.jr && !S.jr.door && S.jr.peek) { S.jr.peek = null; syncUI(); return; }   // looking at a door: a tap on the pool brings the dashboard back
-    if (S.jr && (!S.jr.door || S.jr.door === 'labs' || S.jr.door === 'studio' || S.pac)) return;   // the landing, Labs, the Studio and the Pacer: the pool is to look at
+    if (S.jr && S.jr.door === 'labs') { skyTouch(p, 'down'); try { canvas.setPointerCapture(e.pointerId); } catch (err) {} return; }   // Sky view: drag to turn, touch to name
+    if (S.jr && (!S.jr.door || S.jr.door === 'studio' || S.pac)) return;   // the landing, the Studio and the Pacer: the pool is to look at
     if (S.paused) { setPaused(false); syncBars(); return; }   // tap to play (the speaker follows: lineHTML)
     try { canvas.setPointerCapture(e.pointerId); } catch (err) {}
     if (S.tk) { tinkerTouch(p, true); return; }
     if (S.armed) { strikeSphere(sphereAt(p.x, p.y)); return; }   // armed: this touch uses it
-    if (compLocked()) { compTouch(p); return; }   // Comp lightning: a touch cools, it never drops
+    if (compLocked()) { compTouch(p); return; }   // Challenge lightning: a touch cools, it never drops
     if (!awake() || !S.canDrop) return;
     pointerId = e.pointerId; S.aiming = true; S.aimCancelled = false; grab = S.dropX - p.x;
   });
   canvas.addEventListener('pointermove', (e) => {
     const p = logical(e.clientX, e.clientY);
     if (S.tk) { if (S.tk.press) tinkerTouch(p); return; }
+    if (SV.drag) { skyTouch(p, 'move'); return; }
     if (!awake() || !S.aiming || e.pointerId !== pointerId) return;
     S.aimCancelled = !p.inside;
     if (p.inside) { const r = S.wild ? WILD_R : RADII[S.current]; S.dropX = S.targetX = clamp(p.x + grab, r + 5 - S.sway, LW - r - 5 - S.sway); grab = S.dropX - p.x; }   // the wind's push is allowed for: every wall can be reached
   });
   const finish = (e, drop) => {
     if (S.tk) { if (S.tk.press) tinkerTouch(null, false); return; }
+    if (SV.drag) { skyTouch(logical(e.clientX, e.clientY), 'up'); return; }
     if (!S.aiming || (pointerId !== null && e.pointerId !== pointerId)) return;
     const p = logical(e.clientX, e.clientY), cancelled = S.aimCancelled || !p.inside;
     S.aiming = false; S.aimCancelled = false; pointerId = null;
@@ -4546,9 +4748,6 @@ function bind() {
     if (e.key === ' ' || e.key === 'Enter') { e.preventDefault(); if (e.repeat) return; if (S.jr && S.mode !== 'merge') return; else if (S.paused) setPaused(false); else dropCurrent(); }
     else if (e.key === 'ArrowLeft' || e.key === 'ArrowRight') { e.preventDefault(); S.targetX = clamp(S.targetX + (e.key === 'ArrowLeft' ? -14 : 14), 10, LW - 10); }
   });
-  const ACTS = {
-    compmenu: () => { LINE.sub = 'comp'; syncBars(); }, compoff: () => { LINE.sub = null; setPref('comp', false); }, subcancel: () => { LINE.sub = null; syncBars(); }   // COMPETITION offers Leave Comp, with Cancel: nothing lost
-  };
   document.addEventListener('click', (e) => {
     const t = e.target;
     if (!$('mcPop').hidden && t.closest('#mc')) {   // the pop-up answers first
@@ -4565,7 +4764,6 @@ function bind() {
       return;
     }
     const fr = t.closest('[data-f]'); if (fr) { frameTouch(fr.dataset.f); return; }   // the frame: the ribbons, the bar, the door
-    const act = t.closest('[data-act]'); if (act && ACTS[act.dataset.act]) { ACTS[act.dataset.act](act); return; }
   });
   document.addEventListener('input', (e) => {
     const tx = e.target.closest('[data-task]'); if (tx) cqTyped(+tx.dataset.task, tx.value);   // Conquer's lines: a letter is heard, the first time
