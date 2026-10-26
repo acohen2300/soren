@@ -1,7 +1,7 @@
 <!doctype html>
 <html lang="en">
 <head>
-<!-- SoRen v83 · physics locked since v34 (12627fd9) -->
+<!-- SoRen v84 · physics locked since v34 (12627fd9) -->
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'self' 'unsafe-inline'; style-src 'unsafe-inline'; img-src 'self' data: blob:; media-src blob: data:; manifest-src 'self'; worker-src 'self'; connect-src https://celestrak.org https://ssd-api.jpl.nasa.gov; font-src 'none'; base-uri 'none'; form-action 'none'">
@@ -213,6 +213,15 @@ input[type=range]::-moz-range-track { height: 4px; border-radius: 2px; backgroun
 .strip .chip.next { box-shadow: none; outline: 1.5px dashed #fff; outline-offset: -3px; }   /* from your next game: a dashed outline (blue is only the way on) */
 .strip .chip.quiet { flex: 0 1 auto; padding: 0 16px; margin-left: auto; }
 .strip .sl-row { display: flex; align-items: center; gap: 10px; height: 44px; margin-top: 6px; }
+/* The dashboard (the Journey's landing): the strip's own look and chips, in the middle of the pool; a long one scrolls. */
+.dash { max-height: calc(100% - 16px); overflow-y: auto; padding: 4px 10px 10px; }
+.dash .hd:first-child { margin-top: 6px; }
+.dash .hr { flex: 1.3 1 0; min-width: 0; display: flex; align-items: center; gap: 4px; height: 40px; padding: 0 8px; border-radius: 10px; box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.55); font-size: max(14px, var(--t2)); font-weight: 600; }
+.dash .hr input { width: 100%; min-width: 0; background: none; border: 0; color: #fff; font: inherit; font-size: 16px; text-align: center; -moz-appearance: textfield; } .dash .hr input::placeholder { color: #fff; opacity: 1; }
+.dash .hr input::-webkit-inner-spin-button, .dash .hr input::-webkit-outer-spin-button { -webkit-appearance: none; margin: 0; }
+.dash .chip.task { text-align: left; padding: 0 14px; overflow: hidden; text-overflow: ellipsis; }
+.dash .chip.way { box-shadow: inset 0 0 0 2px rgb(var(--pick)); }   /* the suggested door: blue, the way on (rule 1) */
+.dash .note { margin: 6px 2px 0; font-size: max(14px, var(--t2)); }
 .strip .tog-btn { flex: none; height: 44px; display: grid; place-items: center; }
 /* The shimmer: one sweep of silver across a tile, "this, now"; the breeze passes it round every tile, clockwise. */
 .glint { overflow: hidden; }
@@ -256,6 +265,7 @@ body.rm *, body.rm *::before, body.rm *::after { transition: none !important; an
       <canvas id="game" tabindex="0" aria-label="The pool. Touch and slide to move the waiting sphere, let go to drop it; or the arrow keys and Space. In Tinker, hold a sphere to catch it."></canvas>
       <div class="soren" aria-hidden="true">Soren</div>
       <div class="strip" id="strip" hidden role="toolbar" aria-label="Paused"></div>
+      <div class="strip dash" id="dash" hidden role="group" aria-label="How are you"></div>
       <div class="sr" id="speak" aria-live="polite"></div>
       <div class="sr" id="acc" role="group" aria-label="Play by ear" hidden><input type="range" id="accAim" min="0" max="8" step="1" value="4" aria-label="Dropper"><button type="button" id="accDrop">Drop</button><button type="button" id="accBelow">What is below</button><button type="button" id="accMatch">Where is a match</button></div>
       <div class="cq-checks" id="cqChecks"></div>
@@ -860,7 +870,7 @@ const ENV = { cover: 0, gloom: 0, precip: 0, rain: 0, snow: 0, light: 1, dark: 0
 const FEEL = { life: 0.45, heave: 0.035, glow: 0.65 };
 
 /* ---------- Storage (guarded: private windows and sandboxes can throw) ---------- */
-const VERSION = 83, PHYSICS_ID = '12627fd9';   // the build, and the first eight of the locked Physics block's hash
+const VERSION = 84, PHYSICS_ID = '12627fd9';   // the build, and the first eight of the locked Physics block's hash
 const JKEY = 'soren:journal:p5', JKEY_OLD = 'somatic-resonance:journal:v2', PKEY = 'soren:prefs:p5', SKEY = 'soren:pool:p5';
 function loadJSON(key) { try { const v = JSON.parse(localStorage.getItem(key) || 'null'); return v && typeof v === 'object' ? v : {}; } catch (e) { return {}; } }
 const SAVED = {};   // what each key last held: a save that changes nothing writes nothing
@@ -3793,7 +3803,7 @@ function inkCircle() {
 // The panels over the pool (the pause strip, a card, Tinker's maker): what is behind them as their blur leaves it (the pool's pixels
 // averaged in blocks the blur's size, and the page's sky where a panel reaches past the pool), and the least navy for white on the
 // lightest of it, with a margin of 0.15 (the spheres and the weather move under it). Set as --over on each; the gate measures it.
-const PANELS = ['strip', 'mc', 'maker'];
+const PANELS = ['strip', 'mc', 'maker', 'dash'];
 function inkOver(el) {
   if (!el || el.hidden || !canvas || !canvas.width) return;
   const p = $('pool').getBoundingClientRect(), r = el.getBoundingClientRect(), d = canvas.width / p.width; if (!r.width || !r.height) return;
@@ -3969,8 +3979,8 @@ function cqRow(c, txt, y, box, done, lit) {   // one line of the list: its words
 // game). Pacer: the dot (50-breathing.js). Tinker: the thought game (56-tinker.js). Conquer: name it, play first, go, come back,
 // check in (75-conquer.js). Rest: the night-time sound machine (60-game.js). Studio: the gear with its toys, kept only by Use
 // this. Labs: the next science, under the stars (57-lab.js). A door's row sits above the ribbon only while it has one.
-const DOORS = {   // each door: its word, its icon, one line, and what it opens; the mountain is the landing itself
-  journey: { n: 'Journey', ic: ICON.mountain, line: '', open: null },
+const DOORS = {   // each door: its word, its icon, one line, and what it opens. Merge is a door like the rest (v84: one icon for the Journey)
+  merge: { n: 'Merge', ic: ICON.play, line: 'The game. Drop, merge two of a kind.', open: () => journeyEnd() },
   pacer: { n: 'Pacer', ic: ICON.eye, line: 'A dot that fills and empties. Breathe with it.', open: () => setMode('pacer') },
   tinker: { n: 'Tinker', ic: ICON.hand, line: 'Spheres to catch. Save the good ones; let the worries go.', open: () => setMode('tinker') },
   conquer: { n: 'Conquer', ic: ICON.task, line: 'Name what you will do, play first, go and do it, come back, check in.', open: () => { setMode('merge'); conquerStart(); } },
@@ -4001,21 +4011,62 @@ function journeyLeave() {   // leaving a door, for the landing or for Merge: eac
   const d = S.jr && S.jr.door; if (!d) return;
   if (d === 'conquer') conquerEnd(); if (S.mode !== 'merge') setMode('merge'); setPaused(false); S.jr.door = null; S.jr.peek = null; frClose();
 }
-function doorTile(k) {   // a door in the row: a first touch shows it, the same touch again opens it; the lit door, or the mountain, takes you back to the landing
+function doorTile(k) {   // a door in the row: a first touch shows it, the same touch again opens it; the lit door takes you back to the landing
   if (!S.jr) return;
-  if (k === 'journey' || S.jr.door === k) { journeyLeave(); syncUI(); return; }
+  if (S.jr.door === k) { toLanding(); return; }
   if (S.jr.door) journeyLeave();
   if (S.jr.peek !== k) { S.jr.peek = k; feel('tick'); syncUI(); return; }
-  S.jr.peek = null; S.jr.door = k; DOORS[k].open(); feel('snap'); syncUI();
+  enterDoor(k);
 }
+function enterDoor(k) { if (S.jr.door) journeyLeave(); S.jr.peek = null; feel('snap'); if (k === 'merge') { DOORS.merge.open(); return; } S.jr.door = k; DOORS[k].open(); syncUI(); }
+const toLanding = () => { if (!S.jr) return; journeyLeave(); S.jr.peek = null; syncUI(); };   // the landing: the dashboard
 const jrWord = () => (S.jr && S.jr.door ? DOORS[S.jr.door].n : 'Journey');
 const skyOnly = () => !!S.jr && S.mode !== 'studio' && !(CQ.step === 'go' || CQ.step === 'out');   // in the Journey the land stands aside (not in Studio, not while Conquer's game plays)
-// The landing in the pool: the circle with Journey in it; a door you are looking at says its name, and its one line under the circle.
+// The landing in the pool: the dashboard (below); a door you are looking at says its name in the circle, and its one line under it.
 function drawLanding(c) {
-  const k = S.jr.peek && DOORS[S.jr.peek];
-  circleWord(c, k ? k.n : 'Journey');
-  if (k) words(c, '', k.line, CY + RING_R + 10);
+  const k = S.jr.peek && DOORS[S.jr.peek]; if (!k) return;
+  circleWord(c, k.n); words(c, '', k.line, CY + RING_R + 10);
 }
+
+/* ---------- The dashboard: the Journey's landing (v84, Albert Oct 25, 20:00) ---------- */
+// Check in with yourself, then start somewhere. How you are (three words), what is pressing (six), your heart and your breathing,
+// your task (Conquer's list: its one home), and where to start. Every line is optional; a door works without any of it. Nothing
+// is kept: it lives until the app closes (health and feelings stay off the phone's storage). From what you said, one door is
+// suggested in blue, with the reason in plain words; it never moves you. The rules are plain on purpose, not a diagnosis.
+const DASH = { state: null, feel: null, hr: null, breath: null };
+const DASH_STATE = [['settled', 'Settled'], ['restless', 'Restless'], ['over', 'Overwhelmed']];
+const DASH_FEEL = [['anxious', 'Anxious'], ['stuck', 'Stuck'], ['low', 'Low'], ['angry', 'Angry'], ['tired', 'Tired'], ['okay', 'Okay']];
+const DASH_BREATH = [['slow', 'Slow'], ['steady', 'Steady'], ['fast', 'Fast']];
+const DASH_HR = { min: 30, max: 220, quick: 100 };   // resting heart rate above 100 a minute is the textbook line for a fast heart (tachycardia)
+function dashSuggest() {   // [door, why]: the first rule that fits, or null
+  const d = DASH, h = new Date().getHours(), late = h >= 21 || h < 5;
+  if (d.state === 'over') return ['pacer', 'you feel overwhelmed'];
+  if (d.hr >= DASH_HR.quick) return ['pacer', 'your heart is quick'];
+  if (d.breath === 'fast') return ['pacer', 'your breathing is fast'];
+  if (d.feel === 'anxious' || d.feel === 'angry') return ['pacer', `you feel ${d.feel}`];
+  if (d.feel === 'tired' && late) return ['rest', 'you are tired and it is late'];
+  if (d.state === 'restless' || d.feel === 'stuck') return ['tinker', d.feel === 'stuck' ? 'you feel stuck' : 'you feel restless'];
+  if ((d.state || d.feel) && tasks().length) return ['conquer', 'you have something to do'];
+  if (d.feel === 'low' || d.feel === 'tired') return ['merge', `you feel ${d.feel}`];
+  return null;
+}
+const dashShown = () => !!S.jr && !S.jr.door && !S.jr.peek && !S.sheet && !S.paused && !S.intro;
+function dashHTML() {
+  const ch = (key, w, on) => chip(key, w, on), t = tasks()[0], sg = dashSuggest();
+  return `<div class="hd">How are you?</div>` + chipRow(DASH_STATE.map(([v, w]) => ch(`dh:state:${v}`, w, DASH.state === v)))
+    + `<div class="hd">What is pressing?</div>` + chipRow(DASH_FEEL.slice(0, 3).map(([v, w]) => ch(`dh:feel:${v}`, w, DASH.feel === v))) + chipRow(DASH_FEEL.slice(3).map(([v, w]) => ch(`dh:feel:${v}`, w, DASH.feel === v)))
+    + `<div class="hd">Heart and breathing</div><div class="chips"><label class="hr"><input type="number" id="dashHr" inputmode="numeric" min="${DASH_HR.min}" max="${DASH_HR.max}" placeholder="Heart" value="${DASH.hr || ''}" aria-label="Heart rate, beats a minute"><span>bpm</span></label>`
+    + DASH_BREATH.map(([v, w]) => ch(`dh:breath:${v}`, w, DASH.breath === v)).join('') + `</div>`
+    + `<div class="hd">Your task</div>` + chipRow([chip('dh:task', t ? t.text : 'Name what you will do', false, 'task')])
+    + `<div class="hd">Start${sg ? `<i>${esc(sg[1])}</i>` : ''}</div>` + (sg ? chipRow([chip(`dh:go:${sg[0]}`, DOORS[sg[0]].n, false, 'way')]) : `<p class="note">Any door below.</p>`);
+}
+function dashTouch(rest) {
+  const [k, v] = rest; if (k === 'task') { enterDoor('conquer'); return; }
+  if (k === 'go') { enterDoor(v); return; }
+  DASH[k] = DASH[k] === v ? null : v; const w = { state: DASH_STATE, feel: DASH_FEEL, breath: DASH_BREATH }[k].find(x => x[0] === v)[1];
+  tell(DASH[k] ? w : `${w} · off`); const sg = dashSuggest(); if (sg) speak(`Suggested: ${DOORS[sg[0]].n}, because ${sg[1]}.`); feel('tick'); syncBars();
+}
+function dashHeart(el) { const n = Math.round(+el.value); DASH.hr = el.value === '' || !(n >= DASH_HR.min && n <= DASH_HR.max) ? null : n; if (el.value !== '' && !DASH.hr) el.value = ''; tell(DASH.hr ? `Heart · ${DASH.hr} bpm` : 'Heart · cleared'); syncBars(); }
 
 /* ---------- Studio: the gear with its toys, nothing kept unless you keep it ---------- */
 // On entering, the settings are copied and nothing is saved, and the gear opens by itself with Studio's own row: Scene, Weather
@@ -4047,7 +4098,7 @@ function studioFresh() { for (const k of ['atmo', 'mix', 'cover', 'hour', 'depth
 // and an option in it fills the row with its switch, its slider and its percent, ✓ and ›. In the Journey the row is the doors (a
 // door's own row sits above it); in Studio it is Studio's toys, which open the same way. Every change applies when touched.
 // What shapes how you play lives behind Pause; what adds to play lives under the pool (Albert, Oct 25, 14:06).
-const BAR = { line: '', comp: false, tiles: '', tilesCls: '', ctx: '', strip: '', rows: '' };
+const BAR = { line: '', comp: false, tiles: '', tilesCls: '', ctx: '', strip: '', dash: '', rows: '' };
 const icon = (d, more = '') => `<span class="ic">${d.startsWith('<') ? d : svg(d)}${more}</span>`;
 const cell = (attrs, d, word, extra = '') => `<button class="cell" ${attrs}>${icon(d)}<span class="sub">${word}</span>${extra}</button>`;   // the card's bar, foot and pop-up use it
 const skyName = (k) => ({ bolt: 'Lightning', wind: 'Wind', rain: here().snow ? 'Snow' : 'Rain', cover: 'Clouds' }[k]);
@@ -4126,7 +4177,7 @@ function ctxHTML() {   // the ribbon, icons alone (words where a word is the thi
     if (FR.cat) { const c = CATS[FR.cat]; return openRowHTML(fCell(`cat:${FR.cat}`, c.ic, c.n, 'end sel'), ''); }
     return STUDIO_ROW().map((o, i) => fCell(`st:${i}`, o.ic, o.n, o.cls || '')).join('');
   }
-  if (S.jr && CQ.step !== 'go') return Object.keys(DOORS).map(k => { const inDoor = S.jr.door === k, landing = k === 'journey' && !S.jr.door; return fCell(`door:${k}`, DOORS[k].ic, DOORS[k].n, `${inDoor || landing ? 'on sel' : S.jr.peek === k ? 'sel' : ''}${k === 'labs' ? ' tilt' : ''}`, '', inDoor || landing, DOORS[k].line ? `${DOORS[k].n}. ${DOORS[k].line}` : DOORS[k].n); }).join('');   // a door says its line
+  if (S.jr && CQ.step !== 'go') return Object.keys(DOORS).map(k => { const inDoor = S.jr.door === k; return fCell(`door:${k}`, DOORS[k].ic, DOORS[k].n, `${inDoor ? 'on sel' : S.jr.peek === k ? 'sel' : ''}${k === 'labs' ? ' tilt' : ''}`, '', inDoor, `${DOORS[k].n}. ${DOORS[k].line}`); }).join('');   // a door says its line
   const end = (k) => { const c = CATS[k]; return c.off && c.off() ? '' : fCell(`cat:${k}`, c.ic, c.n, `end${FR.cat === k ? ' sel' : ''}`); };   // only what is relevant shows: no Weather indoors or in space
   if (FR.cat) return openRowHTML(end('weather'), end('scene'));
   return end('weather') + TOOLS.map(k => fCell(`tool:${k}`, ICON[k], TOOL_NAMES[k], '', '<b class="n"></b>')).join('') + end('scene');
@@ -4141,7 +4192,7 @@ const STRIP = {
   game: { n: 'Game', ic: ICON.bloom },
   sound: { n: 'Sound', ic: ICON.note }
 };
-const worldBtn = () => (S.jr ? { n: 'Merge', ic: ICON.breathe } : { n: 'Journey', ic: ICON.mountain });   // one way between the two worlds: in Play to the Journey's landing (the doors live only there), in the Journey back to Merge
+const worldBtn = () => ({ n: 'Journey', ic: ICON.mountain });   // one icon (Albert, 20:00): the Journey's landing, from Play or from inside a door; Merge is a door there
 const RULES_ORDER = ['zen', 'classic', 'comp'];   // easiest to hardest: an easier one applies now, a harder one from the next game (Albert, Oct 25, 14:57)
 const rulesNow = () => (compOn() ? 'comp' : rules() === 'zen' ? 'zen' : 'classic');
 const inGame = () => S.world.balls.length > 0 && !S.gameOver;
@@ -4220,6 +4271,7 @@ function syncBars() {
   ctxSync();
   const showStrip = stripShown(); if (!showStrip) FR.strip = null;
   const sh = showStrip ? stripHTML() : ''; if (sh !== BAR.strip) { BAR.strip = sh; st.innerHTML = sh; st.hidden = !sh; fitIcons(st); if (sh) inkOver(st); }
+  const dh = dashShown() ? dashHTML() : '', da = $('dash'); if (dh !== BAR.dash) { BAR.dash = dh; da.innerHTML = dh; da.hidden = !dh; if (dh) inkOver(da); }   // the Journey's landing
   const lh = lineHTML(); if (BAR.line !== lh) { BAR.line = lh; ln.innerHTML = lh; fitIcons(ln); tickBars.t = 0; }
   if (document.body.classList.toggle('comp', compOn()) !== BAR.comp) { BAR.comp = compOn(); readPalette(); }
   document.body.classList.toggle('journey', !!S.jr);
@@ -4240,7 +4292,7 @@ function tickBars() {   // every frame: the score and its glow, a warning's coun
   if (LINE.tell && ms > LINE.until) { LINE.tell = ''; syncBars(); }   // the bar goes back to the words
   ctxSync();
 }
-function applySeason() { BAR.line = BAR.tiles = BAR.ctx = BAR.strip = ''; if ($('ctxBar') && WORLD) syncBars(); }   // a new place: the frame is rebuilt for it
+function applySeason() { BAR.line = BAR.tiles = BAR.ctx = BAR.strip = BAR.dash = ''; if ($('ctxBar') && WORLD) syncBars(); }   // a new place: the frame is rebuilt for it
 // The frame's one pop-up, when no card is open: the card's own pop-up, standing alone over the frame.
 function framePop(o) { if (!CARD.name) { POP.alone = true; S.sheet = 'pop'; const mc = $('mc'); mc.classList.add('alone'); mc.hidden = false; fitCard(); syncBars(); } popup(o); }   // standing alone it is a sheet like any card: the game waits, the ribbon does not answer
 const FRESH_KEEP = ['tasks', 'saved', 'mins', 'mode'];   // Fresh: every setting back to day one; what you wrote and what you saved stay
@@ -4259,7 +4311,7 @@ function frameTouch(f) {
   }
   if (a === 'sp') {   // the strip
     if (b === 'new') { newGameAsk(); return; } if (b === 'help') { openCard('help'); return; }
-    if (b === 'world') { setPaused(false); frClose(); if (S.jr) journeyEnd(); else journeyStart(); tell(S.jr ? 'Journey' : 'Merge'); feel('snap'); syncUI(); return; }   // the one way between the worlds
+    if (b === 'world') { setPaused(false); frClose(); if (S.jr) toLanding(); else journeyStart(); tell('Journey'); feel('snap'); syncUI(); return; }   // the one way to the landing
     FR.strip = FR.strip === b ? null : b; feel('tick'); syncBars(); return;
   }
   if (a === 'sg') {   // Game
@@ -4280,6 +4332,7 @@ function frameTouch(f) {
   if (a === 'pick') { const o = catItem(); if (o) { setPref(o.key, o.list()[+b]); tell(itemTell(o)); feel('snap'); syncBars(); } return; }
   if (a === 'row') { const o = rowItems()[+b]; if (!o || (o.dis && o.dis())) return; if (o.act) o.act(); else o.go(); tell(o.on ? `${o.n} · ${onOff(o.on())}` : o.n); feel('snap'); syncBars(); return; }
   if (a === 'st') { const o = STUDIO_ROW()[+b]; if (o) { o.act(); if (o.id === 'depth') tell(`Depth · ${DEPTH_WORDS[PREFS.depth]}`); feel('snap'); syncBars(); } return; }
+  if (a === 'dh') { dashTouch(f.split(':').slice(1)); return; }   // the dashboard
   if (a === 'tool') { useTool(b); return; }
   if (a === 'door') { if (S.jr) doorTile(b); else doorTouch(b); return; }   // a door in the Journey's row, or a tile at the opening's door
   if (a === 'tk') { if (S.tk && b === 'make') tkMaker(true); return; }
@@ -4341,7 +4394,7 @@ const text = (t) => (typeof t === 'function' ? t() : t);
 const hub = (ic, name, desc, go) => ({ ic, name, desc, kind: 'hub', go });
 const show = (ic, name, desc, v) => ({ ic, name, desc, kind: 'value', get: v });
 const FAQ = [
-  ['What is the Journey?', 'The other world. A landing over the sky alone, with the mountain and six doors in the ribbon under the pool: the mountain (the Journey itself, where you are), then Pacer (a dot that fills and empties; breathe with it), Tinker (spheres to catch, save or let go), Conquer (name what you will do, play first, go, come back, check in), Rest (the night-time sound machine), Studio (the settings as toys; nothing is kept unless you touch Use this) and Labs (the next science, under the stars). Touch a door once to see what it is, again to go in. The lit door, or the mountain, brings you back to the landing. To go back to Merge: Pause › Journey › Merge, or touch the first word in the bar.'],
+  ['What is the Journey?', 'The other world, reached by the mountain in Pause. Its landing asks how you are: how you feel, what is pressing, your heart and your breathing, and your task. Every line is optional and nothing is kept. From what you say it suggests one door, in blue, and says why; you choose. The doors under the pool: Merge (the game), Pacer (a dot that fills and empties; breathe with it), Tinker (spheres to catch, save or let go), Conquer (name what you will do, play first, go, come back, check in), Rest (the night-time sound machine), Studio (the settings as toys; nothing is kept unless you touch Use this) and Labs (the next science). Touch a door once to hear what it is, again to go in; the lit door brings you back to the landing.'],
   ['What is the Pacer?', 'A dot at the centre fills the circle as you breathe in, green, then blue, then white, and empties as you breathe out; the ring melts at the crest and comes back as it fills. In is 40% of each breath and out 60% (at Natural, about 4.4 seconds in and 6.5 out), because a longer out-breath feels more calming. A light goes round the pool’s edge once a breath. Breathe in as it fills, out as it empties. Its row sets the pace: Slow, Natural, Quick (5, 5.5 and 6 a minute, inside the range the studies used); the pool’s breath in Play follows it. With Chest on (Labs), lay the phone flat on your chest, hands off, and after fifteen seconds the dot follows your breath.'],
   ['What is Tinker?', 'Spheres come in sets of six, grow together, hold, shrink and go; a new six come somewhere else. Hold one and it is caught: it keeps its size and follows your finger. Drop it in Save It, the green tank, and it lives there, kept between visits; a smaller one dropped onto a bigger one is taken in. Let It Go is the circle in the tank: open while a set is grown, shut between sets; dropped in while open, it is gone for good. The + makes one of your own: name it or not, pick its glow, set it loose. A tap on any sphere is a soft tap on glass. Spheres are thoughts: keep the good ones, let the worries go. Nothing is scored.'],
   ['What is Conquer?', 'A door in the Journey. Five steps in the pool. Name it: up to three lines of what you will do after, or none. How long first: 15, 30 or 60 minutes of Merge, or Free. Go: you play; a bell at three minutes left, two at one; or touch Go now. Then three breaths out, and the pool goes dark with your lines and a send-off. I’m back: your lines, to touch as done; one done is a gold done, a whole list is a surprise. What you did leaves the list; the rest waits for next time.'],
@@ -4349,8 +4402,8 @@ const FAQ = [
   ['What are the tools?', 'In the row under the pool, between Weather and Scene. Strike: touch a sphere; it turns red, then the place’s own strike takes it. Mystery: your next sphere becomes whatever it touches first. Storm: the place’s own weather blows in and every sphere lands somewhere new (in Comp, Storm is a gust). A chain of three or a Full Bloom earns one, up to three of each; the count sits on the tile.'],
   ['What is Comp?', 'Play with the calm taken off: Pause › Game › Compete (or touch the second word in the bar). A harder mode starts with your next game; an easier one applies at once. The line creeps down; the wind is real and restless. One sphere at a time carries a countdown: merge it in time and the line lifts or a tool is yours; miss it and the line sinks or a wave rolls in. Strike knocks a sphere down a size; Storm is a gust with a hurricane category. Storms, ice, rain and lightning come on their own, each announced in the bar with its countdown; when lightning heats a sphere red, touch it to cool it. Now and then two or three come at once. Rarely, a tree takes the power out: the pool browns out and the dropper malfunctions until it comes back. Glass knocked hard enough chips, cracks and shatters. No aim line, no Heritage. Touch COMPETITION in the bar to leave: nothing is lost.'],
   ['What do the colours mean?', 'Words are white. A green check means on, or the one chosen in its row. A white outline is where you are. Blue is the way on. Red warns. Gold means something special. Colour is never the only sign.'],
-  ['How do I get around?', 'The bar above the pool: three words (Merge, the rules, the place), Pause, and the score (touch it for Statistics). Each word goes to its setting. Pause opens a strip over the pool: ▶ to play on, ↺ for a new game, then Journey (the doors), Game (the mode, Aim, Next, Numbers, and Access: Still, Soft View, Breathe, Haptics) and Sound (on or off, the volume, each sound on or off), and ? for this Help. What shapes how you play is behind Pause; what adds to play is under the pool. Under the pool: Weather at the left, the tools, Scene at the right. Touch Weather and its four take the tools’ place; touch one and its row is its switch, how strong it is (a slider, in percent), ✓ and ›. Scene holds the place, the hour and Live sky. Touch the end tile again and the tools come back. Every change applies at once.'],
-  ['What is Rest?', 'The night-time sound machine, a door in the Journey. The pool fades to dark while a bed plays on (rain, wind, night or fire, or none), for an hour or all night. Phones stop sound when they lock, so Rest keeps the screen awake; plug in for long sessions. The mountain, or the first word, wakes it.'],
+  ['How do I get around?', 'The bar above the pool tells you where you are and what you just touched (for two seconds); it opens nothing. Then Pause, and the score (touch it for Statistics). Pause opens a strip over the pool: ▶ to play on, ↺ for a new game, the mountain for the Journey, Game (the mode, Aim, Next, Numbers, Access: Still, Soft View, Breathe, Haptics) and Sound (on or off, the volume, each sound), and ? for this Help. What shapes how you play is behind Pause; what adds to play is under the pool: Weather, the tools and Scene.'],
+  ['What is Rest?', 'The night-time sound machine, a door in the Journey. The pool fades to dark while a bed plays on (rain, wind, night or fire, or none), for an hour or all night. Phones stop sound when they lock, so Rest keeps the screen awake; plug in for long sessions. Its lit door wakes it.'],
   ['What is Soft View?', 'Pause › Game › Soft: no bursts, no banners, no lightning, a softer buzz, nothing bright above 4 kHz. Still is Reduce motion, and follows the phone. Breathe is the pool’s own breath, at the Pacer’s pace.'],
   ['What is Labs?', 'The Journey’s Labs door, in beta: the next science, each experiment a check under the stars. Look up: lift the phone toward the sky and the real stars overhead fill the pool; hold the light on the ringed star to draw a constellation. Chest: in the Pacer, lay the phone flat on your chest, hands off, and after fifteen seconds the dot follows your breath. Heavy: a big sphere follows your finger slowly, as heavy glass would. They read the phone’s own motion sensor, on the phone; nothing is kept or sent.'],
   ['What is Studio?', 'A door in the Journey: a sandbox. Scene and Weather as you know them, Sound as a full mixer (each sound’s level, in percent), Depth (how much of the scene is drawn: it steps on each touch), Fresh (every toy back to how SoRen came) and Use this (keeps what you made). Leave without it and nothing is kept.'],
@@ -4462,6 +4515,7 @@ function bind() {
     if (S.outro) { S.outro.t = S.outro.len; return; }   // Conquer's breaths out: a tap moves on
     const p = logical(e.clientX, e.clientY);
     if (CQ.step && CQ.step !== 'go') { conquerTouch(p); return; }   // Check in: a line touched is ticked
+    if (S.jr && !S.jr.door && S.jr.peek) { S.jr.peek = null; syncUI(); return; }   // looking at a door: a tap on the pool brings the dashboard back
     if (S.jr && (!S.jr.door || S.jr.door === 'labs' || S.jr.door === 'studio' || S.pac)) return;   // the landing, Labs, the Studio and the Pacer: the pool is to look at
     if (S.paused) { setPaused(false); syncBars(); return; }   // tap to play (the speaker follows: lineHTML)
     try { canvas.setPointerCapture(e.pointerId); } catch (err) {}
@@ -4517,7 +4571,7 @@ function bind() {
     const tx = e.target.closest('[data-task]'); if (tx) cqTyped(+tx.dataset.task, tx.value);   // Conquer's lines: a letter is heard, the first time
     if (e.target.matches && e.target.matches('[data-lv]')) sliderInput(e.target, false);   // a slider: the level follows the finger
   });
-  document.addEventListener('change', (e) => { if (e.target.matches && e.target.matches('[data-lv]')) sliderInput(e.target, true); });   // and is kept when it lifts
+  document.addEventListener('change', (e) => { if (!e.target.matches) return; if (e.target.matches('[data-lv]')) sliderInput(e.target, true); else if (e.target.id === 'dashHr') dashHeart(e.target); });   // and is kept when it lifts
   // Tinker's maker: a glow picked, the dice, Close, Set it loose
   $('mkCols').addEventListener('click', (e) => { const b = e.target.closest('[data-mk]'); if (!b || !S.tk) return; S.tk.mk = +b.dataset.mk; tkMakerSync(); });
   $('mkDice').addEventListener('click', () => { let w; do w = TK_NAMES[Math.floor(Math.random() * TK_NAMES.length)]; while (w === $('mkName').value); $('mkName').value = w; });
